@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "author": "Toon van Strijp",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/ToonvanStrijp/nestjs-i18n"
+  },
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.json",
     "precommit": "lint-staged",

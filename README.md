@@ -47,7 +47,7 @@ import { I18nModule } from './modules/i18n/i18n.module';
 
 @Module({
   imports: [
-    I18nModule.forRoot(path.join(__dirname, '/i18n/'))
+    I18nModule.forRoot({path: path.join(__dirname, '/i18n/'), fallbackLanguage: 'en'}),
   ],
   controllers: []
 })

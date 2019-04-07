@@ -1,1 +1,1 @@
-export const I18N_PATH = 'I18nPath';
+export const I18N_OPTIONS = 'I18nOptions';

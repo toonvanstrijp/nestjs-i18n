@@ -3,7 +3,8 @@ import * as fs from 'fs';
 import * as glob from 'glob';
 import * as path from 'path';
 import * as format from 'string-format';
-import { I18N_PATH } from '../i18n.constants';
+import { I18N_OPTIONS } from '../i18n.constants';
+import { I18nOptions } from '../i18n.module';
 
 @Injectable()
 export class I18nService {
@@ -12,14 +13,14 @@ export class I18nService {
   private logger = new Logger('I18nService');
 
   constructor(
-    @Inject(I18N_PATH)
-    private readonly i18nPath: string,
+    @Inject(I18N_OPTIONS)
+    private readonly i18nOptions: I18nOptions,
   ) {
-    if (!fs.existsSync(i18nPath)) {
+    if (!fs.existsSync(this.i18nOptions.path)) {
       this.logger.error('i18n path does not exists');
     }
 
-    glob(i18nPath + '**/*.json', (err: Error, files: string[]) => {
+    glob(this.i18nOptions.path + '**/*.json', (err: Error, files: string[]) => {
       files.map(file => {
         const key = path.parse(file).name;
         const data = JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -52,7 +53,11 @@ export class I18nService {
       if (translation === undefined || translation === null) {
         const message = `translation "${key}" in "${lang}" doesn't exist.`;
         this.logger.error(message);
-        return message;
+        if(this.i18nOptions.fallbackLanguage !== null || this.i18nOptions.fallbackLanguage !== undefined && lang !== this.i18nOptions.fallbackLanguage) {
+          return this.translate(this.i18nOptions.fallbackLanguage, key, args);
+        }else {
+          return message;
+        }
       }
       if (args && args.length > 0) {
         translation = format(translation, ...(args || []));

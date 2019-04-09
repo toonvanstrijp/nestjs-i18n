@@ -53,7 +53,7 @@ export class I18nService {
       if (translation === undefined || translation === null) {
         const message = `translation "${key}" in "${lang}" doesn't exist.`;
         this.logger.error(message);
-        if(this.i18nOptions.fallbackLanguage !== null || this.i18nOptions.fallbackLanguage !== undefined && lang !== this.i18nOptions.fallbackLanguage) {
+        if((this.i18nOptions.fallbackLanguage !== null || this.i18nOptions.fallbackLanguage !== undefined) && lang !== this.i18nOptions.fallbackLanguage) {
           return this.translate(this.i18nOptions.fallbackLanguage, key, args);
         }else {
           return message;

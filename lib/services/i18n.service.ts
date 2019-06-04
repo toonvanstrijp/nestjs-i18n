@@ -4,7 +4,7 @@ import * as glob from 'glob';
 import * as path from 'path';
 import * as format from 'string-format';
 import { I18N_OPTIONS } from '../i18n.constants';
-import { I18nOptions } from '../i18n.module';
+import { I18nOptions } from '../interfaces/i18n-options.interface';
 
 @Injectable()
 export class I18nService {
@@ -53,9 +53,13 @@ export class I18nService {
       if (translation === undefined || translation === null) {
         const message = `translation "${key}" in "${lang}" doesn't exist.`;
         this.logger.error(message);
-        if((this.i18nOptions.fallbackLanguage !== null || this.i18nOptions.fallbackLanguage !== undefined) && lang !== this.i18nOptions.fallbackLanguage) {
+        if (
+          (this.i18nOptions.fallbackLanguage !== null ||
+            this.i18nOptions.fallbackLanguage !== undefined) &&
+          lang !== this.i18nOptions.fallbackLanguage
+        ) {
           return this.translate(this.i18nOptions.fallbackLanguage, key, args);
-        }else {
+        } else {
           return message;
         }
       }

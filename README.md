@@ -54,6 +54,26 @@ import { I18nModule } from './modules/i18n/i18n.module';
 export class AppModule {}
 
 ```
+#### using forRootAsync
+```
+import { Module } from '@nestjs/common';
+import * as path from 'path';
+import { I18nModule } from './modules/i18n/i18n.module';
+
+@Module({
+  imports: [
+    I18nModule.forRootAsync({ 
+        useFactory: (config: ConfigurationService) => (
+            { path: configService.i18nPath, fallbackLanguage: 'es' }
+        ),
+        inject: [ConfigurationService] 
+    }),
+  ],
+  controllers: []
+})
+export class AppModule {}
+
+```
 ### Using translation service
 ```
 @Controller()

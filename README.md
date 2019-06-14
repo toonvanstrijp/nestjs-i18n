@@ -43,7 +43,7 @@ To use the translation service we first add the module. **The `I18nModule` has a
 ```
 import { Module } from '@nestjs/common';
 import * as path from 'path';
-import { I18nModule } from './modules/i18n/i18n.module';
+import { I18nModule } from 'nestjs-i18n';
 
 @Module({
   imports: [
@@ -58,7 +58,7 @@ export class AppModule {}
 ```
 import { Module } from '@nestjs/common';
 import * as path from 'path';
-import { I18nModule } from './modules/i18n/i18n.module';
+import { I18nModule } from 'nestjs-i18n';
 
 @Module({
   imports: [

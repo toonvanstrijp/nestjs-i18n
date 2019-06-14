@@ -28,6 +28,7 @@ export class I18nModule {
     const asyncProvider = this.createAsyncOptionsProvider(options);
     return {
       module: I18nModule,
+      imports: options.imports || [],
       providers: [asyncProvider, I18nService],
       exports: [I18nService],
     };

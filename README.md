@@ -42,7 +42,7 @@ The format for the translation file could look like this:
 }
 ```
 String formatting is done by: [string-format](https://github.com/davidchambers/string-format)
-#### Constrains
+#### Constraints
 - Don't use `.` in your keys because you can use the `.` to target nested translations.
 
 

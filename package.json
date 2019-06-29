@@ -1,6 +1,6 @@
 {
   "name": "nestjs-i18n",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "description": "",
   "author": "Toon van Strijp",
   "repository": {
@@ -18,14 +18,15 @@
     "publish:next": "npm publish --access public --tag next"
   },
   "devDependencies": {
-    "@nestjs/common": "^6.2.4",
-    "@nestjs/core": "^6.2.4",
+    "@nestjs/common": "^6.3.2",
+    "@nestjs/core": "^6.3.2",
     "@types/glob": "^7.1.1",
-    "@types/node": "^12.0.4",
+    "@types/node": "^12.0.10",
     "@types/string-format": "^2.0.0",
     "husky": "2.3.0",
     "lint-staged": "8.1.7",
     "prettier": "1.17.1",
+    "reflect-metadata": "^0.1.13",
     "typescript": "3.5.1"
   },
   "dependencies": {

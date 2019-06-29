@@ -48,27 +48,35 @@ export class I18nService {
     key: string,
     args: Array<{ [k: string]: any } | string> = [],
   ) {
-    try {
-      let translation = this.translations[lang][key];
-      if (translation === undefined || translation === null) {
-        const message = `translation "${key}" in "${lang}" doesn't exist.`;
-        this.logger.error(message);
-        if (
-          (this.i18nOptions.fallbackLanguage !== null ||
-            this.i18nOptions.fallbackLanguage !== undefined) &&
-          lang !== this.i18nOptions.fallbackLanguage
-        ) {
-          return this.translate(this.i18nOptions.fallbackLanguage, key, args);
-        } else {
-          return message;
-        }
+    let translation = undefined;
+
+    const keys = key.split('.');
+
+    if (this.translations[lang] !== undefined) {
+      for (let i = 0; i < keys.length; i++) {
+        translation =
+          translation === undefined
+            ? this.translations[lang][keys[i]]
+            : translation[keys[i]];
       }
-      if (args && args.length > 0) {
-        translation = format(translation, ...(args || []));
-      }
-      return translation;
-    } catch (e) {
-      return e.message;
     }
+
+    if (translation === undefined || translation === null) {
+      const message = `translation "${key}" in "${lang}" doesn't exist.`;
+      this.logger.error(message);
+      if (
+        (this.i18nOptions.fallbackLanguage !== null ||
+          this.i18nOptions.fallbackLanguage !== undefined) &&
+        lang !== this.i18nOptions.fallbackLanguage
+      ) {
+        return this.translate(this.i18nOptions.fallbackLanguage, key, args);
+      } else {
+        return undefined;
+      }
+    }
+    if (args && args.length > 0) {
+      translation = format(translation, ...(args || []));
+    }
+    return translation;
   }
 }

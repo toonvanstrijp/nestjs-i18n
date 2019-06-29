@@ -29,15 +29,23 @@ i18n
         └── nl.json
 ```
 ### Translation file
-The format for the translation file should look like this:
+The format for the translation file could look like this:
 ```
 {
   "HELLO_MESSAGE": "Hello {username}",
   "GOODBYE_MESSAGE": "Goodbye {username}",
-  "USER_ADDED_PRODUCT": "{0.username} added {1.productName} to cart"
+  "USER_ADDED_PRODUCT": "{0.username} added {1.productName} to cart",
+  "SETUP": {
+    "WELCOME": "Welcome {0.username}",
+    "GOODBYE": "Goodbye {0.username}"
+  }
 }
 ```
 String formatting is done by: [string-format](https://github.com/davidchambers/string-format)
+#### Constrains
+- Don't use `.` in your keys because you can use the `.` to target nested translations.
+
+
 ### Translation module
 To use the translation service we first add the module. **The `I18nModule` has an `@Global()` attribute so you should only import it once**.
 ```
@@ -86,6 +94,7 @@ export class SampleController {
   @Get()
   sample() {
     this.i18n.translate('en', 'HELLO_MESSAGE', {id: 1, username: 'Toon'});
+    this.i18n.translate('en', 'SETUP.WELCOME', {id: 1, username: 'Toon'});
   }
 }
 ```

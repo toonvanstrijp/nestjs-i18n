@@ -27,13 +27,13 @@
     "@types/jest": "^24.0.15",
     "@types/node": "^12.0.10",
     "@types/string-format": "^2.0.0",
-    "husky": "2.3.0",
+    "husky": "3.0.0",
     "jest": "^24.8.0",
-    "lint-staged": "8.1.7",
-    "prettier": "1.17.1",
+    "lint-staged": "9.0.0",
+    "prettier": "1.18.2",
     "reflect-metadata": "^0.1.13",
     "ts-jest": "^24.0.2",
-    "typescript": "3.5.1"
+    "typescript": "3.5.2"
   },
   "dependencies": {
     "flat": "^4.1.0",

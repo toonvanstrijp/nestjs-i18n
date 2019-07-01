@@ -9,7 +9,6 @@ export interface I18nOptions {
 export interface I18nOptionsFactory {
   createI18nOptions(): Promise<I18nOptions> | I18nOptions;
 }
-
 export interface I18nAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
   name?: string;
   useExisting?: Type<I18nOptionsFactory>;

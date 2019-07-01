@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ToonvanStrijp/nestjs-i18n.svg?branch=master)](https://travis-ci.org/ToonvanStrijp/nestjs-i18n)
+
 ## Description
 
 The **i18n** module for [Nest](https://github.com/nestjs/nest).
@@ -38,13 +40,15 @@ The format for the translation file could look like this:
   "SETUP": {
     "WELCOME": "Welcome {0.username}",
     "GOODBYE": "Goodbye {0.username}"
-  }
+  },
+  "ARRAY": [
+    "ONE",
+    "TWO",
+    "THREE"
+  ]
 }
 ```
 String formatting is done by: [string-format](https://github.com/davidchambers/string-format)
-#### Constraints
-- Don't use `.` in your keys because you can use the `.` to target nested translations.
-
 
 ### Translation module
 To use the translation service we first add the module. **The `I18nModule` has an `@Global()` attribute so you should only import it once**.
@@ -95,6 +99,7 @@ export class SampleController {
   sample() {
     this.i18n.translate('en', 'HELLO_MESSAGE', {id: 1, username: 'Toon'});
     this.i18n.translate('en', 'SETUP.WELCOME', {id: 1, username: 'Toon'});
+    this.i18n.translate('en', 'ARRAY.0');
   }
 }
 ```

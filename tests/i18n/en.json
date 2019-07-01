@@ -1,0 +1,12 @@
+{
+  "HELLO": "Hello",
+  "PRODUCT": {
+    "NEW": "New Product: {0.name}"
+  },
+  "ENGLISH": "English",
+  "ARRAY": [
+    "ONE",
+    "TWO",
+    "THREE"
+  ]
+}

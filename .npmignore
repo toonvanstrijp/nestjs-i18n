@@ -6,3 +6,4 @@ tslint.json
 tsconfig.json
 .prettierrc
 .idea
+tests

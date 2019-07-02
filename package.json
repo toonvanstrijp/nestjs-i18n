@@ -19,8 +19,8 @@
     "test": "jest --config ./tests/jest-test.json"
   },
   "devDependencies": {
-    "@nestjs/common": "^6.3.2",
-    "@nestjs/core": "^6.3.2",
+    "@nestjs/common": "^6.4.0",
+    "@nestjs/core": "^6.4.0",
     "@nestjs/testing": "^6.4.0",
     "@types/flat": "0.0.28",
     "@types/glob": "^7.1.1",

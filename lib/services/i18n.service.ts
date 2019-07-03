@@ -20,7 +20,7 @@ export class I18nService {
   public translate(
     lang: string,
     key: string,
-    args: Array<{ [k: string]: any } | string> = [],
+    args?: Array<{ [k: string]: any } | string> | { [k: string]: any },
   ) {
     let translation = this.translations[lang][key];
 
@@ -37,8 +37,11 @@ export class I18nService {
         return undefined;
       }
     }
-    if (args && args.length > 0) {
-      translation = format(translation, ...(args || []));
+    if (args || (args instanceof Array && args.length > 0)) {
+      translation = format(
+        translation,
+        ...(args instanceof Array ? args || [] : [args]),
+      );
     }
     return translation;
   }

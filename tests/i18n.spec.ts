@@ -34,6 +34,10 @@ describe('i18n module', () => {
     expect(i18nService.translate('nl', 'PRODUCT.NEW', [{ name: 'Test' }])).toBe(
       'Nieuw Product: Test',
     );
+
+    expect(i18nService.translate('nl', 'PRODUCT.NEW', { name: 'Test' })).toBe(
+      'Nieuw Product: Test',
+    );
   });
 
   it('i18n service should return array translation', async () => {

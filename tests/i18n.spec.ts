@@ -53,4 +53,14 @@ describe('i18n module', () => {
   it('i18n service should return fallback translation', async () => {
     expect(i18nService.translate('nl', 'ENGLISH')).toBe('English');
   });
+
+  it('i18n service should return global translation in each language', async () => {
+    expect(i18nService.translate('en', 'APP_NAME')).toBe('Nest-I18N');
+    expect(i18nService.translate('nl', 'APP_NAME')).toBe('Nest-I18N');
+  });
+
+  it('i18n service should return overwritten global translation', async () => {
+    expect(i18nService.translate('en', 'COMPANY')).toBe('Toon');
+    expect(i18nService.translate('nl', 'COMPANY')).toBe('Wim');
+  });
 });

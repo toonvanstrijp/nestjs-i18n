@@ -5,7 +5,7 @@ import { I18nModule, I18nService } from '../lib';
 describe('i18n module', () => {
   let i18nService: I18nService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [
         I18nModule.forRootAsync({

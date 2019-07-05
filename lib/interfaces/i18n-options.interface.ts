@@ -1,7 +1,10 @@
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 
+export type I18nLoadingType = 'BY_LANGUAGE' | 'BY_DOMAIN';
+
 export interface I18nOptions {
+  loadingType?: I18nLoadingType;
   path: string;
   fallbackLanguage?: string;
 }

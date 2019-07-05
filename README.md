@@ -13,6 +13,10 @@ $ npm i --save nestjs-i18n
 ## Quick Start
 
 ### Structure
+
+This module offers to types of loading in your translations files: `BY_DOMAIN` and `BY_LANGUAGE`.
+
+##### loading: BY_DOMAIN (DEPRECATED) will be removed in V3.0.0
 create a directory with your translations files it can be as deeply nested as you would like as long as the keys of the translations are unique. The name of each file should be the language you're targeting.
 ```
 i18n
@@ -30,6 +34,20 @@ i18n
         ├── en.json
         └── nl.json
 ```
+
+#### loading: BY_LANGUAGE
+create a directory and in it define your language keys as directories. When using `BY_LANGUAGE` you can also define global translations. This is useful for things that are the same in each language for example your company name. Each file that is in the root of your i18n folder will be defined globally. You can overwrite global translations by defining them within a language.
+```
+i18n
+├── en
+│   ├── category.json
+│   └── auth.json
+├── nl
+│   ├── category.json
+│   └── auth.json
+└── global.json
+```
+
 ### Translation file
 The format for the translation file could look like this:
 ```

@@ -9,12 +9,12 @@ import { I18N_OPTIONS, I18N_TRANSLATIONS } from './i18n.constants';
 import { I18nService } from './services/i18n.service';
 import {
   I18nAsyncOptions,
+  I18nLoadingType,
   I18nOptions,
   I18nOptionsFactory,
 } from './interfaces/i18n-options.interface';
 import { ValueProvider } from '@nestjs/common/interfaces';
 import { parseTranslations } from './utils/parse';
-import { log } from 'util';
 
 const logger = new Logger('I18nService');
 
@@ -31,7 +31,10 @@ export class I18nModule {
       provide: I18N_TRANSLATIONS,
       useFactory: async () => {
         try {
-          return await parseTranslations(options.path);
+          return await parseTranslations(
+            options.path,
+            options.loadingType || 'BY_DOMAIN',
+          );
         } catch (e) {
           return {};
         }
@@ -89,7 +92,10 @@ export class I18nModule {
       provide: I18N_TRANSLATIONS,
       useFactory: async (options: I18nOptions) => {
         try {
-          return await parseTranslations(options.path);
+          return await parseTranslations(
+            options.path,
+            options.loadingType || 'BY_DOMAIN',
+          );
         } catch (e) {
           return {};
         }

@@ -14,6 +14,7 @@ import {
 } from './interfaces/i18n-options.interface';
 import { ValueProvider } from '@nestjs/common/interfaces';
 import { parseTranslations } from './utils/parse';
+import * as path from 'path';
 
 const logger = new Logger('I18nService');
 
@@ -21,6 +22,8 @@ const logger = new Logger('I18nService');
 @Module({})
 export class I18nModule {
   static forRoot(options: I18nOptions): DynamicModule {
+    options.path = path.normalize(options.path + path.sep);
+
     const i18nOptions: ValueProvider = {
       provide: I18N_OPTIONS,
       useValue: options,

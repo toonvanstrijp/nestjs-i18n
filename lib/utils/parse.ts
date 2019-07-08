@@ -15,6 +15,8 @@ export async function parseTranslations(
   i18nPath: string,
 ): Promise<I18nTranslation> {
   return new Promise<I18nTranslation>((resolve, reject) => {
+    i18nPath = path.normalize(i18nPath + path.sep);
+
     const translations: I18nTranslation = {};
 
     if (!fs.existsSync(i18nPath)) {

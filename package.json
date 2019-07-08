@@ -26,7 +26,7 @@
     "@types/flat": "0.0.28",
     "@types/glob": "^7.1.1",
     "@types/jest": "^24.0.15",
-    "@types/node": "^12.0.10",
+    "@types/node": "^12.6.0",
     "@types/string-format": "^2.0.0",
     "husky": "3.0.0",
     "jest": "^24.8.0",

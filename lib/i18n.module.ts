@@ -14,13 +14,19 @@ import {
 } from './interfaces/i18n-options.interface';
 import { ValueProvider } from '@nestjs/common/interfaces';
 import { parseTranslations } from './utils/parse';
+import * as path from 'path';
 
 const logger = new Logger('I18nService');
+
+const defaultOptions: Partial<I18nOptions> = {
+  filePattern: '*.json',
+};
 
 @Global()
 @Module({})
 export class I18nModule {
   static forRoot(options: I18nOptions): DynamicModule {
+    options = this.sanitizeI18nOptions(options);
     const i18nOptions: ValueProvider = {
       provide: I18N_OPTIONS,
       useValue: options,
@@ -30,7 +36,7 @@ export class I18nModule {
       provide: I18N_TRANSLATIONS,
       useFactory: async () => {
         try {
-          return await parseTranslations(options.path);
+          return await parseTranslations(options);
         } catch (e) {
           return {};
         }
@@ -87,13 +93,25 @@ export class I18nModule {
     return {
       provide: I18N_TRANSLATIONS,
       useFactory: async (options: I18nOptions) => {
+        options = this.sanitizeI18nOptions(options);
         try {
-          return await parseTranslations(options.path);
+          return await parseTranslations(options);
         } catch (e) {
           return {};
         }
       },
       inject: [I18N_OPTIONS],
     };
+  }
+
+  private static sanitizeI18nOptions(options: I18nOptions) {
+    options = { ...defaultOptions, ...options };
+
+    options.path = path.normalize(options.path + path.sep);
+    if (!options.filePattern.startsWith('*.')) {
+      options.filePattern = '*.' + options.filePattern;
+    }
+
+    return options;
   }
 }

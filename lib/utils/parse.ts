@@ -4,6 +4,7 @@ import * as path from 'path';
 import { I18nTranslation } from '../i18n.constants';
 import * as flat from 'flat';
 import { lstatSync, readdirSync } from 'fs';
+import { I18nOptions } from '../interfaces/i18n-options.interface';
 
 const isDirectory = source => lstatSync(source).isDirectory();
 const getDirectories = source =>
@@ -12,10 +13,10 @@ const getDirectories = source =>
     .filter(isDirectory);
 
 export async function parseTranslations(
-  i18nPath: string,
+  options: I18nOptions,
 ): Promise<I18nTranslation> {
   return new Promise<I18nTranslation>((resolve, reject) => {
-    i18nPath = path.normalize(i18nPath + path.sep);
+    const i18nPath = path.normalize(options.path + path.sep);
 
     const translations: I18nTranslation = {};
 
@@ -27,35 +28,40 @@ export async function parseTranslations(
       path.relative(i18nPath, dir),
     );
 
-    glob(i18nPath + '**/*.json', (err: Error, files: string[]) => {
-      if (err) {
-        return reject(err);
-      }
-
-      files.map(file => {
-        let global = false;
-
-        const key = path
-          .dirname(path.relative(i18nPath, file))
-          .split(path.sep)[0];
-
-        if (key === '.') {
-          global = true;
+    glob(
+      i18nPath + '**/' + options.filePattern,
+      (err: Error, files: string[]) => {
+        if (err) {
+          return reject(err);
         }
 
-        const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+        files.map(file => {
+          let global = false;
 
-        const flatData = flat.flatten(data);
+          const key = path
+            .dirname(path.relative(i18nPath, file))
+            .split(path.sep)[0];
 
-        for (const property of Object.keys(flatData)) {
-          [...(global ? languages : [key])].forEach(lang => {
-            translations[lang] = !!translations[lang] ? translations[lang] : {};
-            translations[lang][property] = flatData[property];
-          });
-        }
-      });
+          if (key === '.') {
+            global = true;
+          }
 
-      resolve(translations);
-    });
+          const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+
+          const flatData = flat.flatten(data);
+
+          for (const property of Object.keys(flatData)) {
+            [...(global ? languages : [key])].forEach(lang => {
+              translations[lang] = !!translations[lang]
+                ? translations[lang]
+                : {};
+              translations[lang][property] = flatData[property];
+            });
+          }
+        });
+
+        resolve(translations);
+      },
+    );
   });
 }

@@ -55,13 +55,17 @@ import { I18nModule } from 'nestjs-i18n';
 
 @Module({
   imports: [
-    I18nModule.forRoot({path: path.join(__dirname, '/i18n/'), fallbackLanguage: 'en'}),
+    I18nModule.forRoot({
+      path: path.join(__dirname, '/i18n'), 
+      filePattern: '*.json',
+      fallbackLanguage: 'en',
+    }),
   ],
   controllers: []
 })
 export class AppModule {}
-
 ```
+
 #### using forRootAsync
 ```
 import { Module } from '@nestjs/common';
@@ -71,17 +75,19 @@ import { I18nModule } from 'nestjs-i18n';
 @Module({
   imports: [
     I18nModule.forRootAsync({ 
-        useFactory: (config: ConfigurationService) => (
-            { path: configService.i18nPath, fallbackLanguage: 'es' }
-        ),
+        useFactory: (config: ConfigurationService) => ({ 
+          path: configService.i18nPath, 
+          fallbackLanguage: configService.fallbackLanguage, // e.g., 'en'
+          filePattern: configService.i18nFilePattern, // e.g., '*.i18n.json'
+        }),
         inject: [ConfigurationService] 
     }),
   ],
   controllers: []
 })
 export class AppModule {}
-
 ```
+
 ### Using translation service
 ```
 @Controller()

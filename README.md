@@ -57,7 +57,6 @@ import { I18nModule } from 'nestjs-i18n';
   imports: [
     I18nModule.forRoot({
       path: path.join(__dirname, '/i18n'), 
-      filePattern: '*.json',
       fallbackLanguage: 'en',
     }),
   ],

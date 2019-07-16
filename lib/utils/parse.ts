@@ -29,7 +29,7 @@ export async function parseTranslations(
     );
 
     glob(
-      i18nPath + '**/' + options.filePattern,
+      i18nPath + '/**/' + options.filePattern,
       (err: Error, files: string[]) => {
         if (err) {
           return reject(err);

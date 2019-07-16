@@ -57,6 +57,7 @@ import { I18nModule } from 'nestjs-i18n';
   imports: [
     I18nModule.forRoot({
       path: path.join(__dirname, '/i18n'), 
+      filePattern: '*.json',
       fallbackLanguage: 'en',
     }),
   ],
@@ -77,6 +78,7 @@ import { I18nModule } from 'nestjs-i18n';
         useFactory: (config: ConfigurationService) => ({ 
           path: configService.i18nPath, 
           fallbackLanguage: configService.fallbackLanguage, // e.g., 'en'
+          filePattern: configService.i18nFilePattern, // e.g., '*.i18n.json'
         }),
         inject: [ConfigurationService] 
     }),

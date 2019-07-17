@@ -1,7 +1,7 @@
 {
   "HELLO": "Hallo",
   "PRODUCT": {
-    "NEW": "Nieuw Product: {0.name}"
+    "NEW": "Nieuw Product: {name}"
   },
   "ARRAY": [
     "EEN",

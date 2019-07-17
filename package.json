@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@nestjs/common": "^6.4.0",
-    "@nestjs/core": "^6.4.0",
+    "@nestjs/core": "^6.5.0",
     "@nestjs/testing": "^6.4.0",
     "@types/flat": "0.0.28",
     "@types/glob": "^7.1.1",

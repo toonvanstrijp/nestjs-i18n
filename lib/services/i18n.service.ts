@@ -22,20 +22,14 @@ export class I18nService {
     key: string,
     args?: Array<{ [k: string]: any } | string> | { [k: string]: any },
   ) {
-    let translation = this.translations[lang][key];
+    let translationByLanguage = this.translations[lang];
+    if (translationByLanguage === undefined || translationByLanguage === null) {
+      return this.defaultToFallbackLanguage(lang, key, args);
+    }
 
+    let translation = translationByLanguage[key];
     if (translation === undefined || translation === null) {
-      const message = `translation "${key}" in "${lang}" doesn't exist.`;
-      this.logger.error(message);
-      if (
-        (this.i18nOptions.fallbackLanguage !== null ||
-          this.i18nOptions.fallbackLanguage !== undefined) &&
-        lang !== this.i18nOptions.fallbackLanguage
-      ) {
-        return this.translate(this.i18nOptions.fallbackLanguage, key, args);
-      } else {
-        return undefined;
-      }
+      return this.defaultToFallbackLanguage(lang, key, args);
     }
     if (args || (args instanceof Array && args.length > 0)) {
       translation = format(
@@ -44,5 +38,23 @@ export class I18nService {
       );
     }
     return translation;
+  }
+
+  private defaultToFallbackLanguage(
+    lang: string,
+    key: string,
+    args?: Array<{ [k: string]: any } | string> | { [k: string]: any },
+  ) {
+    const message = `translation "${key}" in "${lang}" doesn't exist.`;
+    this.logger.error(message);
+    if (
+      (this.i18nOptions.fallbackLanguage !== null ||
+        this.i18nOptions.fallbackLanguage !== undefined) &&
+      lang !== this.i18nOptions.fallbackLanguage
+    ) {
+      return this.translate(this.i18nOptions.fallbackLanguage, key, args);
+    } else {
+      return undefined;
+    }
   }
 }

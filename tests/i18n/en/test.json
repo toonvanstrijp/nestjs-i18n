@@ -1,7 +1,7 @@
 {
   "HELLO": "Hello",
   "PRODUCT": {
-    "NEW": "New Product: {0.name}"
+    "NEW": "New Product: {name}"
   },
   "ENGLISH": "English",
   "ARRAY": [

@@ -54,6 +54,10 @@ describe('i18n module', () => {
     expect(i18nService.translate('nl', 'ENGLISH')).toBe('English');
   });
 
+  it('i18n service should return fallback translation if language not registed', async () => {
+    expect(i18nService.translate('es', 'ENGLISH')).toBe('English');
+  });
+
   it('i18n service should return global translation in each language', async () => {
     expect(i18nService.translate('en', 'APP_NAME')).toBe('Nest-I18N');
     expect(i18nService.translate('nl', 'APP_NAME')).toBe('Nest-I18N');

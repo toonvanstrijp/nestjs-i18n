@@ -1,6 +1,6 @@
 {
   "name": "nestjs-i18n",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "",
   "author": "Toon van Strijp",
   "license": "MIT",
@@ -20,13 +20,13 @@
     "test": "jest --config ./tests/jest-test.json"
   },
   "devDependencies": {
-    "@nestjs/common": "^6.4.0",
-    "@nestjs/core": "^6.5.0",
-    "@nestjs/testing": "^6.4.0",
+    "@nestjs/common": "^6.5.3",
+    "@nestjs/core": "^6.5.3",
+    "@nestjs/testing": "^6.5.3",
     "@types/flat": "0.0.28",
     "@types/glob": "^7.1.1",
-    "@types/jest": "^24.0.15",
-    "@types/node": "^12.0.10",
+    "@types/jest": "^24.0.17",
+    "@types/node": "^12.7.2",
     "@types/string-format": "^2.0.0",
     "husky": "3.0.1",
     "jest": "^24.8.0",

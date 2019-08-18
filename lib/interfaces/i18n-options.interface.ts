@@ -1,10 +1,12 @@
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
+import { I18nResolver } from './i18n-language-resolver.interface';
 
 export interface I18nOptions {
   path: string;
   filePattern?: string;
   fallbackLanguage?: string;
+  resolvers?: I18nResolver[];
 }
 
 export interface I18nOptionsFactory {

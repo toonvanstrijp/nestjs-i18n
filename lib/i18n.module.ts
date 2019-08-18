@@ -2,7 +2,9 @@ import {
   DynamicModule,
   Global,
   Logger,
+  MiddlewareConsumer,
   Module,
+  NestModule,
   Provider,
 } from '@nestjs/common';
 import { I18N_OPTIONS, I18N_TRANSLATIONS } from './i18n.constants';
@@ -15,16 +17,24 @@ import {
 import { ValueProvider } from '@nestjs/common/interfaces';
 import { parseTranslations } from './utils/parse';
 import * as path from 'path';
+import { I18nLanguageMiddleware } from './middleware/i18n-language-middleware';
 
 const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
   filePattern: '*.json',
+  resolvers: [],
 };
 
 @Global()
 @Module({})
-export class I18nModule {
+export class I18nModule implements NestModule {
+  constructor() {}
+
+  configure(consumer: MiddlewareConsumer): MiddlewareConsumer | void {
+    consumer.apply(I18nLanguageMiddleware).forRoutes('*');
+  }
+
   static forRoot(options: I18nOptions): DynamicModule {
     options = this.sanitizeI18nOptions(options);
     const i18nOptions: ValueProvider = {

@@ -14,7 +14,7 @@ $ npm i --save nestjs-i18n
 
 ### Structure
 
-create a directory and in it define your language keys as directories. When using `BY_LANGUAGE` you can also define global translations. This is useful for things that are the same in each language for example your company name. Each file that is in the root of your i18n folder will be defined globally. You can overwrite global translations by defining them within a language.
+create a directory and in it define your language keys as directories. You can also define global translations. This is useful for things that are the same in each language for example your company name. Each file that is in the root of your i18n folder will be defined globally. You can overwrite global translations by defining them within a language.
 ```
 i18n
 ├── en

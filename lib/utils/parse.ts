@@ -48,6 +48,8 @@ export async function parseTranslations(
 
           const data = JSON.parse(fs.readFileSync(file, 'utf8'));
 
+          const prefix = path.basename(file).split('.')[0];
+
           const flatData = flat.flatten(data);
 
           for (const property of Object.keys(flatData)) {
@@ -55,7 +57,7 @@ export async function parseTranslations(
               translations[lang] = !!translations[lang]
                 ? translations[lang]
                 : {};
-              translations[lang][property] = flatData[property];
+              translations[lang][`${prefix}.${property}`] = flatData[property];
             });
           }
         });

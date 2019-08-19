@@ -25,7 +25,6 @@ const defaultOptions: Partial<I18nOptions> = {
   filePattern: '*.json',
   resolvers: [],
 };
-
 @Global()
 @Module({})
 export class I18nModule implements NestModule {

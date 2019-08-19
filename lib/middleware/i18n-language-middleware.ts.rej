@@ -1,0 +1,6 @@
+diff a/lib/middleware/i18n-language-middleware.ts b/lib/middleware/i18n-language-middleware.ts	(rejected hunks)
+@@ -17 +17,3 @@ export class I18nLanguageMiddleware implements NestMiddleware {
+-      if (language !== undefined) { break; }
++      if (language !== undefined) {
++        break;
++      }

@@ -7,3 +7,5 @@ tsconfig.json
 .prettierrc
 .idea
 tests
+docker-compose.yml
+docker

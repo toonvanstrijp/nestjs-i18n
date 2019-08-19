@@ -17,12 +17,15 @@
     "publish:npm": "npm publish --access public",
     "prepublish:next": "npm run build",
     "publish:next": "npm publish --access public --tag next",
-    "test": "jest --config ./tests/jest-test.json"
+    "test": "jest --config ./tests/jest-test.json",
+    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "lint:fix": "tslint -p tsconfig.json -c tslint.json --fix"
   },
   "devDependencies": {
     "@nestjs/common": "^6.5.3",
     "@nestjs/core": "^6.5.3",
     "@nestjs/platform-express": "^6.5.3",
+    "@nestjs/platform-fastify": "^6.5.3",
     "@nestjs/testing": "^6.5.3",
     "@types/flat": "0.0.28",
     "@types/glob": "^7.1.1",
@@ -30,14 +33,17 @@
     "@types/node": "^12.7.2",
     "@types/string-format": "^2.0.0",
     "@types/supertest": "^2.0.8",
-    "husky": "^3.0.4",
-    "jest": "^24.9.0",
-    "lint-staged": "^9.2.3",
+    "fs": "0.0.1-security",
+    "husky": "3.0.1",
+    "jest": "^24.8.0",
+    "lint-staged": "9.2.1",
     "prettier": "1.18.2",
-    "supertest": "^4.0.2",
     "reflect-metadata": "^0.1.13",
+    "supertest": "^4.0.2",
     "ts-jest": "^24.0.2",
-    "typescript": "3.5.2"
+    "tslint": "^5.18.0",
+    "typescript": "3.5.2",
+    "url": "^0.11.0"
   },
   "dependencies": {
     "flat": "^4.1.0",

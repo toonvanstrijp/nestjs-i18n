@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+
+  lib:
+    container_name: nestjs-i18
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    command: npm run test
+    tty: true
+    volumes:
+      - ./:/app

@@ -29,8 +29,6 @@ const defaultOptions: Partial<I18nOptions> = {
 @Global()
 @Module({})
 export class I18nModule implements NestModule {
-  constructor() {}
-
   configure(consumer: MiddlewareConsumer): MiddlewareConsumer | void {
     consumer.apply(I18nLanguageMiddleware).forRoutes('*');
   }

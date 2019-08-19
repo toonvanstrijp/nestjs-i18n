@@ -34,9 +34,10 @@
     "jest": "^24.9.0",
     "lint-staged": "^9.2.3",
     "prettier": "1.18.2",
-    "supertest": "^4.0.2",
     "reflect-metadata": "^0.1.13",
+    "supertest": "^4.0.2",
     "ts-jest": "^24.0.2",
+    "tslint": "^5.18.0",
     "typescript": "3.5.2"
   },
   "dependencies": {
@@ -52,6 +53,7 @@
   "lint-staged": {
     "*.ts": [
       "prettier --write",
+      "tslint --project .",
       "git add"
     ]
   }

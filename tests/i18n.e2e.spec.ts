@@ -4,7 +4,8 @@ import { I18nModule, I18nService } from '../lib';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { HelloController } from './controllers/hello.controller';
-import { QueryExpressResolver } from '../lib/resolvers/query-express.resolver';
+import { QueryResolver } from '../lib/resolvers/query.resolver';
+import { HeaderResolver } from '../lib/resolvers/header.resolver';
 
 describe('i18n module e2e', () => {
   let i18nService: I18nService;
@@ -17,7 +18,10 @@ describe('i18n module e2e', () => {
         I18nModule.forRoot({
           path: path.join(__dirname, '/i18n/'),
           fallbackLanguage: 'en',
-          resolvers: [new QueryExpressResolver(['lang', 'locale', 'l'])],
+          resolvers: [
+            new QueryResolver(['lang', 'locale', 'l']),
+            new HeaderResolver(),
+          ],
         }),
       ],
       controllers: [HelloController],
@@ -46,6 +50,14 @@ describe('i18n module e2e', () => {
       .get('/hello?l=nl')
       .expect(200)
       .expect('Hello');
+  });
+
+  it(`/GET hello should return translation when providing accept-language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello')
+      .set('accept-language', 'nl')
+      .expect(200)
+      .expect('Hallo');
   });
 
   afterAll(async () => {

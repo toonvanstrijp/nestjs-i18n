@@ -1,6 +1,6 @@
 import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { I18N_OPTIONS } from '../i18n.constants';
-import { I18nOptions, I18nResolver } from '..';
+import { I18nOptions } from '..';
 
 @Injectable()
 export class I18nLanguageMiddleware implements NestMiddleware {
@@ -9,12 +9,14 @@ export class I18nLanguageMiddleware implements NestMiddleware {
     private readonly i18nOptions: I18nOptions,
   ) {}
 
-  use(req: any, res: any, next: Function) {
+  use(req: any, res: any, next: () => void) {
     let language = null;
 
-    for (let resolver of this.i18nOptions.resolvers) {
+    for (const resolver of this.i18nOptions.resolvers) {
       language = resolver.resolve(req, res);
-      if (language !== undefined) break;
+      if (language !== undefined) {
+        break;
+      }
     }
 
     req.i18nLang = language || this.i18nOptions.fallbackLanguage;

@@ -22,7 +22,7 @@ export class I18nService {
     lang?: string,
     args?: Array<{ [k: string]: any } | string> | { [k: string]: any },
   ) {
-    let translationsByLanguage = this.translations[lang];
+    const translationsByLanguage = this.translations[lang];
     const message = `translation "${key}" in "${lang}" doesn't exist.`;
     if (
       (translationsByLanguage === undefined ||

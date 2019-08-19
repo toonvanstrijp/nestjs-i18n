@@ -31,8 +31,8 @@ describe('i18n module e2e', () => {
         http2: true,
         https: {
           allowHTTP1: true, // fallback support for HTTP1
-          key: fs.readFileSync('./tests/certs/server.key'),
-          cert: fs.readFileSync('./tests/certs/server.crt'),
+          key: fs.readFileSync(path.join(__dirname, '/certs/server.key')),
+          cert: fs.readFileSync(path.join(__dirname, '/certs/server.crt')),
           enableTrace: true,
         },
       },

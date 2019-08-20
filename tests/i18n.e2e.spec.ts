@@ -26,17 +26,9 @@ describe('i18n module e2e', () => {
     };
 
     appExpress = (await createTestModule()).createNestApplication();
-    appFastify = (await createTestModule()).createNestApplication(new FastifyAdapter(
-      {
-        http2: true,
-        https: {
-          allowHTTP1: true, // fallback support for HTTP1
-          key: fs.readFileSync(path.join(__dirname, '/certs/server.key')),
-          cert: fs.readFileSync(path.join(__dirname, '/certs/server.crt')),
-          enableTrace: true,
-        },
-      },
-    ));
+    appFastify = (await createTestModule()).createNestApplication(
+      new FastifyAdapter()
+    );
 
     await appExpress.init();
     await appFastify.init();

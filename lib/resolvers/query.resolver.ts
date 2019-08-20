@@ -14,7 +14,7 @@ export class QueryResolver implements I18nResolver {
     }
 
     for (const key of this.keys) {
-      if (query && query[key] !== undefined) {
+      if (query[key] !== undefined) {
         lang = query[key];
         break;
       }

@@ -13,7 +13,7 @@ export class I18nLanguageMiddleware implements NestMiddleware {
     let language = null;
 
     for (const resolver of this.i18nOptions.resolvers) {
-      language = resolver.resolve(req, res);
+      language = resolver.resolve(req);
       if (language !== undefined) {
         break;
       }

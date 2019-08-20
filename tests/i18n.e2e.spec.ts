@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
-import { I18nModule, I18nService } from '../lib';
+import { I18nModule } from '../lib';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { HelloController } from './controllers/hello.controller';
@@ -8,8 +8,6 @@ import { QueryResolver } from '../lib/resolvers/query.resolver';
 import { HeaderResolver } from '../lib/resolvers/header.resolver';
 
 describe('i18n module e2e', () => {
-  let i18nService: I18nService;
-
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -27,8 +25,6 @@ describe('i18n module e2e', () => {
       controllers: [HelloController],
     }).compile();
 
-    i18nService = module.get(I18nService);
-
     app = module.createNestApplication();
     await app.init();
   });
@@ -41,15 +37,16 @@ describe('i18n module e2e', () => {
   });
 
   it(`/GET hello should return right language when using query resolver`, () => {
-    request(app.getHttpServer())
+    return request(app.getHttpServer())
       .get('/hello?lang=nl')
       .expect(200)
-      .expect('Hallo');
-
-    request(app.getHttpServer())
-      .get('/hello?l=nl')
-      .expect(200)
-      .expect('Hello');
+      .expect('Hallo')
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/hello?l=nl')
+          .expect(200)
+          .expect('Hallo'),
+      );
   });
 
   it(`/GET hello should return translation when providing accept-language`, () => {

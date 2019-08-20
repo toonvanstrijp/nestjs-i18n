@@ -1,3 +1,3 @@
-export interface I18nResolver<TRequest = any, TResponse = any> {
-  resolve(req: TRequest, res: TResponse): string | void;
+export interface I18nResolver<TRequest = any> {
+  resolve(req: TRequest): string | void;
 }

@@ -26,7 +26,7 @@
     "@nestjs/testing": "^6.5.3",
     "@types/flat": "0.0.28",
     "@types/glob": "^7.1.1",
-    "@types/jest": "^24.0.17",
+    "@types/jest": "^24.0.18",
     "@types/node": "^12.7.2",
     "@types/string-format": "^2.0.0",
     "@types/supertest": "^2.0.8",
@@ -37,7 +37,7 @@
     "reflect-metadata": "^0.1.13",
     "supertest": "^4.0.2",
     "ts-jest": "^24.0.2",
-    "tslint": "^5.18.0",
+    "tslint": "^5.19.0",
     "typescript": "3.5.2"
   },
   "dependencies": {

@@ -22,22 +22,18 @@
   "devDependencies": {
     "@nestjs/common": "^6.5.3",
     "@nestjs/core": "^6.5.3",
-    "@nestjs/platform-express": "^6.5.3",
     "@nestjs/testing": "^6.5.3",
     "@types/flat": "0.0.28",
     "@types/glob": "^7.1.1",
-    "@types/jest": "^24.0.18",
+    "@types/jest": "^24.0.17",
     "@types/node": "^12.7.2",
     "@types/string-format": "^2.0.0",
-    "@types/supertest": "^2.0.8",
-    "husky": "^3.0.4",
-    "jest": "^24.9.0",
-    "lint-staged": "^9.2.3",
+    "husky": "3.0.4",
+    "jest": "^24.8.0",
+    "lint-staged": "9.2.2",
     "prettier": "1.18.2",
     "reflect-metadata": "^0.1.13",
-    "supertest": "^4.0.2",
     "ts-jest": "^24.0.2",
-    "tslint": "^5.19.0",
     "typescript": "3.5.2"
   },
   "dependencies": {
@@ -53,7 +49,6 @@
   "lint-staged": {
     "*.ts": [
       "prettier --write",
-      "tslint -c tslint.json './lib/**/*.ts'",
       "git add"
     ]
   }

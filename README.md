@@ -28,7 +28,7 @@ i18n
 
 ### Translation file
 The format for the translation file could look like this:
-```
+```json
 {
   "HELLO_MESSAGE": "Hello {username}",
   "GOODBYE_MESSAGE": "Goodbye {username}",
@@ -48,7 +48,7 @@ String formatting is done by: [string-format](https://github.com/davidchambers/s
 
 ### Translation module
 To use the translation service we first add the module. **The `I18nModule` has an `@Global()` attribute so you should only import it once**.
-```
+```typescript
 import { Module } from '@nestjs/common';
 import * as path from 'path';
 import { I18nModule } from 'nestjs-i18n';
@@ -67,7 +67,7 @@ export class AppModule {}
 ```
 
 #### using forRootAsync
-```
+```typescript
 import { Module } from '@nestjs/common';
 import * as path from 'path';
 import { I18nModule } from 'nestjs-i18n';
@@ -89,7 +89,7 @@ export class AppModule {}
 ```
 
 ### Using translation service
-```
+```typescript
 @Controller()
 export class SampleController {
 

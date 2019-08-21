@@ -28,7 +28,7 @@
     "@types/jest": "^24.0.17",
     "@types/node": "^12.7.2",
     "@types/string-format": "^2.0.0",
-    "husky": "3.0.1",
+    "husky": "3.0.4",
     "jest": "^24.8.0",
     "lint-staged": "9.2.2",
     "prettier": "1.18.2",

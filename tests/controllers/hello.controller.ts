@@ -7,6 +7,6 @@ export class HelloController {
 
   @Get()
   hello(@I18nLang() lang: string): string {
-    return this.i18n.translate('test.HELLO', lang);
+    return this.i18n.translate('test.HELLO', { lang });
   }
 }

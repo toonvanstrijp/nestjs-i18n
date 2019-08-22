@@ -19,9 +19,12 @@ export class I18nService {
 
   public translate(
     key: string,
-    lang?: string,
-    args?: Array<{ [k: string]: any } | string> | { [k: string]: any },
+    options?: {
+      lang?: string;
+      args?: Array<{ [k: string]: any } | string> | { [k: string]: any };
+    },
   ) {
+    const { lang, args } = options;
     const translationsByLanguage = this.translations[lang];
     const message = `translation "${key}" in "${lang}" doesn't exist.`;
     if (
@@ -32,7 +35,10 @@ export class I18nService {
       lang !== this.i18nOptions.fallbackLanguage
     ) {
       this.logger.error(message);
-      return this.translate(key, this.i18nOptions.fallbackLanguage, args);
+      return this.translate(key, {
+        lang: this.i18nOptions.fallbackLanguage,
+        args: args,
+      });
     }
 
     let translation = translationsByLanguage[key];

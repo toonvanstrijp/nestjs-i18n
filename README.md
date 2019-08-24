@@ -126,7 +126,7 @@ export class SampleController {
 
   @Get()
   sample(
-  @I18nLang() lang: string
+    @I18nLang() lang: string
   ) {
     this.i18n.translate('HELLO_MESSAGE', {lang: lang, args: {id: 1, username: 'Toon'}});
     this.i18n.translate('SETUP.WELCOME', {lang: 'en', args: {id: 1, username: 'Toon'}});

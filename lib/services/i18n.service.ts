@@ -5,7 +5,7 @@ import {
   I18N_TRANSLATIONS,
   I18nTranslation,
 } from '../i18n.constants';
-import { I18nOptions } from '../interfaces/i18n-options.interface';
+import { I18nOptions } from '..';
 
 @Injectable()
 export class I18nService {

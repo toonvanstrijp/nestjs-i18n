@@ -1,10 +1,10 @@
 import * as fs from 'fs';
+import { lstatSync, readdirSync } from 'fs';
 import * as glob from 'glob';
 import * as path from 'path';
 import { I18nTranslation } from '../i18n.constants';
 import * as flat from 'flat';
-import { lstatSync, readdirSync } from 'fs';
-import { I18nOptions } from '../interfaces/i18n-options.interface';
+import { I18nOptions } from '..';
 
 const isDirectory = source => lstatSync(source).isDirectory();
 const getDirectories = source =>

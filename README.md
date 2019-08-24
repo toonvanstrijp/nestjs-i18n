@@ -86,6 +86,34 @@ import { I18nModule } from 'nestjs-i18n';
 })
 export class AppModule {}
 ```
+### Language resolvers
+To make it easier to manage in what language to respond you can make use of resolvers
+
+```typescript
+@Module({
+  imports: [
+    I18nModule.forRoot({
+      path: path.join(__dirname, '/i18n/'),
+      fallbackLanguage: 'en',
+      resolvers: [
+        new QueryResolver(['lang', 'locale', 'l']),
+        new HeaderResolver(),
+      ],
+    }),
+  ],
+  controllers: [HelloController],
+})
+export class AppModule {}
+```
+
+There are two build-in resolvers
+
+| Resolver | Default value |
+| ------------- | ------------- |
+| `QueryResolver`  | `none` |
+| `HeaderResolver`  | `accept-language` |
+
+To implement your own resolver use the `I18nResolver` interface.
 
 ### Using translation service
 ```typescript

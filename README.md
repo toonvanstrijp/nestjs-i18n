@@ -115,7 +115,7 @@ There are two build-in resolvers
 
 To implement your own resolver use the `I18nResolver` interface.
 
-### Using translation service
+### Using translation service and language resolver
 ```typescript
 @Controller()
 export class SampleController {
@@ -125,8 +125,10 @@ export class SampleController {
   ) {}
 
   @Get()
-  sample() {
-    this.i18n.translate('HELLO_MESSAGE', {lang: 'en', args: {id: 1, username: 'Toon'}});
+  sample(
+  @I18nLang() lang: string
+  ) {
+    this.i18n.translate('HELLO_MESSAGE', {lang: lang, args: {id: 1, username: 'Toon'}});
     this.i18n.translate('SETUP.WELCOME', {lang: 'en', args: {id: 1, username: 'Toon'}});
     this.i18n.translate('ARRAY.0', {lang: 'en'});
   }

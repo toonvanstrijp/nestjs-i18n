@@ -1,10 +1,10 @@
 import * as fs from 'fs';
+import { lstatSync, readdirSync } from 'fs';
 import * as glob from 'glob';
 import * as path from 'path';
 import { I18nTranslation } from '../i18n.constants';
 import * as flat from 'flat';
-import { lstatSync, readdirSync } from 'fs';
-import { I18nOptions } from '../interfaces/i18n-options.interface';
+import { I18nOptions } from '..';
 
 const isDirectory = source => lstatSync(source).isDirectory();
 const getDirectories = source =>
@@ -48,6 +48,8 @@ export async function parseTranslations(
 
           const data = JSON.parse(fs.readFileSync(file, 'utf8'));
 
+          const prefix = path.basename(file).split('.')[0];
+
           const flatData = flat.flatten(data);
 
           for (const property of Object.keys(flatData)) {
@@ -55,7 +57,7 @@ export async function parseTranslations(
               translations[lang] = !!translations[lang]
                 ? translations[lang]
                 : {};
-              translations[lang][property] = flatData[property];
+              translations[lang][`${prefix}.${property}`] = flatData[property];
             });
           }
         });

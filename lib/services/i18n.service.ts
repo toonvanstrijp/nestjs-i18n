@@ -5,7 +5,7 @@ import {
   I18N_TRANSLATIONS,
   I18nTranslation,
 } from '../i18n.constants';
-import { I18nOptions } from '../interfaces/i18n-options.interface';
+import { I18nOptions } from '..';
 
 @Injectable()
 export class I18nService {
@@ -18,43 +18,37 @@ export class I18nService {
   ) {}
 
   public translate(
-    lang: string,
     key: string,
-    args?: Array<{ [k: string]: any } | string> | { [k: string]: any },
+    options?: {
+      lang?: string;
+      args?: Array<{ [k: string]: any } | string> | { [k: string]: any };
+    },
   ) {
-    let translationByLanguage = this.translations[lang];
-    if (translationByLanguage === undefined || translationByLanguage === null) {
-      return this.defaultToFallbackLanguage(lang, key, args);
+    const { lang, args } = options;
+    const translationsByLanguage = this.translations[lang];
+    const message = `translation "${key}" in "${lang}" doesn't exist.`;
+    if (
+      (translationsByLanguage === undefined ||
+        translationsByLanguage === null ||
+        (!!translationsByLanguage &&
+          !translationsByLanguage.hasOwnProperty(key))) &&
+      lang !== this.i18nOptions.fallbackLanguage
+    ) {
+      this.logger.error(message);
+      return this.translate(key, {
+        lang: this.i18nOptions.fallbackLanguage,
+        args: args,
+      });
     }
 
-    let translation = translationByLanguage[key];
-    if (translation === undefined || translation === null) {
-      return this.defaultToFallbackLanguage(lang, key, args);
-    }
+    let translation = translationsByLanguage[key];
+
     if (args || (args instanceof Array && args.length > 0)) {
       translation = format(
         translation,
         ...(args instanceof Array ? args || [] : [args]),
       );
     }
-    return translation;
-  }
-
-  private defaultToFallbackLanguage(
-    lang: string,
-    key: string,
-    args?: Array<{ [k: string]: any } | string> | { [k: string]: any },
-  ) {
-    const message = `translation "${key}" in "${lang}" doesn't exist.`;
-    this.logger.error(message);
-    if (
-      (this.i18nOptions.fallbackLanguage !== null ||
-        this.i18nOptions.fallbackLanguage !== undefined) &&
-      lang !== this.i18nOptions.fallbackLanguage
-    ) {
-      return this.translate(this.i18nOptions.fallbackLanguage, key, args);
-    } else {
-      return undefined;
-    }
+    return translation || key;
   }
 }

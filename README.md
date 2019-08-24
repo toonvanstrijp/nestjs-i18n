@@ -14,16 +14,15 @@ $ npm i --save nestjs-i18n
 
 ### Structure
 
-create a directory and in it define your language keys as directories. When using `BY_LANGUAGE` you can also define global translations. This is useful for things that are the same in each language for example your company name. Each file that is in the root of your i18n folder will be defined globally. You can overwrite global translations by defining them within a language.
+create a directory and in it define your language keys as directories.
 ```
 i18n
 ├── en
 │   ├── category.json
 │   └── auth.json
-├── nl
-│   ├── category.json
-│   └── auth.json
-└── global.json
+└── nl
+    ├── category.json
+    └── auth.json
 ```
 
 ### Translation file
@@ -87,6 +86,34 @@ import { I18nModule } from 'nestjs-i18n';
 })
 export class AppModule {}
 ```
+### Language resolvers
+To make it easier to manage in what language to respond you can make use of resolvers
+
+```typescript
+@Module({
+  imports: [
+    I18nModule.forRoot({
+      path: path.join(__dirname, '/i18n/'),
+      fallbackLanguage: 'en',
+      resolvers: [
+        new QueryResolver(['lang', 'locale', 'l']),
+        new HeaderResolver(),
+      ],
+    }),
+  ],
+  controllers: [HelloController],
+})
+export class AppModule {}
+```
+
+There are two build-in resolvers
+
+| Resolver | Default value |
+| ------------- | ------------- |
+| `QueryResolver`  | `none` |
+| `HeaderResolver`  | `accept-language` |
+
+To implement your own resolver use the `I18nResolver` interface.
 
 ### Using translation service
 ```typescript
@@ -99,12 +126,14 @@ export class SampleController {
 
   @Get()
   sample() {
-    this.i18n.translate('en', 'HELLO_MESSAGE', {id: 1, username: 'Toon'});
-    this.i18n.translate('en', 'SETUP.WELCOME', {id: 1, username: 'Toon'});
-    this.i18n.translate('en', 'ARRAY.0');
+    this.i18n.translate('HELLO_MESSAGE', {lang: 'en', args: {id: 1, username: 'Toon'}});
+    this.i18n.translate('SETUP.WELCOME', {lang: 'en', args: {id: 1, username: 'Toon'}});
+    this.i18n.translate('ARRAY.0', {lang: 'en'});
   }
 }
 ```
 
 # Breaking changes:
+- from V4.0.0 on we changed the signature of the `translate` method, the language is now optional, if no language is given it'll fallback to the `fallbackLanguage`
+
 - from V3.0.0 on we load translations based on their directory name instead of file name. Change your translations files to the structure above: [info](https://github.com/ToonvanStrijp/nestjs-i18n#structure)

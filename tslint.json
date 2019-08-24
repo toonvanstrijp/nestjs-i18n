@@ -1,20 +1,27 @@
 {
   "defaultSeverity": "error",
   "extends": ["tslint:recommended"],
-  "jsRules": {
-    "no-unused-expression": true
-  },
+  "jsRules": {},
   "rules": {
-    "quotemark": [true, "single"],
+    "quotemark": [true, "single", "avoid-escape"],
+    "no-console": [true, "log"],
+    "arrow-parens": false,
+    "no-consecutive-blank-lines": [true, 2],
     "member-access": [false],
     "ordered-imports": [false],
-    "max-line-length": [true, 150],
-    "member-ordering": [false],
-    "interface-name": [false],
-    "arrow-parens": false,
-    "object-literal-sort-keys": false,
-    "no-var-requires": false,
-    "no-console": false
+    "object-literal-sort-keys": [false],
+    "trailing-comma": [false],
+    "semicolon": [true, "always", "ignore-bound-class-methods"],
+    "max-line-length": [false],
+    "one-line": [true, "check-catch", "check-finally", "check-else", "check-open-brace"],
+    "whitespace": [true, "check-decl", "check-operator", "check-module", "check-type", "check-typecast"],
+    "interface-name": false,
+    "member-ordering": false,
+    "no-floating-promises": true,
+    "object-literal-key-quotes": [true, "as-needed"]
+  },
+  "linterOptions": {
+    "exclude": ["src/generated/**/*"]
   },
   "rulesDirectory": []
 }

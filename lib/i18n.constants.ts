@@ -1,3 +1,5 @@
 export const I18N_OPTIONS = 'I18nOptions';
 export const I18N_TRANSLATIONS = 'I18nTranslations';
-export type I18nTranslation = { [key: string]: { [key: string]: string } };
+export interface I18nTranslation {
+  [key: string]: { [key: string]: string };
+}

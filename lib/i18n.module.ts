@@ -1,8 +1,11 @@
 import {
   DynamicModule,
   Global,
+  Inject,
   Logger,
+  MiddlewareConsumer,
   Module,
+  NestModule,
   Provider,
 } from '@nestjs/common';
 import { I18N_OPTIONS, I18N_TRANSLATIONS } from './i18n.constants';
@@ -15,16 +18,46 @@ import {
 import { ValueProvider } from '@nestjs/common/interfaces';
 import { parseTranslations } from './utils/parse';
 import * as path from 'path';
+import { I18nLanguageMiddleware } from './middleware/i18n-language-middleware';
+import { HttpAdapterHost, ModuleRef } from '@nestjs/core';
 
 const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
   filePattern: '*.json',
+  resolvers: [],
 };
-
 @Global()
 @Module({})
-export class I18nModule {
+export class I18nModule implements NestModule {
+  constructor(
+    private readonly httpAdapterHost: HttpAdapterHost,
+    @Inject(I18N_OPTIONS)
+    private readonly i18nOptions: I18nOptions,
+    private readonly moduleRef: ModuleRef,
+  ) {}
+
+  configure(consumer: MiddlewareConsumer): MiddlewareConsumer | void {
+    const adapterName =
+      this.httpAdapterHost.httpAdapter &&
+      this.httpAdapterHost.httpAdapter.constructor &&
+      this.httpAdapterHost.httpAdapter.constructor.name;
+
+    if (adapterName === 'FastifyAdapter') {
+      this.moduleRef
+        .create(I18nLanguageMiddleware)
+        .then(i18nLanguageMiddleware => {
+          this.httpAdapterHost.httpAdapter
+            .getInstance()
+            .addHook('preHandler', (req, res, done) => {
+              i18nLanguageMiddleware.use(req, res, done);
+            });
+        });
+    } else {
+      consumer.apply(I18nLanguageMiddleware).forRoutes('*');
+    }
+  }
+
   static forRoot(options: I18nOptions): DynamicModule {
     options = this.sanitizeI18nOptions(options);
     const i18nOptions: ValueProvider = {

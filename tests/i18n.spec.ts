@@ -11,6 +11,7 @@ describe('i18n module', () => {
         I18nModule.forRoot({
           path: path.join(__dirname, '/i18n/'),
           fallbackLanguage: 'en',
+          saveMissings: false,
         }),
       ],
     }).compile();
@@ -87,6 +88,7 @@ describe('i18n module without trailing slash in path', () => {
         I18nModule.forRoot({
           path: path.join(__dirname, '/i18n'),
           fallbackLanguage: 'en',
+          saveMissings: false,
         }),
       ],
     }).compile();
@@ -120,6 +122,7 @@ describe('i18n module loads custom files', () => {
           path: path.join(__dirname, '/i18n/'),
           filePattern: '*.custom',
           fallbackLanguage: 'en',
+          saveMissings: false,
         }),
       ],
     }).compile();
@@ -154,6 +157,7 @@ describe('i18n module loads custom files with wrong file pattern', () => {
           path: path.join(__dirname, '/i18n/'),
           filePattern: 'custom',
           fallbackLanguage: 'en',
+          saveMissings: false,
         }),
       ],
     }).compile();

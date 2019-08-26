@@ -1,21 +1,20 @@
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
-import { I18nModule } from '../src/lib';
+import { HeaderResolver, I18nModule, QueryResolver } from '../src/lib';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { HelloController } from './controllers/hello.controller';
-import { QueryResolver } from '../src/lib/resolvers/query.resolver';
-import { HeaderResolver } from '../src/lib/resolvers/header.resolver';
 
 describe('i18n module e2e', () => {
   let app: INestApplication;
 
-  beforeAll(async done => {
+  beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [
         I18nModule.forRoot({
           path: path.join(__dirname, '/i18n/'),
           fallbackLanguage: 'en',
+          saveMissings: false,
           resolvers: [
             new QueryResolver(['lang', 'locale', 'l']),
             new HeaderResolver(),
@@ -26,9 +25,7 @@ describe('i18n module e2e', () => {
     }).compile();
 
     app = module.createNestApplication();
-    app.listen(3333, () => {
-      done();
-    });
+    await app.init();
   });
 
   it(`/GET hello should return translation`, () => {

@@ -28,7 +28,7 @@ export class CheckAction extends AbstractAction {
     const translations = await parseTranslations({
       path: i18nPath,
       filePattern: '*.json',
-      saveMissings: false,
+      saveMissing: false,
     });
 
     let uniqueKeys = [];

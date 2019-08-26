@@ -13,7 +13,7 @@ import { Test } from '@nestjs/testing';
     I18nModule.forRoot({
       path: path.join(__dirname, '/i18n/'),
       fallbackLanguage: 'en',
-      saveMissings: false,
+      saveMissing: false,
       resolvers: [
         new QueryResolver(['lang', 'locale', 'l']),
         new HeaderResolver(),
@@ -34,6 +34,7 @@ describe('i18n module e2e', () => {
         I18nModule.forRoot({
           path: path.join(__dirname, '/i18n/'),
           fallbackLanguage: 'en',
+          saveMissing: false,
           resolvers: [
             new QueryResolver(['lang', 'locale', 'l']),
             new HeaderResolver(),

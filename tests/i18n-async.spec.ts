@@ -13,7 +13,7 @@ describe('i18n module', () => {
             return {
               path: path.join(__dirname, '/i18n/'),
               fallbackLanguage: 'en',
-              saveMissings: false,
+              saveMissing: false,
             };
           },
         }),
@@ -44,7 +44,7 @@ describe('i18n module without trailing slash in path', () => {
             return {
               path: path.join(__dirname, '/i18n'),
               fallbackLanguage: 'en',
-              saveMissings: false,
+              saveMissing: false,
             };
           },
         }),

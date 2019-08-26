@@ -7,6 +7,7 @@ export interface I18nOptions {
   filePattern?: string;
   fallbackLanguage?: string;
   resolvers?: I18nResolver[];
+  saveMissings?: boolean;
 }
 
 export interface I18nOptionsFactory {

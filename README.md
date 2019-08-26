@@ -25,7 +25,7 @@ i18n
     └── auth.json
 ```
 
-### Translation file
+### Translation File
 The format for the translation file could look like this:
 ```json
 {
@@ -45,7 +45,7 @@ The format for the translation file could look like this:
 ```
 String formatting is done by: [string-format](https://github.com/davidchambers/string-format)
 
-### Translation module
+### Translation Module
 To use the translation service we first add the module. **The `I18nModule` has an `@Global()` attribute so you should only import it once**.
 ```typescript
 import { Module } from '@nestjs/common';
@@ -65,7 +65,7 @@ import { I18nModule } from 'nestjs-i18n';
 export class AppModule {}
 ```
 
-#### using forRootAsync
+#### Using forRootAsync()
 ```typescript
 import { Module } from '@nestjs/common';
 import * as path from 'path';
@@ -86,7 +86,7 @@ import { I18nModule } from 'nestjs-i18n';
 })
 export class AppModule {}
 ```
-### Language resolvers
+### Language Resolvers
 To make it easier to manage in what language to respond you can make use of resolvers
 
 ```typescript
@@ -106,16 +106,16 @@ To make it easier to manage in what language to respond you can make use of reso
 export class AppModule {}
 ```
 
-There are two build-in resolvers
+Currently, there are two build-in resolvers
 
 | Resolver | Default value |
 | ------------- | ------------- |
 | `QueryResolver`  | `none` |
 | `HeaderResolver`  | `accept-language` |
 
-To implement your own resolver use the `I18nResolver` interface.
+To implement your own resolver (or custom logic) use the `I18nResolver` interface.
 
-### Using translation service and language resolver
+### Using Translation Service and Language Resolver
 ```typescript
 @Controller()
 export class SampleController {
@@ -131,6 +131,21 @@ export class SampleController {
     this.i18n.translate('HELLO_MESSAGE', {lang: lang, args: {id: 1, username: 'Toon'}});
     this.i18n.translate('SETUP.WELCOME', {lang: 'en', args: {id: 1, username: 'Toon'}});
     this.i18n.translate('ARRAY.0', {lang: 'en'});
+  }
+}
+```
+
+### Missing Translations
+
+If you require a translation that is missing, `I18n` will log an error. However, you can also write these missing translations to a new file in order to help translating your application later on.
+
+This behaviour can be controlled via the `saveMissing: boolean` attribute when adding the `I18nModule` to your application. Thereby, `true` describes the following behaviour:
+
+Say, you request the translation `mail.registration.subject` in a `de` language, and this specific key is missing. This will create a `de/mail.missing` file in your `i18n` folder and add the following content:
+```json
+{
+  "registration": {
+    "subject": ""
   }
 }
 ```

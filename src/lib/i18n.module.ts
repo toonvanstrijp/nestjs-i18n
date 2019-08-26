@@ -10,7 +10,11 @@ import {
 } from '@nestjs/common';
 import { I18N_OPTIONS, I18N_TRANSLATIONS } from './i18n.constants';
 import { I18nService } from './services/i18n.service';
-import { I18nAsyncOptions, I18nOptions, I18nOptionsFactory } from './interfaces/i18n-options.interface';
+import {
+  I18nAsyncOptions,
+  I18nOptions,
+  I18nOptionsFactory,
+} from './interfaces/i18n-options.interface';
 import { ValueProvider } from '@nestjs/common/interfaces';
 import { parseTranslations } from './utils/parse';
 import * as path from 'path';
@@ -22,6 +26,7 @@ const logger = new Logger('I18nService');
 const defaultOptions: Partial<I18nOptions> = {
   filePattern: '*.json',
   resolvers: [],
+  saveMissings: true,
 };
 @Global()
 @Module({})

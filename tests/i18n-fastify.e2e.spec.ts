@@ -76,21 +76,29 @@ describe('i18n module e2e', () => {
       });
   });
 
-  // it(`/GET hello should return translation when providing accept-language`, () => {
-  //   return request(app.getHttpServer())
-  //     .get('/hello')
-  //     .set('accept-language', 'nl')
-  //     .expect(200)
-  //     .expect('Hallo');
-  // });
-  //
-  // it(`/GET hello should return translation when providing accept-language`, () => {
-  //   return request(app.getHttpServer())
-  //     .get('/hello')
-  //     .set('accept-language', 'nl')
-  //     .expect(200)
-  //     .expect('Hallo');
-  // });
+  it(`/GET hello should return translation when providing accept-language`, () => {
+    return app
+      .inject({
+        url: '/hello',
+        method: 'GET',
+        headers: {
+          'accept-language': 'nl',
+        },
+      })
+      .then(({ payload }) => expect(payload).toBe('Hallo'));
+  });
+
+  it(`/GET hello should return translation when providing accept-language`, () => {
+    return app
+      .inject({
+        url: '/hello',
+        method: 'GET',
+        headers: {
+          'accept-language': 'nl',
+        },
+      })
+      .then(({ payload }) => expect(payload).toBe('Hallo'));
+  });
 
   afterAll(async () => {
     await app.close();

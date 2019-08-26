@@ -1,11 +1,11 @@
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
-import { I18nModule } from '../lib';
+import { I18nModule } from '../src/lib';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { HelloController } from './controllers/hello.controller';
-import { QueryResolver } from '../lib/resolvers/query.resolver';
-import { HeaderResolver } from '../lib/resolvers/header.resolver';
+import { QueryResolver } from '../src/lib/resolvers/query.resolver';
+import { HeaderResolver } from '../src/lib/resolvers/header.resolver';
 
 describe('i18n module e2e', () => {
   let app: INestApplication;

@@ -4,10 +4,10 @@ import * as glob from 'glob';
 import * as path from 'path';
 import { I18nTranslation } from '../i18n.constants';
 import * as flat from 'flat';
-import { I18nOptions } from '..';
+import { I18nOptions } from '../index';
 
 const isDirectory = source => lstatSync(source).isDirectory();
-const getDirectories = source =>
+export const getDirectories = source =>
   readdirSync(source)
     .map(name => path.join(source, name))
     .filter(isDirectory);

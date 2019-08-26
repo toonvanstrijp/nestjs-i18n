@@ -8,10 +8,14 @@
     "type": "git",
     "url": "https://github.com/ToonvanStrijp/nestjs-i18n"
   },
+  "bin": {
+    "nest-i18n": "bin/nest-i18n.js"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "build:cli": "rm -rf bin && tsc -p tsconfig.cli.json",
     "precommit": "lint-staged",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",

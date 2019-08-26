@@ -1,8 +1,8 @@
 import * as path from 'path';
-import { I18nModule, QueryResolver } from '../lib';
+import { I18nModule, QueryResolver } from '../src/lib';
 import { Module } from '@nestjs/common';
 import { HelloController } from './controllers/hello.controller';
-import { HeaderResolver } from '../lib/resolvers/header.resolver';
+import { HeaderResolver } from '../src/lib/resolvers/header.resolver';
 import {
   FastifyAdapter,
   NestFastifyApplication,

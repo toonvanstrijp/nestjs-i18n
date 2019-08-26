@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
-import { I18nModule, I18nService } from '../lib';
+import { I18nModule, I18nService } from '../src/lib';
 
 describe('i18n module', () => {
   let i18nService: I18nService;

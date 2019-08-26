@@ -1,11 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import * as format from 'string-format';
-import {
-  I18N_OPTIONS,
-  I18N_TRANSLATIONS,
-  I18nTranslation,
-} from '../i18n.constants';
-import { I18nOptions } from '..';
+import { I18N_OPTIONS, I18N_TRANSLATIONS, I18nTranslation } from '../i18n.constants';
+import { I18nOptions } from '../index';
 
 @Injectable()
 export class I18nService {

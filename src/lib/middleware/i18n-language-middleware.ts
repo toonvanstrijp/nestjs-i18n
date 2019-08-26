@@ -1,6 +1,6 @@
 import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { I18N_OPTIONS } from '../i18n.constants';
-import { I18nOptions } from '..';
+import { I18nOptions } from '../index';
 
 @Injectable()
 export class I18nLanguageMiddleware implements NestMiddleware {

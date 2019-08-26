@@ -63,32 +63,37 @@ export class I18nService {
   }
 
   private saveMissingTranslation(key: string, language: string) {
-    console.log(key);
     const filePathMissing = path.join(this.i18nOptions.path, language);
     if (!fs.existsSync(filePathMissing)) {
       this.logger.error(`Cannot find path to store missing translations`);
       return;
     }
 
-    const fileName = path.join(filePathMissing, 'json.missing');
+    const keyParts = key.split('.');
+    const filePart = keyParts.shift();
+    const keyWithoutFile = keyParts.join('.');
+
+    const filePath = path.join(filePathMissing, `${filePart}.missing`);
 
     // first we get the content of the file
     let jsonContent = {};
-    if (fs.existsSync(fileName)) {
-      const fileContent = fs.readFileSync(fileName, { encoding: 'utf8' });
+    if (fs.existsSync(filePath)) {
+      const fileContent = fs.readFileSync(filePath, { encoding: 'utf8' });
       jsonContent = JSON.parse(fileContent);
     }
 
     // check if the key is already present in our file
     // so we must not save the file again
-    if (_.has(jsonContent, key)) {
+    if (_.has(jsonContent, keyWithoutFile)) {
       return;
     }
 
     // and now we add the missing key
-    jsonContent = _.set(jsonContent, key, '');
+    jsonContent = _.set(jsonContent, keyWithoutFile, '');
 
-    fs.writeFileSync(fileName, JSON.stringify(jsonContent, null, 2));
-    this.logger.error(`The key "${key}" was added to the file "${fileName}"`);
+    fs.writeFileSync(filePath, JSON.stringify(jsonContent, null, 2));
+    this.logger.error(
+      `The key "${keyWithoutFile}" for language: ${language} was added to the file "${filePart}.missing" (@ ${filePath} )`,
+    );
   }
 }

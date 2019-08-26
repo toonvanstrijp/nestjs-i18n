@@ -10,20 +10,16 @@ export class I18nLanguageMiddleware implements NestMiddleware {
   ) {}
 
   use(req: any, res: any, next: () => void) {
-    try {
-      let language = null;
+    let language = null;
 
-      for (const resolver of this.i18nOptions.resolvers) {
-        language = resolver.resolve(req);
-        if (language !== undefined) {
-          break;
-        }
+    for (const resolver of this.i18nOptions.resolvers) {
+      language = resolver.resolve(req);
+      if (language !== undefined) {
+        break;
       }
-
-      req.i18nLang = language || this.i18nOptions.fallbackLanguage;
-    } catch (e) {
-      console.log(e);
     }
+    req.i18nLang = language || this.i18nOptions.fallbackLanguage;
+
     next();
   }
 }

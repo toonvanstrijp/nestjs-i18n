@@ -26,8 +26,11 @@ describe('i18n module missing files', () => {
     const basePath = path.join(__dirname, 'i18n');
 
     // remove the json.missing file from the i18n/LANG directory!
-    if (fs.existsSync(path.join(basePath, 'en', 'json.missing'))) {
-      fs.unlinkSync(path.join(basePath, 'en', 'json.missing'));
+    const languages = ['en', 'nl'];
+    for (const language of languages) {
+      if (fs.existsSync(path.join(basePath, language, 'domain.missing'))) {
+        fs.unlinkSync(path.join(basePath, language, 'domain.missing'));
+      }
     }
   });
 
@@ -37,10 +40,22 @@ describe('i18n module missing files', () => {
 
   it('should report missing translations', async () => {
     // this will create the missing file
-    i18nService.translate('unknown.key', { lang: 'en' });
+    i18nService.translate('domain.unknown.key', { lang: 'en' });
 
     expect(
-      fs.existsSync(path.join(__dirname, 'i18n', 'en', 'json.missing')),
+      fs.existsSync(path.join(__dirname, 'i18n', 'en', 'domain.missing')),
+    ).toBeTruthy();
+  });
+
+  it('should report missing translations for various languages', async () => {
+    // this will create the missing file
+    i18nService.translate('domain.another.key', { lang: 'nl' });
+
+    expect(
+      fs.existsSync(path.join(__dirname, 'i18n', 'nl', 'domain.missing')),
+    ).toBeTruthy();
+    expect(
+      fs.existsSync(path.join(__dirname, 'i18n', 'en', 'domain.missing')),
     ).toBeTruthy();
   });
 });

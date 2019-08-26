@@ -8,10 +8,15 @@
     "type": "git",
     "url": "https://github.com/ToonvanStrijp/nestjs-i18n"
   },
+  "bin": {
+    "nest-i18n": "bin/nest-i18n.js"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "build": "npm run build:lib && npm run build:cli",
+    "build:lib": "rm -rf dist && tsc -p tsconfig.build.json",
+    "build:cli": "rm -rf bin && tsc -p tsconfig.cli.json",
     "precommit": "lint-staged",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",
@@ -25,10 +30,10 @@
     "@nestjs/platform-express": "^6.5.3",
     "@nestjs/platform-fastify": "^6.5.3",
     "@nestjs/testing": "^6.5.3",
+    "@types/commander": "^2.12.2",
     "@types/flat": "0.0.28",
-    "@types/glob": "^7.1.1",
-    "@types/lodash": "^4.14.0",
     "@types/jest": "^24.0.18",
+    "@types/lodash": "^4.14.0",
     "@types/node": "^12.7.2",
     "@types/string-format": "^2.0.0",
     "@types/supertest": "^2.0.8",
@@ -43,10 +48,10 @@
     "typescript": "3.5.3"
   },
   "dependencies": {
+    "chalk": "^2.4.2",
+    "commander": "^3.0.0",
     "flat": "^4.1.0",
-    "glob": "^7.1.4",
     "lodash": "^4.17.0",
-    "rxjs": "^6.5.2",
     "string-format": "^2.0.0"
   },
   "peerDependencies": {

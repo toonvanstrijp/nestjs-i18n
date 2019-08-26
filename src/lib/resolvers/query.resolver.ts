@@ -1,4 +1,4 @@
-import { I18nResolver } from '..';
+import { I18nResolver } from '../index';
 
 export class QueryResolver implements I18nResolver {
   constructor(private keys: string[]) {}

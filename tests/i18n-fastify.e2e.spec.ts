@@ -1,8 +1,7 @@
 import * as path from 'path';
-import { I18nModule, QueryResolver } from '../lib';
+import { HeaderResolver, I18nModule, QueryResolver } from '../src/lib';
 import { Module } from '@nestjs/common';
 import { HelloController } from './controllers/hello.controller';
-import { HeaderResolver } from '../lib/resolvers/header.resolver';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -14,6 +13,7 @@ import { Test } from '@nestjs/testing';
     I18nModule.forRoot({
       path: path.join(__dirname, '/i18n/'),
       fallbackLanguage: 'en',
+      saveMissing: false,
       resolvers: [
         new QueryResolver(['lang', 'locale', 'l']),
         new HeaderResolver(),
@@ -34,6 +34,7 @@ describe('i18n module e2e', () => {
         I18nModule.forRoot({
           path: path.join(__dirname, '/i18n/'),
           fallbackLanguage: 'en',
+          saveMissing: false,
           resolvers: [
             new QueryResolver(['lang', 'locale', 'l']),
             new HeaderResolver(),
@@ -75,21 +76,29 @@ describe('i18n module e2e', () => {
       });
   });
 
-  // it(`/GET hello should return translation when providing accept-language`, () => {
-  //   return request(app.getHttpServer())
-  //     .get('/hello')
-  //     .set('accept-language', 'nl')
-  //     .expect(200)
-  //     .expect('Hallo');
-  // });
-  //
-  // it(`/GET hello should return translation when providing accept-language`, () => {
-  //   return request(app.getHttpServer())
-  //     .get('/hello')
-  //     .set('accept-language', 'nl')
-  //     .expect(200)
-  //     .expect('Hallo');
-  // });
+  it(`/GET hello should return translation when providing accept-language`, () => {
+    return app
+      .inject({
+        url: '/hello',
+        method: 'GET',
+        headers: {
+          'accept-language': 'nl',
+        },
+      })
+      .then(({ payload }) => expect(payload).toBe('Hallo'));
+  });
+
+  it(`/GET hello should return translation when providing accept-language`, () => {
+    return app
+      .inject({
+        url: '/hello',
+        method: 'GET',
+        headers: {
+          'accept-language': 'nl',
+        },
+      })
+      .then(({ payload }) => expect(payload).toBe('Hallo'));
+  });
 
   afterAll(async () => {
     await app.close();

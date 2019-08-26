@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
-import { I18nModule, I18nService } from '../lib';
+import { I18nModule, I18nService } from '../src/lib';
 
 describe('i18n module', () => {
   let i18nService: I18nService;
@@ -11,6 +11,7 @@ describe('i18n module', () => {
         I18nModule.forRoot({
           path: path.join(__dirname, '/i18n/'),
           fallbackLanguage: 'en',
+          saveMissing: false,
         }),
       ],
     }).compile();
@@ -87,6 +88,7 @@ describe('i18n module without trailing slash in path', () => {
         I18nModule.forRoot({
           path: path.join(__dirname, '/i18n'),
           fallbackLanguage: 'en',
+          saveMissing: false,
         }),
       ],
     }).compile();
@@ -120,6 +122,7 @@ describe('i18n module loads custom files', () => {
           path: path.join(__dirname, '/i18n/'),
           filePattern: '*.custom',
           fallbackLanguage: 'en',
+          saveMissing: false,
         }),
       ],
     }).compile();
@@ -154,6 +157,7 @@ describe('i18n module loads custom files with wrong file pattern', () => {
           path: path.join(__dirname, '/i18n/'),
           filePattern: 'custom',
           fallbackLanguage: 'en',
+          saveMissing: false,
         }),
       ],
     }).compile();

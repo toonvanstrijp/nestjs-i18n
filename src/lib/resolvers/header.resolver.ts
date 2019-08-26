@@ -1,4 +1,4 @@
-import { I18nResolver } from '..';
+import { I18nResolver } from '../index';
 
 export class HeaderResolver implements I18nResolver {
   constructor(private keys: string[] = ['accept-language']) {}

@@ -14,7 +14,7 @@ describe('i18n module missing files', () => {
         I18nModule.forRoot({
           path: basePath,
           fallbackLanguage: 'en',
-          saveMissings: true,
+          saveMissing: true,
         }),
       ],
     }).compile();

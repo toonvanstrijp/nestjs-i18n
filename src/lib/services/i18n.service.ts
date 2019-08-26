@@ -36,7 +36,7 @@ export class I18nService {
       (!!translationsByLanguage && !translationsByLanguage.hasOwnProperty(key))
     ) {
       // and now we detect, if this should also be added to the MISSING file
-      if (this.i18nOptions.saveMissings === true) {
+      if (this.i18nOptions.saveMissing === true) {
         this.saveMissingTranslation(key, lang);
       }
 

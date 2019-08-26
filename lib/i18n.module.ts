@@ -26,6 +26,7 @@ const logger = new Logger('I18nService');
 const defaultOptions: Partial<I18nOptions> = {
   filePattern: '*.json',
   resolvers: [],
+  saveMissings: true,
 };
 @Global()
 @Module({})

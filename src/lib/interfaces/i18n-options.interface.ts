@@ -4,8 +4,8 @@ import { I18nResolver } from './i18n-language-resolver.interface';
 
 export interface I18nOptions {
   path: string;
+  fallbackLanguage: string;
   filePattern?: string;
-  fallbackLanguage?: string;
   resolvers?: I18nResolver[];
   saveMissing?: boolean;
 }

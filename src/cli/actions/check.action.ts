@@ -29,6 +29,7 @@ export class CheckAction extends AbstractAction {
       path: i18nPath,
       filePattern: '*.json',
       saveMissing: false,
+      fallbackLanguage: 'NOT_USED',
     });
 
     let uniqueKeys = [];

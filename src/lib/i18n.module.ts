@@ -28,6 +28,7 @@ const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
   saveMissing: true,
 };
+
 @Global()
 @Module({})
 export class I18nModule implements NestModule {

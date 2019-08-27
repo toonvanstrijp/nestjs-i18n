@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { I18nLang, I18nService } from '../../src/lib';
+import { I18nLang, I18nService } from '../../../src/lib';
 
 @Controller('hello')
 export class HelloController {

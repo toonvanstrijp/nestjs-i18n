@@ -3,9 +3,9 @@ import * as path from 'path';
 import { HeaderResolver, I18nModule, QueryResolver } from '../src/lib';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { HelloController } from './controllers/hello.controller';
+import { HelloController } from './app/controllers/hello.controller';
 
-describe('i18n module e2e', () => {
+describe('i18n module e2e express', () => {
   let app: INestApplication;
 
   beforeAll(async () => {

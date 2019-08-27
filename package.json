@@ -27,6 +27,7 @@
   "devDependencies": {
     "@nestjs/common": "^6.5.3",
     "@nestjs/core": "^6.5.3",
+    "@nestjs/graphql": "^6.4.2",
     "@nestjs/platform-express": "^6.5.3",
     "@nestjs/platform-fastify": "^6.5.3",
     "@nestjs/testing": "^6.5.3",
@@ -37,7 +38,10 @@
     "@types/node": "^12.7.2",
     "@types/string-format": "^2.0.0",
     "@types/supertest": "^2.0.8",
+    "apollo-server-express": "^2.8.1",
     "fastify": "^2.7.1",
+    "graphql": "^14.4.2",
+    "graphql-tools": "^4.0.5",
     "husky": "3.0.4",
     "jest": "^24.9.0",
     "lint-staged": "9.2.4",

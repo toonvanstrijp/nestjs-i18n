@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { HeaderResolver, I18nModule, QueryResolver } from '../src/lib';
 import { Module } from '@nestjs/common';
-import { HelloController } from './controllers/hello.controller';
+import { HelloController } from './app/controllers/hello.controller';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -24,7 +24,7 @@ import { Test } from '@nestjs/testing';
 })
 export class AppModule {}
 
-describe('i18n module e2e', () => {
+describe('i18n module e2e fastify', () => {
   let app: NestFastifyApplication;
 
   beforeAll(async () => {

@@ -26,12 +26,12 @@ export async function parseTranslations(
     const translations: I18nTranslation = {};
 
     if (!fs.existsSync(i18nPath)) {
-      reject('i18n path does not exists');
+      reject(`i18n path (${i18nPath}) cannot be found`);
     }
 
     if (!options.filePattern.match(/\*\.[A-z]+/)) {
       reject(
-        `filePattern should be formatted like: *.json, *.txt, *.custom etc.`,
+        `filePattern should be formatted like: *.json, *.txt, *.custom etc`,
       );
     }
 

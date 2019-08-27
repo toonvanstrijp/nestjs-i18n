@@ -73,6 +73,7 @@ export class I18nModule implements NestModule {
         try {
           return await parseTranslations(options);
         } catch (e) {
+          logger.error(e);
           return {};
         }
       },
@@ -132,6 +133,7 @@ export class I18nModule implements NestModule {
         try {
           return await parseTranslations(options);
         } catch (e) {
+          logger.error(e);
           return {};
         }
       },

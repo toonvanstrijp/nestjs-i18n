@@ -1,11 +1,9 @@
 [![Build Status](https://travis-ci.org/ToonvanStrijp/nestjs-i18n.svg?branch=master)](https://travis-ci.org/ToonvanStrijp/nestjs-i18n) [![Greenkeeper badge](https://badges.greenkeeper.io/ToonvanStrijp/nestjs-i18n.svg)](https://greenkeeper.io/)
 
 ## Description
-
 The **i18n** module for [Nest](https://github.com/nestjs/nest).
 
 ## Installation
-
 ```bash
 $ npm i --save nestjs-i18n
 ```
@@ -13,7 +11,6 @@ $ npm i --save nestjs-i18n
 ## Quick Start
 
 ### Structure
-
 create a directory and in it define your language keys as directories.
 ```
 i18n
@@ -86,9 +83,9 @@ import { I18nModule } from 'nestjs-i18n';
 })
 export class AppModule {}
 ```
+
 ### Language Resolvers
 To make it easier to manage in what language to respond you can make use of resolvers
-
 ```typescript
 @Module({
   imports: [
@@ -105,7 +102,6 @@ To make it easier to manage in what language to respond you can make use of reso
 })
 export class AppModule {}
 ```
-
 Currently, there are two build-in resolvers
 
 | Resolver | Default value |
@@ -136,7 +132,6 @@ export class SampleController {
 ```
 
 ### Missing Translations
-
 If you require a translation that is missing, `I18n` will log an error. However, you can also write these missing translations to a new file in order to help translating your application later on.
 
 This behaviour can be controlled via the `saveMissing: boolean` attribute when adding the `I18nModule` to your application. Thereby, `true` describes the following behaviour:
@@ -149,6 +144,14 @@ Say, you request the translation `mail.registration.subject` in a `de` language,
   }
 }
 ```
+
+# CLI
+To easily check if your i18n folder is correctly structured you can use the following command:
+`nest-i18n check <i18n-path>`
+
+example: `nest-i18n check src/i18n`
+
+This is very useful inside a CI environment to prevent releases with missing translations.
 
 # Breaking changes:
 - from V4.0.0 on we changed the signature of the `translate` method, the language is now optional, if no language is given it'll fallback to the `fallbackLanguage`

@@ -44,7 +44,10 @@ export class CheckAction extends AbstractAction {
       let errorCount = 0;
       let message = '';
       uniqueKeys.forEach(key => {
-        if (!translations[lang].hasOwnProperty(key)) {
+        if (
+          !translations.hasOwnProperty(lang) ||
+          !translations[lang].hasOwnProperty(key)
+        ) {
           errorCount++;
           const fileName = key.split('.')[0];
           key = key.substring(key.indexOf('.') + 1);

@@ -28,6 +28,10 @@ describe('i18n module', () => {
     expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe('Hallo');
   });
 
+  it('i18n service should fallback to the fallback language if none is provided', async () => {
+    expect(i18nService.translate('test.HELLO')).toBe('Hello');
+  });
+
   it('i18n service should return nested translation', async () => {
     expect(
       i18nService.translate('test.PRODUCT.NEW', {

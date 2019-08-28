@@ -27,7 +27,15 @@ export class I18nService {
       args?: Array<{ [k: string]: any } | string> | { [k: string]: any };
     },
   ) {
+    options = {
+      ...{
+        lang: this.i18nOptions.fallbackLanguage,
+      },
+      ...options,
+    };
+
     const { lang, args } = options;
+
     const translationsByLanguage = this.translations[lang];
 
     if (

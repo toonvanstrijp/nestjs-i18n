@@ -1,6 +1,6 @@
 {
   "name": "nestjs-i18n",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "description": "",
   "author": "Toon van Strijp",
   "license": "MIT",
@@ -40,7 +40,7 @@
     "@types/supertest": "^2.0.8",
     "apollo-server-express": "^2.9.4",
     "fastify": "^2.8.0",
-    "graphql": "^14.5.7",
+    "graphql": "^14.5.8",
     "graphql-tools": "^4.0.5",
     "husky": "3.0.5",
     "jest": "^24.9.0",

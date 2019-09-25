@@ -4,7 +4,7 @@ export class HeaderResolver implements I18nResolver {
   constructor(private keys: string[] = ['accept-language']) {}
 
   resolve(req: any) {
-    let lang;
+    let lang: string;
 
     for (const key of this.keys) {
       if (req.headers[key] !== undefined) {

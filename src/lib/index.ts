@@ -1,5 +1,6 @@
 export * from './i18n.module';
 export * from './i18n.constants';
+export * from './i18n-request.context';
 export * from './services/i18n.service';
 export * from './interfaces/i18n-options.interface';
 export * from './interfaces/i18n-language-resolver.interface';

@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { I18N_OPTIONS, I18N_TRANSLATIONS } from './i18n.constants';
 import { I18nService } from './services/i18n.service';
+import { I18nRequestScopeService } from './services/i18n-request-scope.service';
 import {
   I18nAsyncOptions,
   I18nOptions,
@@ -84,10 +85,11 @@ export class I18nModule implements NestModule {
       providers: [
         { provide: Logger, useValue: logger },
         I18nService,
+        I18nRequestScopeService,
         i18nOptions,
         translationsProvider,
       ],
-      exports: [I18nService],
+      exports: [I18nService, I18nRequestScopeService],
     };
   }
 
@@ -102,8 +104,9 @@ export class I18nModule implements NestModule {
         asyncOptionsProvider,
         asyncTranslationProvider,
         I18nService,
+        I18nRequestScopeService,
       ],
-      exports: [I18nService],
+      exports: [I18nService, I18nRequestScopeService],
     };
   }
 

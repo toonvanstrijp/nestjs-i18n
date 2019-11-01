@@ -16,8 +16,7 @@ export class I18nRequestScopeService {
 
   public translate(key, options?) {
     options = {
-      lang:
-        this.req.i18nLang || (this.req.raw ? this.req.raw.i18nLang : undefined),
+      lang: this.detectedLanguage,
       ...options,
     };
     return this.i18nService.translate(key, options);

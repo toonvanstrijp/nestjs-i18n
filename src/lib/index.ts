@@ -8,3 +8,4 @@ export * from './decorators/i18n-lang.decorator';
 export * from './decorators/i18n.decorator';
 export * from './resolvers/header.resolver';
 export * from './resolvers/query.resolver';
+export * from './resolvers/cookie.resolver';

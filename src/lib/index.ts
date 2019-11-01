@@ -5,6 +5,6 @@ export * from './services/i18n.service';
 export * from './interfaces/i18n-options.interface';
 export * from './interfaces/i18n-language-resolver.interface';
 export * from './decorators/i18n-lang.decorator';
-export * from './decorators/i18n-context.decorator';
+export * from './decorators/i18n.decorator';
 export * from './resolvers/header.resolver';
 export * from './resolvers/query.resolver';

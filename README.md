@@ -108,10 +108,12 @@ Currently, there are two build-in resolvers
 | ------------- | ------------- |
 | `QueryResolver`  | `none` |
 | `HeaderResolver`  | `accept-language` |
+| `QueryResolver`  | `lang` |
 
 To implement your own resolver (or custom logic) use the `I18nResolver` interface.
 
-### Using Translation Service and Language Resolver
+### Translating with i18n module
+#### I18nLang decorator and I18nService
 ```typescript
 @Controller()
 export class SampleController {
@@ -127,6 +129,45 @@ export class SampleController {
     this.i18n.translate('HELLO_MESSAGE', {lang: lang, args: {id: 1, username: 'Toon'}});
     this.i18n.translate('SETUP.WELCOME', {lang: 'en', args: {id: 1, username: 'Toon'}});
     this.i18n.translate('ARRAY.0', {lang: 'en'});
+  }
+}
+```
+
+#### I18nContext decorator
+No need to handle lang manually
+```typescript
+@Controller()
+export class SampleController {
+
+  @Get()
+  sample(
+    @I18nContext() i18nContext: I18nRequestContext
+  ) {
+    i18nContext.translate('HELLO_MESSAGE', {args: {id: 1, username: 'Toon'}})
+    i18nContext.translate('SETUP.WELCOME', {args: {id: 1, username: 'Toon'}});
+    i18nContext.translate('ARRAY.0');
+  }
+}
+```
+
+#### Within a custom service using request scoped translation service
+To be use within other services like sending E-mails.
+The advantage is that you don't have to worry about transporting `lang` from `Request` to your service. 
+
+**Use with caution!** The `I18nRequestScopeService` uses `REQUEST` scope and is no singleton. 
+This will be inherited to all consumers of `I18nRequestScopeService`!
+Read [Nest Docs](https://docs.nestjs.com/fundamentals/injection-scopes) for more information.
+
+**Dont use `I18nRequestScopeService` within controllers.** `I18nContext` decorator is a much better solution.     
+```typescript
+@Injectable()
+export class SampleService {
+  constructor(private readonly i18nService: I18nRequestScopeService) {}
+
+  doFancyStuff() {
+    this.i18nService.translate('HELLO_MESSAGE', {args: {id: 1, username: 'Toon'}})
+    this.i18nService.translate('SETUP.WELCOME', {args: {id: 1, username: 'Toon'}});
+    this.i18nService.translate('ARRAY.0');
   }
 }
 ```

@@ -95,6 +95,7 @@ To make it easier to manage in what language to respond you can make use of reso
       resolvers: [
         new QueryResolver(['lang', 'locale', 'l']),
         new HeaderResolver(),
+        new CookieResolver(['lang', 'locale', 'l'])
       ],
     }),
   ],

@@ -155,12 +155,12 @@ No need to handle `lang` manually.
 ```typescript
 @Injectable()
 export class SampleService {
-  constructor(private readonly i18nService: I18nRequestScopeService) {}
+  constructor(private readonly i18n: I18nRequestScopeService) {}
 
   doFancyStuff() {
-    this.i18nService.translate('HELLO_MESSAGE', {args: {id: 1, username: 'Toon'}})
-    this.i18nService.translate('SETUP.WELCOME', {args: {id: 1, username: 'Toon'}});
-    this.i18nService.translate('ARRAY.0');
+    this.i18n.translate('HELLO_MESSAGE', {args: {id: 1, username: 'Toon'}})
+    this.i18n.translate('SETUP.WELCOME', {args: {id: 1, username: 'Toon'}});
+    this.i18n.translate('ARRAY.0');
   }
 }
 ```

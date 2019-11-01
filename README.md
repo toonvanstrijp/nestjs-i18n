@@ -108,7 +108,7 @@ Currently, there are two build-in resolvers
 | ------------- | ------------- |
 | `QueryResolver`  | `none` |
 | `HeaderResolver`  | `accept-language` |
-| `QueryResolver`  | `lang` |
+| `CookieResolver`  | `lang` |
 
 To implement your own resolver (or custom logic) use the `I18nResolver` interface.
 

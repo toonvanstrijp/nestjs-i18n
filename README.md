@@ -134,7 +134,7 @@ export class SampleController {
 }
 ```
 
-#### I18nContext decorator
+#### I18n decorator
 No need to handle `lang` manually.
 ```typescript
 @Controller()

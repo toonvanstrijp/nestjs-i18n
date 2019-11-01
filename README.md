@@ -159,7 +159,7 @@ The advantage is that you don't have to worry about transporting `lang` from `Re
 This will be inherited to all consumers of `I18nRequestScopeService`!
 Read [Nest Docs](https://docs.nestjs.com/fundamentals/injection-scopes) for more information.
 
-**Dont use `I18nRequestScopeService` within controllers.** `I18nContext` decorator is a much better solution.     
+**Dont use `I18nRequestScopeService` within controllers.** `I18n` decorator is a much better solution.     
 ```typescript
 @Injectable()
 export class SampleService {

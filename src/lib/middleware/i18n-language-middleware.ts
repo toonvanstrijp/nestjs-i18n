@@ -1,12 +1,13 @@
 import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { I18N_OPTIONS } from '../i18n.constants';
-import { I18nOptions } from '../index';
+import { I18nOptions, I18nService } from '../index';
 
 @Injectable()
 export class I18nLanguageMiddleware implements NestMiddleware {
   constructor(
     @Inject(I18N_OPTIONS)
     private readonly i18nOptions: I18nOptions,
+    private readonly i18nService: I18nService,
   ) {}
 
   use(req: any, res: any, next: () => void) {
@@ -19,6 +20,7 @@ export class I18nLanguageMiddleware implements NestMiddleware {
       }
     }
     req.i18nLang = language || this.i18nOptions.fallbackLanguage;
+    req.i18nService = this.i18nService;
 
     next();
   }

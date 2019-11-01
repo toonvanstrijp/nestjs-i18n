@@ -19,6 +19,6 @@ function resolveI18nServiceFromRestRequest(req): [string, I18nService] {
 }
 
 function resolveI18nServiceFromGraphQLContext(req): [string, I18nService] {
-  const { ctx } = req;
+  const [root, args, ctx, info] = req;
   return [ctx.req.i18nLang, ctx.req.i18nService];
 }

@@ -14,6 +14,6 @@ function resolveI18nLanguageFromRestRequest(req) {
 }
 
 function resolveI18nLanguageFromGraphQLContext(req) {
-  const { ctx } = req;
+  const [root, args, ctx, info] = req;
   return ctx.req.i18nLang;
 }

@@ -135,7 +135,6 @@ export class SampleController {
 ```
 
 #### `I18n` decorator
-No need to handle `lang` manually.
 ```typescript
 @Controller()
 export class SampleController {
@@ -150,16 +149,9 @@ export class SampleController {
   }
 }
 ```
+No need to handle `lang` manually.
 
 #### `I18nRequestScopeService` within a custom service using request scoped translation service
-To be use within other services like sending E-mails.
-The advantage is that you don't have to worry about transporting `lang` from `Request` to your service. 
-
-**Use with caution!** The `I18nRequestScopeService` uses `REQUEST` scope and is no singleton. 
-This will be inherited to all consumers of `I18nRequestScopeService`!
-Read [Nest Docs](https://docs.nestjs.com/fundamentals/injection-scopes) for more information.
-
-**Dont use `I18nRequestScopeService` within controllers.** `I18n` decorator is a much better solution.     
 ```typescript
 @Injectable()
 export class SampleService {
@@ -172,6 +164,14 @@ export class SampleService {
   }
 }
 ```
+To be use within other services like sending E-mails.
+The advantage is that you don't have to worry about transporting `lang` from `Request` to your service. 
+
+**Use with caution!** The `I18nRequestScopeService` uses `REQUEST` scope and is no singleton. 
+This will be inherited to all consumers of `I18nRequestScopeService`!
+Read [Nest Docs](https://docs.nestjs.com/fundamentals/injection-scopes) for more information.
+
+**Dont use `I18nRequestScopeService` within controllers.** `I18n` decorator is a much better solution.     
 
 ### Missing Translations
 If you require a translation that is missing, `I18n` will log an error. However, you can also write these missing translations to a new file in order to help translating your application later on.

@@ -114,7 +114,7 @@ Currently, there are two build-in resolvers
 To implement your own resolver (or custom logic) use the `I18nResolver` interface.
 
 ### Translating with i18n module
-#### I18nLang decorator and I18nService
+#### `I18nLang` decorator and `I18nService`
 ```typescript
 @Controller()
 export class SampleController {
@@ -134,7 +134,7 @@ export class SampleController {
 }
 ```
 
-#### I18n decorator
+#### `I18n` decorator
 No need to handle `lang` manually.
 ```typescript
 @Controller()
@@ -151,7 +151,7 @@ export class SampleController {
 }
 ```
 
-#### Within a custom service using request scoped translation service
+#### `I18nRequestScopeService` within a custom service using request scoped translation service
 To be use within other services like sending E-mails.
 The advantage is that you don't have to worry about transporting `lang` from `Request` to your service. 
 

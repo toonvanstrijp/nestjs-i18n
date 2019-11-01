@@ -1,6 +1,11 @@
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
-import { HeaderResolver, I18nModule, QueryResolver } from '../src/lib';
+import {
+  CookieResolver,
+  HeaderResolver,
+  I18nModule,
+  QueryResolver,
+} from '../src/lib';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
@@ -17,7 +22,7 @@ describe('i18n module e2e graphql', () => {
           path: path.join(__dirname, '/i18n/'),
           fallbackLanguage: 'en',
           saveMissing: false,
-          resolvers: [new HeaderResolver()],
+          resolvers: [new HeaderResolver(), new CookieResolver()],
         }),
         GraphQLModule.forRoot({
           typePaths: ['*/**/*.graphql'],
@@ -37,6 +42,48 @@ describe('i18n module e2e graphql', () => {
     return request(app.getHttpServer())
       .post('/graphql')
       .set('accept-language', 'nl')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{cat(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          cat: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Kat',
+          },
+        },
+      });
+  });
+
+  it(`should query a particular cat in EN with cookie`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('Cookie', ['lang=en'])
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{cat(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          cat: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Cat',
+          },
+        },
+      });
+  });
+
+  it(`should query a particular cat in NL with cookie`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('Cookie', ['lang=nl'])
       .send({
         operationName: null,
         variables: {},

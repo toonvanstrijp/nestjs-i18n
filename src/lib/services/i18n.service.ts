@@ -28,9 +28,7 @@ export class I18nService {
     },
   ) {
     options = {
-      ...{
-        lang: this.i18nOptions.fallbackLanguage,
-      },
+      lang: this.i18nOptions.fallbackLanguage,
       ...options,
     };
 

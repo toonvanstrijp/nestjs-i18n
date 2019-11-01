@@ -1,6 +1,6 @@
 import { I18nService } from './services/i18n.service';
 
-export class I18nRequestContext {
+export class I18nContext {
   constructor(
     private readonly detectedLanguage: string,
     private readonly service: I18nService,

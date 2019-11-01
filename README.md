@@ -135,18 +135,18 @@ export class SampleController {
 ```
 
 #### I18nContext decorator
-No need to handle lang manually
+No need to handle `lang` manually.
 ```typescript
 @Controller()
 export class SampleController {
 
   @Get()
   sample(
-    @I18nContext() i18nContext: I18nRequestContext
+    @I18n() i18n: I18nContext
   ) {
-    i18nContext.translate('HELLO_MESSAGE', {args: {id: 1, username: 'Toon'}})
-    i18nContext.translate('SETUP.WELCOME', {args: {id: 1, username: 'Toon'}});
-    i18nContext.translate('ARRAY.0');
+    i18n.translate('HELLO_MESSAGE', {args: {id: 1, username: 'Toon'}})
+    i18n.translate('SETUP.WELCOME', {args: {id: 1, username: 'Toon'}});
+    i18n.translate('ARRAY.0');
   }
 }
 ```

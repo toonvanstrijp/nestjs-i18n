@@ -95,6 +95,7 @@ To make it easier to manage in what language to respond you can make use of reso
       resolvers: [
         new QueryResolver(['lang', 'locale', 'l']),
         new HeaderResolver(),
+        new CookieResolver(['lang', 'locale', 'l'])
       ],
     }),
   ],
@@ -108,10 +109,12 @@ Currently, there are two build-in resolvers
 | ------------- | ------------- |
 | `QueryResolver`  | `none` |
 | `HeaderResolver`  | `accept-language` |
+| `CookieResolver`  | `lang` |
 
 To implement your own resolver (or custom logic) use the `I18nResolver` interface.
 
-### Using Translation Service and Language Resolver
+### Translating with i18n module
+#### `I18nLang` decorator and `I18nService`
 ```typescript
 @Controller()
 export class SampleController {
@@ -130,6 +133,45 @@ export class SampleController {
   }
 }
 ```
+
+#### `I18n` decorator
+```typescript
+@Controller()
+export class SampleController {
+
+  @Get()
+  sample(
+    @I18n() i18n: I18nContext
+  ) {
+    i18n.translate('HELLO_MESSAGE', {args: {id: 1, username: 'Toon'}})
+    i18n.translate('SETUP.WELCOME', {args: {id: 1, username: 'Toon'}});
+    i18n.translate('ARRAY.0');
+  }
+}
+```
+No need to handle `lang` manually.
+
+#### `I18nRequestScopeService` within a custom service using request scoped translation service
+```typescript
+@Injectable()
+export class SampleService {
+  constructor(private readonly i18n: I18nRequestScopeService) {}
+
+  doFancyStuff() {
+    this.i18n.translate('HELLO_MESSAGE', {args: {id: 1, username: 'Toon'}})
+    this.i18n.translate('SETUP.WELCOME', {args: {id: 1, username: 'Toon'}});
+    this.i18n.translate('ARRAY.0');
+  }
+}
+```
+To be use within other services like sending E-mails.
+The advantage is that you don't have to worry about transporting `lang` from `Request` to your service. 
+
+**Use with caution!** The `I18nRequestScopeService` uses `REQUEST` scope and is no singleton. 
+This will be inherited to all consumers of `I18nRequestScopeService`!
+Read [Nest Docs](https://docs.nestjs.com/fundamentals/injection-scopes) for more information.
+
+**Dont use `I18nRequestScopeService` within controllers.** `I18n` decorator is a much better solution.     
 
 ### Missing Translations
 If you require a translation that is missing, `I18n` will log an error. However, you can also write these missing translations to a new file in order to help translating your application later on.

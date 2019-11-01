@@ -56,6 +56,62 @@ describe('i18n module e2e express', () => {
       .expect('Hallo');
   });
 
+  it(`/GET hello/context should return translation`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/context')
+      .expect(200)
+      .expect('Hello');
+  });
+
+  it(`/GET hello/context should return right language when using query resolver`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/context?lang=nl')
+      .expect(200)
+      .expect('Hallo')
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/hello?l=nl')
+          .expect(200)
+          .expect('Hallo'),
+      );
+  });
+
+  it(`/GET hello/context should return translation when providing accept-language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/context')
+      .set('accept-language', 'nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/request-scope should return translation`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/request-scope')
+      .expect(200)
+      .expect('Hello');
+  });
+
+  it(`/GET hello/request-scope should return right language when using query resolver`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/request-scope?lang=nl')
+      .expect(200)
+      .expect('Hallo')
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/hello?l=nl')
+          .expect(200)
+          .expect('Hallo'),
+      );
+  });
+
+  it(`/GET hello/request-scope should return translation when providing accept-language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/request-scope')
+      .set('accept-language', 'nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+
   afterAll(async () => {
     await app.close();
   });

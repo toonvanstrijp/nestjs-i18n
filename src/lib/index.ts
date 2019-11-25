@@ -2,6 +2,7 @@ export * from './i18n.module';
 export * from './i18n.constants';
 export * from './i18n.context';
 export * from './services/i18n.service';
+export * from './services/i18n-request-scope.service';
 export * from './interfaces/i18n-options.interface';
 export * from './interfaces/i18n-language-resolver.interface';
 export * from './decorators/i18n-lang.decorator';

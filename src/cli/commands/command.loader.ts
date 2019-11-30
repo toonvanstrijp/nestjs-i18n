@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import * as chalk from 'chalk';
 import { CommanderStatic } from 'commander';
 import { CheckCommand } from './check.command';
 import { CheckAction } from '../actions/check.action';

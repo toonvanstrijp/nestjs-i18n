@@ -59,7 +59,7 @@ export class I18nService {
 
     let translation = translationsByLanguage[key];
 
-    if (args || (args instanceof Array && args.length > 0)) {
+    if (translation && (args || (args instanceof Array && args.length > 0))) {
       translation = format(
         translation,
         ...(args instanceof Array ? args || [] : [args]),

@@ -10,11 +10,6 @@
     "baseUrl": "./",
     "incremental": true
   },
-  "include": [
-    "src/lib/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ]
+  "include": ["src/lib/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

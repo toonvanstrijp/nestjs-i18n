@@ -1,10 +1,10 @@
 {
-  "moduleFileExtensions": [
-    "js",
-    "json",
-    "ts",
-    "d.ts"
-  ],
+  "globals": {
+    "ts-jest": {
+      "diagnostics": false
+    }
+  },
+  "moduleFileExtensions": ["js", "json", "ts", "d.ts"],
   "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".spec.ts$",

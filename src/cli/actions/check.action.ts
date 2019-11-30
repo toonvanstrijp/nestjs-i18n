@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { getDirectories, parseTranslations } from '../../lib/utils/parse';
 import * as _ from 'lodash';
-import chalk from 'chalk';
+import * as chalk from 'chalk';
 
 export class CheckAction extends AbstractAction {
   public async handle(inputs: Input[], options: Input[]) {

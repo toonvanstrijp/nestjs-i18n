@@ -47,6 +47,18 @@ describe('i18n module missing files', () => {
     ).toBeTruthy();
   });
 
+  it('should report missing translations with args', async () => {
+    // this will create the missing file
+    i18nService.translate('domain.unknown.key', {
+      lang: 'en',
+      args: { test: 'hello' },
+    });
+
+    expect(
+      fs.existsSync(path.join(__dirname, 'i18n', 'en', 'domain.missing')),
+    ).toBeTruthy();
+  });
+
   it('should report missing translations for various languages', async () => {
     // this will create the missing file
     i18nService.translate('domain.another.key', { lang: 'nl' });

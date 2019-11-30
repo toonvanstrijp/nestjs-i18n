@@ -14,14 +14,18 @@ export const getDirectories = source =>
 const getFiles = (dirPath: string, pattern: RegExp) =>
   fs
     .readdirSync(dirPath, { withFileTypes: true })
-    .filter(f => {
+    .filter((f: fs.Dirent | string) => {
       try {
-        return f.isFile() && f.name.match(pattern);
+        if (typeof f === 'string') {
+          return fs.existsSync(path.join(dirPath, f)) && f.match(pattern);
+        } else {
+          return f.isFile() && f.name.match(pattern);
+        }
       } catch {
         return false;
       }
     })
-    .map(f => path.join(dirPath, f.name));
+    .map(f => path.join(dirPath, typeof f === 'string' ? f : f.name));
 
 export async function parseTranslations(
   options: I18nOptions,

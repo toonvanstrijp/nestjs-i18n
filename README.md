@@ -201,4 +201,4 @@ This is very useful inside a CI environment to prevent releases with missing tra
 - from V3.0.0 on we load translations based on their directory name instead of file name. Change your translations files to the structure above: [info](https://github.com/ToonvanStrijp/nestjs-i18n#structure)
 
 # Special contributions
-- @choem for giving pizza
+- @Choem for giving pizza

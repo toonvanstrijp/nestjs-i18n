@@ -23,7 +23,7 @@ i18n
 ```
 
 ### Translation File
-The format for the translation file could look like this:
+The format of a translation file could look like this:
 ```json
 {
   "HELLO_MESSAGE": "Hello {username}",
@@ -43,7 +43,7 @@ The format for the translation file could look like this:
 String formatting is done by: [string-format](https://github.com/davidchambers/string-format)
 
 ### Translation Module
-To use the translation service we first add the module. **The `I18nModule` has an `@Global()` attribute so you should only import it once**.
+To use the translation service we first add the module. **The `I18nModule` has a `@Global()` attribute so you should only import it once**.
 ```typescript
 import { Module } from '@nestjs/common';
 import * as path from 'path';
@@ -103,7 +103,7 @@ To make it easier to manage in what language to respond you can make use of reso
 })
 export class AppModule {}
 ```
-Currently, there are two build-in resolvers
+Currently, there are two built-in resolvers
 
 | Resolver | Default value |
 | ------------- | ------------- |
@@ -164,14 +164,14 @@ export class SampleService {
   }
 }
 ```
-To be use within other services like sending E-mails.
-The advantage is that you don't have to worry about transporting `lang` from `Request` to your service. 
+To be used within other services like sending E-mails.
+The advantage is that you don't have to worry about transporting `lang` from the `Request` to your service. 
 
-**Use with caution!** The `I18nRequestScopeService` uses `REQUEST` scope and is no singleton. 
+**Use with caution!** The `I18nRequestScopeService` uses the `REQUEST` scope and is no singleton. 
 This will be inherited to all consumers of `I18nRequestScopeService`!
 Read [Nest Docs](https://docs.nestjs.com/fundamentals/injection-scopes) for more information.
 
-**Dont use `I18nRequestScopeService` within controllers.** `I18n` decorator is a much better solution.     
+**Dont use `I18nRequestScopeService` within controllers.** The `I18n` decorator is a much better solution.     
 
 ### Missing Translations
 If you require a translation that is missing, `I18n` will log an error. However, you can also write these missing translations to a new file in order to help translating your application later on.

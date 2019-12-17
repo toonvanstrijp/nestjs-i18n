@@ -71,7 +71,7 @@ import { I18nModule } from 'nestjs-i18n';
 @Module({
   imports: [
     I18nModule.forRootAsync({ 
-        useFactory: (config: ConfigurationService) => ({ 
+        useFactory: (configService: ConfigurationService) => ({ 
           path: configService.i18nPath, 
           fallbackLanguage: configService.fallbackLanguage, // e.g., 'en'
           filePattern: configService.i18nFilePattern, // e.g., '*.i18n.json'

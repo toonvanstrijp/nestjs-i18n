@@ -36,7 +36,7 @@
     "@types/flat": "0.0.28",
     "@types/jest": "^24.0.23",
     "@types/lodash": "^4.14.149",
-    "@types/node": "^12.12.14",
+    "@types/node": "^13.1.0",
     "@types/string-format": "^2.0.0",
     "apollo-server-express": "^2.9.12",
     "fastify": "^2.10.0",

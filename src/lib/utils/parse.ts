@@ -8,6 +8,7 @@ import { promisify } from 'util';
 const readdir = promisify(fs.readdir);
 const lstat = promisify(fs.lstat);
 const exists = promisify(fs.exists);
+const readFile = promisify(fs.readFile);
 
 function mapAsync<T, U>(
   array: T[],
@@ -68,7 +69,7 @@ export async function parseTranslations(
 
   const translations: I18nTranslation = {};
 
-  if (!fs.existsSync(i18nPath)) {
+  if (!(await exists(i18nPath))) {
     throw new Error(`i18n path (${i18nPath}) cannot be found`);
   }
 
@@ -90,7 +91,7 @@ export async function parseTranslations(
     return files;
   }, Promise.resolve([]));
 
-  files.map(file => {
+  for (const file of files) {
     let global = false;
 
     const key = path.dirname(path.relative(i18nPath, file)).split(path.sep)[0];
@@ -99,7 +100,7 @@ export async function parseTranslations(
       global = true;
     }
 
-    const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+    const data = JSON.parse(await readFile(file, 'utf8'));
 
     const prefix = path.basename(file).split('.')[0];
 
@@ -112,7 +113,7 @@ export async function parseTranslations(
           flatData[property];
       });
     }
-  });
+  }
 
   return translations;
 }

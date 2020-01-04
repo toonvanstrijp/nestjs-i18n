@@ -81,6 +81,10 @@ describe('i18n module', () => {
       'test.custom',
     );
   });
+
+  it('i18n service should return supported languages', () => {
+    expect(i18nService.getSupportedLanguages()).toEqual(['en', 'nl']);
+  });
 });
 
 describe('i18n module without trailing slash in path', () => {

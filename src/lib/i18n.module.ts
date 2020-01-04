@@ -8,7 +8,12 @@ import {
   NestModule,
   Provider,
 } from '@nestjs/common';
-import { I18N_OPTIONS, I18N_TRANSLATIONS } from './i18n.constants';
+import {
+  I18N_OPTIONS,
+  I18N_TRANSLATIONS,
+  I18N_LANGUAGES,
+  I18nTranslation,
+} from './i18n.constants';
 import { I18nService } from './services/i18n.service';
 import { I18nRequestScopeService } from './services/i18n-request-scope.service';
 import {
@@ -17,7 +22,7 @@ import {
   I18nOptionsFactory,
 } from './interfaces/i18n-options.interface';
 import { ValueProvider } from '@nestjs/common/interfaces';
-import { parseTranslations } from './utils/parse';
+import { parseTranslations, getLanguages } from './utils/parse';
 import * as path from 'path';
 import { I18nLanguageMiddleware } from './middleware/i18n-language-middleware';
 import { HttpAdapterHost, ModuleRef } from '@nestjs/core';
@@ -70,12 +75,24 @@ export class I18nModule implements NestModule {
 
     const translationsProvider = {
       provide: I18N_TRANSLATIONS,
-      useFactory: async () => {
+      useFactory: async (): Promise<I18nTranslation> => {
         try {
           return await parseTranslations(options);
         } catch (e) {
-          logger.error(e);
+          logger.error('parsing translation error', e);
           return {};
+        }
+      },
+    };
+
+    const languagessProvider = {
+      provide: I18N_LANGUAGES,
+      useFactory: async (): Promise<string[]> => {
+        try {
+          return await getLanguages(options);
+        } catch (e) {
+          logger.error('failed getting languages', e);
+          return [];
         }
       },
     };
@@ -88,6 +105,7 @@ export class I18nModule implements NestModule {
         I18nRequestScopeService,
         i18nOptions,
         translationsProvider,
+        languagessProvider,
       ],
       exports: [I18nService, I18nRequestScopeService],
     };
@@ -96,6 +114,7 @@ export class I18nModule implements NestModule {
   static forRootAsync(options: I18nAsyncOptions): DynamicModule {
     const asyncOptionsProvider = this.createAsyncOptionsProvider(options);
     const asyncTranslationProvider = this.createAsyncTranslationProvider();
+    const asyncLanguagesProvider = this.createAsyncLanguagesProvider();
     return {
       module: I18nModule,
       imports: options.imports || [],
@@ -103,6 +122,7 @@ export class I18nModule implements NestModule {
         { provide: Logger, useValue: logger },
         asyncOptionsProvider,
         asyncTranslationProvider,
+        asyncLanguagesProvider,
         I18nService,
         I18nRequestScopeService,
       ],
@@ -131,13 +151,29 @@ export class I18nModule implements NestModule {
   private static createAsyncTranslationProvider(): Provider {
     return {
       provide: I18N_TRANSLATIONS,
-      useFactory: async (options: I18nOptions) => {
+      useFactory: async (options: I18nOptions): Promise<I18nTranslation> => {
         options = this.sanitizeI18nOptions(options);
         try {
           return await parseTranslations(options);
         } catch (e) {
-          logger.error(e);
+          logger.error('parsing translation error', e);
           return {};
+        }
+      },
+      inject: [I18N_OPTIONS],
+    };
+  }
+
+  private static createAsyncLanguagesProvider(): Provider {
+    return {
+      provide: I18N_LANGUAGES,
+      useFactory: async (options: I18nOptions): Promise<string[]> => {
+        options = this.sanitizeI18nOptions(options);
+        try {
+          return await getLanguages(options);
+        } catch (e) {
+          logger.error('parsing translation error', e);
+          return [];
         }
       },
       inject: [I18N_OPTIONS],

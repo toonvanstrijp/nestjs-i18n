@@ -52,6 +52,7 @@
     "typescript": "3.6.3"
   },
   "dependencies": {
+    "accept-language-negotiator": "^1.2.0",
     "chalk": "^3.0.0",
     "commander": "^4.0.1",
     "cookie": "^0.4.0",

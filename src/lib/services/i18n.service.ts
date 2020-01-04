@@ -4,6 +4,7 @@ import {
   I18N_OPTIONS,
   I18N_TRANSLATIONS,
   I18nTranslation,
+  I18N_LANGUAGES,
 } from '../i18n.constants';
 import { I18nOptions } from '..';
 import * as fs from 'fs';
@@ -17,6 +18,8 @@ export class I18nService {
     private readonly i18nOptions: I18nOptions,
     @Inject(I18N_TRANSLATIONS)
     private readonly translations: I18nTranslation,
+    @Inject(I18N_LANGUAGES)
+    private readonly supportedLanguages: string[],
     private readonly logger: Logger,
   ) {}
 
@@ -66,6 +69,10 @@ export class I18nService {
       );
     }
     return translation || key;
+  }
+
+  public getSupportedLanguages() {
+    return this.supportedLanguages;
   }
 
   private saveMissingTranslation(key: string, language: string) {

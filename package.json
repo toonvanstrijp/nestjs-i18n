@@ -20,7 +20,6 @@
     "precommit": "lint-staged",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",
-    "publish:npm:next": "npm publish --access public --tag next",
     "prepublish:next": "npm run build",
     "publish:next": "npm publish --access public --tag next",
     "test": "jest --config ./tests/jest-test.json",

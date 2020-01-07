@@ -1,3 +1,3 @@
-export interface I18nResolver<TRequest = any, TResponse = string> {
-  resolve(req: TRequest): TResponse;
+export interface I18nResolver<TRequest = any> {
+  resolve(req: TRequest): string | string[] | undefined;
 }

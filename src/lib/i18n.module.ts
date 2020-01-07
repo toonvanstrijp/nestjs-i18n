@@ -1,7 +1,6 @@
 import {
   DynamicModule,
   Global,
-  Inject,
   Logger,
   MiddlewareConsumer,
   Module,
@@ -13,6 +12,7 @@ import {
   I18N_TRANSLATIONS,
   I18N_LANGUAGES,
   I18nTranslation,
+  I18N_RESOLVERS,
 } from './i18n.constants';
 import { I18nService } from './services/i18n.service';
 import { I18nRequestScopeService } from './services/i18n-request-scope.service';
@@ -20,12 +20,16 @@ import {
   I18nAsyncOptions,
   I18nOptions,
   I18nOptionsFactory,
+  ResolverWithOptions,
+  I18nOptionResolver,
 } from './interfaces/i18n-options.interface';
 import { ValueProvider } from '@nestjs/common/interfaces';
 import { parseTranslations, getLanguages } from './utils/parse';
 import * as path from 'path';
 import { I18nLanguageMiddleware } from './middleware/i18n-language-middleware';
 import { HttpAdapterHost, ModuleRef } from '@nestjs/core';
+import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
+import { shouldResolve } from './utils/util';
 
 const logger = new Logger('I18nService');
 
@@ -40,8 +44,6 @@ const defaultOptions: Partial<I18nOptions> = {
 export class I18nModule implements NestModule {
   constructor(
     private readonly httpAdapterHost: HttpAdapterHost,
-    @Inject(I18N_OPTIONS)
-    private readonly i18nOptions: I18nOptions,
     private readonly moduleRef: ModuleRef,
   ) {}
 
@@ -97,6 +99,11 @@ export class I18nModule implements NestModule {
       },
     };
 
+    const resolversProvider = {
+      provide: I18N_RESOLVERS,
+      useValue: options.resolvers || [],
+    };
+
     return {
       module: I18nModule,
       providers: [
@@ -106,8 +113,10 @@ export class I18nModule implements NestModule {
         i18nOptions,
         translationsProvider,
         languagessProvider,
+        resolversProvider,
+        ...this.createResolverProviders(options.resolvers),
       ],
-      exports: [I18nService, I18nRequestScopeService],
+      exports: [I18nService, I18nRequestScopeService, languagessProvider],
     };
   }
 
@@ -115,6 +124,10 @@ export class I18nModule implements NestModule {
     const asyncOptionsProvider = this.createAsyncOptionsProvider(options);
     const asyncTranslationProvider = this.createAsyncTranslationProvider();
     const asyncLanguagesProvider = this.createAsyncLanguagesProvider();
+    const resolversProvider = {
+      provide: I18N_RESOLVERS,
+      useValue: options.resolvers || [],
+    };
     return {
       module: I18nModule,
       imports: options.imports || [],
@@ -125,8 +138,10 @@ export class I18nModule implements NestModule {
         asyncLanguagesProvider,
         I18nService,
         I18nRequestScopeService,
+        resolversProvider,
+        ...this.createResolverProviders(options.resolvers),
       ],
-      exports: [I18nService, I18nRequestScopeService],
+      exports: [I18nService, I18nRequestScopeService, asyncLanguagesProvider],
     };
   }
 
@@ -189,5 +204,38 @@ export class I18nModule implements NestModule {
     }
 
     return options;
+  }
+
+  private static createResolverProviders(resolvers?: I18nOptionResolver[]) {
+    return (resolvers || [])
+      .filter(shouldResolve)
+      .reduce<Provider[]>((providers, r) => {
+        if (r.hasOwnProperty('use') && r.hasOwnProperty('options')) {
+          const resolver = r as ResolverWithOptions;
+          const optionsToken = getI18nResolverOptionsToken(resolver.use);
+          providers.push({
+            provide: resolver.use,
+            useClass: resolver.use,
+            inject: [optionsToken],
+          });
+          providers.push({
+            provide: optionsToken,
+            useFactory: () => resolver.options,
+          });
+        } else {
+          const optionsToken = getI18nResolverOptionsToken(r as Function);
+          providers.push({
+            provide: r,
+            useClass: r,
+            inject: [optionsToken],
+          } as any);
+          providers.push({
+            provide: optionsToken,
+            useFactory: () => undefined,
+          });
+        }
+
+        return providers;
+      }, []);
   }
 }

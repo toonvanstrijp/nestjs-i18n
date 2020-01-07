@@ -5,29 +5,12 @@ import {
   I18nModule,
   QueryResolver,
 } from '../src/lib';
-import { Module } from '@nestjs/common';
 import { HelloController } from './app/controllers/hello.controller';
 import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
-
-@Module({
-  imports: [
-    I18nModule.forRoot({
-      path: path.join(__dirname, '/i18n/'),
-      fallbackLanguage: 'en',
-      saveMissing: false,
-      resolvers: [
-        new QueryResolver(['lang', 'locale', 'l']),
-        new HeaderResolver(),
-      ],
-    }),
-  ],
-  controllers: [HelloController],
-})
-export class AppModule {}
 
 describe('i18n module e2e fastify', () => {
   let app: NestFastifyApplication;
@@ -41,8 +24,8 @@ describe('i18n module e2e fastify', () => {
           fallbackLanguage: 'en',
           saveMissing: false,
           resolvers: [
-            new QueryResolver(['lang', 'locale', 'l']),
-            new HeaderResolver(),
+            { use: QueryResolver, options: ['lang', 'locale', 'l'] },
+            HeaderResolver,
             new CookieResolver(),
           ],
         }),

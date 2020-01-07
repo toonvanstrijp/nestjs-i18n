@@ -9,5 +9,9 @@ node_js:
   - node
 os:
   - linux
-  - osx
+install:
+  - npm install
+script:
+  - npm test
+  - npm run coveralls
 sudo: false

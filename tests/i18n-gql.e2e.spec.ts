@@ -1,11 +1,6 @@
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
-import {
-  CookieResolver,
-  HeaderResolver,
-  I18nModule,
-  QueryResolver,
-} from '../src/lib';
+import { CookieResolver, HeaderResolver, I18nModule } from '../src/lib';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';

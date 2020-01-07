@@ -85,3 +85,4 @@ typings/
 dist/
 reports/
 bin/
+coverage/

@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/ToonvanStrijp/nestjs-i18n.svg?branch=master)](https://travis-ci.org/ToonvanStrijp/nestjs-i18n) [![Greenkeeper badge](https://badges.greenkeeper.io/ToonvanStrijp/nestjs-i18n.svg)](https://greenkeeper.io/)
+[![Coverage Status](https://coveralls.io/repos/github/ToonvanStrijp/nestjs-i18n/badge.svg?branch=master)](https://coveralls.io/github/ToonvanStrijp/nestjs-i18n?branch=master)
 
 ## Description
 

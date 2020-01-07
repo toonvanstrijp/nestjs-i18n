@@ -23,7 +23,8 @@
     "prepublish:next": "npm run build",
     "publish:next": "npm publish --access public --tag next",
     "test": "jest --config ./tests/jest-test.json",
-    "test:cov": "jest --config ./tests/jest-test.json --coverage"
+    "test:cov": "jest --config ./tests/jest-test.json --coverage",
+    "coveralls": "npm run test:cov && cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
     "@nestjs/common": "^6.10.13",
@@ -40,6 +41,7 @@
     "@types/node": "^13.1.0",
     "@types/string-format": "^2.0.0",
     "apollo-server-express": "^2.9.15",
+    "coveralls": "^3.0.9",
     "fastify": "^2.11.0",
     "graphql": "^14.5.8",
     "graphql-tools": "^4.0.6",

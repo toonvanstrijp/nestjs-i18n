@@ -21,8 +21,8 @@ describe('i18n module e2e express', () => {
           fallbackLanguage: 'en',
           saveMissing: false,
           resolvers: [
-            new QueryResolver(['lang', 'locale', 'l']),
-            new HeaderResolver(),
+            { use: QueryResolver, options: ['lang', 'locale', 'l'] },
+            HeaderResolver,
             new CookieResolver(),
           ],
         }),

@@ -1,16 +1,17 @@
 {
   "globals": {
     "ts-jest": {
-      "diagnostics": false
+      "diagnostics": true
     }
   },
   "moduleFileExtensions": ["js", "json", "ts", "d.ts"],
-  "rootDir": ".",
+  "rootDir": "../",
   "testEnvironment": "node",
   "testRegex": ".spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
+  "collectCoverageFrom": ["src/lib/**/*.ts", "!**/node_modules/**"],
   "moduleNameMapper": {
     "fastify/lib/Reply": "fastify/lib/reply"
   }

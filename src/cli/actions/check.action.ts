@@ -16,7 +16,7 @@ export class CheckAction extends AbstractAction {
       process.exit(1);
     }
 
-    const languages = getDirectories(i18nPath).map(dir =>
+    const languages = (await getDirectories(i18nPath)).map(dir =>
       path.relative(i18nPath, dir),
     );
 

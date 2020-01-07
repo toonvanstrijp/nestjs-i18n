@@ -1,7 +1,10 @@
 import { I18nResolver } from '../index';
+import { Injectable } from '@nestjs/common';
+import { I18nResolverOptions } from '../decorators/i18n-resolver-options.decorator';
 
+@Injectable()
 export class QueryResolver implements I18nResolver {
-  constructor(private keys: string[]) {}
+  constructor(@I18nResolverOptions() private keys: string[]) {}
 
   resolve(req: any) {
     let lang: string;

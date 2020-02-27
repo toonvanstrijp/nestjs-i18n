@@ -45,7 +45,7 @@
     "fastify": "^2.12.0",
     "graphql": "^14.6.0",
     "graphql-tools": "^4.0.6",
-    "husky": "4.2.1",
+    "husky": "4.2.2",
     "jest": "^25.1.0",
     "lint-staged": "10.0.7",
     "prettier": "1.19.1",

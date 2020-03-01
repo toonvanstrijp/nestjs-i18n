@@ -22,7 +22,11 @@ export class HeaderResolver implements I18nResolver {
       }
     }
 
-    const service: I18nService = req.i18nService;
-    return pick(service.getSupportedLanguages(), lang);
+    if (!lang) {
+      return lang;
+    } else {
+      const service: I18nService = req.i18nService;
+      return pick(service.getSupportedLanguages(), lang);
+    }
   }
 }

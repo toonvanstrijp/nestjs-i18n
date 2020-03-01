@@ -71,7 +71,7 @@ describe('i18n module e2e fastify', () => {
         url: '/hello',
         method: 'GET',
         headers: {
-          'accept-language': 'nl',
+          'accept-language': 'nl-NL,nl;q=0.5',
         },
       })
       .then(({ payload }) => expect(payload).toBe('Hallo'));
@@ -83,7 +83,7 @@ describe('i18n module e2e fastify', () => {
         url: '/hello',
         method: 'GET',
         headers: {
-          'accept-language': 'nl',
+          'accept-language': 'nl-NL,nl;q=0.5',
         },
       })
       .then(({ payload }) => expect(payload).toBe('Hallo'));
@@ -134,7 +134,7 @@ describe('i18n module e2e fastify', () => {
         url: '/hello/context',
         method: 'GET',
         headers: {
-          'accept-language': 'nl',
+          'accept-language': 'nl-NL,nl;q=0.5',
         },
       })
       .then(({ payload }) => expect(payload).toBe('Hallo'));
@@ -185,7 +185,7 @@ describe('i18n module e2e fastify', () => {
         url: '/hello/request-scope',
         method: 'GET',
         headers: {
-          'accept-language': 'nl',
+          'accept-language': 'nl-NL,nl;q=0.5',
         },
       })
       .then(({ payload }) => expect(payload).toBe('Hallo'));

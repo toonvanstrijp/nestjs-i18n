@@ -25,7 +25,7 @@ export class I18nLanguageMiddleware implements NestMiddleware {
 
   async use(req: any, res: any, next: () => void) {
     let language = null;
-
+    req.i18nService = this.i18nService;
     for (const r of this.i18nResolvers) {
       const resolver = await this.getResolver(r);
 
@@ -36,7 +36,6 @@ export class I18nLanguageMiddleware implements NestMiddleware {
       }
     }
     req.i18nLang = language || this.i18nOptions.fallbackLanguage;
-    req.i18nService = this.i18nService;
 
     next();
   }

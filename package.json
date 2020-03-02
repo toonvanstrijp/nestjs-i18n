@@ -35,7 +35,7 @@
     "@nestjs/testing": "^6.11.6",
     "@types/commander": "^2.12.2",
     "@types/cookie": "^0.3.3",
-    "@types/flat": "0.0.28",
+    "@types/flat": "5.0.0",
     "@types/jest": "^25.1.2",
     "@types/lodash": "^4.14.149",
     "@types/node": "^13.7.0",

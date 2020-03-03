@@ -2,6 +2,7 @@ import * as path from 'path';
 import {
   CookieResolver,
   HeaderResolver,
+  AcceptLanguageResolver,
   I18nModule,
   QueryResolver,
 } from '../src/lib';
@@ -25,8 +26,9 @@ describe('i18n module e2e fastify', () => {
           saveMissing: false,
           resolvers: [
             { use: QueryResolver, options: ['lang', 'locale', 'l'] },
-            HeaderResolver,
+            new HeaderResolver(['x-custom-lang']),
             new CookieResolver(),
+            AcceptLanguageResolver,
           ],
         }),
       ],
@@ -65,13 +67,13 @@ describe('i18n module e2e fastify', () => {
       });
   });
 
-  it(`/GET hello should return translation when providing accept-language`, () => {
+  it(`/GET hello should return translation when providing x-custom-lang`, () => {
     return app
       .inject({
         url: '/hello',
         method: 'GET',
         headers: {
-          'accept-language': 'nl',
+          'x-custom-lang': 'nl',
         },
       })
       .then(({ payload }) => expect(payload).toBe('Hallo'));
@@ -83,7 +85,7 @@ describe('i18n module e2e fastify', () => {
         url: '/hello',
         method: 'GET',
         headers: {
-          'accept-language': 'nl',
+          'accept-language': 'nl-NL,nl;q=0.5',
         },
       })
       .then(({ payload }) => expect(payload).toBe('Hallo'));
@@ -128,13 +130,24 @@ describe('i18n module e2e fastify', () => {
       });
   });
 
+  it(`/GET hello/context should return translation when providing x-custom-lang`, () => {
+    return app
+      .inject({
+        url: '/hello/context',
+        method: 'GET',
+        headers: {
+          'x-custom-lang': 'nl',
+        },
+      })
+      .then(({ payload }) => expect(payload).toBe('Hallo'));
+  });
   it(`/GET hello/context should return translation when providing accept-language`, () => {
     return app
       .inject({
         url: '/hello/context',
         method: 'GET',
         headers: {
-          'accept-language': 'nl',
+          'accept-language': 'nl-NL,nl;q=0.5',
         },
       })
       .then(({ payload }) => expect(payload).toBe('Hallo'));
@@ -179,17 +192,30 @@ describe('i18n module e2e fastify', () => {
       });
   });
 
+  it(`/GET hello/request-scope should return translation when providing x-custom-lang`, () => {
+    return app
+      .inject({
+        url: '/hello/request-scope',
+        method: 'GET',
+        headers: {
+          'x-custom-lang': 'nl',
+        },
+      })
+      .then(({ payload }) => expect(payload).toBe('Hallo'));
+  });
+
   it(`/GET hello/request-scope should return translation when providing accept-language`, () => {
     return app
       .inject({
         url: '/hello/request-scope',
         method: 'GET',
         headers: {
-          'accept-language': 'nl',
+          'accept-language': 'nl-NL,nl;q=0.5',
         },
       })
       .then(({ payload }) => expect(payload).toBe('Hallo'));
   });
+  
 
   it(`/GET hello/request-scope should return translation when providing cookie`, () => {
     return app

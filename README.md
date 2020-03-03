@@ -103,7 +103,8 @@ To make it easier to manage in what language to respond you can make use of reso
       fallbackLanguage: 'en',
       resolvers: [
         { use: QueryResolver, options: ['lang', 'locale', 'l'] },
-        HeaderResolver,
+        new HeaderResolver(['x-custom-lang']),
+        AcceptLanguageResolver,
         new CookieResolver(['lang', 'locale', 'l']),
       ],
     }),
@@ -113,13 +114,14 @@ To make it easier to manage in what language to respond you can make use of reso
 export class AppModule {}
 ```
 
-Currently, there are two built-in resolvers
+Currently, there are four built-in resolvers
 
-| Resolver         | Default value     |
-| ---------------- | ----------------- |
-| `QueryResolver`  | `none`            |
-| `HeaderResolver` | `accept-language` |
-| `CookieResolver` | `lang`            |
+| Resolver                 | Default value     |
+| ------------------------ | ----------------- |
+| `QueryResolver`          | `none`            |
+| `HeaderResolver`         | `none`            |
+| `AcceptLanguageResolver` | `N/A`             |
+| `CookieResolver`         | `lang`            |
 
 To implement your own resolver (or custom logic) use the `I18nResolver` interface. The resolvers are provided via the nestjs dependency injection, this way you can inject your own services if needed.
 

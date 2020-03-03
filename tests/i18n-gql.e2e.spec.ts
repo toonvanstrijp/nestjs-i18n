@@ -17,7 +17,7 @@ describe('i18n module e2e graphql', () => {
           path: path.join(__dirname, '/i18n/'),
           fallbackLanguage: 'en',
           saveMissing: false,
-          resolvers: [new HeaderResolver(), new CookieResolver()],
+          resolvers: [new HeaderResolver(['x-custom-lang']), new CookieResolver()],
         }),
         GraphQLModule.forRoot({
           typePaths: ['*/**/*.graphql'],
@@ -36,7 +36,7 @@ describe('i18n module e2e graphql', () => {
   it(`should query a particular cat in NL`, () => {
     return request(app.getHttpServer())
       .post('/graphql')
-      .set('accept-language', 'nl')
+      .set('x-custom-lang', 'nl')
       .send({
         operationName: null,
         variables: {},
@@ -99,7 +99,7 @@ describe('i18n module e2e graphql', () => {
   it(`should query a particular cat in EN`, () => {
     return request(app.getHttpServer())
       .post('/graphql')
-      .set('accept-language', 'en')
+      .set('x-custom-lang', 'en')
       .send({
         operationName: null,
         variables: {},

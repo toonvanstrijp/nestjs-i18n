@@ -22,7 +22,7 @@ describe('i18n module e2e express', () => {
           saveMissing: false,
           resolvers: [
             { use: QueryResolver, options: ['lang', 'locale', 'l'] },
-            HeaderResolver,
+            new HeaderResolver(['x-custom-lang']),
             new CookieResolver(),
           ],
         }),
@@ -54,10 +54,10 @@ describe('i18n module e2e express', () => {
       );
   });
 
-  it(`/GET hello should return translation when providing accept-language`, () => {
+  it(`/GET hello should return translation when providing x-custom-lang`, () => {
     return request(app.getHttpServer())
       .get('/hello')
-      .set('accept-language', 'nl')
+      .set('x-custom-lang', 'nl')
       .expect(200)
       .expect('Hallo');
   });
@@ -90,10 +90,10 @@ describe('i18n module e2e express', () => {
       );
   });
 
-  it(`/GET hello/context should return translation when providing accept-language`, () => {
+  it(`/GET hello/context should return translation when providing x-custom-lang`, () => {
     return request(app.getHttpServer())
       .get('/hello/context')
-      .set('accept-language', 'nl')
+      .set('x-custom-lang', 'nl')
       .expect(200)
       .expect('Hallo');
   });
@@ -126,10 +126,10 @@ describe('i18n module e2e express', () => {
       );
   });
 
-  it(`/GET hello/request-scope should return translation when providing accept-language`, () => {
+  it(`/GET hello/request-scope should return translation when providing x-custom-lang`, () => {
     return request(app.getHttpServer())
       .get('/hello/request-scope')
-      .set('accept-language', 'nl')
+      .set('x-custom-lang', 'nl')
       .expect(200)
       .expect('Hallo');
   });

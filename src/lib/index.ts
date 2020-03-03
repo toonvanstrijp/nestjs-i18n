@@ -18,5 +18,6 @@ export * from './decorators/i18n.decorator';
 
 // build in resolvers
 export * from './resolvers/header.resolver';
+export * from './resolvers/accept-language.resolver';
 export * from './resolvers/query.resolver';
 export * from './resolvers/cookie.resolver';

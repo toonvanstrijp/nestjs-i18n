@@ -3,6 +3,7 @@ import * as path from 'path';
 import {
   CookieResolver,
   HeaderResolver,
+  AcceptLanguageResolver,
   I18nModule,
   QueryResolver,
 } from '../src/lib';
@@ -24,6 +25,7 @@ describe('i18n module e2e express', () => {
             { use: QueryResolver, options: ['lang', 'locale', 'l'] },
             new HeaderResolver(['x-custom-lang']),
             new CookieResolver(),
+            AcceptLanguageResolver,
           ],
         }),
       ],
@@ -58,6 +60,13 @@ describe('i18n module e2e express', () => {
     return request(app.getHttpServer())
       .get('/hello')
       .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+  it(`/GET hello should return translation when providing accept-language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello')
+      .set('accept-language', 'nl-NL,nl;q=0.5')
       .expect(200)
       .expect('Hallo');
   });
@@ -97,6 +106,13 @@ describe('i18n module e2e express', () => {
       .expect(200)
       .expect('Hallo');
   });
+  it(`/GET hello/context should return translation when providing accept-language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/context')
+      .set('accept-language', 'nl-NL,nl;q=0.5')
+      .expect(200)
+      .expect('Hallo');
+  });
 
   it(`/GET hello/context should return translation when providing cookie`, () => {
     return request(app.getHttpServer())
@@ -130,6 +146,13 @@ describe('i18n module e2e express', () => {
     return request(app.getHttpServer())
       .get('/hello/request-scope')
       .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+  it(`/GET hello/request-scope should return translation when providing accept-language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/request-scope')
+      .set('accept-language', 'nl-NL,nl;q=0.5')
       .expect(200)
       .expect('Hallo');
   });

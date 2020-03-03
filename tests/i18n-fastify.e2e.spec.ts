@@ -2,6 +2,7 @@ import * as path from 'path';
 import {
   CookieResolver,
   HeaderResolver,
+  AcceptLanguageResolver,
   I18nModule,
   QueryResolver,
 } from '../src/lib';
@@ -27,6 +28,7 @@ describe('i18n module e2e fastify', () => {
             { use: QueryResolver, options: ['lang', 'locale', 'l'] },
             new HeaderResolver(['x-custom-lang']),
             new CookieResolver(),
+            AcceptLanguageResolver,
           ],
         }),
       ],
@@ -77,13 +79,13 @@ describe('i18n module e2e fastify', () => {
       .then(({ payload }) => expect(payload).toBe('Hallo'));
   });
 
-  it(`/GET hello should return translation when providing x-custom-lang`, () => {
+  it(`/GET hello should return translation when providing accept-language`, () => {
     return app
       .inject({
         url: '/hello',
         method: 'GET',
         headers: {
-          'x-custom-lang': 'nl',
+          'accept-language': 'nl-NL,nl;q=0.5',
         },
       })
       .then(({ payload }) => expect(payload).toBe('Hallo'));
@@ -139,6 +141,17 @@ describe('i18n module e2e fastify', () => {
       })
       .then(({ payload }) => expect(payload).toBe('Hallo'));
   });
+  it(`/GET hello/context should return translation when providing accept-language`, () => {
+    return app
+      .inject({
+        url: '/hello/context',
+        method: 'GET',
+        headers: {
+          'accept-language': 'nl-NL,nl;q=0.5',
+        },
+      })
+      .then(({ payload }) => expect(payload).toBe('Hallo'));
+  });
 
   it(`/GET hello/context should return translation when providing cookie`, () => {
     return app
@@ -190,6 +203,19 @@ describe('i18n module e2e fastify', () => {
       })
       .then(({ payload }) => expect(payload).toBe('Hallo'));
   });
+
+  it(`/GET hello/request-scope should return translation when providing accept-language`, () => {
+    return app
+      .inject({
+        url: '/hello/request-scope',
+        method: 'GET',
+        headers: {
+          'accept-language': 'nl-NL,nl;q=0.5',
+        },
+      })
+      .then(({ payload }) => expect(payload).toBe('Hallo'));
+  });
+  
 
   it(`/GET hello/request-scope should return translation when providing cookie`, () => {
     return app

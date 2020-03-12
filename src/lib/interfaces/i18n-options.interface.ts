@@ -1,6 +1,7 @@
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { I18nResolver } from './i18n-language-resolver.interface';
+import { I18nParser } from '../parsers/i18n.parser';
 
 export type ResolverWithOptions = {
   use: Type<I18nResolver>;
@@ -35,5 +36,6 @@ export interface I18nAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
     ...args: any[]
   ) => Promise<I18nOptionsWithoutResolvers> | I18nOptionsWithoutResolvers;
   resolvers?: I18nOptionResolver[];
+  parser?: I18nParser;
   inject?: any[];
 }

@@ -28,8 +28,12 @@ describe('i18n module', () => {
   });
 
   it('i18n service should return correct translation', async () => {
-    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe('Hello');
-    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe('Hallo');
+    expect(await i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
+      'Hello',
+    );
+    expect(await i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
+      'Hallo',
+    );
   });
 });
 
@@ -55,11 +59,15 @@ describe('i18n module without trailing slash in path', () => {
   });
 
   it('i18n service should be defined', async () => {
-    expect(i18nService).toBeTruthy();
+    expect(await i18nService).toBeTruthy();
   });
 
   it('i18n service should return correct translation', async () => {
-    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe('Hello');
-    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe('Hallo');
+    expect(await i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
+      'Hello',
+    );
+    expect(await i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
+      'Hallo',
+    );
   });
 });

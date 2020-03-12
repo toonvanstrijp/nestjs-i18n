@@ -61,6 +61,7 @@
     "cookie": "^0.4.0",
     "flat": "^5.0.0",
     "lodash": "^4.17.0",
+    "rxjs": "^6.5.4",
     "string-format": "^2.0.0"
   },
   "peerDependencies": {

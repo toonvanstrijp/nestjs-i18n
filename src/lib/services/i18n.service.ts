@@ -3,13 +3,14 @@ import * as format from 'string-format';
 import {
   I18N_OPTIONS,
   I18N_TRANSLATIONS,
-  I18nTranslation,
   I18N_LANGUAGES,
 } from '../i18n.constants';
 import { I18nOptions } from '..';
+import { I18nTranslation } from '../interfaces/i18n-translation.interface';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import * as path from 'path';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class I18nService {
@@ -17,19 +18,19 @@ export class I18nService {
     @Inject(I18N_OPTIONS)
     private readonly i18nOptions: I18nOptions,
     @Inject(I18N_TRANSLATIONS)
-    private readonly translations: I18nTranslation,
+    private readonly translations: Observable<I18nTranslation>,
     @Inject(I18N_LANGUAGES)
-    private readonly supportedLanguages: string[],
+    private readonly supportedLanguages: Observable<string[]>,
     private readonly logger: Logger,
   ) {}
 
-  public translate(
+  public async translate(
     key: string,
     options?: {
       lang?: string;
       args?: Array<{ [k: string]: any } | string> | { [k: string]: any };
     },
-  ) {
+  ): Promise<string> {
     options = {
       lang: this.i18nOptions.fallbackLanguage,
       ...options,
@@ -37,7 +38,7 @@ export class I18nService {
 
     const { lang, args } = options;
 
-    const translationsByLanguage = this.translations[lang];
+    const translationsByLanguage = (await this.translations.toPromise())[lang];
 
     if (
       translationsByLanguage === undefined ||
@@ -71,8 +72,8 @@ export class I18nService {
     return translation || key;
   }
 
-  public getSupportedLanguages() {
-    return this.supportedLanguages;
+  public async getSupportedLanguages() {
+    return this.supportedLanguages.toPromise();
   }
 
   private saveMissingTranslation(key: string, language: string) {

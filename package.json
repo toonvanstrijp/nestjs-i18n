@@ -32,7 +32,7 @@
     "@nestjs/graphql": "^6.5.4",
     "@nestjs/platform-express": "^6.11.6",
     "@nestjs/platform-fastify": "^6.11.6",
-    "@nestjs/testing": "^6.11.6",
+    "@nestjs/testing": "^7.0.0",
     "@types/commander": "^2.12.2",
     "@types/cookie": "^0.3.3",
     "@types/flat": "5.0.0",

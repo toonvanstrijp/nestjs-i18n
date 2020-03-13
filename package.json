@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@nestjs/common": "^7.0.0",
-    "@nestjs/core": "^6.11.6",
+    "@nestjs/core": "^7.0.0",
     "@nestjs/graphql": "^6.5.4",
     "@nestjs/platform-express": "^6.11.6",
     "@nestjs/platform-fastify": "^6.11.6",

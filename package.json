@@ -31,7 +31,7 @@
     "@nestjs/core": "^6.11.6",
     "@nestjs/graphql": "^6.5.4",
     "@nestjs/platform-express": "^6.11.6",
-    "@nestjs/platform-fastify": "^6.11.6",
+    "@nestjs/platform-fastify": "^7.0.0",
     "@nestjs/testing": "^6.11.6",
     "@types/commander": "^2.12.2",
     "@types/cookie": "^0.3.3",

@@ -32,12 +32,16 @@ export class I18nLanguageMiddleware implements NestMiddleware {
 
       language = resolver.resolve(req);
 
+      if (language instanceof Promise) {
+        language = await (language as Promise<string>);
+      }
+
       if (language !== undefined) {
         break;
       }
     }
     req.i18nLang = language || this.i18nOptions.fallbackLanguage;
-    
+
     next();
   }
 

@@ -15,7 +15,9 @@ export class HeaderResolver implements I18nResolver {
 
     for (const key of this.keys) {
       if (key === 'accept-language') {
-        console.warn('HeaderResolver does not support RFC4647 Accept-Language header. Please use AcceptLanguageResolver instead.');
+        console.warn(
+          'HeaderResolver does not support RFC4647 Accept-Language header. Please use AcceptLanguageResolver instead.',
+        );
       }
       if (req.headers[key] !== undefined) {
         lang = req.headers[key];

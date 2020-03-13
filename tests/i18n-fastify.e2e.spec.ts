@@ -5,6 +5,7 @@ import {
   AcceptLanguageResolver,
   I18nModule,
   QueryResolver,
+  I18nJsonParser,
 } from '../src/lib';
 import { HelloController } from './app/controllers/hello.controller';
 import {
@@ -21,15 +22,19 @@ describe('i18n module e2e fastify', () => {
     const module = await Test.createTestingModule({
       imports: [
         I18nModule.forRoot({
-          path: path.join(__dirname, '/i18n/'),
           fallbackLanguage: 'en',
-          saveMissing: false,
           resolvers: [
             { use: QueryResolver, options: ['lang', 'locale', 'l'] },
             new HeaderResolver(['x-custom-lang']),
             new CookieResolver(),
             AcceptLanguageResolver,
           ],
+          parser: {
+            class: I18nJsonParser,
+            options: {
+              path: path.join(__dirname, '/i18n/'),
+            },
+          },
         }),
       ],
       controllers: [HelloController],
@@ -215,7 +220,6 @@ describe('i18n module e2e fastify', () => {
       })
       .then(({ payload }) => expect(payload).toBe('Hallo'));
   });
-  
 
   it(`/GET hello/request-scope should return translation when providing cookie`, () => {
     return app

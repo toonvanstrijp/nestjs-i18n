@@ -1,6 +1,11 @@
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
-import { CookieResolver, HeaderResolver, I18nModule } from '../src/lib';
+import {
+  CookieResolver,
+  HeaderResolver,
+  I18nModule,
+  I18nJsonParser,
+} from '../src/lib';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
@@ -14,10 +19,17 @@ describe('i18n module e2e graphql', () => {
     const module = await Test.createTestingModule({
       imports: [
         I18nModule.forRoot({
-          path: path.join(__dirname, '/i18n/'),
           fallbackLanguage: 'en',
-          saveMissing: false,
-          resolvers: [new HeaderResolver(['x-custom-lang']), new CookieResolver()],
+          resolvers: [
+            new HeaderResolver(['x-custom-lang']),
+            new CookieResolver(),
+          ],
+          parser: {
+            class: I18nJsonParser,
+            options: {
+              path: path.join(__dirname, '/i18n/'),
+            },
+          },
         }),
         GraphQLModule.forRoot({
           typePaths: ['*/**/*.graphql'],

@@ -1,8 +1,13 @@
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
-import { I18nModule, I18nService } from '../src/lib';
+import {
+  I18nModule,
+  I18nService,
+  I18nJsonParser,
+  I18nJsonParserOptions,
+} from '../src/lib';
 
-describe('i18n module', () => {
+describe('i18n async module', () => {
   let i18nService: I18nService;
 
   beforeAll(async () => {
@@ -11,10 +16,14 @@ describe('i18n module', () => {
         I18nModule.forRootAsync({
           useFactory: () => {
             return {
-              path: path.join(__dirname, '/i18n/'),
               fallbackLanguage: 'en',
-              saveMissing: false,
             };
+          },
+          parser: {
+            class: I18nJsonParser,
+            options: {
+              path: path.join(__dirname, '/i18n/'),
+            },
           },
         }),
       ],
@@ -46,10 +55,14 @@ describe('i18n module without trailing slash in path', () => {
         I18nModule.forRootAsync({
           useFactory: () => {
             return {
-              path: path.join(__dirname, '/i18n'),
               fallbackLanguage: 'en',
-              saveMissing: false,
             };
+          },
+          parser: {
+            class: I18nJsonParser,
+            options: {
+              path: path.join(__dirname, '/i18n'),
+            },
           },
         }),
       ],

@@ -8,7 +8,10 @@ export type ResolverWithOptions = {
   options: any;
 };
 
-export type I18nOptionsWithoutResolvers = Omit<I18nOptions, 'resolvers'>;
+export type I18nOptionsWithoutResolvers = Omit<
+  I18nOptions,
+  'resolvers' | 'parser'
+>;
 
 export type I18nOptionResolver =
   | ResolverWithOptions
@@ -16,11 +19,14 @@ export type I18nOptionResolver =
   | I18nResolver;
 
 export interface I18nOptions {
-  path: string;
   fallbackLanguage: string;
-  filePattern?: string;
+  parser: I18nParserOptions;
   resolvers?: I18nOptionResolver[];
-  saveMissing?: boolean;
+}
+
+export interface I18nParserOptions<T extends I18nParser = I18nParser> {
+  class: Type<T>;
+  options: any;
 }
 
 export interface I18nOptionsFactory {
@@ -36,6 +42,6 @@ export interface I18nAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
     ...args: any[]
   ) => Promise<I18nOptionsWithoutResolvers> | I18nOptionsWithoutResolvers;
   resolvers?: I18nOptionResolver[];
-  parser?: I18nParser;
+  parser: I18nParserOptions;
   inject?: any[];
 }

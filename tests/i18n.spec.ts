@@ -1,22 +1,33 @@
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
-import { I18nModule, I18nService } from '../src/lib';
+import {
+  I18nModule,
+  I18nService,
+  I18nJsonParser,
+  I18nParser,
+} from '../src/lib';
 
 describe('i18n module', () => {
   let i18nService: I18nService;
+  let i18nParser: I18nParser;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [
         I18nModule.forRoot({
-          path: path.join(__dirname, '/i18n/'),
           fallbackLanguage: 'en',
-          saveMissing: false,
+          parser: {
+            class: I18nJsonParser,
+            options: {
+              path: path.join(__dirname, '/i18n/'),
+            },
+          },
         }),
       ],
     }).compile();
 
     i18nService = module.get(I18nService);
+    i18nParser = module.get(I18nParser);
   });
 
   it('i18n service should be defined', async () => {
@@ -101,6 +112,20 @@ describe('i18n module', () => {
   it('i18n service should return supported languages', async () => {
     expect(await i18nService.getSupportedLanguages()).toEqual(['en', 'nl']);
   });
+
+  describe('i18n should refresh', () => {
+    it('i18n should refresh translations', async () => {
+      const parseSpy = jest.spyOn(i18nParser, 'parse');
+      await i18nService.refresh();
+      expect(parseSpy).toHaveBeenCalled();
+    });
+
+    it('i18n should refresh languages', async () => {
+      const languagesSpy = jest.spyOn(i18nParser, 'languages');
+      await i18nService.refresh();
+      expect(languagesSpy).toHaveBeenCalled();
+    });
+  });
 });
 
 describe('i18n module without trailing slash in path', () => {
@@ -110,9 +135,13 @@ describe('i18n module without trailing slash in path', () => {
     const module = await Test.createTestingModule({
       imports: [
         I18nModule.forRoot({
-          path: path.join(__dirname, '/i18n'),
           fallbackLanguage: 'en',
-          saveMissing: false,
+          parser: {
+            class: I18nJsonParser,
+            options: {
+              path: path.join(__dirname, '/i18n/'),
+            },
+          },
         }),
       ],
     }).compile();
@@ -147,10 +176,14 @@ describe('i18n module loads custom files', () => {
     const module = await Test.createTestingModule({
       imports: [
         I18nModule.forRoot({
-          path: path.join(__dirname, '/i18n/'),
-          filePattern: '*.custom',
           fallbackLanguage: 'en',
-          saveMissing: false,
+          parser: {
+            class: I18nJsonParser,
+            options: {
+              path: path.join(__dirname, '/i18n/'),
+              filePattern: '*.custom',
+            },
+          },
         }),
       ],
     }).compile();
@@ -182,10 +215,14 @@ describe('i18n module loads custom files with wrong file pattern', () => {
     const module = await Test.createTestingModule({
       imports: [
         I18nModule.forRoot({
-          path: path.join(__dirname, '/i18n/'),
-          filePattern: 'custom',
           fallbackLanguage: 'en',
-          saveMissing: false,
+          parser: {
+            class: I18nJsonParser,
+            options: {
+              path: path.join(__dirname, '/i18n/'),
+              filePattern: 'custom',
+            },
+          },
         }),
       ],
     }).compile();

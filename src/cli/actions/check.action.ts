@@ -2,7 +2,7 @@ import { AbstractAction } from './abstract.action';
 import { Input } from '../commands';
 import * as path from 'path';
 import * as fs from 'fs';
-import { getDirectories } from '../../lib/utils/parse';
+import { getDirectories } from '../../lib/utils/file';
 import { I18nJsonParser } from '../../lib/parsers/i18n.json.parser';
 import * as _ from 'lodash';
 import * as chalk from 'chalk';
@@ -29,8 +29,6 @@ export class CheckAction extends AbstractAction {
     const jsonParser = new I18nJsonParser({
       path: i18nPath,
       filePattern: '*.json',
-      saveMissing: false,
-      fallbackLanguage: 'NOT_USED',
     });
 
     const translations = await jsonParser.parse();

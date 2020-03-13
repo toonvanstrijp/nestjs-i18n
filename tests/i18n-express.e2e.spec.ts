@@ -6,6 +6,8 @@ import {
   AcceptLanguageResolver,
   I18nModule,
   QueryResolver,
+  I18nJsonParser,
+  I18nJsonParserOptions,
 } from '../src/lib';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
@@ -18,15 +20,19 @@ describe('i18n module e2e express', () => {
     const module = await Test.createTestingModule({
       imports: [
         I18nModule.forRoot({
-          path: path.join(__dirname, '/i18n/'),
           fallbackLanguage: 'en',
-          saveMissing: false,
           resolvers: [
             { use: QueryResolver, options: ['lang', 'locale', 'l'] },
             new HeaderResolver(['x-custom-lang']),
             new CookieResolver(),
             AcceptLanguageResolver,
           ],
+          parser: {
+            class: I18nJsonParser,
+            options: {
+              path: path.join(__dirname, '/i18n/'),
+            },
+          },
         }),
       ],
       controllers: [HelloController],

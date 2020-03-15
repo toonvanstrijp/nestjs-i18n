@@ -10,17 +10,17 @@ export class HelloController {
   ) {}
 
   @Get()
-  hello(@I18nLang() lang: string): string {
+  async hello(@I18nLang() lang: string): Promise<string> {
     return this.i18n.translate('test.HELLO', { lang });
   }
 
   @Get('/context')
-  helloContext(@I18n() i18n: I18nContext): string {
+  helloContext(@I18n() i18n: I18nContext): Promise<string> {
     return i18n.translate('test.HELLO');
   }
 
   @Get('/request-scope')
-  helloRequestScope(): string {
+  helloRequestScope(): Promise<string> {
     return this.i18nRequestScope.translate('test.HELLO');
   }
 }

@@ -11,8 +11,10 @@ import {
   I18N_OPTIONS,
   I18N_TRANSLATIONS,
   I18N_LANGUAGES,
-  I18nTranslation,
   I18N_RESOLVERS,
+  I18N_PARSER_OPTIONS,
+  I18N_LANGUAGES_SUBJECT,
+  I18N_TRANSLATIONS_SUBJECT,
 } from './i18n.constants';
 import { I18nService } from './services/i18n.service';
 import { I18nRequestScopeService } from './services/i18n-request-scope.service';
@@ -23,20 +25,24 @@ import {
   ResolverWithOptions,
   I18nOptionResolver,
 } from './interfaces/i18n-options.interface';
-import { ValueProvider } from '@nestjs/common/interfaces';
-import { parseTranslations, getLanguages } from './utils/parse';
-import * as path from 'path';
+import { ValueProvider, ClassProvider } from '@nestjs/common/interfaces';
 import { I18nLanguageMiddleware } from './middleware/i18n-language-middleware';
 import { HttpAdapterHost, ModuleRef } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
 import { shouldResolve } from './utils/util';
+import { I18nTranslation } from './interfaces/i18n-translation.interface';
+import { I18nParser } from './parsers/i18n.parser';
+import {
+  Observable,
+  of as observableOf,
+  merge as observableMerge,
+  BehaviorSubject,
+} from 'rxjs';
 
 const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
-  filePattern: '*.json',
   resolvers: [],
-  saveMissing: true,
 };
 
 @Global()
@@ -70,33 +76,71 @@ export class I18nModule implements NestModule {
 
   static forRoot(options: I18nOptions): DynamicModule {
     options = this.sanitizeI18nOptions(options);
+
+    const i18nLanguagesSubject = new BehaviorSubject<string[]>([]);
+    const i18nTranslationSubject = new BehaviorSubject<I18nTranslation>({});
+
     const i18nOptions: ValueProvider = {
       provide: I18N_OPTIONS,
       useValue: options,
     };
 
+    const i18nParserProvider: ClassProvider = {
+      provide: I18nParser,
+      useClass: options.parser,
+    };
+
+    const i18nParserOptionsProvider: ValueProvider = {
+      provide: I18N_PARSER_OPTIONS,
+      useValue: options.parserOptions,
+    };
+
+    const i18nLanguagesSubjectProvider: ValueProvider = {
+      provide: I18N_LANGUAGES_SUBJECT,
+      useValue: i18nLanguagesSubject,
+    };
+
+    const i18nTranslationSubjectProvider: ValueProvider = {
+      provide: I18N_TRANSLATIONS_SUBJECT,
+      useValue: i18nTranslationSubject,
+    };
+
     const translationsProvider = {
       provide: I18N_TRANSLATIONS,
-      useFactory: async (): Promise<I18nTranslation> => {
+      useFactory: async (
+        parser: I18nParser,
+      ): Promise<Observable<I18nTranslation>> => {
         try {
-          return await parseTranslations(options);
+          const translation = await parser.parse();
+          if (translation instanceof Observable) {
+            translation.subscribe(i18nTranslationSubject);
+          } else {
+            i18nTranslationSubject.next(translation);
+          }
         } catch (e) {
           logger.error('parsing translation error', e);
-          return {};
         }
+        return i18nTranslationSubject.asObservable();
       },
+      inject: [I18nParser],
     };
 
     const languagessProvider = {
       provide: I18N_LANGUAGES,
-      useFactory: async (): Promise<string[]> => {
+      useFactory: async (parser: I18nParser): Promise<Observable<string[]>> => {
         try {
-          return await getLanguages(options);
+          const languages = await parser.languages();
+          if (languages instanceof Observable) {
+            languages.subscribe(i18nLanguagesSubject);
+          } else {
+            i18nLanguagesSubject.next(languages);
+          }
         } catch (e) {
-          logger.error('failed getting languages', e);
-          return [];
+          logger.error('parsing translation error', e);
         }
+        return i18nLanguagesSubject.asObservable();
       },
+      inject: [I18nParser],
     };
 
     const resolversProvider = {
@@ -114,6 +158,10 @@ export class I18nModule implements NestModule {
         translationsProvider,
         languagessProvider,
         resolversProvider,
+        i18nParserProvider,
+        i18nParserOptionsProvider,
+        i18nLanguagesSubjectProvider,
+        i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
       ],
       exports: [I18nService, I18nRequestScopeService, languagessProvider],
@@ -124,10 +172,31 @@ export class I18nModule implements NestModule {
     const asyncOptionsProvider = this.createAsyncOptionsProvider(options);
     const asyncTranslationProvider = this.createAsyncTranslationProvider();
     const asyncLanguagesProvider = this.createAsyncLanguagesProvider();
-    const resolversProvider = {
+    const asyncParserOptionsProvider = this.createAsyncParserOptionsProvider();
+
+    const i18nLanguagesSubject = new BehaviorSubject<string[]>([]);
+    const i18nTranslationSubject = new BehaviorSubject<I18nTranslation>({});
+
+    const resolversProvider: ValueProvider = {
       provide: I18N_RESOLVERS,
       useValue: options.resolvers || [],
     };
+
+    const i18nParserProvider: ClassProvider<I18nParser> = {
+      provide: I18nParser,
+      useClass: options.parser,
+    };
+
+    const i18nLanguagesSubjectProvider: ValueProvider = {
+      provide: I18N_LANGUAGES_SUBJECT,
+      useValue: i18nLanguagesSubject,
+    };
+
+    const i18nTranslationSubjectProvider: ValueProvider = {
+      provide: I18N_TRANSLATIONS_SUBJECT,
+      useValue: i18nTranslationSubject,
+    };
+
     return {
       module: I18nModule,
       imports: options.imports || [],
@@ -136,9 +205,13 @@ export class I18nModule implements NestModule {
         asyncOptionsProvider,
         asyncTranslationProvider,
         asyncLanguagesProvider,
+        asyncParserOptionsProvider,
         I18nService,
         I18nRequestScopeService,
         resolversProvider,
+        i18nParserProvider,
+        i18nLanguagesSubjectProvider,
+        i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
       ],
       exports: [I18nService, I18nRequestScopeService, asyncLanguagesProvider],
@@ -163,46 +236,64 @@ export class I18nModule implements NestModule {
     };
   }
 
+  private static createAsyncParserOptionsProvider(): Provider {
+    return {
+      provide: I18N_PARSER_OPTIONS,
+      useFactory: async (options: I18nOptions): Promise<any> => {
+        return options.parserOptions;
+      },
+      inject: [I18N_OPTIONS],
+    };
+  }
+
   private static createAsyncTranslationProvider(): Provider {
     return {
       provide: I18N_TRANSLATIONS,
-      useFactory: async (options: I18nOptions): Promise<I18nTranslation> => {
-        options = this.sanitizeI18nOptions(options);
+      useFactory: async (
+        parser: I18nParser,
+        translationsSubject: BehaviorSubject<I18nTranslation>,
+      ): Promise<Observable<I18nTranslation>> => {
         try {
-          return await parseTranslations(options);
+          const translation = await parser.parse();
+          if (translation instanceof Observable) {
+            translation.subscribe(translationsSubject);
+          } else {
+            translationsSubject.next(translation);
+          }
         } catch (e) {
           logger.error('parsing translation error', e);
-          return {};
         }
+        return translationsSubject.asObservable();
       },
-      inject: [I18N_OPTIONS],
+      inject: [I18nParser, I18N_TRANSLATIONS_SUBJECT],
     };
   }
 
   private static createAsyncLanguagesProvider(): Provider {
     return {
       provide: I18N_LANGUAGES,
-      useFactory: async (options: I18nOptions): Promise<string[]> => {
-        options = this.sanitizeI18nOptions(options);
+      useFactory: async (
+        parser: I18nParser,
+        languagesSubject: BehaviorSubject<string[]>,
+      ): Promise<Observable<string[]>> => {
         try {
-          return await getLanguages(options);
+          const languages = await parser.languages();
+          if (languages instanceof Observable) {
+            languages.subscribe(languagesSubject);
+          } else {
+            languagesSubject.next(languages);
+          }
         } catch (e) {
           logger.error('parsing translation error', e);
-          return [];
         }
+        return languagesSubject.asObservable();
       },
-      inject: [I18N_OPTIONS],
+      inject: [I18nParser, I18N_LANGUAGES_SUBJECT],
     };
   }
 
   private static sanitizeI18nOptions(options: I18nOptions) {
     options = { ...defaultOptions, ...options };
-
-    options.path = path.normalize(options.path + path.sep);
-    if (!options.filePattern.startsWith('*.')) {
-      options.filePattern = '*.' + options.filePattern;
-    }
-
     return options;
   }
 

@@ -1,13 +1,17 @@
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { I18nResolver } from './i18n-language-resolver.interface';
+import { I18nParser } from '../parsers/i18n.parser';
 
 export type ResolverWithOptions = {
   use: Type<I18nResolver>;
   options: any;
 };
 
-export type I18nOptionsWithoutResolvers = Omit<I18nOptions, 'resolvers'>;
+export type I18nOptionsWithoutResolvers = Omit<
+  I18nOptions,
+  'resolvers' | 'parser'
+>;
 
 export type I18nOptionResolver =
   | ResolverWithOptions
@@ -15,11 +19,10 @@ export type I18nOptionResolver =
   | I18nResolver;
 
 export interface I18nOptions {
-  path: string;
   fallbackLanguage: string;
-  filePattern?: string;
   resolvers?: I18nOptionResolver[];
-  saveMissing?: boolean;
+  parser: Type<I18nParser>;
+  parserOptions: any;
 }
 
 export interface I18nOptionsFactory {
@@ -35,5 +38,6 @@ export interface I18nAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
     ...args: any[]
   ) => Promise<I18nOptionsWithoutResolvers> | I18nOptionsWithoutResolvers;
   resolvers?: I18nOptionResolver[];
+  parser: Type<I18nParser>;
   inject?: any[];
 }

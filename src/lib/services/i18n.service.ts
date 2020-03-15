@@ -3,13 +3,18 @@ import * as format from 'string-format';
 import {
   I18N_OPTIONS,
   I18N_TRANSLATIONS,
-  I18nTranslation,
   I18N_LANGUAGES,
+  I18N_LANGUAGES_SUBJECT,
+  I18N_TRANSLATIONS_SUBJECT,
 } from '../i18n.constants';
 import { I18nOptions } from '..';
+import { I18nTranslation } from '../interfaces/i18n-translation.interface';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import * as path from 'path';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { I18nParser } from '../parsers/i18n.parser';
+import { take, first, last } from 'rxjs/operators';
 
 @Injectable()
 export class I18nService {
@@ -17,19 +22,24 @@ export class I18nService {
     @Inject(I18N_OPTIONS)
     private readonly i18nOptions: I18nOptions,
     @Inject(I18N_TRANSLATIONS)
-    private readonly translations: I18nTranslation,
+    private readonly translations: Observable<I18nTranslation>,
     @Inject(I18N_LANGUAGES)
-    private readonly supportedLanguages: string[],
+    private readonly supportedLanguages: Observable<string[]>,
     private readonly logger: Logger,
+    private readonly parser: I18nParser,
+    @Inject(I18N_LANGUAGES_SUBJECT)
+    private readonly languagesSubject: BehaviorSubject<string[]>,
+    @Inject(I18N_TRANSLATIONS_SUBJECT)
+    private readonly translationsSubject: BehaviorSubject<I18nTranslation>,
   ) {}
 
-  public translate(
+  public async translate(
     key: string,
     options?: {
       lang?: string;
       args?: Array<{ [k: string]: any } | string> | { [k: string]: any };
     },
-  ) {
+  ): Promise<string> {
     options = {
       lang: this.i18nOptions.fallbackLanguage,
       ...options,
@@ -37,18 +47,15 @@ export class I18nService {
 
     const { lang, args } = options;
 
-    const translationsByLanguage = this.translations[lang];
+    const translationsByLanguage = (
+      await this.translations.pipe(take(1)).toPromise()
+    )[lang];
 
     if (
       translationsByLanguage === undefined ||
       translationsByLanguage === null ||
       (!!translationsByLanguage && !translationsByLanguage.hasOwnProperty(key))
     ) {
-      // and now we detect, if this should also be added to the MISSING file
-      if (this.i18nOptions.saveMissing === true) {
-        this.saveMissingTranslation(key, lang);
-      }
-
       if (lang !== this.i18nOptions.fallbackLanguage) {
         const message = `Translation "${key}" in "${lang}" does not exist.`;
         this.logger.error(message);
@@ -60,7 +67,9 @@ export class I18nService {
       }
     }
 
-    let translation = translationsByLanguage[key];
+    let translation = translationsByLanguage
+      ? translationsByLanguage[key]
+      : key;
 
     if (translation && (args || (args instanceof Array && args.length > 0))) {
       translation = format(
@@ -71,42 +80,25 @@ export class I18nService {
     return translation || key;
   }
 
-  public getSupportedLanguages() {
-    return this.supportedLanguages;
+  public async getSupportedLanguages() {
+    return this.supportedLanguages.pipe(take(1)).toPromise();
   }
 
-  private saveMissingTranslation(key: string, language: string) {
-    const filePathMissing = path.join(this.i18nOptions.path, language);
-    if (!fs.existsSync(filePathMissing)) {
-      this.logger.error(`Cannot find path to store missing translations`);
-      return;
+  public async refresh() {
+    const translations = await this.parser.parse();
+    if (translations instanceof Observable) {
+      this.translationsSubject.next(
+        await translations.pipe(take(1)).toPromise(),
+      );
+    } else {
+      this.translationsSubject.next(translations);
     }
 
-    const keyParts = key.split('.');
-    const filePart = keyParts.shift();
-    const keyWithoutFile = keyParts.join('.');
-
-    const filePath = path.join(filePathMissing, `${filePart}.missing`);
-
-    // first we get the content of the file
-    let jsonContent = {};
-    if (fs.existsSync(filePath)) {
-      const fileContent = fs.readFileSync(filePath, { encoding: 'utf8' });
-      jsonContent = JSON.parse(fileContent);
+    const languages = await this.parser.languages();
+    if (languages instanceof Observable) {
+      this.languagesSubject.next(await languages.pipe(take(1)).toPromise());
+    } else {
+      this.languagesSubject.next(languages);
     }
-
-    // check if the key is already present in our file
-    // so we must not save the file again
-    if (_.has(jsonContent, keyWithoutFile)) {
-      return;
-    }
-
-    // and now we add the missing key
-    jsonContent = _.set(jsonContent, keyWithoutFile, '');
-
-    fs.writeFileSync(filePath, JSON.stringify(jsonContent, null, 2));
-    this.logger.error(
-      `The key "${keyWithoutFile}" for language: ${language} was added to the file "${filePart}.missing" (@ ${filePath} )`,
-    );
   }
 }

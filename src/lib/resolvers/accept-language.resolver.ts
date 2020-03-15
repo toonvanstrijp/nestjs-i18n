@@ -9,11 +9,11 @@ import { pick } from 'accept-language-parser';
 export class AcceptLanguageResolver implements I18nResolver {
   constructor() {}
 
-  resolve(req: any) {
+  async resolve(req: any) {
     const lang = req.headers['accept-language'];
     if (lang) {
       const service: I18nService = req.i18nService;
-      return pick(service.getSupportedLanguages(), lang);
+      return pick(await service.getSupportedLanguages(), lang);
     }
     return lang;
   }

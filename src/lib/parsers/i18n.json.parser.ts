@@ -1,43 +1,83 @@
 import { I18nParser } from './i18n.parser';
 import { I18N_PARSER_OPTIONS } from '../i18n.constants';
-import { Inject } from '@nestjs/common';
+import { Inject, OnModuleDestroy } from '@nestjs/common';
 import * as path from 'path';
 import * as fs from 'fs';
 import { getDirectories, getFiles } from '../utils/file';
 import * as flat from 'flat';
 import { promisify } from 'util';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
-import { Observable } from 'rxjs';
-
+import {
+  Observable,
+  Subject,
+  merge as ObservableMerge,
+  from as ObservableFrom,
+} from 'rxjs';
+import * as chokidar from 'chokidar';
+import { switchMap } from 'rxjs/operators';
 const readFile = promisify(fs.readFile);
 const exists = promisify(fs.exists);
 
 export interface I18nJsonParserOptions {
   path: string;
   filePattern?: string;
+  watch?: boolean;
 }
 
 const defaultOptions: Partial<I18nJsonParserOptions> = {
   filePattern: '*.json',
+  watch: false,
 };
 
-export class I18nJsonParser extends I18nParser<I18nJsonParserOptions> {
+export class I18nJsonParser extends I18nParser<I18nJsonParserOptions>
+  implements OnModuleDestroy {
+  private watcher?: chokidar.FSWatcher;
+
+  private events: Subject<string> = new Subject();
+
   constructor(
     @Inject(I18N_PARSER_OPTIONS)
     options: I18nJsonParserOptions,
   ) {
     super();
     this.options = this.sanitizeOptions(options);
+
+    if (this.options.watch) {
+      this.watcher = chokidar
+        .watch(this.options.path, { ignoreInitial: true })
+        .on('all', event => {
+          this.events.next(event);
+        });
+    }
   }
 
-  async languages(): Promise<string[]> {
-    const i18nPath = path.normalize(this.options.path + path.sep);
-    return (await getDirectories(i18nPath)).map(dir =>
-      path.relative(i18nPath, dir),
-    );
+  async onModuleDestroy() {
+    if (this.watcher) {
+      await this.watcher.close();
+    }
+  }
+
+  async languages(): Promise<string[] | Observable<string[]>> {
+    if (this.options.watch) {
+      return ObservableMerge(
+        ObservableFrom(this.parseLanguages()),
+        this.events.pipe(switchMap(() => this.parseLanguages())),
+      );
+    }
+    return this.parseLanguages();
   }
 
   async parse(): Promise<I18nTranslation | Observable<I18nTranslation>> {
+    if (this.options.watch) {
+      return ObservableMerge(
+        ObservableFrom(this.parseTranslations()),
+        this.events.pipe(switchMap(() => this.parseTranslations())),
+      );
+    }
+    return this.parseTranslations();
+  }
+
+  private async parseTranslations(): Promise<I18nTranslation> {
     const i18nPath = path.normalize(this.options.path + path.sep);
 
     const translations: I18nTranslation = {};
@@ -52,7 +92,7 @@ export class I18nJsonParser extends I18nParser<I18nJsonParserOptions> {
       );
     }
 
-    const languages = await this.languages();
+    const languages = await this.parseLanguages();
 
     const pattern = new RegExp(
       '.' + this.options.filePattern.replace('.', '.'),
@@ -93,6 +133,13 @@ export class I18nJsonParser extends I18nParser<I18nJsonParserOptions> {
     }
 
     return translations;
+  }
+
+  private async parseLanguages(): Promise<string[]> {
+    const i18nPath = path.normalize(this.options.path + path.sep);
+    return (await getDirectories(i18nPath)).map(dir =>
+      path.relative(i18nPath, dir),
+    );
   }
 
   private sanitizeOptions(options: I18nJsonParserOptions) {

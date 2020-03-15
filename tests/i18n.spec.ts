@@ -1,5 +1,6 @@
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import * as path from 'path';
+import * as fs from 'fs';
 import {
   I18nModule,
   I18nService,
@@ -113,17 +114,41 @@ describe('i18n module', () => {
     expect(await i18nService.getSupportedLanguages()).toEqual(['en', 'nl']);
   });
 
-  describe('i18n should refresh', () => {
-    it('i18n should refresh translations', async () => {
-      const parseSpy = jest.spyOn(i18nParser, 'parse');
-      await i18nService.refresh();
-      expect(parseSpy).toHaveBeenCalled();
+  describe('i18n should refresh manually', () => {
+    const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
+    const newLanguagePath = path.join(__dirname, '/i18n/de/');
+
+    afterAll(async () => {
+      fs.unlinkSync(newTranslationPath);
+      fs.rmdirSync(newLanguagePath);
     });
 
-    it('i18n should refresh languages', async () => {
+    it('i18n should refresh translations and languages', async () => {
+      const parseSpy = jest.spyOn(i18nParser, 'parse');
       const languagesSpy = jest.spyOn(i18nParser, 'languages');
       await i18nService.refresh();
+      expect(parseSpy).toHaveBeenCalled();
       expect(languagesSpy).toHaveBeenCalled();
+    });
+
+    it('i18n should load new translations', async () => {
+      fs.writeFileSync(
+        newTranslationPath,
+        JSON.stringify({ WORLD: 'wereld' }),
+        'utf8',
+      );
+      await i18nService.refresh();
+      const translation = await i18nService.translate('test2.WORLD', {
+        lang: 'nl',
+      });
+      expect(translation).toEqual('wereld');
+    });
+
+    it('i18n should load new languages', async () => {
+      fs.mkdirSync(newLanguagePath);
+      await i18nService.refresh();
+      const languages = await i18nService.getSupportedLanguages();
+      expect(languages).toContain('de');
     });
   });
 });
@@ -243,5 +268,59 @@ describe('i18n module loads custom files with wrong file pattern', () => {
     expect(await i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
       'test.HELLO',
     );
+  });
+});
+
+describe('i18n module with parser watch', () => {
+  let i18nService: I18nService;
+  let i18nParser: I18nParser;
+
+  const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
+  const newLanguagePath = path.join(__dirname, '/i18n/de/');
+  let i18nModule: TestingModule;
+  beforeAll(async () => {
+    i18nModule = await Test.createTestingModule({
+      imports: [
+        I18nModule.forRoot({
+          fallbackLanguage: 'en',
+          parser: {
+            class: I18nJsonParser,
+            options: {
+              path: path.join(__dirname, '/i18n/'),
+              watch: true,
+            },
+          },
+        }),
+      ],
+    }).compile();
+
+    i18nService = i18nModule.get(I18nService);
+    i18nParser = i18nModule.get(I18nParser);
+  });
+
+  afterAll(async () => {
+    await i18nModule.close();
+    fs.unlinkSync(newTranslationPath);
+    fs.rmdirSync(newLanguagePath);
+  });
+
+  it('i18n should load new translations', async () => {
+    fs.writeFileSync(
+      newTranslationPath,
+      JSON.stringify({ WORLD: 'wereld' }),
+      'utf8',
+    );
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    const translation = await i18nService.translate('test2.WORLD', {
+      lang: 'nl',
+    });
+    expect(translation).toEqual('wereld');
+  });
+
+  it('i18n should load new languages', async () => {
+    fs.mkdirSync(newLanguagePath);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    const languages = await i18nService.getSupportedLanguages();
+    expect(languages).toContain('de');
   });
 });

@@ -48,7 +48,7 @@ export class I18nService {
     const { lang, args } = options;
 
     const translationsByLanguage = (
-      await this.translations.pipe(first()).toPromise()
+      await this.translations.pipe(take(1)).toPromise()
     )[lang];
 
     if (
@@ -81,14 +81,14 @@ export class I18nService {
   }
 
   public async getSupportedLanguages() {
-    return this.supportedLanguages.pipe(first()).toPromise();
+    return this.supportedLanguages.pipe(take(1)).toPromise();
   }
 
   public async refresh() {
     const translations = await this.parser.parse();
     if (translations instanceof Observable) {
       this.translationsSubject.next(
-        await translations.pipe(first()).toPromise(),
+        await translations.pipe(take(1)).toPromise(),
       );
     } else {
       this.translationsSubject.next(translations);
@@ -96,7 +96,7 @@ export class I18nService {
 
     const languages = await this.parser.languages();
     if (languages instanceof Observable) {
-      this.languagesSubject.next(await languages.pipe(first()).toPromise());
+      this.languagesSubject.next(await languages.pipe(take(1)).toPromise());
     } else {
       this.languagesSubject.next(languages);
     }

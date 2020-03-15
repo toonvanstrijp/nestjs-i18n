@@ -110,21 +110,17 @@ export class I18nModule implements NestModule {
       useFactory: async (
         parser: I18nParser,
       ): Promise<Observable<I18nTranslation>> => {
-        let translationObservable = observableOf({});
         try {
           const translation = await parser.parse();
           if (translation instanceof Observable) {
-            translationObservable = translation;
+            translation.subscribe(i18nTranslationSubject);
           } else {
-            translationObservable = observableOf(translation);
+            i18nTranslationSubject.next(translation);
           }
         } catch (e) {
           logger.error('parsing translation error', e);
         }
-        return observableMerge(
-          translationObservable,
-          i18nTranslationSubject.asObservable(),
-        );
+        return i18nTranslationSubject.asObservable();
       },
       inject: [I18nParser],
     };
@@ -132,21 +128,17 @@ export class I18nModule implements NestModule {
     const languagessProvider = {
       provide: I18N_LANGUAGES,
       useFactory: async (parser: I18nParser): Promise<Observable<string[]>> => {
-        let languageObservable = observableOf([]);
         try {
           const languages = await parser.languages();
           if (languages instanceof Observable) {
-            languageObservable = languages;
+            languages.subscribe(i18nLanguagesSubject);
           } else {
-            languageObservable = observableOf(languages);
+            i18nLanguagesSubject.next(languages);
           }
         } catch (e) {
           logger.error('parsing translation error', e);
         }
-        return observableMerge(
-          languageObservable,
-          i18nLanguagesSubject.asObservable(),
-        );
+        return i18nLanguagesSubject.asObservable();
       },
       inject: [I18nParser],
     };
@@ -255,21 +247,17 @@ export class I18nModule implements NestModule {
         parser: I18nParser,
         translationsSubject: BehaviorSubject<I18nTranslation>,
       ): Promise<Observable<I18nTranslation>> => {
-        let translationObservable = observableOf({});
         try {
           const translation = await parser.parse();
           if (translation instanceof Observable) {
-            translationObservable = translation;
+            translation.subscribe(translationsSubject);
           } else {
-            translationObservable = observableOf(translation);
+            translationsSubject.next(translation);
           }
         } catch (e) {
           logger.error('parsing translation error', e);
         }
-        return observableMerge(
-          translationObservable,
-          translationsSubject.asObservable(),
-        );
+        return translationsSubject.asObservable();
       },
       inject: [I18nParser, I18N_TRANSLATIONS_SUBJECT],
     };
@@ -282,21 +270,17 @@ export class I18nModule implements NestModule {
         parser: I18nParser,
         languagesSubject: BehaviorSubject<string[]>,
       ): Promise<Observable<string[]>> => {
-        let languageObservable = observableOf([]);
         try {
           const languages = await parser.languages();
           if (languages instanceof Observable) {
-            languageObservable = languages;
+            languages.subscribe(languagesSubject);
           } else {
-            languageObservable = observableOf(languages);
+            languagesSubject.next(languages);
           }
         } catch (e) {
           logger.error('parsing translation error', e);
         }
-        return observableMerge(
-          languageObservable,
-          languagesSubject.asObservable(),
-        );
+        return languagesSubject.asObservable();
       },
       inject: [I18nParser, I18N_LANGUAGES_SUBJECT],
     };

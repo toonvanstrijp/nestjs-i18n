@@ -20,13 +20,9 @@ export type I18nOptionResolver =
 
 export interface I18nOptions {
   fallbackLanguage: string;
-  parser: I18nParserOptions;
   resolvers?: I18nOptionResolver[];
-}
-
-export interface I18nParserOptions<T extends I18nParser = I18nParser> {
-  class: Type<T>;
-  options: any;
+  parser: Type<I18nParser>;
+  parserOptions: any;
 }
 
 export interface I18nOptionsFactory {
@@ -42,6 +38,6 @@ export interface I18nAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
     ...args: any[]
   ) => Promise<I18nOptionsWithoutResolvers> | I18nOptionsWithoutResolvers;
   resolvers?: I18nOptionResolver[];
-  parser: I18nParserOptions;
+  parser: Type<I18nParser>;
   inject?: any[];
 }

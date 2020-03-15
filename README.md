@@ -13,6 +13,8 @@ $ npm i --save nestjs-i18n
 
 ## Quick Start
 
+Build in we have a JSON parser (`I18nJsonParser`) this parser handles to following structure
+
 ### Structure
 
 create a directory and in it define your language keys as directories.
@@ -58,9 +60,11 @@ import { I18nModule } from 'nestjs-i18n';
 @Module({
   imports: [
     I18nModule.forRoot({
-      path: path.join(__dirname, '/i18n'),
-      filePattern: '*.json',
       fallbackLanguage: 'en',
+      parser: I18nJsonParser,
+      parserOptions: {
+        path: path.join(__dirname, '/i18n/'),
+      },
     }),
   ],
   controllers: [],
@@ -79,16 +83,50 @@ import { I18nModule } from 'nestjs-i18n';
   imports: [
     I18nModule.forRootAsync({
       useFactory: (configService: ConfigurationService) => ({
-        path: configService.i18nPath,
         fallbackLanguage: configService.fallbackLanguage, // e.g., 'en'
-        filePattern: configService.i18nFilePattern, // e.g., '*.i18n.json'
+        parserOptions: {
+          path: path.join(__dirname, '/i18n/'),
+        },
       }),
+      parser: I18nJsonParser,
       inject: [ConfigurationService],
     }),
   ],
   controllers: [],
 })
 export class AppModule {}
+```
+
+### Parsers
+
+A default JSON parser (`I18nJsonParser`) is included, to implement your own parser create a class that extends the `I18nParser` class.
+
+```typescript
+export class I18nMysqlParser extends I18nParser {
+  constructor(
+    @Inject(I18N_PARSER_OPTIONS)
+    private options: I18nJsonParserOptions,
+  ) {
+    super();
+  }
+
+  async languages(): Promise<string[] | Observable<string[]>> {
+    // for example do a database call here
+    return observableOf(['nl', 'en']);
+  }
+
+  async parse(): Promise<I18nTranslation | Observable<I18nTranslation>> {
+    // for example do a database call here
+    return observableOf({
+      nl: {
+        HELLO: 'Hallo',
+      },
+      en: {
+        HELLO: 'Hello',
+      },
+    });
+  }
+}
 ```
 
 ### Language Resolvers
@@ -99,8 +137,11 @@ To make it easier to manage in what language to respond you can make use of reso
 @Module({
   imports: [
     I18nModule.forRoot({
-      path: path.join(__dirname, '/i18n/'),
       fallbackLanguage: 'en',
+      parser: I18nJsonParser,
+      parserOptions: {
+        path: path.join(__dirname, '/i18n/'),
+      },
       resolvers: [
         { use: QueryResolver, options: ['lang', 'locale', 'l'] },
         new HeaderResolver(['x-custom-lang']),
@@ -116,12 +157,12 @@ export class AppModule {}
 
 Currently, there are four built-in resolvers
 
-| Resolver                 | Default value     |
-| ------------------------ | ----------------- |
-| `QueryResolver`          | `none`            |
-| `HeaderResolver`         | `none`            |
-| `AcceptLanguageResolver` | `N/A`             |
-| `CookieResolver`         | `lang`            |
+| Resolver                 | Default value |
+| ------------------------ | ------------- |
+| `QueryResolver`          | `none`        |
+| `HeaderResolver`         | `none`        |
+| `AcceptLanguageResolver` | `N/A`         |
+| `CookieResolver`         | `lang`        |
 
 To implement your own resolver (or custom logic) use the `I18nResolver` interface. The resolvers are provided via the nestjs dependency injection, this way you can inject your own services if needed.
 
@@ -149,9 +190,11 @@ To provide initial options to your custom resolver use the `@I18nResolverOptions
 
 ```typescript
 I18nModule.forRoot({
-  path: path.join(__dirname, '/i18n/'),
   fallbackLanguage: 'en',
-  saveMissing: false,
+  parser: I18nJsonParser,
+  parserOptions: {
+    path: path.join(__dirname, '/i18n/'),
+  },
   resolvers: [{ use: QueryResolver, options: ['lang', 'locale', 'l'] }],
 });
 ```
@@ -162,11 +205,13 @@ I18nModule.forRoot({
 I18nModule.forRootAsync({
   useFactory: () => {
     return {
-      path: path.join(__dirname, '/i18n'),
       fallbackLanguage: 'en',
-      saveMissing: false,
+      parserOptions: {
+        path: path.join(__dirname, '/i18n'),
+      },
     };
   },
+  parser: I18nJsonParser,
   resolvers: [{ use: QueryResolver, options: ['lang', 'locale', 'l'] }],
 });
 ```
@@ -235,22 +280,6 @@ Read [Nest Docs](https://docs.nestjs.com/fundamentals/injection-scopes) for more
 
 **Dont use `I18nRequestScopeService` within controllers.** The `I18n` decorator is a much better solution.
 
-### Missing Translations
-
-If you require a translation that is missing, `I18n` will log an error. However, you can also write these missing translations to a new file in order to help translating your application later on.
-
-This behaviour can be controlled via the `saveMissing: boolean` attribute when adding the `I18nModule` to your application. Thereby, `true` describes the following behaviour:
-
-Say, you request the translation `mail.registration.subject` in a `de` language, and this specific key is missing. This will create a `de/mail.missing` file in your `i18n` folder and add the following content:
-
-```json
-{
-  "registration": {
-    "subject": ""
-  }
-}
-```
-
 # CLI
 
 To easily check if your i18n folder is correctly structured you can use the following command:
@@ -261,6 +290,8 @@ example: `nest-i18n check src/i18n`
 This is very useful inside a CI environment to prevent releases with missing translations.
 
 # Breaking changes:
+
+- from V6.0.0 on we implemented the `I18nParser`, by using this we can easily support different formats other than JSON. To migrate to this change look at the [Quick start](#quick-start) above. There are some changes in the declaration of the `I18nModule`.
 
 - from V4.0.0 on we changed the signature of the `translate` method, the language is now optional, if no language is given it'll fallback to the `fallbackLanguage`
 

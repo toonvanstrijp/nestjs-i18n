@@ -29,15 +29,14 @@ const defaultOptions: Partial<I18nJsonParserOptions> = {
   watch: false,
 };
 
-export class I18nJsonParser extends I18nParser<I18nJsonParserOptions>
-  implements OnModuleDestroy {
+export class I18nJsonParser extends I18nParser implements OnModuleDestroy {
   private watcher?: chokidar.FSWatcher;
 
   private events: Subject<string> = new Subject();
 
   constructor(
     @Inject(I18N_PARSER_OPTIONS)
-    options: I18nJsonParserOptions,
+    private options: I18nJsonParserOptions,
   ) {
     super();
     this.options = this.sanitizeOptions(options);

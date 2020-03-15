@@ -1,14 +1,20 @@
-import { createParamDecorator } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { I18nService } from '..';
 import { I18nContext } from '../i18n.context';
 
-export const I18n = createParamDecorator((data, req) => {
-  // this is gonna be so nasty..
-  // FIXME: This has to be fixed in later stages! PLEASE!
-  if (Array.isArray(req)) {
-    return new I18nContext(...resolveI18nServiceFromGraphQLContext(req));
+export const I18n = createParamDecorator((data, ctx: ExecutionContext) => {
+  switch (ctx.getType() as string) {
+    case 'http':
+      return new I18nContext(
+        ...resolveI18nServiceFromRestRequest(ctx.switchToHttp().getRequest()),
+      );
+    case 'graphql':
+      return new I18nContext(
+        ...resolveI18nServiceFromGraphQLContext(ctx.getArgs()),
+      );
+    default:
+      throw Error(`context type: ${ctx.getType()} not supported`);
   }
-  return new I18nContext(...resolveI18nServiceFromRestRequest(req));
 });
 
 function resolveI18nServiceFromRestRequest(req): [string, I18nService] {

@@ -1,12 +1,16 @@
-import { createParamDecorator } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-export const I18nLang = createParamDecorator((data, req) => {
-  // this is gonna be so nasty..
-  // FIXME: This has to be fixed in later stages! PLEASE!
-  if (Array.isArray(req)) {
-    return resolveI18nLanguageFromGraphQLContext(req);
+export const I18nLang = createParamDecorator((data, ctx: ExecutionContext) => {
+  switch (ctx.getType() as string) {
+    case 'http':
+      return resolveI18nLanguageFromRestRequest(
+        ctx.switchToHttp().getRequest(),
+      );
+    case 'graphql':
+      return resolveI18nLanguageFromGraphQLContext(ctx.getArgs());
+    default:
+      throw Error(`context type: ${ctx.getType()} not supported`);
   }
-  return resolveI18nLanguageFromRestRequest(req);
 });
 
 function resolveI18nLanguageFromRestRequest(req) {

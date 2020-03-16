@@ -11,6 +11,15 @@ The **i18n** module for [Nest](https://github.com/nestjs/nest).
 $ npm i --save nestjs-i18n
 ```
 
+## Versions
+
+To keep your setup working use the correct version of `nestjs-i18n`.
+
+| nestjs-i18n version    | nestjs version |
+| ---------------------- | -------------- |
+| **v7.0.0** or greather | **v7.0.0**     |
+| **v6.0.0** or below    | **v6.0.0**     |
+
 ## Quick Start
 
 Build in we have a JSON parser (`I18nJsonParser`) this parser handles to following structure

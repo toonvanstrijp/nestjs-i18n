@@ -1,6 +1,6 @@
 {
   "name": "nestjs-i18n",
-  "version": "6.0.1",
+  "version": "7.0.0",
   "description": "",
   "author": "Toon van Strijp",
   "license": "MIT",
@@ -27,38 +27,38 @@
     "coveralls": "npm run test:cov && cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
-    "@nestjs/common": "^6.11.6",
-    "@nestjs/core": "^6.11.6",
-    "@nestjs/graphql": "^6.5.4",
-    "@nestjs/platform-express": "^6.11.6",
-    "@nestjs/platform-fastify": "^6.11.6",
-    "@nestjs/testing": "^6.11.6",
+    "@nestjs/common": "^7.0.2",
+    "@nestjs/core": "^7.0.2",
+    "@nestjs/graphql": "^7.0.6",
+    "@nestjs/platform-express": "^7.0.2",
+    "@nestjs/platform-fastify": "^7.0.2",
+    "@nestjs/testing": "^7.0.2",
     "@types/commander": "^2.12.2",
     "@types/cookie": "^0.3.3",
     "@types/flat": "5.0.0",
-    "@types/jest": "^25.1.2",
+    "@types/jest": "^25.1.4",
     "@types/lodash": "^4.14.149",
-    "@types/node": "^13.7.0",
+    "@types/node": "^13.9.1",
     "@types/string-format": "^2.0.0",
-    "apollo-server-express": "^2.10.0",
+    "apollo-server-express": "^2.11.0",
     "coveralls": "^3.0.9",
-    "fastify": "^2.12.0",
+    "fastify": "^2.12.1",
     "graphql": "^14.6.0",
-    "graphql-tools": "^4.0.6",
-    "husky": "4.2.2",
+    "graphql-tools": "^4.0.7",
+    "husky": "^4.2.3",
     "jest": "^25.1.0",
     "lint-staged": "10.0.8",
     "prettier": "1.19.1",
     "reflect-metadata": "^0.1.13",
     "supertest": "^4.0.2",
-    "ts-jest": "^25.2.0",
+    "ts-jest": "^25.2.1",
     "typescript": "3.7.5"
   },
   "dependencies": {
     "accept-language-parser": "^1.5.0",
     "chalk": "^3.0.0",
     "chokidar": "^3.3.1",
-    "commander": "^4.1.1",
+    "commander": "^5.0.0",
     "cookie": "^0.4.0",
     "flat": "^5.0.0",
     "lodash": "^4.17.0",
@@ -66,8 +66,8 @@
     "string-format": "^2.0.0"
   },
   "peerDependencies": {
-    "@nestjs/common": "^6.0.0",
-    "@nestjs/core": "^6.0.0"
+    "@nestjs/common": "^7.0.0",
+    "@nestjs/core": "^7.0.0"
   },
   "lint-staged": {
     "*.ts": [

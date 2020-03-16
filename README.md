@@ -254,16 +254,16 @@ export class SampleController {
   constructor(private readonly i18n: I18nService) {}
 
   @Get()
-  sample(@I18nLang() lang: string) {
-    this.i18n.translate('HELLO_MESSAGE', {
+  async sample(@I18nLang() lang: string) {
+    await this.i18n.translate('HELLO_MESSAGE', {
       lang: lang,
       args: { id: 1, username: 'Toon' },
     });
-    this.i18n.translate('SETUP.WELCOME', {
+    await this.i18n.translate('SETUP.WELCOME', {
       lang: 'en',
       args: { id: 1, username: 'Toon' },
     });
-    this.i18n.translate('ARRAY.0', { lang: 'en' });
+    await this.i18n.translate('ARRAY.0', { lang: 'en' });
   }
 }
 ```
@@ -274,10 +274,14 @@ export class SampleController {
 @Controller()
 export class SampleController {
   @Get()
-  sample(@I18n() i18n: I18nContext) {
-    i18n.translate('HELLO_MESSAGE', { args: { id: 1, username: 'Toon' } });
-    i18n.translate('SETUP.WELCOME', { args: { id: 1, username: 'Toon' } });
-    i18n.translate('ARRAY.0');
+  async sample(@I18n() i18n: I18nContext) {
+    await i18n.translate('HELLO_MESSAGE', {
+      args: { id: 1, username: 'Toon' },
+    });
+    await i18n.translate('SETUP.WELCOME', {
+      args: { id: 1, username: 'Toon' },
+    });
+    await i18n.translate('ARRAY.0');
   }
 }
 ```
@@ -291,10 +295,14 @@ No need to handle `lang` manually.
 export class SampleService {
   constructor(private readonly i18n: I18nRequestScopeService) {}
 
-  doFancyStuff() {
-    this.i18n.translate('HELLO_MESSAGE', { args: { id: 1, username: 'Toon' } });
-    this.i18n.translate('SETUP.WELCOME', { args: { id: 1, username: 'Toon' } });
-    this.i18n.translate('ARRAY.0');
+  async doFancyStuff() {
+    await this.i18n.translate('HELLO_MESSAGE', {
+      args: { id: 1, username: 'Toon' },
+    });
+    await this.i18n.translate('SETUP.WELCOME', {
+      args: { id: 1, username: 'Toon' },
+    });
+    await this.i18n.translate('ARRAY.0');
   }
 }
 ```

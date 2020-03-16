@@ -17,11 +17,9 @@ describe('i18n module', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          parser: {
-            class: I18nJsonParser,
-            options: {
-              path: path.join(__dirname, '/i18n/'),
-            },
+          parser: I18nJsonParser,
+          parserOptions: {
+            path: path.join(__dirname, '/i18n/'),
           },
         }),
       ],
@@ -161,11 +159,9 @@ describe('i18n module without trailing slash in path', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          parser: {
-            class: I18nJsonParser,
-            options: {
-              path: path.join(__dirname, '/i18n/'),
-            },
+          parser: I18nJsonParser,
+          parserOptions: {
+            path: path.join(__dirname, '/i18n/'),
           },
         }),
       ],
@@ -202,12 +198,10 @@ describe('i18n module loads custom files', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          parser: {
-            class: I18nJsonParser,
-            options: {
-              path: path.join(__dirname, '/i18n/'),
-              filePattern: '*.custom',
-            },
+          parser: I18nJsonParser,
+          parserOptions: {
+            path: path.join(__dirname, '/i18n/'),
+            filePattern: '*.custom',
           },
         }),
       ],
@@ -241,12 +235,10 @@ describe('i18n module loads custom files with wrong file pattern', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          parser: {
-            class: I18nJsonParser,
-            options: {
-              path: path.join(__dirname, '/i18n/'),
-              filePattern: 'custom',
-            },
+          parser: I18nJsonParser,
+          parserOptions: {
+            path: path.join(__dirname, '/i18n/'),
+            filePattern: 'custom',
           },
         }),
       ],
@@ -283,12 +275,10 @@ describe('i18n module with parser watch', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          parser: {
-            class: I18nJsonParser,
-            options: {
-              path: path.join(__dirname, '/i18n/'),
-              watch: true,
-            },
+          parser: I18nJsonParser,
+          parserOptions: {
+            path: path.join(__dirname, '/i18n/'),
+            watch: true,
           },
         }),
       ],

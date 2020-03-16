@@ -87,12 +87,12 @@ export class I18nModule implements NestModule {
 
     const i18nParserProvider: ClassProvider = {
       provide: I18nParser,
-      useClass: options.parser.class,
+      useClass: options.parser,
     };
 
     const i18nParserOptionsProvider: ValueProvider = {
       provide: I18N_PARSER_OPTIONS,
-      useValue: options.parser.options,
+      useValue: options.parserOptions,
     };
 
     const i18nLanguagesSubjectProvider: ValueProvider = {
@@ -172,6 +172,7 @@ export class I18nModule implements NestModule {
     const asyncOptionsProvider = this.createAsyncOptionsProvider(options);
     const asyncTranslationProvider = this.createAsyncTranslationProvider();
     const asyncLanguagesProvider = this.createAsyncLanguagesProvider();
+    const asyncParserOptionsProvider = this.createAsyncParserOptionsProvider();
 
     const i18nLanguagesSubject = new BehaviorSubject<string[]>([]);
     const i18nTranslationSubject = new BehaviorSubject<I18nTranslation>({});
@@ -183,12 +184,7 @@ export class I18nModule implements NestModule {
 
     const i18nParserProvider: ClassProvider<I18nParser> = {
       provide: I18nParser,
-      useClass: options.parser.class,
-    };
-
-    const i18nParserOptionsProvider: ValueProvider = {
-      provide: I18N_PARSER_OPTIONS,
-      useValue: options.parser.options,
+      useClass: options.parser,
     };
 
     const i18nLanguagesSubjectProvider: ValueProvider = {
@@ -209,11 +205,11 @@ export class I18nModule implements NestModule {
         asyncOptionsProvider,
         asyncTranslationProvider,
         asyncLanguagesProvider,
+        asyncParserOptionsProvider,
         I18nService,
         I18nRequestScopeService,
         resolversProvider,
         i18nParserProvider,
-        i18nParserOptionsProvider,
         i18nLanguagesSubjectProvider,
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
@@ -237,6 +233,16 @@ export class I18nModule implements NestModule {
       useFactory: async (optionsFactory: I18nOptionsFactory) =>
         await optionsFactory.createI18nOptions(),
       inject: [options.useClass || options.useExisting],
+    };
+  }
+
+  private static createAsyncParserOptionsProvider(): Provider {
+    return {
+      provide: I18N_PARSER_OPTIONS,
+      useFactory: async (options: I18nOptions): Promise<any> => {
+        return options.parserOptions;
+      },
+      inject: [I18N_OPTIONS],
     };
   }
 

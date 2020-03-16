@@ -327,7 +327,7 @@ This is very useful inside a CI environment to prevent releases with missing tra
 
 # Breaking changes:
 
-- from V6.0.0 on we implemented the `I18nParser`, by using this we can easily support different formats other than JSON. To migrate to this change look at the [Quick start](#quick-start) above. There are some changes in the declaration of the `I18nModule`.
+- from V6.0.0 on we implemented the `I18nParser`, by using this we can easily support different formats other than JSON. To migrate to this change look at the [Quick start](#quick-start) above. There are some changes in the declaration of the `I18nModule`. Note: the translate function returns a Promise<string>. So you need to call it using await i18n.translate('HELLO');
 
 - from V4.0.0 on we changed the signature of the `translate` method, the language is now optional, if no language is given it'll fallback to the `fallbackLanguage`
 

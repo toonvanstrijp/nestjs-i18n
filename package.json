@@ -29,7 +29,7 @@
   "devDependencies": {
     "@nestjs/common": "^7.0.2",
     "@nestjs/core": "^7.0.2",
-    "@nestjs/graphql": "^7.0.4",
+    "@nestjs/graphql": "^7.0.6",
     "@nestjs/platform-express": "^7.0.2",
     "@nestjs/platform-fastify": "^7.0.2",
     "@nestjs/testing": "^7.0.2",

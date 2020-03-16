@@ -97,9 +97,37 @@ import { I18nModule } from 'nestjs-i18n';
 export class AppModule {}
 ```
 
-### Parsers
+## Live reloading / Refreshing translations
 
-A default JSON parser (`I18nJsonParser`) is included, to implement your own parser create a class that extends the `I18nParser` class.
+To use live reloading use the `watch` option in the `I18nJsonParser`. The `I18nJsonParser` watches the `i18n` folder for changes and when needed updates the `translations` or `languages`.
+
+```typescript
+I18nModule.forRoot({
+  fallbackLanguage: 'en',
+  parser: I18nJsonParser,
+  parserOptions: {
+    path: path.join(__dirname, '/i18n/'),
+    // add this to enable live translations
+    watch: true,
+  },
+});
+```
+
+To refresh your translations and languages manually:
+
+```typescript
+await this.i18nService.refresh();
+```
+
+### Parser
+
+A default JSON parser (`I18nJsonParser`) is included.
+
+To implement your own `I18nParser` take a look at this example [i18n.json.parser.ts](https://github.com/ToonvanStrijp/nestjs-i18n/blob/master/src/lib/parsers/i18n.json.parser.ts).
+
+#### Live translations / languages
+
+To provide live translations you can return an observable within the extended `I18nParser` class. For and implementation example you can take a look at the [i18n.json.parser.ts](https://github.com/ToonvanStrijp/nestjs-i18n/blob/master/src/lib/parsers/i18n.json.parser.ts).
 
 ```typescript
 export class I18nMysqlParser extends I18nParser {

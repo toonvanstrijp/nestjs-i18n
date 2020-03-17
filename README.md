@@ -57,6 +57,20 @@ The format of a translation file could look like this:
 
 String formatting is done by: [string-format](https://github.com/davidchambers/string-format)
 
+### nest-cli.json copy i18n
+
+If you've created your project using the `@nestjs/cli` you can edit the `nest-cli.json` to automatically copy your `i18n` folder to your output (`dist`) folder.
+
+```json
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "assets": ["i18n/**/*"]
+  }
+}
+```
+
 ### Translation Module
 
 To use the translation service we first add the module. **The `I18nModule` has a `@Global()` attribute so you should only import it once**.
@@ -64,7 +78,7 @@ To use the translation service we first add the module. **The `I18nModule` has a
 ```typescript
 import { Module } from '@nestjs/common';
 import * as path from 'path';
-import { I18nModule } from 'nestjs-i18n';
+import { I18nModule, I18nJsonParser } from 'nestjs-i18n';
 
 @Module({
   imports: [
@@ -86,7 +100,7 @@ export class AppModule {}
 ```typescript
 import { Module } from '@nestjs/common';
 import * as path from 'path';
-import { I18nModule } from 'nestjs-i18n';
+import { I18nModule, I18nJsonParser } from 'nestjs-i18n';
 
 @Module({
   imports: [

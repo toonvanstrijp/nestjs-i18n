@@ -23,6 +23,8 @@ To keep your setup working use the correct version of `nestjs-i18n`.
 ## Quick Start
 
 Build in we have a JSON parser (`I18nJsonParser`) this parser handles to following structure
+@Column({ default: false })
+activated!: boolean;
 
 ### Structure
 
@@ -54,6 +56,8 @@ The format of a translation file could look like this:
   "ARRAY": ["ONE", "TWO", "THREE"]
 }
 ```
+
+To get a specific translation the JSON gets flattened by: [flat](https://github.com/hughsk/flat). All the translations are prefixed with the file name (to prevent collisions). Let's say the filename of the translation file is: `user.json`. To use the `HELLO_MESSAGE` translation you would use the following key: `user.HELLO_MESSAGE`.
 
 String formatting is done by: [string-format](https://github.com/davidchambers/string-format)
 

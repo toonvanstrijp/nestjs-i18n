@@ -9,12 +9,10 @@ import {
 } from '../i18n.constants';
 import { I18nOptions } from '..';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
-import * as fs from 'fs';
 import * as _ from 'lodash';
-import * as path from 'path';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { I18nParser } from '../parsers/i18n.parser';
-import { take, first, last } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
 @Injectable()
 export class I18nService {

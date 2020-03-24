@@ -26,8 +26,8 @@ import {
   I18nOptionResolver,
 } from './interfaces/i18n-options.interface';
 import { ValueProvider, ClassProvider } from '@nestjs/common/interfaces';
-import { I18nLanguageMiddleware } from './middleware/i18n-language-middleware';
-import { HttpAdapterHost, ModuleRef } from '@nestjs/core';
+import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
+import { HttpAdapterHost, ModuleRef, APP_INTERCEPTOR } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
 import { shouldResolve } from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
@@ -47,33 +47,7 @@ const defaultOptions: Partial<I18nOptions> = {
 
 @Global()
 @Module({})
-export class I18nModule implements NestModule {
-  constructor(
-    private readonly httpAdapterHost: HttpAdapterHost,
-    private readonly moduleRef: ModuleRef,
-  ) {}
-
-  configure(consumer: MiddlewareConsumer): MiddlewareConsumer | void {
-    const adapterName =
-      this.httpAdapterHost.httpAdapter &&
-      this.httpAdapterHost.httpAdapter.constructor &&
-      this.httpAdapterHost.httpAdapter.constructor.name;
-
-    if (adapterName === 'FastifyAdapter') {
-      this.moduleRef
-        .create(I18nLanguageMiddleware)
-        .then(i18nLanguageMiddleware => {
-          this.httpAdapterHost.httpAdapter
-            .getInstance()
-            .addHook('preHandler', (req, res, done) => {
-              i18nLanguageMiddleware.use(req, res, done);
-            });
-        });
-    } else {
-      consumer.apply(I18nLanguageMiddleware).forRoutes('*');
-    }
-  }
-
+export class I18nModule {
   static forRoot(options: I18nOptions): DynamicModule {
     options = this.sanitizeI18nOptions(options);
 
@@ -152,6 +126,10 @@ export class I18nModule implements NestModule {
       module: I18nModule,
       providers: [
         { provide: Logger, useValue: logger },
+        {
+          provide: APP_INTERCEPTOR,
+          useClass: I18nLanguageInterceptor,
+        },
         I18nService,
         I18nRequestScopeService,
         i18nOptions,
@@ -202,6 +180,10 @@ export class I18nModule implements NestModule {
       imports: options.imports || [],
       providers: [
         { provide: Logger, useValue: logger },
+        {
+          provide: APP_INTERCEPTOR,
+          useClass: I18nLanguageInterceptor,
+        },
         asyncOptionsProvider,
         asyncTranslationProvider,
         asyncLanguagesProvider,

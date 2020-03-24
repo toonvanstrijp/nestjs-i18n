@@ -13,6 +13,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
+import * as request from 'supertest';
 
 describe('i18n module e2e fastify', () => {
   let app: NestFastifyApplication;
@@ -41,196 +42,139 @@ describe('i18n module e2e fastify', () => {
     app = module.createNestApplication<NestFastifyApplication>(adapter);
 
     await app.init();
+    await app.getHttpAdapter().getInstance().ready();
   });
 
   it(`/GET hello should return translation`, () => {
-    return app
-      .inject({
-        url: '/hello',
-        method: 'GET',
-      })
-      .then(({ payload }) => expect(payload).toBe('Hello'));
+    return request(app.getHttpServer())
+      .get('/hello')
+      .expect(200)
+      .expect('Hello');
   });
 
   it(`/GET hello should return right language when using query resolver`, () => {
-    return app
-      .inject({
-        url: '/hello?lang=nl',
-        method: 'GET',
-        query: { lang: 'nl' },
-      })
-      .then(({ payload }) => {
-        expect(payload).toBe('Hallo');
-        return app
-          .inject({
-            url: '/hello?l=nl',
-            method: 'GET',
-          })
-          .then(({ payload }) => expect(payload).toBe('Hallo'));
-      });
+    return request(app.getHttpServer())
+      .get('/hello?lang=nl')
+      .expect(200)
+      .expect('Hallo')
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/hello?l=nl')
+          .expect(200)
+          .expect('Hallo'),
+      );
   });
 
   it(`/GET hello should return translation when providing x-custom-lang`, () => {
-    return app
-      .inject({
-        url: '/hello',
-        method: 'GET',
-        headers: {
-          'x-custom-lang': 'nl',
-        },
-      })
-      .then(({ payload }) => expect(payload).toBe('Hallo'));
+    return request(app.getHttpServer())
+      .get('/hello')
+      .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect('Hallo');
   });
-
   it(`/GET hello should return translation when providing accept-language`, () => {
-    return app
-      .inject({
-        url: '/hello',
-        method: 'GET',
-        headers: {
-          'accept-language': 'nl-NL,nl;q=0.5',
-        },
-      })
-      .then(({ payload }) => expect(payload).toBe('Hallo'));
+    return request(app.getHttpServer())
+      .get('/hello')
+      .set('accept-language', 'nl-NL,nl;q=0.5')
+      .expect(200)
+      .expect('Hallo');
   });
 
   it(`/GET hello should return translation when providing cookie`, () => {
-    return app
-      .inject({
-        url: '/hello',
-        method: 'GET',
-        headers: {
-          cookie: 'lang=nl',
-        },
-      })
-      .then(({ payload }) => expect(payload).toBe('Hallo'));
+    return request(app.getHttpServer())
+      .get('/hello')
+      .set('Cookie', ['lang=nl'])
+      .expect(200)
+      .expect('Hallo');
   });
 
   it(`/GET hello/context should return translation`, () => {
-    return app
-      .inject({
-        url: '/hello/context',
-        method: 'GET',
-      })
-      .then(({ payload }) => expect(payload).toBe('Hello'));
+    return request(app.getHttpServer())
+      .get('/hello/context')
+      .expect(200)
+      .expect('Hello');
   });
 
   it(`/GET hello/context should return right language when using query resolver`, () => {
-    return app
-      .inject({
-        url: '/hello/context?lang=nl',
-        method: 'GET',
-        query: { lang: 'nl' },
-      })
-      .then(({ payload }) => {
-        expect(payload).toBe('Hallo');
-        return app
-          .inject({
-            url: '/hello/context?l=nl',
-            method: 'GET',
-          })
-          .then(({ payload }) => expect(payload).toBe('Hallo'));
-      });
+    return request(app.getHttpServer())
+      .get('/hello/context?lang=nl')
+      .expect(200)
+      .expect('Hallo')
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/hello/context?l=nl')
+          .expect(200)
+          .expect('Hallo'),
+      );
   });
 
   it(`/GET hello/context should return translation when providing x-custom-lang`, () => {
-    return app
-      .inject({
-        url: '/hello/context',
-        method: 'GET',
-        headers: {
-          'x-custom-lang': 'nl',
-        },
-      })
-      .then(({ payload }) => expect(payload).toBe('Hallo'));
+    return request(app.getHttpServer())
+      .get('/hello/context')
+      .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect('Hallo');
   });
+
   it(`/GET hello/context should return translation when providing accept-language`, () => {
-    return app
-      .inject({
-        url: '/hello/context',
-        method: 'GET',
-        headers: {
-          'accept-language': 'nl-NL,nl;q=0.5',
-        },
-      })
-      .then(({ payload }) => expect(payload).toBe('Hallo'));
+    return request(app.getHttpServer())
+      .get('/hello/context')
+      .set('accept-language', 'nl-NL,nl;q=0.5')
+      .expect(200)
+      .expect('Hallo');
   });
 
   it(`/GET hello/context should return translation when providing cookie`, () => {
-    return app
-      .inject({
-        url: '/hello/context',
-        method: 'GET',
-        headers: {
-          cookie: 'lang=nl',
-        },
-      })
-      .then(({ payload }) => expect(payload).toBe('Hallo'));
+    return request(app.getHttpServer())
+      .get('/hello/context')
+      .set('Cookie', ['lang=nl'])
+      .expect(200)
+      .expect('Hallo');
   });
 
   it(`/GET hello/request-scope should return translation`, () => {
-    return app
-      .inject({
-        url: '/hello/request-scope',
-        method: 'GET',
-      })
-      .then(({ payload }) => expect(payload).toBe('Hello'));
+    return request(app.getHttpServer())
+      .get('/hello/request-scope')
+      .expect(200)
+      .expect('Hello');
   });
 
   it(`/GET hello/request-scope should return right language when using query resolver`, () => {
-    return app
-      .inject({
-        url: '/hello/request-scope?lang=nl',
-        method: 'GET',
-        query: { lang: 'nl' },
-      })
-      .then(({ payload }) => {
-        expect(payload).toBe('Hallo');
-        return app
-          .inject({
-            url: '/hello/request-scope?l=nl',
-            method: 'GET',
-          })
-          .then(({ payload }) => expect(payload).toBe('Hallo'));
-      });
+    return request(app.getHttpServer())
+      .get('/hello/request-scope?lang=nl')
+      .expect(200)
+      .expect('Hallo')
+      .then(() =>
+        request(app.getHttpServer())
+          .get('/hello/request-scope?l=nl')
+          .expect(200)
+          .expect('Hallo'),
+      );
   });
 
   it(`/GET hello/request-scope should return translation when providing x-custom-lang`, () => {
-    return app
-      .inject({
-        url: '/hello/request-scope',
-        method: 'GET',
-        headers: {
-          'x-custom-lang': 'nl',
-        },
-      })
-      .then(({ payload }) => expect(payload).toBe('Hallo'));
+    return request(app.getHttpServer())
+      .get('/hello/request-scope')
+      .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect('Hallo');
   });
 
   it(`/GET hello/request-scope should return translation when providing accept-language`, () => {
-    return app
-      .inject({
-        url: '/hello/request-scope',
-        method: 'GET',
-        headers: {
-          'accept-language': 'nl-NL,nl;q=0.5',
-        },
-      })
-      .then(({ payload }) => expect(payload).toBe('Hallo'));
+    return request(app.getHttpServer())
+      .get('/hello/request-scope')
+      .set('accept-language', 'nl-NL,nl;q=0.5')
+      .expect(200)
+      .expect('Hallo');
   });
 
   it(`/GET hello/request-scope should return translation when providing cookie`, () => {
-    return app
-      .inject({
-        url: '/hello/request-scope',
-        method: 'GET',
-        headers: {
-          cookie: 'lang=nl',
-        },
-      })
-      .then(({ payload }) => expect(payload).toBe('Hallo'));
+    return request(app.getHttpServer())
+      .get('/hello/request-scope')
+      .set('Cookie', ['lang=nl'])
+      .expect(200)
+      .expect('Hallo');
   });
-
   afterAll(async () => {
     await app.close();
   });

@@ -5,7 +5,7 @@ export function getContextObject(context: ExecutionContext): any {
     case 'http':
       return context.switchToHttp().getRequest();
     case 'graphql':
-      const [root, args, ctx, info] = context.getArgs();
+      const [, , ctx] = context.getArgs();
       return ctx;
     case 'rpc':
       return context.switchToRpc().getContext();

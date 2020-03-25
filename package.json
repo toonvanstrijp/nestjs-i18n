@@ -39,7 +39,7 @@
     "@types/flat": "5.0.0",
     "@types/jest": "^25.1.4",
     "@types/lodash": "^4.14.149",
-    "@types/node": "^13.9.3",
+    "@types/node": "^13.9.4",
     "@types/string-format": "^2.0.0",
     "@types/supertest": "^2.0.8",
     "apollo-server-express": "^2.11.0",

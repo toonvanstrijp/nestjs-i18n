@@ -48,15 +48,9 @@
     "graphql": "^14.6.0",
     "graphql-tools": "^4.0.7",
     "husky": "^4.2.3",
-<<<<<<< HEAD
     "jest": "^25.2.3",
     "lint-staged": "10.0.9",
     "prettier": "2.0.2",
-=======
-    "jest": "^25.1.0",
-    "lint-staged": "10.0.9",
-    "prettier": "1.19.1",
->>>>>>> v7.0.0
     "reflect-metadata": "^0.1.13",
     "supertest": "^4.0.2",
     "ts-jest": "^25.2.1",

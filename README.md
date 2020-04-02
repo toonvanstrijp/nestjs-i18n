@@ -188,6 +188,8 @@ export class I18nMysqlParser extends I18nParser {
 
 To make it easier to manage in what language to respond you can make use of resolvers
 
+> (note: When using `forRootAsync` you don't return the `resolvers` with the rest of the config. You'll need to provide the `resolvers` like this: [example](#using-forrootasync-1))
+
 ```typescript
 @Module({
   imports: [

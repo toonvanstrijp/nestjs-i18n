@@ -6,7 +6,11 @@ export function getI18nResolverOptionsToken(target: Function) {
 }
 
 export function I18nResolverOptions() {
-  return function(target: Function, key: string | symbol, index?: number): any {
+  return function (
+    target: Function,
+    key: string | symbol,
+    index?: number,
+  ): any {
     return Inject(getI18nResolverOptionsToken(target))(target, key, index);
   };
 }

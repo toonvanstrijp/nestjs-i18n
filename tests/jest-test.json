@@ -7,7 +7,7 @@
   "moduleFileExtensions": ["js", "json", "ts", "d.ts"],
   "rootDir": "../",
   "testEnvironment": "node",
-  "testRegex": "spec.ts$",
+  "testRegex": "i18n-fastify.e2e.spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },

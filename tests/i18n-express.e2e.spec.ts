@@ -110,6 +110,7 @@ describe('i18n module e2e express', () => {
       .expect(200)
       .expect('Hallo');
   });
+
   it(`/GET hello/context should return translation when providing accept-language`, () => {
     return request(app.getHttpServer())
       .get('/hello/context')
@@ -153,6 +154,7 @@ describe('i18n module e2e express', () => {
       .expect(200)
       .expect('Hallo');
   });
+
   it(`/GET hello/request-scope should return translation when providing accept-language`, () => {
     return request(app.getHttpServer())
       .get('/hello/request-scope')

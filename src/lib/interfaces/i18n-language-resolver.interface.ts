@@ -1,3 +1,7 @@
-export interface I18nResolver<TRequest = any> {
-  resolve(req: TRequest): Promise<string> | string | string[] | undefined;
+import { ExecutionContext } from '@nestjs/common';
+
+export interface I18nResolver {
+  resolve(
+    context: ExecutionContext,
+  ): Promise<string | string[] | undefined> | string | string[] | undefined;
 }

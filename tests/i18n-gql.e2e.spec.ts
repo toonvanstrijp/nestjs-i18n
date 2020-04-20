@@ -5,6 +5,7 @@ import {
   HeaderResolver,
   I18nModule,
   I18nJsonParser,
+  AcceptLanguageResolver,
 } from '../src/lib';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
@@ -22,6 +23,7 @@ describe('i18n module e2e graphql', () => {
           fallbackLanguage: 'en',
           resolvers: [
             new HeaderResolver(['x-custom-lang']),
+            new AcceptLanguageResolver(),
             new CookieResolver(),
           ],
           parser: I18nJsonParser,

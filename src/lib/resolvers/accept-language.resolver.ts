@@ -1,7 +1,7 @@
 import { I18nResolver } from '../index';
 import { Injectable, ExecutionContext } from '@nestjs/common';
-import { I18nService } from '../services/i18n.service';
 import { pick } from 'accept-language-parser';
+import { I18nService } from '../services/i18n.service';
 
 @Injectable()
 export class AcceptLanguageResolver implements I18nResolver {
@@ -10,14 +10,24 @@ export class AcceptLanguageResolver implements I18nResolver {
   async resolve(
     context: ExecutionContext,
   ): Promise<string | string[] | undefined> {
-    const req = context.switchToHttp().getRequest();
+    let req, service: I18nService;
 
-    const lang: string = req.raw
+    switch (context.getType() as string) {
+      case 'http':
+        req = context.switchToHttp().getRequest();
+        service = req.i18nService;
+        break;
+      case 'graphql':
+        [, , { req, i18nService: service }] = context.getArgs();
+        break;
+      default:
+        return undefined;
+    }
+
+    const lang = req.raw
       ? req.raw.headers['accept-language']
       : req.headers['accept-language'];
-
     if (lang) {
-      const service: I18nService = req.i18nService;
       return pick(await service.getSupportedLanguages(), lang);
     }
     return lang;

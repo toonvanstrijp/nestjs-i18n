@@ -35,7 +35,7 @@
     "@nestjs/testing": "^7.0.8",
     "@types/accept-language-parser": "^1.5.1",
     "@types/commander": "^2.12.2",
-    "@types/cookie": "^0.3.3",
+    "@types/cookie": "^0.4.0",
     "@types/flat": "5.0.0",
     "@types/jest": "^25.2.1",
     "@types/lodash": "^4.14.150",

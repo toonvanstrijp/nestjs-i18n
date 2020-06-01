@@ -9,11 +9,10 @@ import {
 import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
 import { I18nOptions, I18nResolver, ResolverWithOptions } from '../index';
 import { I18nService } from '../services/i18n.service';
-import { ModuleRef, Reflector } from '@nestjs/core';
+import { ModuleRef } from '@nestjs/core';
 import { shouldResolve } from '../utils/util';
 import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { getContextObject } from '../utils/context';
 
 @Injectable()
@@ -84,9 +83,9 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     if (shouldResolve(r)) {
       if (r.hasOwnProperty('use') && r.hasOwnProperty('options')) {
         const resolver = r as ResolverWithOptions;
-        return await this.moduleRef.resolve(resolver.use);
+        return this.moduleRef.get(resolver.use);
       } else {
-        return await this.moduleRef.resolve(r as Type<I18nResolver>);
+        return this.moduleRef.get(r as Type<I18nResolver>);
       }
     } else {
       return r as I18nResolver;

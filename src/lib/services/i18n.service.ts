@@ -35,7 +35,7 @@ export class I18nService {
     key: string,
     options?: {
       lang?: string;
-      args?: Array<{ [k: string]: any } | string> | { [k: string]: any };
+      args?: ({ [k: string]: any } | string)[] | { [k: string]: any };
     },
   ): Promise<string> {
     options = {
@@ -43,7 +43,13 @@ export class I18nService {
       ...options,
     };
 
-    const { lang, args } = options;
+    const { args } = options;
+    let { lang } = options;
+
+    lang =
+      lang === undefined || lang === null
+        ? this.i18nOptions.fallbackLanguage
+        : lang;
 
     const translationsByLanguage = (
       await this.translations.pipe(take(1)).toPromise()
@@ -60,7 +66,7 @@ export class I18nService {
 
         return this.translate(key, {
           lang: this.i18nOptions.fallbackLanguage,
-          args: args,
+          args,
         });
       }
     }

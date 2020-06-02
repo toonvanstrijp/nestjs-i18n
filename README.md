@@ -23,8 +23,6 @@ To keep your setup working use the correct version of `nestjs-i18n`.
 ## Quick Start
 
 Build in we have a JSON parser (`I18nJsonParser`) this parser handles to following structure
-@Column({ default: false })
-activated!: boolean;
 
 ### Structure
 

@@ -14,13 +14,28 @@ export class HelloController {
     return this.i18n.translate('test.HELLO', { lang });
   }
 
+  @Get('/short')
+  async helloShort(@I18nLang() lang: string): Promise<string> {
+    return this.i18n.t('test.HELLO', { lang });
+  }
+
   @Get('/context')
   helloContext(@I18n() i18n: I18nContext): Promise<string> {
     return i18n.translate('test.HELLO');
   }
 
+  @Get('/short/context')
+  helloShortContext(@I18n() i18n: I18nContext): Promise<string> {
+    return i18n.t('test.HELLO');
+  }
+
   @Get('/request-scope')
   helloRequestScope(): Promise<string> {
     return this.i18nRequestScope.translate('test.HELLO');
+  }
+
+  @Get('/short/request-scope')
+  helloShortRequestScope(): Promise<string> {
+    return this.i18nRequestScope.t('test.HELLO');
   }
 }

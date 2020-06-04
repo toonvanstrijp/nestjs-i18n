@@ -47,6 +47,13 @@ describe('i18n module e2e express', () => {
       .expect('Hello');
   });
 
+  it(`/GET short should return translation`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/short')
+      .expect(200)
+      .expect('Hello');
+  });
+
   it(`/GET hello should return right language when using query resolver`, () => {
     return request(app.getHttpServer())
       .get('/hello?lang=nl')
@@ -86,6 +93,13 @@ describe('i18n module e2e express', () => {
   it(`/GET hello/context should return translation`, () => {
     return request(app.getHttpServer())
       .get('/hello/context')
+      .expect(200)
+      .expect('Hello');
+  });
+
+  it(`/GET hello/short/context should return translation`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/short/context')
       .expect(200)
       .expect('Hello');
   });
@@ -130,6 +144,13 @@ describe('i18n module e2e express', () => {
   it(`/GET hello/request-scope should return translation`, () => {
     return request(app.getHttpServer())
       .get('/hello/request-scope')
+      .expect(200)
+      .expect('Hello');
+  });
+
+  it(`/GET hello/short/request-scope should return translation`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/short/request-scope')
       .expect(200)
       .expect('Hello');
   });

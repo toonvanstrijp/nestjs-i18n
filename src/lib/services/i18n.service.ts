@@ -14,6 +14,11 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { I18nParser } from '../parsers/i18n.parser';
 import { take } from 'rxjs/operators';
 
+export type translateOptions = {
+  lang?: string;
+  args?: ({ [k: string]: any } | string)[] | { [k: string]: any };
+};
+
 @Injectable()
 export class I18nService {
   constructor(
@@ -33,10 +38,7 @@ export class I18nService {
 
   public async translate(
     key: string,
-    options?: {
-      lang?: string;
-      args?: ({ [k: string]: any } | string)[] | { [k: string]: any };
-    },
+    options?: translateOptions,
   ): Promise<string> {
     options = {
       lang: this.i18nOptions.fallbackLanguage,
@@ -82,6 +84,10 @@ export class I18nService {
       );
     }
     return translation || key;
+  }
+
+  public t(key: string, options?: translateOptions) {
+    return this.translate(key, options);
   }
 
   public async getSupportedLanguages() {

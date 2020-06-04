@@ -1,4 +1,4 @@
-import { I18nService } from './services/i18n.service';
+import { I18nService, translateOptions } from './services/i18n.service';
 
 export class I18nContext {
   constructor(
@@ -6,11 +6,15 @@ export class I18nContext {
     private readonly service: I18nService,
   ) {}
 
-  translate(key, options?) {
+  public translate(key: string, options?: translateOptions) {
     options = {
       lang: this.detectedLanguage,
       ...options,
     };
     return this.service.translate(key, options);
+  }
+
+  public t(key: string, options?: translateOptions) {
+    return this.translate(key, options);
   }
 }

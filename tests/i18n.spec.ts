@@ -294,8 +294,16 @@ describe('i18n module with parser watch', () => {
 
   afterAll(async () => {
     await i18nModule.close();
-    fs.unlinkSync(newTranslationPath);
-    fs.rmdirSync(newLanguagePath);
+    try {
+      fs.unlinkSync(newTranslationPath);
+    } catch (e) {
+      // ignore
+    }
+    try {
+      fs.rmdirSync(newLanguagePath);
+    } catch (e) {
+      // ignore
+    }
   });
 
   it('i18n should load new translations', async () => {

@@ -287,7 +287,7 @@ describe('i18n module with parser watch', () => {
         }),
       ],
     }).compile();
-    await i18nModule.init();
+
     i18nService = i18nModule.get(I18nService);
     i18nParser = i18nModule.get(I18nParser);
   });

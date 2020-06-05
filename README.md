@@ -29,13 +29,17 @@ Build in we have a JSON parser (`I18nJsonParser`) this parser handles to followi
 create a directory and in it define your language keys as directories.
 
 ```
-i18n
-├── en
-│   ├── category.json
-│   └── auth.json
-└── nl
-    ├── category.json
-    └── auth.json
+package.json
+package-lock.json
+...
+src
+└── i18n
+    ├── en
+    │   ├── category.json
+    │   └── auth.json
+    └── nl
+        ├── category.json
+        └── auth.json
 ```
 
 ### Translation File

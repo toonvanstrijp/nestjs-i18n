@@ -25,7 +25,11 @@ import {
   ResolverWithOptions,
   I18nOptionResolver,
 } from './interfaces/i18n-options.interface';
-import { ValueProvider, ClassProvider } from '@nestjs/common/interfaces';
+import {
+  ValueProvider,
+  ClassProvider,
+  OnModuleInit,
+} from '@nestjs/common/interfaces';
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import { HttpAdapterHost, ModuleRef, APP_INTERCEPTOR } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
@@ -38,6 +42,7 @@ import {
   merge as observableMerge,
   BehaviorSubject,
 } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 const logger = new Logger('I18nService');
 
@@ -47,7 +52,14 @@ const defaultOptions: Partial<I18nOptions> = {
 
 @Global()
 @Module({})
-export class I18nModule {
+export class I18nModule implements OnModuleInit {
+  constructor(private readonly i18n: I18nService) {}
+
+  async onModuleInit() {
+    // makes sure languages & translations are loaded before application loads
+    await this.i18n.refresh();
+  }
+
   static forRoot(options: I18nOptions): DynamicModule {
     options = this.sanitizeI18nOptions(options);
 

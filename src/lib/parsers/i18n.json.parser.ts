@@ -44,7 +44,7 @@ export class I18nJsonParser extends I18nParser implements OnModuleDestroy {
     if (this.options.watch) {
       this.watcher = chokidar
         .watch(this.options.path, { ignoreInitial: true })
-        .on('all', event => {
+        .on('all', (event) => {
           this.events.next(event);
         });
     }
@@ -98,7 +98,7 @@ export class I18nJsonParser extends I18nParser implements OnModuleDestroy {
     );
 
     const files = await [
-      ...languages.map(l => path.join(i18nPath, l)),
+      ...languages.map((l) => path.join(i18nPath, l)),
       i18nPath,
     ].reduce(async (files, path) => {
       (await files).push(...(await getFiles(path, pattern)));
@@ -123,7 +123,7 @@ export class I18nJsonParser extends I18nParser implements OnModuleDestroy {
       const flatData = flat.flatten(data);
 
       for (const property of Object.keys(flatData)) {
-        [...(global ? languages : [key])].forEach(lang => {
+        [...(global ? languages : [key])].forEach((lang) => {
           translations[lang] = !!translations[lang] ? translations[lang] : {};
           translations[lang][`${global ? '' : `${prefix}.`}${property}`] =
             flatData[property];
@@ -136,7 +136,7 @@ export class I18nJsonParser extends I18nParser implements OnModuleDestroy {
 
   private async parseLanguages(): Promise<string[]> {
     const i18nPath = path.normalize(this.options.path + path.sep);
-    return (await getDirectories(i18nPath)).map(dir =>
+    return (await getDirectories(i18nPath)).map((dir) =>
       path.relative(i18nPath, dir),
     );
   }

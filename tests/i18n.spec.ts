@@ -304,7 +304,7 @@ describe('i18n module with parser watch', () => {
       JSON.stringify({ WORLD: 'wereld' }),
       'utf8',
     );
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     const translation = await i18nService.translate('test2.WORLD', {
       lang: 'nl',
     });
@@ -317,7 +317,7 @@ describe('i18n module with parser watch', () => {
     } catch (e) {
       // ignore
     }
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     const languages = await i18nService.getSupportedLanguages();
     expect(languages).toContain('de');
   });

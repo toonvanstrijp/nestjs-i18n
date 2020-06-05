@@ -5,12 +5,11 @@ import { I18nService } from '../services/i18n.service';
 
 @Injectable()
 export class AcceptLanguageResolver implements I18nResolver {
-  constructor() {}
-
   async resolve(
     context: ExecutionContext,
   ): Promise<string | string[] | undefined> {
-    let req, service: I18nService;
+    let req: any;
+    let service: I18nService;
 
     switch (context.getType() as string) {
       case 'http':

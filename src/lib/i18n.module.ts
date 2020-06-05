@@ -2,9 +2,7 @@ import {
   DynamicModule,
   Global,
   Logger,
-  MiddlewareConsumer,
   Module,
-  NestModule,
   Provider,
 } from '@nestjs/common';
 import {
@@ -31,18 +29,12 @@ import {
   OnModuleInit,
 } from '@nestjs/common/interfaces';
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
-import { HttpAdapterHost, ModuleRef, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
 import { shouldResolve } from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nParser } from './parsers/i18n.parser';
-import {
-  Observable,
-  of as observableOf,
-  merge as observableMerge,
-  BehaviorSubject,
-} from 'rxjs';
-import { take } from 'rxjs/operators';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 const logger = new Logger('I18nService');
 
@@ -297,7 +289,9 @@ export class I18nModule implements OnModuleInit {
       .reduce<Provider[]>((providers, r) => {
         if (r.hasOwnProperty('use') && r.hasOwnProperty('options')) {
           const resolver = r as ResolverWithOptions;
-          const optionsToken = getI18nResolverOptionsToken(resolver.use);
+          const optionsToken = getI18nResolverOptionsToken(
+            (resolver.use as unknown) as () => void,
+          );
           providers.push({
             provide: resolver.use,
             useClass: resolver.use,
@@ -308,7 +302,9 @@ export class I18nModule implements OnModuleInit {
             useFactory: () => resolver.options,
           });
         } else {
-          const optionsToken = getI18nResolverOptionsToken(r as Function);
+          const optionsToken = getI18nResolverOptionsToken(
+            (r as unknown) as () => void,
+          );
           providers.push({
             provide: r,
             useClass: r,

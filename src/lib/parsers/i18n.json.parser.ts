@@ -100,9 +100,9 @@ export class I18nJsonParser extends I18nParser implements OnModuleDestroy {
     const files = await [
       ...languages.map((l) => path.join(i18nPath, l)),
       i18nPath,
-    ].reduce(async (files, path) => {
-      (await files).push(...(await getFiles(path, pattern)));
-      return files;
+    ].reduce(async (f: Promise<string[]>, p: string) => {
+      (await f).push(...(await getFiles(p, pattern)));
+      return f;
     }, Promise.resolve([]));
 
     for (const file of files) {

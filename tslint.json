@@ -13,8 +13,21 @@
     "trailing-comma": [false],
     "semicolon": [true, "always", "ignore-bound-class-methods"],
     "max-line-length": [false],
-    "one-line": [true, "check-catch", "check-finally", "check-else", "check-open-brace"],
-    "whitespace": [true, "check-decl", "check-operator", "check-module", "check-type", "check-typecast"],
+    "one-line": [
+      true,
+      "check-catch",
+      "check-finally",
+      "check-else",
+      "check-open-brace"
+    ],
+    "whitespace": [
+      true,
+      "check-decl",
+      "check-operator",
+      "check-module",
+      "check-type",
+      "check-typecast"
+    ],
     "interface-name": false,
     "member-ordering": false,
     "no-floating-promises": true,

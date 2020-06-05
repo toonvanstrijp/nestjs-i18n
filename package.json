@@ -54,7 +54,7 @@
     "reflect-metadata": "^0.1.13",
     "supertest": "^4.0.2",
     "ts-jest": "^26.1.0",
-    "typescript": "3.9.3"
+    "typescript": "3.9.5"
   },
   "dependencies": {
     "accept-language-parser": "^1.5.0",

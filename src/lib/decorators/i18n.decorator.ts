@@ -20,7 +20,7 @@ export const I18n = createParamDecorator((data, ctx: ExecutionContext) => {
       throw Error(`context type: ${ctx.getType()} not supported`);
   }
 });
-function resolveI18nServiceFromRequest(req): [string, I18nService] {
+function resolveI18nServiceFromRequest(req: any): [string, I18nService] {
   return [
     req.raw && req.raw.i18nLang ? req.raw.i18nLang : req.i18nLang,
     req.raw && req.raw.i18nService ? req.raw.i18nService : req.i18nService,
@@ -34,6 +34,8 @@ function resolveI18nServiceFromGraphQLContext(
   return [ctx.req.i18nLang, ctx.req.i18nService];
 }
 
-function resolveI18nServiceFromRpcContext(rpcContext): [string, I18nService] {
+function resolveI18nServiceFromRpcContext(
+  rpcContext: any,
+): [string, I18nService] {
   return [rpcContext.i18nLang, rpcContext.i18nService];
 }

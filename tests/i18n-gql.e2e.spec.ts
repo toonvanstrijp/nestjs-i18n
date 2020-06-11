@@ -21,6 +21,12 @@ describe('i18n module e2e graphql', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
+          fallbacks: {
+            'en-CA': 'fr',
+            'en-*': 'en',
+            'fr-*': 'fr',
+            'pt': 'pt-BR',
+          },
           resolvers: [
             new HeaderResolver(['x-custom-lang']),
             new AcceptLanguageResolver(),
@@ -108,6 +114,26 @@ describe('i18n module e2e graphql', () => {
       });
   });
 
+  it(`should query a particular cat in EN when not providing x-custom-lang`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{cat(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          cat: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Cat',
+          },
+        },
+      });
+  });
+
   it(`should query a particular cat in EN`, () => {
     return request(app.getHttpServer())
       .post('/graphql')
@@ -124,6 +150,132 @@ describe('i18n module e2e graphql', () => {
             name: 'bar',
             age: 6,
             description: 'Cat',
+          },
+        },
+      });
+  });
+
+  it(`should query a particular cat in EN when sending "en-US" in x-custom-lang`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('x-custom-lang', 'en-US')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{cat(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          cat: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Cat',
+          },
+        },
+      });
+  });
+
+  it(`should query a particular cat in FR when sending "en-CA" in x-custom-lang`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('x-custom-lang', 'en-CA')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{cat(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          cat: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Chat',
+          },
+        },
+      });
+  });
+
+  it(`should query a particular cat in FR`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('x-custom-lang', 'fr')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{cat(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          cat: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Chat',
+          },
+        },
+      });
+  });
+
+  it(`should query a particular cat in FR when sending "fr-BE" in x-custom-lang`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('x-custom-lang', 'fr-BE')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{cat(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          cat: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Chat',
+          },
+        },
+      });
+  });
+
+  it(`should query a particular cat in PT-BR`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('x-custom-lang', 'pt-BR')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{cat(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          cat: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Gato',
+          },
+        },
+      });
+  });
+
+  it(`should query a particular cat in PT-BR when sending "pt" in x-custom-lang`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('x-custom-lang', 'pt')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{cat(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          cat: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Gato',
           },
         },
       });

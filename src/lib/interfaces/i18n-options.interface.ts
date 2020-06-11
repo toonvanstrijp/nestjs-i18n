@@ -20,6 +20,7 @@ export type I18nOptionResolver =
 
 export interface I18nOptions {
   fallbackLanguage: string;
+  fallbacks?: { [key: string]: string };
   resolvers?: I18nOptionResolver[];
   parser: Type<I18nParser>;
   parserOptions: any;
@@ -30,6 +31,7 @@ export interface I18nOptionsFactory {
     | Promise<I18nOptionsWithoutResolvers>
     | I18nOptionsWithoutResolvers;
 }
+
 export interface I18nAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
   name?: string;
   useExisting?: Type<I18nOptionsFactory>;

@@ -290,6 +290,26 @@ I18nModule.forRootAsync({
 });
 ```
 
+#### Using Fallbacks
+
+To configure multiple fallbacks use `fallbacks` option. You could handle a single language or multiple ones.
+
+```typescript
+I18nModule.forRoot({
+  fallbackLanguage: 'en',
+  fallbacks: {
+    'en-CA': 'fr',
+    'en-*': 'en',
+    'fr-*': 'fr',
+    'pt': 'pt-BR',
+  },
+  parser: I18nJsonParser,
+  parserOptions: {
+    path: path.join(__dirname, '/i18n/'),
+  },
+});
+```
+
 ### Translating with i18n module
 
 #### `I18nLang` decorator and `I18nService`

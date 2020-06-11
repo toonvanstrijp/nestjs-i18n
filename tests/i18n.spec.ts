@@ -96,7 +96,7 @@ describe('i18n module', () => {
     );
   });
 
-  it('i18n service should return fallback translation if language not registed', async () => {
+  it('i18n service should return fallback translation if language not registered', async () => {
     expect(await i18nService.translate('test.ENGLISH', { lang: 'es' })).toBe(
       'English',
     );
@@ -109,7 +109,7 @@ describe('i18n module', () => {
   });
 
   it('i18n service should return supported languages', async () => {
-    expect(await i18nService.getSupportedLanguages()).toEqual(['en', 'nl']);
+    expect(await i18nService.getSupportedLanguages()).toEqual(['en', 'fr', 'nl', 'pt-BR']);
   });
 
   describe('i18n should refresh manually', () => {
@@ -328,5 +328,74 @@ describe('i18n module with parser watch', () => {
     await new Promise((resolve) => setTimeout(resolve, 500));
     const languages = await i18nService.getSupportedLanguages();
     expect(languages).toContain('de');
+  });
+});
+
+describe('i18n module with fallbacks', () => {
+  let i18nService: I18nService;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      imports: [
+        I18nModule.forRoot({
+          fallbackLanguage: 'en',
+          fallbacks: {
+            'en-CA': 'fr',
+            'en-*': 'en',
+            'fr-*': 'fr',
+            'pt': 'pt-BR',
+          },
+          parser: I18nJsonParser,
+          parserOptions: {
+            path: path.join(__dirname, '/i18n'),
+          },
+        }),
+      ],
+    }).compile();
+
+    i18nService = module.get(I18nService);
+  });
+
+  it('i18n service should be defined', async () => {
+    expect(i18nService).toBeTruthy();
+  });
+
+  it('i18n service should return english translation', async () => {
+    expect(await i18nService.translate('test.HELLO')).toBe(
+      'Hello',
+    );
+    expect(await i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
+      'Hello',
+    );
+    expect(await i18nService.translate('test.HELLO', { lang: 'en-US' })).toBe(
+      'Hello',
+    );
+  });
+
+  it('i18n service should return dutch translation', async () => {
+    expect(await i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
+      'Hallo',
+    );
+  });
+
+  it('i18n service should return french translation', async () => {
+    expect(await i18nService.translate('test.HELLO', { lang: 'fr' })).toBe(
+      'Bonjour',
+    );
+    expect(await i18nService.translate('test.HELLO', { lang: 'fr-BE' })).toBe(
+      'Bonjour',
+    );
+    expect(await i18nService.translate('test.HELLO', { lang: 'en-CA' })).toBe(
+      'Bonjour',
+    );
+  });
+
+  it('i18n service should return portuguese-brazil translation', async () => {
+    expect(await i18nService.translate('test.HELLO', { lang: 'pt' })).toBe(
+      'Olá',
+    );
+    expect(await i18nService.translate('test.HELLO', { lang: 'pt-BR' })).toBe(
+      'Olá',
+    );
   });
 });

@@ -1,0 +1,12 @@
+{
+  "HELLO": "Bonjour",
+  "PRODUCT": {
+    "NEW": "Nouveau Produit: {name}"
+  },
+  "ARRAY": [
+    "UN",
+    "DEUX",
+    "TROIS"
+  ],
+  "cat": "Chat"
+}

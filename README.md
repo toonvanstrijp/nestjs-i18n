@@ -294,6 +294,8 @@ I18nModule.forRootAsync({
 
 To configure multiple fallbacks use `fallbacks` option. You could handle a single language or multiple ones.
 
+> (note: In this example, the translations `en` `fr` and `pt-BR` are needed to work correctly.)
+
 ```typescript
 I18nModule.forRoot({
   fallbackLanguage: 'en',

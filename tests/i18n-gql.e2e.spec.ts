@@ -72,6 +72,27 @@ describe('i18n module e2e graphql', () => {
       });
   });
 
+  it(`should query a particular cat (using @I18nContext) in NL`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('x-custom-lang', 'nl')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{catUsingContext(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          catUsingContext: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Kat',
+          },
+        },
+      });
+  });
+
   it(`should query a particular cat in EN with cookie`, () => {
     return request(app.getHttpServer())
       .post('/graphql')

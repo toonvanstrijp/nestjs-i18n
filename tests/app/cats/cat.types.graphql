@@ -8,4 +8,5 @@ type Cat {
 type Query {
   cats: [Cat]
   cat(id: Int!): Cat
+  catUsingContext(id: Int!): Cat
 }

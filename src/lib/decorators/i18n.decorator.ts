@@ -31,7 +31,7 @@ function resolveI18nServiceFromGraphQLContext(
   graphqlContext,
 ): [string, I18nService] {
   const [root, args, ctx, info] = graphqlContext;
-  return [ctx.req.i18nLang, ctx.req.i18nService];
+  return [ctx.i18nLang, ctx.i18nService];
 }
 
 function resolveI18nServiceFromRpcContext(

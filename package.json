@@ -59,7 +59,7 @@
   "dependencies": {
     "accept-language-parser": "^1.5.0",
     "chalk": "^4.1.0",
-    "chokidar": "^3.4.0",
+    "chokidar": "^3.4.1",
     "commander": "^5.1.0",
     "cookie": "^0.4.1",
     "flat": "^5.0.0",

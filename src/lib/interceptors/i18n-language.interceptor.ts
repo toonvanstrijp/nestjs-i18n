@@ -51,32 +51,10 @@ export class I18nLanguageInterceptor implements NestInterceptor {
         }
       }
 
-      ctx.i18nLang = language;
+      ctx.i18nLang = language || this.i18nOptions.fallbackLanguage;
     }
 
     return next.handle();
-  }
-
-  async use(req: any, res: any, next: () => void) {
-    let language = null;
-
-    req.i18nService = this.i18nService;
-    for (const r of this.i18nResolvers) {
-      const resolver = await this.getResolver(r);
-
-      language = resolver.resolve(req);
-
-      if (language instanceof Promise) {
-        language = await (language as Promise<string>);
-      }
-
-      if (language !== undefined) {
-        break;
-      }
-    }
-    req.i18nLang = language || this.i18nOptions.fallbackLanguage;
-
-    next();
   }
 
   private async getResolver(r: I18nOptionResolver): Promise<I18nResolver> {

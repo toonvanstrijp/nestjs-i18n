@@ -34,7 +34,7 @@ export class I18nService {
     private readonly languagesSubject: BehaviorSubject<string[]>,
     @Inject(I18N_TRANSLATIONS_SUBJECT)
     private readonly translationsSubject: BehaviorSubject<I18nTranslation>,
-  ) { }
+  ) {}
 
   public async translate(
     key: string,
@@ -117,10 +117,9 @@ export class I18nService {
   private async handleFallbacks(lang: string) {
     const supportedLanguages = await this.getSupportedLanguages();
     if (this.i18nOptions.fallbacks && !supportedLanguages.includes(lang)) {
-      const sanitizedLang =
-        lang.includes('-')
-          ? lang.substring(0, lang.indexOf('-')).concat('-*')
-          : lang;
+      const sanitizedLang = lang.includes('-')
+        ? lang.substring(0, lang.indexOf('-')).concat('-*')
+        : lang;
 
       for (const key in this.i18nOptions.fallbacks) {
         if (key === lang || key === sanitizedLang) {

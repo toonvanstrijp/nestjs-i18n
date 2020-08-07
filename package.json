@@ -62,7 +62,7 @@
     "chokidar": "^3.4.1",
     "commander": "^6.0.0",
     "cookie": "^0.4.1",
-    "flat": "^5.0.0",
+    "flat": "^5.0.2",
     "lodash": "^4.17.19",
     "rxjs": "^6.6.0",
     "string-format": "^2.0.0"

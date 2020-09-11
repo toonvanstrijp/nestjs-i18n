@@ -11,6 +11,28 @@ The **i18n** module for [Nest](https://github.com/nestjs/nest).
 $ npm i --save nestjs-i18n
 ```
 
+## Table of contents
+  * [Versions](#versions)
+  * [Quick Start](#quick-start)
+    + [Structure](#structure)
+    + [Translation File](#translation-file)
+    + [nest-cli.json copy i18n](#nest-clijson-copy-i18n)
+    + [Translation Module](#translation-module)
+      - [Using forRootAsync()](#using-forrootasync--)
+    + [Live reloading / Refreshing translations](#live-reloading---refreshing-translations)
+    + [GraphQL usage](#graphql-usage)
+    + [Parser](#parser)
+      - [Live translations / languages](#live-translations---languages)
+    + [Language Resolvers](#language-resolvers)
+      - [Custom resolver](#custom-resolver)
+      - [Using forRootAsync()](#using-forrootasync---1)
+      - [Using Fallbacks](#using-fallbacks)
+    + [Translating with i18n module](#translating-with-i18n-module)
+      - [`I18nLang` decorator and `I18nService`](#-i18nlang--decorator-and--i18nservice-)
+      - [`I18n` decorator](#-i18n--decorator)
+      - [`I18nRequestScopeService` within a custom service using request scoped translation service](#-i18nrequestscopeservice--within-a-custom-service-using-request-scoped-translation-service)
+- [Breaking changes:](#breaking-changes-)
+
 ## Versions
 
 To keep your setup working use the correct version of `nestjs-i18n`.
@@ -126,7 +148,7 @@ import { I18nModule, I18nJsonParser } from 'nestjs-i18n';
 export class AppModule {}
 ```
 
-## Live reloading / Refreshing translations
+### Live reloading / Refreshing translations
 
 To use live reloading use the `watch` option in the `I18nJsonParser`. The `I18nJsonParser` watches the `i18n` folder for changes and when needed updates the `translations` or `languages`.
 
@@ -148,7 +170,7 @@ To refresh your translations and languages manually:
 await this.i18nService.refresh();
 ```
 
-## GraphQL usage
+### GraphQL usage
 When using GraphQL it is required to provide the right context. You can do this by importing the GraphQLModule like this:
 ```typescript
 import { Module } from '@nestjs/common';

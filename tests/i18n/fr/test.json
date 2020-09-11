@@ -8,5 +8,6 @@
     "DEUX",
     "TROIS"
   ],
-  "cat": "Chat"
+  "cat": "Chat",
+  "cat_name": "Chat: {name}"
 }

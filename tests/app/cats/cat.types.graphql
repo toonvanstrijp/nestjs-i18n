@@ -10,3 +10,16 @@ type Query {
   cat(id: Int!): Cat
   catUsingContext(id: Int!): Cat
 }
+
+type Mutation {
+  createCat(createCatInput: CreateCatInput): Cat
+}
+
+type Subscription {
+  catAdded: String
+}
+
+input CreateCatInput {
+  name: String
+  age: Int
+}

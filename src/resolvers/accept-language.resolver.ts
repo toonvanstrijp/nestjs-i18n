@@ -18,6 +18,7 @@ export class AcceptLanguageResolver implements I18nResolver {
         break;
       case 'graphql':
         [, , { req, i18nService: service }] = context.getArgs();
+        if(!req) return undefined;
         break;
       default:
         return undefined;
@@ -26,6 +27,7 @@ export class AcceptLanguageResolver implements I18nResolver {
     const lang = req.raw
       ? req.raw.headers['accept-language']
       : req.headers['accept-language'];
+      
     if (lang) {
       return pick(await service.getSupportedLanguages(), lang);
     }

@@ -1,13 +1,17 @@
-import { Resolver, Args, Query } from '@nestjs/graphql';
+import { Resolver, Args, Query, Subscription, Mutation } from '@nestjs/graphql';
 import { CatService } from './cat.service';
 import { I18nLang, I18nService, I18n } from '../../../src';
 import { I18nContext } from '../../../src/i18n.context';
+import { Inject } from '@nestjs/common';
+import { PubSub } from 'graphql-subscriptions';
+import { async } from 'rxjs';
 
 @Resolver('Cat')
 export class CatResolver {
   constructor(
     private readonly catService: CatService,
     private readonly i18nService: I18nService,
+    @Inject('PUB_SUB') private readonly pubSub: PubSub,
   ) {}
 
   @Query('cats')
@@ -31,5 +35,21 @@ export class CatResolver {
     // we manually overwrite this property to indicate a value that is translated!
     cat.description = await i18n.translate('test.cat');
     return cat;
+  }
+
+  @Mutation('createCat')
+  async create(@Args('createCatInput') args: any): Promise<any> {
+    await this.pubSub.publish('catAdded', { catAdded: args.name });
+    return args;
+  }
+
+  @Subscription('catAdded', {resolve: async (payload: any, args: any, context: any) => {
+    const {catAdded} = payload;
+    const i18nService: I18nService = context.i18nService;
+
+    return await i18nService.translate('test.cat_name', {lang: context.i18nLang, args: {name: catAdded}});
+  }})
+  catAdded() {
+    return this.pubSub.asyncIterator('catAdded');
   }
 }

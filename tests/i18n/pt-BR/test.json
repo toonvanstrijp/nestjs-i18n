@@ -8,5 +8,6 @@
     "DOIS",
     "TRÊS"
   ],
-  "cat": "Gato"
+  "cat": "Gato",
+  "cat_name": "Gato: {name}"
 }

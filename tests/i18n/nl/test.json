@@ -8,5 +8,6 @@
     "TWEE",
     "DRIE"
   ],
-  "cat": "Kat"
+  "cat": "Kat",
+  "cat_name": "Kat: {name}"
 }

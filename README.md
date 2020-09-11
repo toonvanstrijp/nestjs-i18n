@@ -148,6 +148,33 @@ To refresh your translations and languages manually:
 await this.i18nService.refresh();
 ```
 
+## GraphQL usage
+When using GraphQL it is required to provide the right context. You can do this by importing the GraphQLModule like this:
+```typescript
+import { Module } from '@nestjs/common';
+import * as path from 'path';
+import { I18nModule, I18nJsonParser } from 'nestjs-i18n';
+
+@Module({
+  imports: [
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      parser: I18nJsonParser,
+      parserOptions: {
+        path: path.join(__dirname, '/i18n/'),
+      },
+    }),
+    GraphQLModule.forRoot({
+      // USE THIS TO PROVIDE THE RIGHT CONTEXT FOR I18N
+      context: ({ req, connection }) => connection ? { req: connection.context } : { req },
+      ...
+    }),
+  ],
+  controllers: [],
+})
+export class AppModule {}
+```
+
 ### Parser
 
 A default JSON parser (`I18nJsonParser`) is included.

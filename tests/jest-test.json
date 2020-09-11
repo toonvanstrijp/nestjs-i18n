@@ -11,7 +11,7 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
-  "collectCoverageFrom": ["src/lib/**/*.ts", "!**/node_modules/**"],
+  "collectCoverageFrom": ["src/**/*.ts", "!**/node_modules/**"],
   "moduleNameMapper": {
     "fastify/lib/Reply": "fastify/lib/reply"
   }

@@ -6,7 +6,7 @@ import {
   I18nService,
   I18nJsonParser,
   I18nParser,
-} from '../src/lib';
+} from '../src';
 
 describe('i18n module', () => {
   let i18nService: I18nService;

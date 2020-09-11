@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
-import { I18nModule, I18nService, I18nJsonParser } from '../src/lib';
+import { I18nModule, I18nService, I18nJsonParser } from '../src';
 
 describe('i18n async module', () => {
   let i18nService: I18nService;

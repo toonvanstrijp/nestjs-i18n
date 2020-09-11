@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
-import { I18n, I18nContext, I18nLang, I18nService } from '../../../src/lib';
-import { I18nRequestScopeService } from '../../../src/lib/services/i18n-request-scope.service';
+import { I18n, I18nContext, I18nLang, I18nService } from '../../../src';
+import { I18nRequestScopeService } from '../../../src/services/i18n-request-scope.service';
 
 @Controller('hello')
 export class HelloController {

@@ -6,7 +6,7 @@ import {
   I18nModule,
   I18nJsonParser,
   AcceptLanguageResolver,
-} from '../src/lib';
+} from '../src';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';

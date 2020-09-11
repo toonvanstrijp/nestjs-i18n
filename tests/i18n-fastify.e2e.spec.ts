@@ -6,7 +6,7 @@ import {
   I18nModule,
   QueryResolver,
   I18nJsonParser,
-} from '../src/lib';
+} from '../src';
 import { HelloController } from './app/controllers/hello.controller';
 import {
   FastifyAdapter,

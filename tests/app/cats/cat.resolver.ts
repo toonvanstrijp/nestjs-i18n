@@ -1,7 +1,7 @@
 import { Resolver, Args, Query } from '@nestjs/graphql';
 import { CatService } from './cat.service';
-import { I18nLang, I18nService, I18n } from '../../../src/lib';
-import { I18nContext } from '../../../src/lib/i18n.context';
+import { I18nLang, I18nService, I18n } from '../../../src';
+import { I18nContext } from '../../../src/i18n.context';
 
 @Resolver('Cat')
 export class CatResolver {

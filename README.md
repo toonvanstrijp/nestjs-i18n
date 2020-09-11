@@ -411,15 +411,6 @@ Read [Nest Docs](https://docs.nestjs.com/fundamentals/injection-scopes) for more
 
 **Dont use `I18nRequestScopeService` within controllers.** The `I18n` decorator is a much better solution.
 
-# CLI
-
-To easily check if your i18n folder is correctly structured you can use the following command:
-`nest-i18n check <i18n-path>`
-
-example: `nest-i18n check src/i18n`
-
-This is very useful inside a CI environment to prevent releases with missing translations.
-
 # Breaking changes:
 
 - from V8.0.0 on we changed the internal `18n-middleware` for an `interceptor` this way we can provide the `ExecutionContext` so that `nestjs-i18n` works on diffrent protocols was well for example (grpc or websockets). This contains one breaking change. It only applies to your code if you've made a custom `resolver`. To resolve this breaking change take look at this [example](#custom-resolver). Instead of providing the `req` in the `resolve` method, change this to take the `ExecutionContext` as argument.

@@ -10,5 +10,6 @@
     "heading": "Hello, {username}",
     "title": "Wachtwoord vergeten",
     "followLink": "Volg deze link om je wachtwoord in te stellen"
-  }
+  },
+  "dot.test": "test"
 }

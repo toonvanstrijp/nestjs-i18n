@@ -12,5 +12,6 @@
     "heading": "Hello, {username}",
     "title": "Forgot password",
     "followLink": "Please follow the link to set up your password"
-  }
+  },
+  "dot.test": "test"
 }

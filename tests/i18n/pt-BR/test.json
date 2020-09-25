@@ -10,5 +10,6 @@
     "heading": "Olá, {username}",
     "title": "Esqueceu a senha",
     "followLink": "Por favor, siga o link para configurar sua senha"
-  }
+  },
+  "dot.test": "test"
 }

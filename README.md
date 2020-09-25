@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ToonvanStrijp/nestjs-i18n.svg?branch=master)](https://travis-ci.org/ToonvanStrijp/nestjs-i18n) 
+[![Build Status](https://travis-ci.org/ToonvanStrijp/nestjs-i18n.svg?branch=master)](https://travis-ci.org/ToonvanStrijp/nestjs-i18n)
 [![Coverage Status](https://coveralls.io/repos/github/ToonvanStrijp/nestjs-i18n/badge.svg?branch=master)](https://coveralls.io/github/ToonvanStrijp/nestjs-i18n?branch=master)
 
 ## Description
@@ -12,26 +12,28 @@ $ npm i --save nestjs-i18n
 ```
 
 ## Table of contents
-  * [Versions](#versions)
-  * [Quick Start](#quick-start)
-    + [Structure](#structure)
-    + [Translation File](#translation-file)
-    + [nest-cli.json copy i18n](#nest-clijson-copy-i18n)
-    + [Translation Module](#translation-module)
-      - [Using forRootAsync()](#using-forrootasync--)
-    + [Live reloading / Refreshing translations](#live-reloading---refreshing-translations)
-    + [GraphQL usage](#graphql-usage)
-    + [Parser](#parser)
-      - [Live translations / languages](#live-translations---languages)
-    + [Language Resolvers](#language-resolvers)
-      - [Custom resolver](#custom-resolver)
-      - [Using forRootAsync()](#using-forrootasync---1)
-      - [Using Fallbacks](#using-fallbacks)
-    + [Translating with i18n module](#translating-with-i18n-module)
-      - [`I18nLang` decorator and `I18nService`](#-i18nlang--decorator-and--i18nservice-)
-      - [`I18n` decorator](#-i18n--decorator)
-      - [`I18nRequestScopeService` within a custom service using request scoped translation service](#-i18nrequestscopeservice--within-a-custom-service-using-request-scoped-translation-service)
-- [Breaking changes:](#breaking-changes-)
+
+- [Versions](#versions)
+- [Quick Start](#quick-start)
+  - [Structure](#structure)
+  - [Translation File](#translation-file)
+  - [nest-cli.json copy i18n](#nest-clijson-copy-i18n)
+  - [Translation Module](#translation-module)
+    - [Using forRootAsync()](#using-forrootasync--)
+  - [Live reloading / Refreshing translations](#live-reloading---refreshing-translations)
+  - [GraphQL usage](#graphql-usage)
+  - [Parser](#parser)
+    - [Live translations / languages](#live-translations---languages)
+  - [Language Resolvers](#language-resolvers)
+    - [Custom resolver](#custom-resolver)
+    - [Using forRootAsync()](#using-forrootasync---1)
+    - [Using Fallbacks](#using-fallbacks)
+  - [Translating with i18n module](#translating-with-i18n-module)
+    - [`I18nLang` decorator and `I18nService`](#-i18nlang--decorator-and--i18nservice-)
+    - [`I18n` decorator](#-i18n--decorator)
+    - [`I18nRequestScopeService` within a custom service using request scoped translation service](#-i18nrequestscopeservice--within-a-custom-service-using-request-scoped-translation-service)
+
+* [Breaking changes:](#breaking-changes-)
 
 ## Versions
 
@@ -81,7 +83,7 @@ The format of a translation file could look like this:
 }
 ```
 
-To get a specific translation the JSON gets flattened by: [flat](https://github.com/hughsk/flat). All the translations are prefixed with the file name (to prevent collisions). Let's say the filename of the translation file is: `user.json`. To use the `HELLO_MESSAGE` translation you would use the following key: `user.HELLO_MESSAGE`.
+All the translations are prefixed with the file name (to prevent collisions). Let's say the filename of the translation file is: `user.json`. To use the `HELLO_MESSAGE` translation you would use the following key: `user.HELLO_MESSAGE`.
 
 String formatting is done by: [string-format](https://github.com/davidchambers/string-format)
 
@@ -171,7 +173,9 @@ await this.i18nService.refresh();
 ```
 
 ### GraphQL usage
+
 When using GraphQL it is required to provide the right context. You can do this by importing the GraphQLModule like this:
+
 ```typescript
 import { Module } from '@nestjs/common';
 import * as path from 'path';
@@ -352,7 +356,7 @@ I18nModule.forRoot({
     'en-CA': 'fr',
     'en-*': 'en',
     'fr-*': 'fr',
-    'pt': 'pt-BR',
+    pt: 'pt-BR',
   },
   parser: I18nJsonParser,
   parserOptions: {

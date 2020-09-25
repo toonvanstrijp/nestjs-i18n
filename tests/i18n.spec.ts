@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as path from 'path';
 import * as fs from 'fs';
 import { I18nModule, I18nService, I18nJsonParser, I18nParser } from '../src';
+import { async } from 'rxjs';
 
 describe('i18n module', () => {
   let i18nService: I18nService;
@@ -395,5 +396,9 @@ describe('i18n module with fallbacks', () => {
     expect(await i18nService.translate('test.HELLO', { lang: 'pt-BR' })).toBe(
       'Olá',
     );
+  });
+
+  it('i18n service should return translation with . in key', async () => {
+    expect(await i18nService.translate('test.dot.test')).toBe('test');
   });
 });

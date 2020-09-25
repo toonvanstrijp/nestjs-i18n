@@ -120,7 +120,7 @@ export class I18nService {
 
     const { args } = options;
 
-    if (keys.length > 1) {
+    if (keys.length > 1 && !translations.hasOwnProperty(key)) {
       const newKey = keys.slice(1, keys.length).join('.');
 
       return translations && translations.hasOwnProperty(firstKey)

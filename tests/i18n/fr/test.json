@@ -10,5 +10,6 @@
     "heading": "Bonjour, {username}",
     "title": "Mot de passe oublié",
     "followLink": "Veuillez suivre le lien pour configurer votre mot de passe"
-  }
+  },
+  "dot.test": "test"
 }

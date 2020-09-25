@@ -39,7 +39,7 @@ export class I18nService {
   public async translate(
     key: string,
     options?: translateOptions,
-  ): Promise<string> {
+  ): Promise<any> {
     options = {
       lang: this.i18nOptions.fallbackLanguage,
       ...options,
@@ -59,10 +59,16 @@ export class I18nService {
       await this.translations.pipe(take(1)).toPromise()
     )[lang];
 
+    const translation = await this.translateObject(
+      key,
+      translationsByLanguage ? translationsByLanguage : key,
+      options,
+    );
+
     if (
       translationsByLanguage === undefined ||
       translationsByLanguage === null ||
-      (!!translationsByLanguage && !translationsByLanguage.hasOwnProperty(key))
+      !translation
     ) {
       if (lang !== this.i18nOptions.fallbackLanguage) {
         const message = `Translation "${key}" in "${lang}" does not exist.`;
@@ -75,16 +81,6 @@ export class I18nService {
       }
     }
 
-    let translation = translationsByLanguage
-      ? translationsByLanguage[key]
-      : key;
-
-    if (translation && (args || (args instanceof Array && args.length > 0))) {
-      translation = format(
-        translation,
-        ...(args instanceof Array ? args || [] : [args]),
-      );
-    }
     return translation || key;
   }
 
@@ -112,6 +108,48 @@ export class I18nService {
     } else {
       this.languagesSubject.next(languages);
     }
+  }
+
+  private async translateObject(
+    key: string,
+    translations: I18nTranslation | string,
+    options?: translateOptions,
+  ): Promise<I18nTranslation | string> {
+    const keys = key.split('.');
+    const [firstKey] = keys;
+
+    const { args } = options;
+
+    if (keys.length > 1) {
+      const newKey = keys.slice(1, keys.length).join('.');
+
+      return translations && translations.hasOwnProperty(firstKey)
+        ? await this.translateObject(newKey, translations[firstKey], options)
+        : undefined;
+    }
+
+    let translation = translations[key];
+
+    if (translation && (args || (args instanceof Array && args.length > 0))) {
+      if (translation instanceof Object) {
+        return Object.keys(translation).reduce(async (obj, nestedKey) => {
+          return {
+            ...(await obj),
+            [nestedKey]: await this.translateObject(
+              nestedKey,
+              translation,
+              options,
+            ),
+          };
+        }, Promise.resolve({}));
+      }
+      translation = format(
+        translation,
+        ...(args instanceof Array ? args || [] : [args]),
+      );
+    }
+
+    return translation;
   }
 
   private async handleFallbacks(lang: string) {

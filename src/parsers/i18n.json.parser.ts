@@ -4,7 +4,6 @@ import { Inject, OnModuleDestroy } from '@nestjs/common';
 import * as path from 'path';
 import * as fs from 'fs';
 import { getDirectories, getFiles } from '../utils/file';
-import * as flat from 'flat';
 import { promisify } from 'util';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
 import {
@@ -120,13 +119,19 @@ export class I18nJsonParser extends I18nParser implements OnModuleDestroy {
 
       const prefix = path.basename(file).split('.')[0];
 
-      const flatData = flat.flatten(data);
-
-      for (const property of Object.keys(flatData)) {
+      for (const property of Object.keys(data)) {
         [...(global ? languages : [key])].forEach((lang) => {
           translations[lang] = !!translations[lang] ? translations[lang] : {};
-          translations[lang][`${global ? '' : `${prefix}.`}${property}`] =
-            flatData[property];
+
+          if (global) {
+            translations[lang][property] = data[property];
+          } else {
+            translations[lang][prefix] = !!translations[lang][prefix]
+              ? translations[lang][prefix]
+              : {};
+
+            translations[lang][prefix][property] = data[property];
+          }
         });
       }
     }

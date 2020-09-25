@@ -25,7 +25,7 @@ describe('i18n module e2e express', () => {
             'en-CA': 'fr',
             'en-*': 'en',
             'fr-*': 'fr',
-            'pt': 'pt-BR',
+            pt: 'pt-BR',
           },
           resolvers: [
             { use: QueryResolver, options: ['lang', 'locale', 'l'] },
@@ -136,6 +136,7 @@ describe('i18n module e2e express', () => {
       .expect(200)
       .expect('Hallo');
   });
+
   it(`/GET hello should return translation when providing accept-language`, () => {
     return request(app.getHttpServer())
       .get('/hello')
@@ -476,6 +477,24 @@ describe('i18n module e2e express', () => {
       .set('x-custom-lang', 'pt-BR')
       .expect(200)
       .expect('Olá');
+  });
+
+  it('/GET hello/object should return translated object', () => {
+    return request(app.getHttpServer())
+      .get('/hello/object')
+      .expect(200)
+      .expect({
+        heading: 'Hello, KirillCherkalov',
+        title: 'Forgot password',
+        followLink: 'Please follow the link to set up your password',
+      });
+  });
+
+  it('/GET hello/array should return translated array', () => {
+    return request(app.getHttpServer())
+      .get('/hello/array')
+      .expect(200)
+      .expect(['ONE', 'TWO', 'THREE']);
   });
 
   afterAll(async () => {

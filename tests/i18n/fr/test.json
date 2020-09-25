@@ -3,11 +3,12 @@
   "PRODUCT": {
     "NEW": "Nouveau Produit: {name}"
   },
-  "ARRAY": [
-    "UN",
-    "DEUX",
-    "TROIS"
-  ],
+  "ARRAY": ["UN", "DEUX", "TROIS"],
   "cat": "Chat",
-  "cat_name": "Chat: {name}"
+  "cat_name": "Chat: {name}",
+  "set-up-password": {
+    "heading": "Bonjour, {username}",
+    "title": "Mot de passe oublié",
+    "followLink": "Veuillez suivre le lien pour configurer votre mot de passe"
+  }
 }

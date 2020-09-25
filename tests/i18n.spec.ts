@@ -1,12 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as path from 'path';
 import * as fs from 'fs';
-import {
-  I18nModule,
-  I18nService,
-  I18nJsonParser,
-  I18nParser,
-} from '../src';
+import { I18nModule, I18nService, I18nJsonParser, I18nParser } from '../src';
 
 describe('i18n module', () => {
   let i18nService: I18nService;
@@ -109,7 +104,12 @@ describe('i18n module', () => {
   });
 
   it('i18n service should return supported languages', async () => {
-    expect(await i18nService.getSupportedLanguages()).toEqual(['en', 'fr', 'nl', 'pt-BR']);
+    expect(await i18nService.getSupportedLanguages()).toEqual([
+      'en',
+      'fr',
+      'nl',
+      'pt-BR',
+    ]);
   });
 
   describe('i18n should refresh manually', () => {
@@ -343,7 +343,7 @@ describe('i18n module with fallbacks', () => {
             'en-CA': 'fr',
             'en-*': 'en',
             'fr-*': 'fr',
-            'pt': 'pt-BR',
+            pt: 'pt-BR',
           },
           parser: I18nJsonParser,
           parserOptions: {
@@ -361,9 +361,7 @@ describe('i18n module with fallbacks', () => {
   });
 
   it('i18n service should return english translation', async () => {
-    expect(await i18nService.translate('test.HELLO')).toBe(
-      'Hello',
-    );
+    expect(await i18nService.translate('test.HELLO')).toBe('Hello');
     expect(await i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
       'Hello',
     );

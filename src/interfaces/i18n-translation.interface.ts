@@ -1,3 +1,3 @@
 export interface I18nTranslation {
-  [key: string]: { [key: string]: string };
+  [key: string]: { [key: string]: I18nTranslation | string } | string;
 }

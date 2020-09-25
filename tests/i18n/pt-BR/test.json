@@ -3,11 +3,12 @@
   "PRODUCT": {
     "NEW": "Novo Produto: {name}"
   },
-  "ARRAY": [
-    "UM",
-    "DOIS",
-    "TRÊS"
-  ],
+  "ARRAY": ["UM", "DOIS", "TRÊS"],
   "cat": "Gato",
-  "cat_name": "Gato: {name}"
+  "cat_name": "Gato: {name}",
+  "set-up-password": {
+    "heading": "Olá, {username}",
+    "title": "Esqueceu a senha",
+    "followLink": "Por favor, siga o link para configurar sua senha"
+  }
 }

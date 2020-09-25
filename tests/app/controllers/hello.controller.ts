@@ -38,4 +38,16 @@ export class HelloController {
   helloShortRequestScope(): Promise<string> {
     return this.i18nRequestScope.t('test.HELLO');
   }
+
+  @Get('/object')
+  object(): Promise<any> {
+    return this.i18n.translate('test.set-up-password', {
+      args: { username: 'KirillCherkalov' },
+    });
+  }
+
+  @Get('/array')
+  array(): Promise<any> {
+    return this.i18n.translate('test.ARRAY');
+  }
 }

@@ -4,12 +4,13 @@
     "NEW": "New Product: {name}"
   },
   "ENGLISH": "English",
-  "ARRAY": [
-    "ONE",
-    "TWO",
-    "THREE"
-  ],
+  "ARRAY": ["ONE", "TWO", "THREE"],
   "cat": "Cat",
   "ONLY_EN_KEY": "this key only exists in en lang",
-  "cat_name": "Cat: {name}"
+  "cat_name": "Cat: {name}",
+  "set-up-password": {
+    "heading": "Hello, {username}",
+    "title": "Forgot password",
+    "followLink": "Please follow the link to set up your password"
+  }
 }

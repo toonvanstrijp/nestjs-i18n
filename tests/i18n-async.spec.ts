@@ -90,7 +90,7 @@ describe('i18n async module with fallbacks', () => {
                 'en-CA': 'fr',
                 'en-*': 'en',
                 'fr-*': 'fr',
-                'pt': 'pt-BR',
+                pt: 'pt-BR',
               },
               parserOptions: {
                 path: path.join(__dirname, '/i18n/'),
@@ -110,9 +110,7 @@ describe('i18n async module with fallbacks', () => {
   });
 
   it('i18n service should return correct translation', async () => {
-    expect(await i18nService.translate('test.HELLO')).toBe(
-      'Hello',
-    );
+    expect(await i18nService.translate('test.HELLO')).toBe('Hello');
     expect(await i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
       'Hello',
     );

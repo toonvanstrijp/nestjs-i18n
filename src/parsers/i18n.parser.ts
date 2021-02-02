@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 export abstract class I18nParser {
   abstract languages(): Promise<string[] | Observable<string[]>>;
-  abstract async parse(): Promise<
+  abstract parse(): Promise<
     I18nTranslation | Observable<I18nTranslation>
   >;
 }

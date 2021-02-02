@@ -25,6 +25,7 @@ describe('i18n module e2e express', () => {
             'en-CA': 'fr',
             'en-*': 'en',
             'fr-*': 'fr',
+            'fr': 'fr-FR',
             pt: 'pt-BR',
           },
           resolvers: [
@@ -413,6 +414,14 @@ describe('i18n module e2e express', () => {
       .set('accept-language', 'nl-NL,nl;q=0.5')
       .expect(200)
       .expect('Hallo');
+  });
+
+  it(`/GET hello/request-scope should return translation when providing wildcard accept-language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/request-scope')
+      .set('accept-language', 'fr-FR')
+      .expect(200)
+      .expect('Bonjour');
   });
 
   it(`/GET hello/request-scope should return translation when providing cookie`, () => {

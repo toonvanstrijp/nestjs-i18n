@@ -11,5 +11,11 @@
     "title": "Mot de passe oublié",
     "followLink": "Veuillez suivre le lien pour configurer votre mot de passe"
   },
-  "dot.test": "test"
+  "dot.test": "test",
+  "day_interval": {
+    "one": "Tous les jours",
+    "other": "Tous les {count} jours",
+    "zero": "Jamais"
+  },
+  "nested": "Nous allons faire du shopping: $t(test.day_interval, {{\"count\": {count} }})"
 }

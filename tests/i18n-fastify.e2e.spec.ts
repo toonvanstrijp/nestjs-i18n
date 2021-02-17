@@ -502,6 +502,49 @@ describe('i18n module e2e fastify', () => {
       .expect(['ONE', 'TWO', 'THREE']);
   });
 
+  it('/GET hello/plurarization should return correct plural', async () => {
+    await request(app.getHttpServer())
+      .get('/hello/plurarization?count=0')
+      .expect(200)
+      .expect('Never');
+    await request(app.getHttpServer())
+      .get('/hello/plurarization?count=1')
+      .expect(200)
+      .expect('Every day');
+    await request(app.getHttpServer())
+      .get('/hello/plurarization?count=2')
+      .expect(200)
+      .expect('Every 2 days');
+    await request(app.getHttpServer())
+      .get('/hello/plurarization?count=0')
+      .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect('Nooit');
+
+    await request(app.getHttpServer())
+      .get('/hello/plurarization?count=1')
+      .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect('Iedere dag');
+    await request(app.getHttpServer())
+      .get('/hello/plurarization?count=2')
+      .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect('Iedere 2 dagen');
+  });
+
+  it('/GET hello/nested should return correct translation', async () => {
+    await request(app.getHttpServer())
+      .get('/hello/nested?count=2')
+      .expect(200)
+      .expect('We go shopping: Every 2 days');
+    await request(app.getHttpServer())
+      .get('/hello/nested?count=2')
+      .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect('Wij gaan winkelen: Iedere 2 dagen');
+  });
+  
   afterAll(async () => {
     await app.close();
   });

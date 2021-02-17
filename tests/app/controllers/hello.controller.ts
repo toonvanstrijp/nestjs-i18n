@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { I18n, I18nContext, I18nLang, I18nService } from '../../../src';
 import { I18nRequestScopeService } from '../../../src/services/i18n-request-scope.service';
 
@@ -49,5 +49,19 @@ export class HelloController {
   @Get('/array')
   array(): Promise<any> {
     return this.i18n.translate('test.ARRAY');
+  }
+
+  @Get('/plurarization')
+  plurarization(
+    @Query('count') count: number
+  ): Promise<any> {
+    return this.i18nRequestScope.translate('test.day_interval', { args: { count }});
+  }
+
+  @Get('/nested')
+  nested(
+    @Query('count') count: number
+  ): Promise<any> {
+    return this.i18nRequestScope.translate('test.nested', { args: { count }});
   }
 }

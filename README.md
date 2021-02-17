@@ -32,6 +32,8 @@ $ npm i --save nestjs-i18n
     - [`I18nLang` decorator and `I18nService`](#-i18nlang--decorator-and--i18nservice-)
     - [`I18n` decorator](#-i18n--decorator)
     - [`I18nRequestScopeService` within a custom service using request scoped translation service](#-i18nrequestscopeservice--within-a-custom-service-using-request-scoped-translation-service)
+   -  [Pluralize translations](#pluralize-translations)
+   -  [Nested translations](#nested-translations)
    -  [Translating HttpExceptions](#translating-httpexceptions)
 
 * [Breaking changes:](#breaking-changes-)
@@ -438,6 +440,46 @@ Read [Nest Docs](https://docs.nestjs.com/fundamentals/injection-scopes) for more
 
 **Dont use `I18nRequestScopeService` within controllers.** The `I18n` decorator is a much better solution.
 
+# Pluralize translations
+You can use plurals inside your translations as followed. You need to provide a `one`, `other` and `zero` translation for the pluralization to work.
+
+```json
+{
+  "day_interval": {
+      "one": "Every day",
+      "other": "Every {count} days",
+      "zero": "Never"
+  },
+  "cat": {
+      "one": "cat",
+      "other": "cats",
+      "zero": "cats"
+  }
+}
+```
+
+For i18n to pick the right plural you need to provide a count argument within the translation function.
+
+```typescript
+await i18n.translate('test.day_interval', {
+  args: { count: 1 },
+});
+```
+
+# Nested translations
+
+You can also use nested translation by making use of the translate function inside your translation by doing: `$t(KEY)`. To pass down arguments: `$t(KEY, {{\"count\": {count} }})`.
+
+```json
+{
+  "day_interval": {
+    "one": "Every day",
+    "other": "Every {count} days",
+    "zero": "Never"
+  },
+  "shopping": "We go shopping: $t(test.day_interval, {{\"count\": {count} }})"
+}
+```
 
 # Translating HttpExceptions
 

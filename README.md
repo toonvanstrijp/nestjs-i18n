@@ -437,6 +437,75 @@ Read [Nest Docs](https://docs.nestjs.com/fundamentals/injection-scopes) for more
 
 **Dont use `I18nRequestScopeService` within controllers.** The `I18n` decorator is a much better solution.
 
+
+# Translating HttpExceptions
+
+To translate httpexceptions, we need to create a filter and translate the exception message.
+
+```typescript
+import { I18nService } from 'nestjs-i18n';
+import {
+	ExceptionFilter,
+	Catch,
+	ArgumentsHost,
+	HttpException,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
+
+@Catch(HttpException)
+export class AllExceptionsFilter implements ExceptionFilter {
+	constructor(private readonly i18n: I18nService) {}
+
+	async catch(exception: HttpException, host: ArgumentsHost) {
+		const ctx = host.switchToHttp();
+		const response = ctx.getResponse<Response>();
+		const statusCode = exception.getStatus();
+
+		let message = exception.getResponse() as {
+			key: string;
+			args: Record<string, any>;
+		};
+
+		message = await this.i18n.translate(message.key, {
+			lang: host.switchToHttp().getRequest().i18nLang,
+			args: message.args,
+		});
+
+		response.status(statusCode).json({ statusCode, message });
+	}
+}
+
+```
+Now we need to use this filter as global filter. Since we are using dependency injection, you cannot have dependency injection if you register your filter with useGlobalFilters(). From the [docs](https://docs.nestjs.com/exception-filters#binding-filters), register the filter as global filter as :
+
+```typescript
+import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
+
+@Module({
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
+})
+export class AppModule {}
+```
+
+
+Now to use the filter , simply throw exceptions like:
+
+```typescript
+
+		throw new HttpException(
+			{ key: 'operations.HELLO', args: { username: 'rubin' } },
+			HttpStatus.FORBIDDEN,
+		);
+    
+```
+
+
 # Breaking changes:
 
 - from V8.0.0 on we changed the internal `18n-middleware` for an `interceptor` this way we can provide the `ExecutionContext` so that `nestjs-i18n` works on diffrent protocols was well for example (grpc or websockets). This contains one breaking change. It only applies to your code if you've made a custom `resolver`. To resolve this breaking change take look at this [example](#custom-resolver). Instead of providing the `req` in the `resolve` method, change this to take the `ExecutionContext` as argument.

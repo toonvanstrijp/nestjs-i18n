@@ -32,6 +32,7 @@ $ npm i --save nestjs-i18n
     - [`I18nLang` decorator and `I18nService`](#-i18nlang--decorator-and--i18nservice-)
     - [`I18n` decorator](#-i18n--decorator)
     - [`I18nRequestScopeService` within a custom service using request scoped translation service](#-i18nrequestscopeservice--within-a-custom-service-using-request-scoped-translation-service)
+   -  [Translating HttpExceptions](#translating-httpexceptions)
 
 * [Breaking changes:](#breaking-changes-)
 

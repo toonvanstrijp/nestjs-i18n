@@ -498,10 +498,10 @@ Now to use the filter , simply throw exceptions like:
 
 ```typescript
 
-		throw new HttpException(
-			{ key: 'operations.HELLO', args: { username: 'rubin' } },
-			HttpStatus.FORBIDDEN,
-		);
+  throw new HttpException(
+    { key: 'operations.HELLO', args: { username: 'rubin' } },
+	HttpStatus.FORBIDDEN,
+     );
     
 ```
 

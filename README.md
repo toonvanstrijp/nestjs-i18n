@@ -467,7 +467,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 		};
 
 		message = await this.i18n.translate(message.key, {
-			lang: host.switchToHttp().getRequest().i18nLang,
+			lang: ctx.getRequest().i18nLang,
 			args: message.args,
 		});
 

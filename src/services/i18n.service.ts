@@ -9,7 +9,6 @@ import {
 } from '../i18n.constants';
 import { I18nOptions } from '..';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
-import * as _ from 'lodash';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { I18nParser } from '../parsers/i18n.parser';
 import { take } from 'rxjs/operators';

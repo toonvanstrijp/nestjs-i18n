@@ -11,5 +11,11 @@
     "title": "Wachtwoord vergeten",
     "followLink": "Volg deze link om je wachtwoord in te stellen"
   },
-  "dot.test": "test"
+  "dot.test": "test",
+  "day_interval": {
+    "one": "Iedere dag",
+    "other": "Iedere {count} dagen",
+    "zero": "Nooit"
+  },
+  "nested": "Wij gaan winkelen: $t(test.day_interval, {{\"count\": {count} }})"
 }

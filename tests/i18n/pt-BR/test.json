@@ -11,5 +11,11 @@
     "title": "Esqueceu a senha",
     "followLink": "Por favor, siga o link para configurar sua senha"
   },
-  "dot.test": "test"
+  "dot.test": "test",
+  "day_interval": {
+    "one": "Todos os dias",
+    "other": "A cada {count} dias",
+    "zero": "Nunca"
+  },
+  "nested": "Vamos fazer compras: $t(test.day_interval, {\"count\": {count} })"
 }

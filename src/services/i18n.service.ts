@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import * as format from 'string-format';
 import {
   I18N_OPTIONS,
@@ -13,6 +13,7 @@ import * as _ from 'lodash';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { I18nParser } from '../parsers/i18n.parser';
 import { take } from 'rxjs/operators';
+import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
 
 export type translateOptions = {
   lang?: string;
@@ -114,6 +115,7 @@ export class I18nService {
     key: string,
     translations: I18nTranslation | string,
     options?: translateOptions,
+    rootTranslations?: I18nTranslation | string
   ): Promise<I18nTranslation | string> {
     const keys = key.split('.');
     const [firstKey] = keys;
@@ -124,14 +126,25 @@ export class I18nService {
       const newKey = keys.slice(1, keys.length).join('.');
 
       return translations && translations.hasOwnProperty(firstKey)
-        ? await this.translateObject(newKey, translations[firstKey], options)
+        ? await this.translateObject(newKey, translations[firstKey], options, translations)
         : undefined;
     }
 
     let translation = translations[key];
 
     if (translation && (args || (args instanceof Array && args.length > 0))) {
-      if (translation instanceof Object) {
+      const pluralObject = this.getPluralObject(translation);
+      if(pluralObject && args && args.hasOwnProperty('count')) {
+        const count = Number(args['count']);
+        
+        if(count == 0 && !!pluralObject.zero) {
+          translation = pluralObject.zero
+        } else if(count == 1 && !!pluralObject.one) {
+          translation = pluralObject.one
+        } else if(!!pluralObject.other){
+          translation = pluralObject.other
+        }
+      }else if (translation instanceof Object) {
         return Object.keys(translation).reduce(async (obj, nestedKey) => {
           return {
             ...(await obj),
@@ -139,6 +152,7 @@ export class I18nService {
               nestedKey,
               translation,
               options,
+              rootTranslations
             ),
           };
         }, Promise.resolve({}));
@@ -147,6 +161,15 @@ export class I18nService {
         translation,
         ...(args instanceof Array ? args || [] : [args]),
       );
+      const nestedTranslations = this.getNestedTranslations(translation);
+      if(nestedTranslations && nestedTranslations.length > 0) {
+        var offset = 0;
+        for (const nestedTranslation of nestedTranslations) {
+          const result = await this.translateObject(nestedTranslation.key, rootTranslations, {...options, args: { parent: options.args, ...nestedTranslation.args }}) as string;
+          translation = translation.substring(0, nestedTranslation.index - offset) + result + translation.substring(nestedTranslation.index + nestedTranslation.length - offset)
+          offset = offset + (nestedTranslation.length -result.length);
+        }
+      }
     }
 
     return translation;
@@ -167,5 +190,42 @@ export class I18nService {
       }
     }
     return lang;
+  }
+
+  private getPluralObject(translation: any): I18nPluralObject | undefined {
+    if(translation.hasOwnProperty('one') || translation.hasOwnProperty('zero') || translation.hasOwnProperty('other')) {
+      return translation as I18nPluralObject;
+    }
+    return undefined
+  }
+
+  private getNestedTranslations(translation: string): { index: number, length: number, key: string, args: {} }[] | undefined  {
+    var list = [];
+    const regex = /\$t\((.*?)(,(.*?))?\)/g;
+    var result: RegExpExecArray;
+    while(result =  regex.exec(translation)) {
+      var key = undefined;
+      var args = {};
+      var index = undefined;
+      var length = undefined;
+      if(result && result.length > 0) {
+        key = result[1].trim();
+        index = result.index
+        length = result[0].length
+        if(result.length >= 3) {
+          try {
+            args = JSON.parse(result[3])
+          }catch(e) {
+  
+          }
+        }
+      }
+      if(!!key) {
+        list.push({ index, length, key, args });
+      }
+      result = undefined;
+    }
+
+    return list.length > 0 ? list : undefined;
   }
 }

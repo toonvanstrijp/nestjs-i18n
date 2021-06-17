@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "accept-language-parser": "^1.5.0",
-    "chokidar": "^3.5.1",
+    "chokidar": "^3.5.2",
     "cookie": "^0.4.1",
     "rxjs": "^6.6.7",
     "string-format": "^2.0.0"

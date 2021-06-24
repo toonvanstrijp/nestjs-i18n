@@ -379,15 +379,15 @@ export class SampleController {
 
   @Get()
   async sample(@I18nLang() lang: string) {
-    await this.i18n.translate('HELLO_MESSAGE', {
+    await this.i18n.translate('user.HELLO_MESSAGE', {
       lang: lang,
       args: { id: 1, username: 'Toon' },
     });
-    await this.i18n.translate('SETUP.WELCOME', {
+    await this.i18n.translate('user.SETUP.WELCOME', {
       lang: 'en',
       args: { id: 1, username: 'Toon' },
     });
-    await this.i18n.translate('ARRAY.0', { lang: 'en' });
+    await this.i18n.translate('user.ARRAY.0', { lang: 'en' });
   }
 }
 ```
@@ -399,13 +399,13 @@ export class SampleController {
 export class SampleController {
   @Get()
   async sample(@I18n() i18n: I18nContext) {
-    await i18n.translate('HELLO_MESSAGE', {
+    await i18n.translate('user.HELLO_MESSAGE', {
       args: { id: 1, username: 'Toon' },
     });
-    await i18n.translate('SETUP.WELCOME', {
+    await i18n.translate('user.SETUP.WELCOME', {
       args: { id: 1, username: 'Toon' },
     });
-    await i18n.translate('ARRAY.0');
+    await i18n.translate('user.ARRAY.0');
   }
 }
 ```
@@ -420,13 +420,13 @@ export class SampleService {
   constructor(private readonly i18n: I18nRequestScopeService) {}
 
   async doFancyStuff() {
-    await this.i18n.translate('HELLO_MESSAGE', {
+    await this.i18n.translate('user.HELLO_MESSAGE', {
       args: { id: 1, username: 'Toon' },
     });
-    await this.i18n.translate('SETUP.WELCOME', {
+    await this.i18n.translate('user.SETUP.WELCOME', {
       args: { id: 1, username: 'Toon' },
     });
-    await this.i18n.translate('ARRAY.0');
+    await this.i18n.translate('user.ARRAY.0');
   }
 }
 ```

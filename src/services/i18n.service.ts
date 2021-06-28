@@ -63,6 +63,7 @@ export class I18nService {
       key,
       translationsByLanguage ? translationsByLanguage : key,
       options,
+      translationsByLanguage ? translationsByLanguage : undefined,
     );
 
     if (
@@ -125,7 +126,7 @@ export class I18nService {
       const newKey = keys.slice(1, keys.length).join('.');
 
       return translations && translations.hasOwnProperty(firstKey)
-        ? await this.translateObject(newKey, translations[firstKey], options, translations)
+        ? await this.translateObject(newKey, translations[firstKey], options, rootTranslations)
         : undefined;
     }
 

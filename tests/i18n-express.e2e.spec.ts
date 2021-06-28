@@ -549,6 +549,18 @@ describe('i18n module e2e express', () => {
       .expect('Wij gaan winkelen: Iedere 2 dagen');
   });
 
+  it('/GET hello/deeply-nested should return correct translation', async () => {
+    await request(app.getHttpServer())
+      .get('/hello/deeply-nested?count=2')
+      .expect(200)
+      .expect('We go shopping: Every 2 days');
+    await request(app.getHttpServer())
+      .get('/hello/deeply-nested?count=2')
+      .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect('Wij gaan winkelen: Iedere 2 dagen');
+  });
+
   afterAll(async () => {
     await app.close();
   });

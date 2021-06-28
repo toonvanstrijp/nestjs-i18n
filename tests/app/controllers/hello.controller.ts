@@ -64,4 +64,11 @@ export class HelloController {
   ): Promise<any> {
     return this.i18nRequestScope.translate('test.nested', { args: { count }});
   }
+
+  @Get('/deeply-nested')
+  deeplyNested(
+    @Query('count') count: number
+  ): Promise<any> {
+    return this.i18nRequestScope.translate('test.nest1.nest2.nest3', { args: { count }});
+  }
 }

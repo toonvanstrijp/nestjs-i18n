@@ -19,5 +19,10 @@
     "other": "Every {count} days",
     "zero": "Never"
   },
-  "nested": "We go shopping: $t(test.day_interval, {{\"count\": {count} }})"
+  "nested": "We go shopping: $t(test.day_interval, {{\"count\": {count} }})",
+  "nest1": {
+    "nest2": {
+      "nest3": "We go shopping: $t(test.day_interval, {{\"count\": {count} }})"
+    }
+  }
 }

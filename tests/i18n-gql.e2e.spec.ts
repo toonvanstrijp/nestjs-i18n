@@ -328,7 +328,7 @@ describe('i18n module e2e graphql', () => {
       });
   });
 
-  it(`should subscribe to catAdded and return cat name with "fr" placeholder`, async (done) => {
+  it(`should subscribe to catAdded and return cat name with "fr" placeholder`, async () => {
     apollo
       .subscribe({
         query: gql`
@@ -363,9 +363,7 @@ describe('i18n module e2e graphql', () => {
         },
       });
 
-    setTimeout(() => {
-      done();
-    }, 2000);
+    return new Promise(resolve => setTimeout(resolve, 2000));
   });
 
   afterAll(async () => {

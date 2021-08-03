@@ -29,7 +29,8 @@ export class AcceptLanguageResolver implements I18nResolver {
       : req?.headers?.['accept-language'];
 
     if (lang) {
-      return pick(await service.getSupportedLanguages(), lang, {loose: true });
+      return pick(await service.getSupportedLanguages(), lang)
+        ?? pick(await service.getSupportedLanguages(), lang, { loose: true });
     }
     return lang;
   }

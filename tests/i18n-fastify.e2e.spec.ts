@@ -515,7 +515,7 @@ describe('i18n module e2e fastify', () => {
     return request(app.getHttpServer())
       .get('/hello/array')
       .expect(200)
-      .expect(['ONE', 'TWO', 'THREE']);
+      .expect(res => expect(res.body).toEqual(['ONE', 'TWO', 'THREE']));
   });
 
   it('/GET hello/plurarization should return correct plural', async () => {

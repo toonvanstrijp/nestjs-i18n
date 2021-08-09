@@ -110,6 +110,8 @@ describe('i18n module', () => {
       'fr',
       'nl',
       'pt-BR',
+      'zh-CN',
+      'zh-TW'
     ]);
   });
 

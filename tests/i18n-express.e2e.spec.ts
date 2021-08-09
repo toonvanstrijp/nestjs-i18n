@@ -146,6 +146,22 @@ describe('i18n module e2e express', () => {
       .expect('Hallo');
   });
 
+  it(`/GET hello should return translation when providing accept-language with exact match`, () => {
+    return request(app.getHttpServer())
+      .get('/hello')
+      .set('accept-language', 'zh-TW')
+      .expect(200)
+      .expect('你們好');
+  });
+
+  it(`/GET hello should return translation when providing accept-language with loose match`, () => {
+    return request(app.getHttpServer())
+      .get('/hello')
+      .set('accept-language', 'zh-hans')
+      .expect(200)
+      .expect('你们好');
+  });
+
   it(`/GET hello should return translation when providing cookie`, () => {
     return request(app.getHttpServer())
       .get('/hello')

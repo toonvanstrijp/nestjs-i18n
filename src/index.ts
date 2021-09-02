@@ -33,3 +33,6 @@ export * from './resolvers/cookie.resolver';
 // build in parsers
 export * from './parsers/i18n.parser';
 export * from './parsers/i18n.json.parser';
+
+// interceptor
+export * from './interceptors/i18n-language.interceptor'

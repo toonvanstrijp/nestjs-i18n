@@ -10,8 +10,9 @@ export class I18nRequestScopeService {
   ) {}
 
   public translate(key: string, options?: translateOptions) {
+    const lang = (!this.req.i18nLang && this.req.context) ? this.req.context.i18nLang : this.req.i18nLang;
     options = {
-      lang: this.req.i18nLang,
+        lang,
       ...options,
     };
     return this.i18nService.translate(key, options);

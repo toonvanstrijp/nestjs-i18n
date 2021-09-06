@@ -6,6 +6,7 @@ import {
   I18N_LANGUAGES,
   I18N_LANGUAGES_SUBJECT,
   I18N_TRANSLATIONS_SUBJECT,
+  I18N_RESOLVERS,
 } from '../i18n.constants';
 import { I18nOptions } from '..';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
@@ -13,6 +14,16 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { I18nParser } from '../parsers/i18n.parser';
 import { take } from 'rxjs/operators';
 import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
+import { ExecutionContext } from '@nestjs/common';
+import {
+  I18nOptionResolver,
+  ResolverWithOptions,
+} from 'src/interfaces/i18n-options.interface';
+import { ModuleRef } from '@nestjs/core';
+import { I18nResolver } from 'src/interfaces/i18n-language-resolver.interface';
+import { shouldResolve } from '../utils/util';
+import { Type } from '@nestjs/common';
+import { getContextObject } from '../utils/context';
 
 export type translateOptions = {
   lang?: string;
@@ -34,6 +45,9 @@ export class I18nService {
     private readonly languagesSubject: BehaviorSubject<string[]>,
     @Inject(I18N_TRANSLATIONS_SUBJECT)
     private readonly translationsSubject: BehaviorSubject<I18nTranslation>,
+    @Inject(I18N_RESOLVERS)
+    private readonly i18nResolvers: I18nOptionResolver[],
+    private readonly moduleRef: ModuleRef,
   ) {}
 
   public async translate(
@@ -111,11 +125,53 @@ export class I18nService {
     }
   }
 
+  public async getLanguageByContext(
+    context: ExecutionContext,
+  ): Promise<string> {
+    let language = null;
+
+    const ctx = getContextObject(context);
+
+    if (ctx) {
+      ctx.i18nService = this;
+
+      for (const r of this.i18nResolvers) {
+        const resolver = await this.getResolver(r);
+
+        language = resolver.resolve(context);
+
+        if (language instanceof Promise) {
+          language = await (language as Promise<string>);
+        }
+
+        if (language !== undefined) {
+          break;
+        }
+      }
+
+      ctx.i18nLang = language || this.i18nOptions.fallbackLanguage;
+    }
+    return ctx.i18nLang || this.i18nOptions.fallbackLanguage;
+  }
+
+  private async getResolver(r: I18nOptionResolver): Promise<I18nResolver> {
+    if (shouldResolve(r)) {
+      if (r.hasOwnProperty('use') && r.hasOwnProperty('options')) {
+        const resolver = r as ResolverWithOptions;
+        return this.moduleRef.get(resolver.use);
+      } else {
+        return this.moduleRef.get(r as Type<I18nResolver>);
+      }
+    } else {
+      return r as I18nResolver;
+    }
+  }
+
   private async translateObject(
     key: string,
     translations: I18nTranslation | string,
     options?: translateOptions,
-    rootTranslations?: I18nTranslation | string
+    rootTranslations?: I18nTranslation | string,
   ): Promise<I18nTranslation | string> {
     const keys = key.split('.');
     const [firstKey] = keys;
@@ -126,7 +182,12 @@ export class I18nService {
       const newKey = keys.slice(1, keys.length).join('.');
 
       return translations && translations.hasOwnProperty(firstKey)
-        ? await this.translateObject(newKey, translations[firstKey], options, rootTranslations)
+        ? await this.translateObject(
+            newKey,
+            translations[firstKey],
+            options,
+            rootTranslations,
+          )
         : undefined;
     }
 
@@ -134,17 +195,17 @@ export class I18nService {
 
     if (translation && (args || (args instanceof Array && args.length > 0))) {
       const pluralObject = this.getPluralObject(translation);
-      if(pluralObject && args && args.hasOwnProperty('count')) {
+      if (pluralObject && args && args.hasOwnProperty('count')) {
         const count = Number(args['count']);
-        
-        if(count == 0 && !!pluralObject.zero) {
-          translation = pluralObject.zero
-        } else if(count == 1 && !!pluralObject.one) {
-          translation = pluralObject.one
-        } else if(!!pluralObject.other){
-          translation = pluralObject.other
+
+        if (count == 0 && !!pluralObject.zero) {
+          translation = pluralObject.zero;
+        } else if (count == 1 && !!pluralObject.one) {
+          translation = pluralObject.one;
+        } else if (!!pluralObject.other) {
+          translation = pluralObject.other;
         }
-      }else if (translation instanceof Object) {
+      } else if (translation instanceof Object) {
         return Object.keys(translation).reduce(async (obj, nestedKey) => {
           return {
             ...(await obj),
@@ -152,7 +213,7 @@ export class I18nService {
               nestedKey,
               translation,
               options,
-              rootTranslations
+              rootTranslations,
             ),
           };
         }, Promise.resolve({}));
@@ -162,12 +223,24 @@ export class I18nService {
         ...(args instanceof Array ? args || [] : [args]),
       );
       const nestedTranslations = this.getNestedTranslations(translation);
-      if(nestedTranslations && nestedTranslations.length > 0) {
+      if (nestedTranslations && nestedTranslations.length > 0) {
         var offset = 0;
         for (const nestedTranslation of nestedTranslations) {
-          const result = await this.translateObject(nestedTranslation.key, rootTranslations, {...options, args: { parent: options.args, ...nestedTranslation.args }}) as string;
-          translation = translation.substring(0, nestedTranslation.index - offset) + result + translation.substring(nestedTranslation.index + nestedTranslation.length - offset)
-          offset = offset + (nestedTranslation.length -result.length);
+          const result = (await this.translateObject(
+            nestedTranslation.key,
+            rootTranslations,
+            {
+              ...options,
+              args: { parent: options.args, ...nestedTranslation.args },
+            },
+          )) as string;
+          translation =
+            translation.substring(0, nestedTranslation.index - offset) +
+            result +
+            translation.substring(
+              nestedTranslation.index + nestedTranslation.length - offset,
+            );
+          offset = offset + (nestedTranslation.length - result.length);
         }
       }
     }
@@ -193,34 +266,38 @@ export class I18nService {
   }
 
   private getPluralObject(translation: any): I18nPluralObject | undefined {
-    if(translation.hasOwnProperty('one') || translation.hasOwnProperty('zero') || translation.hasOwnProperty('other')) {
+    if (
+      translation.hasOwnProperty('one') ||
+      translation.hasOwnProperty('zero') ||
+      translation.hasOwnProperty('other')
+    ) {
       return translation as I18nPluralObject;
     }
-    return undefined
+    return undefined;
   }
 
-  private getNestedTranslations(translation: string): { index: number, length: number, key: string, args: {} }[] | undefined  {
+  private getNestedTranslations(
+    translation: string,
+  ): { index: number; length: number; key: string; args: {} }[] | undefined {
     var list = [];
     const regex = /\$t\((.*?)(,(.*?))?\)/g;
     var result: RegExpExecArray;
-    while(result =  regex.exec(translation)) {
+    while ((result = regex.exec(translation))) {
       var key = undefined;
       var args = {};
       var index = undefined;
       var length = undefined;
-      if(result && result.length > 0) {
+      if (result && result.length > 0) {
         key = result[1].trim();
-        index = result.index
-        length = result[0].length
-        if(result.length >= 3) {
+        index = result.index;
+        length = result[0].length;
+        if (result.length >= 3) {
           try {
-            args = JSON.parse(result[3])
-          }catch(e) {
-  
-          }
+            args = JSON.parse(result[3]);
+          } catch (e) {}
         }
       }
-      if(!!key) {
+      if (!!key) {
         list.push({ index, length, key, args });
       }
       result = undefined;

@@ -133,6 +133,9 @@ export class I18nService {
     const ctx = getContextObject(context);
 
     if (ctx) {
+      if (ctx.i18nLang) {
+        return ctx.i18nLang;
+      }
       ctx.i18nService = this;
 
       for (const r of this.i18nResolvers) {
@@ -151,6 +154,7 @@ export class I18nService {
 
       ctx.i18nLang = language || this.i18nOptions.fallbackLanguage;
     }
+
     return ctx.i18nLang || this.i18nOptions.fallbackLanguage;
   }
 

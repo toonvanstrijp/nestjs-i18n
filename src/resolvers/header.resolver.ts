@@ -31,7 +31,7 @@ export class HeaderResolver implements I18nResolver {
             'HeaderResolver does not support RFC4647 Accept-Language header. Please use AcceptLanguageResolver instead.',
           );
         }
-        if (req.headers[key] !== undefined) {
+        if (req.headers !== undefined && req.headers[key] !== undefined) {
           lang = req.headers[key];
           break;
         }

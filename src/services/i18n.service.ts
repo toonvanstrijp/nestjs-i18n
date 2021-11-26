@@ -93,8 +93,10 @@ export class I18nService {
     return this.supportedLanguages.pipe(take(1)).toPromise();
   }
 
-  public async refresh() {
-    const translations = await this.parser.parse();
+  public async refresh(translations?: I18nTranslation | Observable<I18nTranslation>) {
+    if(!translations){
+      translations = await this.parser.parse();
+    }
     if (translations instanceof Observable) {
       this.translationsSubject.next(
         await translations.pipe(take(1)).toPromise(),

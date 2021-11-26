@@ -93,7 +93,9 @@ export class I18nService {
     return this.supportedLanguages.pipe(take(1)).toPromise();
   }
 
-  public async refresh(translations?: I18nTranslation | Observable<I18nTranslation>) {
+  public async refresh(
+    translations?: I18nTranslation | Observable<I18nTranslation>,
+    languages?: string[] | Observable<string[]>) {
     if(!translations){
       translations = await this.parser.parse();
     }
@@ -105,7 +107,10 @@ export class I18nService {
       this.translationsSubject.next(translations);
     }
 
-    const languages = await this.parser.languages();
+    if(!languages){
+      languages = await this.parser.languages();
+    }
+
     if (languages instanceof Observable) {
       this.languagesSubject.next(await languages.pipe(take(1)).toPromise());
     } else {
@@ -138,7 +143,7 @@ export class I18nService {
       const pluralObject = this.getPluralObject(translation);
       if(pluralObject && args && args.hasOwnProperty('count')) {
         const count = Number(args['count']);
-        
+
         if(count == 0 && !!pluralObject.zero) {
           translation = pluralObject.zero
         } else if(count == 1 && !!pluralObject.one) {
@@ -218,7 +223,7 @@ export class I18nService {
           try {
             args = JSON.parse(result[3])
           }catch(e) {
-  
+
           }
         }
       }

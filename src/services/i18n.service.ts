@@ -71,7 +71,8 @@ export class I18nService {
       translationsByLanguage === null ||
       !translation
     ) {
-      if (lang !== this.i18nOptions.fallbackLanguage) {
+      if (lang !== this.i18nOptions.fallbackLanguage &&
+        this.i18nOptions.logging) {
         const message = `Translation "${key}" in "${lang}" does not exist.`;
         this.logger.error(message);
 
@@ -136,7 +137,7 @@ export class I18nService {
       const pluralObject = this.getPluralObject(translation);
       if(pluralObject && args && args.hasOwnProperty('count')) {
         const count = Number(args['count']);
-        
+
         if(count == 0 && !!pluralObject.zero) {
           translation = pluralObject.zero
         } else if(count == 1 && !!pluralObject.one) {
@@ -216,7 +217,7 @@ export class I18nService {
           try {
             args = JSON.parse(result[3])
           }catch(e) {
-  
+
           }
         }
       }

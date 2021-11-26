@@ -40,6 +40,7 @@ const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
+  logging: true
 };
 
 @Global()
@@ -169,6 +170,11 @@ export class I18nModule implements OnModuleInit {
       useClass: options.parser,
     };
 
+    const i18nOptions: ValueProvider = {
+      provide: I18N_OPTIONS,
+      useValue: options,
+    };
+
     const i18nLanguagesSubjectProvider: ValueProvider = {
       provide: I18N_LANGUAGES_SUBJECT,
       useValue: i18nLanguagesSubject,
@@ -193,6 +199,7 @@ export class I18nModule implements OnModuleInit {
         asyncLanguagesProvider,
         asyncParserOptionsProvider,
         I18nService,
+        i18nOptions,
         I18nRequestScopeService,
         resolversProvider,
         i18nParserProvider,

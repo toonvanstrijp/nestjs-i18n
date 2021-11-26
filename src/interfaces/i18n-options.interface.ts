@@ -24,6 +24,7 @@ export interface I18nOptions {
   resolvers?: I18nOptionResolver[];
   parser: Type<I18nParser>;
   parserOptions: any;
+  logging?: boolean;
 }
 
 export interface I18nOptionsFactory {
@@ -42,4 +43,5 @@ export interface I18nAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
   resolvers?: I18nOptionResolver[];
   parser: Type<I18nParser>;
   inject?: any[];
+  logging?: boolean;
 }

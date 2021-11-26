@@ -94,8 +94,12 @@ export class I18nService {
     return this.supportedLanguages.pipe(take(1)).toPromise();
   }
 
-  public async refresh() {
-    const translations = await this.parser.parse();
+  public async refresh(
+    translations?: I18nTranslation | Observable<I18nTranslation>,
+    languages?: string[] | Observable<string[]>) {
+    if(!translations){
+      translations = await this.parser.parse();
+    }
     if (translations instanceof Observable) {
       this.translationsSubject.next(
         await translations.pipe(take(1)).toPromise(),
@@ -104,7 +108,10 @@ export class I18nService {
       this.translationsSubject.next(translations);
     }
 
-    const languages = await this.parser.languages();
+    if(!languages){
+      languages = await this.parser.languages();
+    }
+
     if (languages instanceof Observable) {
       this.languagesSubject.next(await languages.pipe(take(1)).toPromise());
     } else {

@@ -172,7 +172,7 @@ export class I18nModule implements OnModuleInit {
 
     const i18nOptions: ValueProvider = {
       provide: I18N_OPTIONS,
-      useValue: options,
+      useValue: options.useFactory(),
     };
 
     const i18nLanguagesSubjectProvider: ValueProvider = {

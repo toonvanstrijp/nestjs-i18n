@@ -77,6 +77,44 @@ describe('i18n module e2e graphql', () => {
     });
   });
 
+  it(`should subscribe to catAdded and return cat name with "fr" placeholder`, async () => {
+    apollo
+      .subscribe({
+        query: gql`
+          subscription catAdded {
+            catAdded
+          }
+        `,
+      })
+      .subscribe({
+        next: (catText) => {
+          expect(catText).toEqual({ data: { catAdded: 'Chat: Haya' } });
+        },
+        error: (error) => {
+          throw error;
+        },
+      });
+
+    await request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        operationName: null,
+        variables: {},
+        query:
+          'mutation {  createCat(createCatInput: {name: "Haya", age: 2})  { name, age }  }',
+      })
+      .expect(200, {
+        data: {
+          createCat: {
+            name: 'Haya',
+            age: 2,
+          },
+        },
+      });
+
+    return new Promise(resolve => setTimeout(resolve, 2000));
+  });
+  
   it(`should query a particular cat in NL`, () => {
     return request(app.getHttpServer())
       .post('/graphql')
@@ -326,44 +364,6 @@ describe('i18n module e2e graphql', () => {
           },
         },
       });
-  });
-
-  it(`should subscribe to catAdded and return cat name with "fr" placeholder`, async () => {
-    apollo
-      .subscribe({
-        query: gql`
-          subscription catAdded {
-            catAdded
-          }
-        `,
-      })
-      .subscribe({
-        next: (catText) => {
-          expect(catText).toEqual({ data: { catAdded: 'Chat: Haya' } });
-        },
-        error: (error) => {
-          throw error;
-        },
-      });
-
-    await request(app.getHttpServer())
-      .post('/graphql')
-      .send({
-        operationName: null,
-        variables: {},
-        query:
-          'mutation {  createCat(createCatInput: {name: "Haya", age: 2})  { name, age }  }',
-      })
-      .expect(200, {
-        data: {
-          createCat: {
-            name: 'Haya',
-            age: 2,
-          },
-        },
-      });
-
-    return new Promise(resolve => setTimeout(resolve, 2000));
   });
 
   afterAll(async () => {

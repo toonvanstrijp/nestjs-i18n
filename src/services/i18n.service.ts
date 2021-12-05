@@ -75,12 +75,12 @@ export class I18nService {
         this.i18nOptions.logging) {
         const message = `Translation "${key}" in "${lang}" does not exist.`;
         this.logger.error(message);
-
-        return this.translate(key, {
-          lang: this.i18nOptions.fallbackLanguage,
-          args,
-        });
       }
+
+      return this.translate(key, {
+        lang: this.i18nOptions.fallbackLanguage,
+        args,
+      });
     }
 
     return translation || key;

@@ -71,11 +71,11 @@ export class I18nService {
       translationsByLanguage === null ||
       !translation
     ) {
-      if (lang !== this.i18nOptions.fallbackLanguage &&
-        this.i18nOptions.logging) {
-        const message = `Translation "${key}" in "${lang}" does not exist.`;
-        this.logger.error(message);
-
+      if (lang !== this.i18nOptions.fallbackLanguage) {
+        if (this.i18nOptions.logging) {
+          const message = `Translation "${key}" in "${lang}" does not exist.`;
+          this.logger.error(message);
+        }
         return this.translate(key, {
           lang: this.i18nOptions.fallbackLanguage,
           args,

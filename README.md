@@ -260,7 +260,7 @@ To make it easier to manage in what language to respond you can make use of reso
       resolvers: [
         { use: QueryResolver, options: ['lang', 'locale', 'l'] },
         new HeaderResolver(['x-custom-lang']),
-        AcceptLanguageResolver,
+        { use: AcceptLanguageResolver, options: { matchType: 'strict-loose' } },
         new CookieResolver(['lang', 'locale', 'l']),
       ],
     }),

@@ -1,5 +1,4 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import * as format from 'string-format';
 import {
   I18N_OPTIONS,
   I18N_TRANSLATIONS,
@@ -165,7 +164,7 @@ export class I18nService {
           };
         }, Promise.resolve({}));
       }
-      translation = format(
+      translation = this.i18nOptions.formatter(
         translation,
         ...(args instanceof Array ? args || [] : [args]),
       );

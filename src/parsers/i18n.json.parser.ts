@@ -121,12 +121,12 @@ export class I18nJsonParser extends I18nParser implements OnModuleDestroy {
 
       for (const property of Object.keys(data)) {
         [...(global ? languages : [key])].forEach((lang) => {
-          translations[lang] = !!translations[lang] ? translations[lang] : {};
+          translations[lang] = translations[lang] ? translations[lang] : {};
 
           if (global) {
             translations[lang][property] = data[property];
           } else {
-            translations[lang][prefix] = !!translations[lang][prefix]
+            translations[lang][prefix] = translations[lang][prefix]
               ? translations[lang][prefix]
               : {};
 

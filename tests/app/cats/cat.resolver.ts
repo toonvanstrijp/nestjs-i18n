@@ -23,7 +23,7 @@ export class CatResolver {
   async getCat(@Args('id') id: number, @I18nLang() lang: string) {
     const cat = await this.catService.findById(id);
     // we manually overwrite this property to indicate a value that is translated!
-    cat.description = await this.i18nService.translate('test.cat', {
+    cat.description = this.i18nService.translate('test.cat', {
       lang: lang,
     });
     return cat;
@@ -33,7 +33,7 @@ export class CatResolver {
   async getCatUsingContext(@Args('id') id: number, @I18n() i18n: I18nContext) {
     const cat = await this.catService.findById(id);
     // we manually overwrite this property to indicate a value that is translated!
-    cat.description = await i18n.translate('test.cat');
+    cat.description = i18n.translate('test.cat');
     return cat;
   }
 
@@ -47,7 +47,7 @@ export class CatResolver {
     const {catAdded} = payload;
     const i18nService: I18nService = context.i18nService;
 
-    return await i18nService.translate('test.cat_name', {lang: context.i18nLang, args: {name: catAdded}});
+    return i18nService.translate('test.cat_name', {lang: context.i18nLang, args: {name: catAdded}});
   }})
   catAdded() {
     return this.pubSub.asyncIterator('catAdded');

@@ -13,14 +13,15 @@
   "scripts": {
     "build": "npm run build:lib",
     "build:lib": "rm -rf dist && tsc -p tsconfig.build.json",
-    "precommit": "lint-staged",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",
     "prepublish:next": "npm run build",
     "publish:next": "npm publish --access public --tag next",
     "test": "jest --config ./tests/jest-test.json",
     "test:cov": "jest --config ./tests/jest-test.json --coverage",
-    "coveralls": "npm run test:cov && cat ./coverage/lcov.info | coveralls"
+    "coveralls": "npm run test:cov && cat ./coverage/lcov.info | coveralls",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "devDependencies": {
     "@nestjs/common": "^8.4.2",
@@ -29,14 +30,20 @@
     "@nestjs/platform-express": "^8.4.2",
     "@nestjs/platform-fastify": "^8.4.2",
     "@nestjs/testing": "^8.4.2",
+    "@types/cookie": "^0.4.1",
     "@types/jest": "^27.4.1",
     "@types/string-format": "^2.0.0",
     "@types/ws": "^8.5.3",
+    "@typescript-eslint/eslint-plugin": "^5.16.0",
+    "@typescript-eslint/parser": "^5.16.0",
     "apollo-cache-inmemory": "^1.6.6",
     "apollo-client": "^2.6.10",
     "apollo-link-ws": "^1.0.20",
     "apollo-server-core": "^3.6.5",
     "apollo-server-express": "^3.6.5",
+    "eslint": "^8.11.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.25.4",
     "graphql-subscriptions": "^2.0.0",
     "graphql-tag": "^2.12.6",
     "jest": "^27.3.1",
@@ -45,6 +52,7 @@
     "ts-jest": "^27.0.7"
   },
   "dependencies": {
+    "@types/accept-language-parser": "^1.5.3",
     "accept-language-parser": "^1.5.0",
     "chokidar": "^3.5.3",
     "cookie": "^0.4.1",
@@ -54,11 +62,5 @@
     "@nestjs/common": "*",
     "@nestjs/core": "*",
     "rxjs": "*"
-  },
-  "lint-staged": {
-    "*.ts": [
-      "prettier --write",
-      "git add"
-    ]
   }
 }

@@ -10,65 +10,65 @@ export class HelloController {
   ) {}
 
   @Get()
-  async hello(@I18nLang() lang: string): Promise<string> {
+  hello(@I18nLang() lang: string): any {
     return this.i18n.translate('test.HELLO', { lang });
   }
 
   @Get('/short')
-  async helloShort(@I18nLang() lang: string): Promise<string> {
+  helloShort(@I18nLang() lang: string): any {
     return this.i18n.t('test.HELLO', { lang });
   }
 
   @Get('/context')
-  helloContext(@I18n() i18n: I18nContext): Promise<string> {
+  helloContext(@I18n() i18n: I18nContext): any {
     return i18n.translate('test.HELLO');
   }
 
   @Get('/short/context')
-  helloShortContext(@I18n() i18n: I18nContext): Promise<string> {
+  helloShortContext(@I18n() i18n: I18nContext): any {
     return i18n.t('test.HELLO');
   }
 
   @Get('/request-scope')
-  helloRequestScope(): Promise<string> {
+  helloRequestScope(): any {
     return this.i18nRequestScope.translate('test.HELLO');
   }
 
   @Get('/short/request-scope')
-  helloShortRequestScope(): Promise<string> {
+  helloShortRequestScope(): any {
     return this.i18nRequestScope.t('test.HELLO');
   }
 
   @Get('/object')
-  object(): Promise<any> {
+  object(): any {
     return this.i18n.translate('test.set-up-password', {
       args: { username: 'KirillCherkalov' },
     });
   }
 
   @Get('/array')
-  array(): Promise<any> {
+  array(): any {
     return this.i18n.translate('test.ARRAY');
   }
 
   @Get('/plurarization')
   plurarization(
     @Query('count') count: number
-  ): Promise<any> {
+  ): any {
     return this.i18nRequestScope.translate('test.day_interval', { args: { count }});
   }
 
   @Get('/nested')
   nested(
     @Query('count') count: number
-  ): Promise<any> {
+  ): any {
     return this.i18nRequestScope.translate('test.nested', { args: { count }});
   }
 
   @Get('/deeply-nested')
   deeplyNested(
     @Query('count') count: number
-  ): Promise<any> {
+  ): any {
     return this.i18nRequestScope.translate('test.nest1.nest2.nest3', { args: { count }});
   }
 }

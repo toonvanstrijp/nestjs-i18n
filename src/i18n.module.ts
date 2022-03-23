@@ -290,7 +290,7 @@ export class I18nModule implements OnModuleInit {
     return (resolvers || [])
       .filter(shouldResolve)
       .reduce<Provider[]>((providers, r) => {
-        if (r.hasOwnProperty('use') && r.hasOwnProperty('options')) {
+        if (r['use'] && r['options']) {
           const resolver = r as ResolverWithOptions;
           const optionsToken = getI18nResolverOptionsToken(
             (resolver.use as unknown) as () => void,

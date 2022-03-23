@@ -30,7 +30,7 @@ function resolveI18nServiceFromRequest(req: any): [string, I18nService] {
 function resolveI18nServiceFromGraphQLContext(
   graphqlContext,
 ): [string, I18nService] {
-  const [root, args, ctx, info] = graphqlContext;
+  const [,, ctx] = graphqlContext;
   return [ctx.i18nLang, ctx.i18nService];
 }
 

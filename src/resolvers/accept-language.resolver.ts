@@ -40,7 +40,7 @@ export class AcceptLanguageResolver implements I18nResolver {
       : req?.headers?.['accept-language'];
 
     if (lang) {
-      const supportedLangs = await service.getSupportedLanguages();
+      const supportedLangs = service.getSupportedLanguages();
       if (this.options.matchType === 'strict') {
         return pick(supportedLangs, lang)
       } else if (this.options.matchType === 'loose') {

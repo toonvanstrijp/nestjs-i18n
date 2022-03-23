@@ -1,6 +1,6 @@
 {
   "name": "nestjs-i18n",
-  "version": "8.2.3",
+  "version": "8.3.0",
   "description": "",
   "author": "Toon van Strijp",
   "license": "MIT",
@@ -30,6 +30,7 @@
     "@nestjs/platform-fastify": "^8.2.0",
     "@nestjs/testing": "^8.2.0",
     "@types/jest": "^27.0.3",
+    "@types/string-format": "^2.0.0",
     "@types/ws": "^8.2.0",
     "apollo-cache-inmemory": "^1.6.6",
     "apollo-client": "^2.6.10",

@@ -35,11 +35,13 @@ import { shouldResolve } from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nParser } from './parsers/i18n.parser';
 import { Observable, BehaviorSubject } from 'rxjs';
+import * as format from 'string-format';
 
 const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
+  formatter: format,
   logging: true
 };
 

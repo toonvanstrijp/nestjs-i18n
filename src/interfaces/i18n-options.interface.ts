@@ -18,12 +18,18 @@ export type I18nOptionResolver =
   | Type<I18nResolver>
   | I18nResolver;
 
+export type Formatter = (
+  template: string,
+  ...args: (string | Record<string, string>)[]
+) => string;
+
 export interface I18nOptions {
   fallbackLanguage: string;
   fallbacks?: { [key: string]: string };
   resolvers?: I18nOptionResolver[];
   parser: Type<I18nParser>;
   parserOptions: any;
+  formatter?: Formatter;
   logging?: boolean;
 }
 

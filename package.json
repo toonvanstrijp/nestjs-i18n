@@ -46,6 +46,7 @@
     "eslint-plugin-import": "^2.25.4",
     "graphql-subscriptions": "^2.0.0",
     "graphql-tag": "^2.12.6",
+    "hbs": "^4.2.0",
     "jest": "^27.3.1",
     "subscriptions-transport-ws": "^0.9.0",
     "supertest": "^6.1.6",

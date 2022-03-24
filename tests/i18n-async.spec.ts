@@ -1,3 +1,4 @@
+import { Global, Module } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
 import { I18nModule, I18nService, I18nJsonParser } from '../src';
@@ -76,6 +77,18 @@ describe('i18n module without trailing slash in path', () => {
   });
 });
 
+@Global()
+@Module({
+  providers: [
+    {
+      provide: 'FALLBACK_LANGUAGE',
+      useValue: 'en'
+    }
+  ],
+  exports: ['FALLBACK_LANGUAGE']
+})
+export class TestModule {}
+
 describe('i18n async module with fallbacks', () => {
   let i18nService: I18nService;
 
@@ -83,9 +96,11 @@ describe('i18n async module with fallbacks', () => {
     const module = await Test.createTestingModule({
       imports: [
         I18nModule.forRootAsync({
-          useFactory: () => {
+          imports: [TestModule],
+          inject: ['FALLBACK_LANGUAGE'],
+          useFactory: (fallbackLanguage: any) => {
             return {
-              fallbackLanguage: 'en',
+              fallbackLanguage: fallbackLanguage,
               fallbacks: {
                 'en-CA': 'fr',
                 'en-*': 'en',

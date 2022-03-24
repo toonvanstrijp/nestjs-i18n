@@ -213,8 +213,8 @@ export class I18nModule implements OnModuleInit {
     if (options.useFactory) {
       return {
         provide: I18N_OPTIONS,
-        useFactory: async () => {
-          return this.sanitizeI18nOptions(await options.useFactory() as any)
+        useFactory: async (...args) => {
+          return this.sanitizeI18nOptions(await options.useFactory(...args) as any)
         },
         inject: options.inject || [],
       };

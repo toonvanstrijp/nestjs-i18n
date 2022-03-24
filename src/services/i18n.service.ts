@@ -162,7 +162,7 @@ export class I18nService {
           translation = pluralObject.other
         }
       }else if (translation instanceof Object) {
-        const result = Object.keys(translation).reduce(async (obj, nestedKey) => {
+        const result = Object.keys(translation).reduce((obj, nestedKey) => {
           return {
             ...obj,
             [nestedKey]: this.translateObject(

@@ -31,6 +31,7 @@
     "@nestjs/platform-fastify": "^8.4.2",
     "@nestjs/testing": "^8.4.2",
     "@types/cookie": "^0.4.1",
+    "@types/hbs": "^4.0.1",
     "@types/jest": "^27.4.1",
     "@types/string-format": "^2.0.0",
     "@types/ws": "^8.5.3",

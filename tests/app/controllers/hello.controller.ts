@@ -17,7 +17,7 @@ export class HelloController {
   @Get('/index')
   @Render('index')
   index(): any {
-    return { username: 'KirillCherkalov' };
+    return { count: 1 };
   }
 
   @Get('/short')

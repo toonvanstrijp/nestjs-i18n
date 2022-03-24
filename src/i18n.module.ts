@@ -1,6 +1,7 @@
 import {
   DynamicModule,
   Global,
+  Inject,
   Logger,
   Module,
   Provider,
@@ -36,23 +37,43 @@ import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nParser } from './parsers/i18n.parser';
 import { Observable, BehaviorSubject } from 'rxjs';
 import * as format from 'string-format';
+import { I18nJsonParser } from './parsers/i18n.json.parser';
 
 const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
   formatter: format,
-  logging: true
+  logging: true,
+  parser: I18nJsonParser
 };
 
 @Global()
 @Module({})
 export class I18nModule implements OnModuleInit {
-  constructor(private readonly i18n: I18nService) {}
+  constructor(private readonly i18n: I18nService, @Inject(I18N_OPTIONS) private readonly i18nOptions: I18nOptions) {}
 
   async onModuleInit() {
     // makes sure languages & translations are loaded before application loads
     await this.i18n.refresh();
+
+    // Register handlebars helper
+    if (this.i18nOptions.viewEngine == 'hbs') {
+      try {
+        const hbs = await import("hbs")
+        hbs.registerHelper('t', (key: string, args: any, options: any) => {
+          if (!options) {
+            options = args;
+          }
+          
+          const lang = options.lookupProperty(options.data.root, 'i18nLang');
+          return this.i18n.t(key, {lang, args});
+        });
+        logger.log("Handlebars helper registered");
+      }catch(e) {
+        logger.error('hbs module failed to load', e);
+      }
+    }
   }
 
   static forRoot(options: I18nOptions): DynamicModule {

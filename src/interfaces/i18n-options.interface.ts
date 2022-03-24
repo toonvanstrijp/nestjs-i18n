@@ -31,6 +31,7 @@ export interface I18nOptions {
   parserOptions: any;
   formatter?: Formatter;
   logging?: boolean;
+  viewEngine?: 'hbs'
 }
 
 export interface I18nOptionsFactory {

@@ -7,7 +7,6 @@ import {
   I18nModule,
   QueryResolver,
   I18nJsonParser,
-  I18nService,
 } from '../src';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
@@ -15,7 +14,6 @@ import {
   NestExpressApplication,
 } from '@nestjs/platform-express';
 import { join } from 'path';
-import * as Handlebars from 'hbs';
 
 describe('i18n module e2e hbs', () => {
   let app: NestExpressApplication;
@@ -42,17 +40,13 @@ describe('i18n module e2e hbs', () => {
           parserOptions: {
             path: path.join(__dirname, '/i18n/'),
           },
+          viewEngine: 'hbs'
         }),
       ],
       controllers: [HelloController],
     }).compile();
 
     app = module.createNestApplication<NestExpressApplication>();
-
-    var i18nService = app.get(I18nService);
-    Handlebars.registerHelper('i18n', function (object, propertyName, options) {
-      return i18nService.t(propertyName);
-    });
 
     app.setBaseViewsDir(join(__dirname, 'app', 'views'));
     app.setViewEngine('hbs');
@@ -61,10 +55,15 @@ describe('i18n module e2e hbs', () => {
   });
 
   it(`should render translated page`, async () => {
-    return request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get('/hello/index')
       .expect(200)
-      .expect('Hello');
+      .expect('Every day');
+
+    return request(app.getHttpServer())
+      .get('/hello/index?l=nl')
+      .expect(200)
+      .expect('Iedere dag');
   })
   
   afterAll(async () => {

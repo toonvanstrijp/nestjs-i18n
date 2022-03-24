@@ -232,14 +232,16 @@ export class I18nModule implements OnModuleInit {
     if (options.useFactory) {
       return {
         provide: I18N_OPTIONS,
-        useFactory: options.useFactory,
+        useFactory: async () => {
+          return this.sanitizeI18nOptions(await options.useFactory() as any)
+        },
         inject: options.inject || [],
       };
     }
     return {
       provide: I18N_OPTIONS,
       useFactory: async (optionsFactory: I18nOptionsFactory) =>
-        await optionsFactory.createI18nOptions(),
+      this.sanitizeI18nOptions(await optionsFactory.createI18nOptions() as any),
       inject: [options.useClass || options.useExisting],
     };
   }
@@ -248,7 +250,7 @@ export class I18nModule implements OnModuleInit {
     return {
       provide: I18N_PARSER_OPTIONS,
       useFactory: async (options: I18nOptions): Promise<any> => {
-        return options.parserOptions;
+        return this.sanitizeI18nOptions(options.parserOptions);
       },
       inject: [I18N_OPTIONS],
     };

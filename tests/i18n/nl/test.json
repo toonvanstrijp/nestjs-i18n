@@ -18,6 +18,7 @@
     "zero": "Nooit"
   },
   "nested": "Wij gaan winkelen: $t(test.day_interval, {{\"count\": {count} }})",
+  "nested-no-args": "Wij gaan winkelen: $t(test.dot.test)",
   "nest1": {
     "nest2": {
       "nest3": "Wij gaan winkelen: $t(test.day_interval, {{\"count\": {count} }})"

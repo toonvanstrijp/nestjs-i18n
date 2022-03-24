@@ -17,5 +17,6 @@
     "other": "Tous les {count} jours",
     "zero": "Jamais"
   },
-  "nested": "Nous allons faire du shopping: $t(test.day_interval, {{\"count\": {count} }})"
+  "nested": "Nous allons faire du shopping: $t(test.day_interval, {{\"count\": {count} }})",
+  "nested-no-args": "Nous allons faire du shopping: $t(test.dot.test)"
 }

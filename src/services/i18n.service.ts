@@ -16,6 +16,7 @@ import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
 export type translateOptions = {
   lang?: string;
   args?: ({ [k: string]: any } | string)[] | { [k: string]: any };
+  debug?: boolean;
 };
 
 @Injectable()
@@ -136,7 +137,7 @@ export class I18nService {
     const keys = key.split('.');
     const [firstKey] = keys;
 
-    const { args } = options;
+    const args = options?.args ?? {};
 
     if (keys.length > 1 && !translations[key]) {
       const newKey = keys.slice(1, keys.length).join('.');
@@ -161,7 +162,7 @@ export class I18nService {
           translation = pluralObject.other
         }
       }else if (translation instanceof Object) {
-        return Object.keys(translation).reduce((obj, nestedKey) => {
+        const result = Object.keys(translation).reduce(async (obj, nestedKey) => {
           return {
             ...obj,
             [nestedKey]: this.translateObject(
@@ -172,6 +173,12 @@ export class I18nService {
             ),
           };
         }, {});
+
+        if (translation instanceof Array) {
+          return Object.values(result) as unknown as I18nTranslation;
+        }
+
+        return result;
       }
       translation = this.i18nOptions.formatter(
         translation,

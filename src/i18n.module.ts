@@ -37,15 +37,13 @@ import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nParser } from './parsers/i18n.parser';
 import { Observable, BehaviorSubject } from 'rxjs';
 import * as format from 'string-format';
-import { I18nJsonParser } from './parsers/i18n.json.parser';
 
 const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
   formatter: format,
-  logging: true,
-  parser: I18nJsonParser
+  logging: true
 };
 
 @Global()

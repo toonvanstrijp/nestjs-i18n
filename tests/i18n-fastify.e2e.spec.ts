@@ -36,7 +36,6 @@ describe('i18n module e2e fastify', () => {
             new CookieResolver(),
             AcceptLanguageResolver,
           ],
-          parser: I18nJsonParser,
           parserOptions: {
             path: path.join(__dirname, '/i18n/'),
           },

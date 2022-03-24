@@ -37,13 +37,15 @@ import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nParser } from './parsers/i18n.parser';
 import { Observable, BehaviorSubject } from 'rxjs';
 import * as format from 'string-format';
+import { I18nJsonParser } from './parsers/i18n.json.parser';
 
 const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
   formatter: format,
-  logging: true
+  logging: true,
+  parser: I18nJsonParser
 };
 
 @Global()
@@ -173,6 +175,8 @@ export class I18nModule implements OnModuleInit {
   }
 
   static forRootAsync(options: I18nAsyncOptions): DynamicModule {
+    options = this.sanitizeI18nOptions(options);
+
     const asyncOptionsProvider = this.createAsyncOptionsProvider(options);
     const asyncTranslationProvider = this.createAsyncTranslationProvider();
     const asyncLanguagesProvider = this.createAsyncLanguagesProvider();
@@ -302,7 +306,7 @@ export class I18nModule implements OnModuleInit {
     };
   }
 
-  private static sanitizeI18nOptions(options: I18nOptions) {
+  private static sanitizeI18nOptions<T = I18nOptions | I18nAsyncOptions>(options: T) {
     options = { ...defaultOptions, ...options };
     return options;
   }

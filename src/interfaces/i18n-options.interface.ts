@@ -27,7 +27,7 @@ export interface I18nOptions {
   fallbackLanguage: string;
   fallbacks?: { [key: string]: string };
   resolvers?: I18nOptionResolver[];
-  parser: Type<I18nParser>;
+  parser?: Type<I18nParser>;
   parserOptions: any;
   formatter?: Formatter;
   logging?: boolean;
@@ -48,7 +48,7 @@ export interface I18nAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
     ...args: any[]
   ) => Promise<I18nOptionsWithoutResolvers> | I18nOptionsWithoutResolvers;
   resolvers?: I18nOptionResolver[];
-  parser: Type<I18nParser>;
+  parser?: Type<I18nParser>;
   inject?: any[];
   logging?: boolean;
 }

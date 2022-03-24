@@ -17,7 +17,6 @@ describe('i18n async module', () => {
               },
             };
           },
-          parser: I18nJsonParser,
         }),
       ],
     }).compile();
@@ -54,7 +53,6 @@ describe('i18n module without trailing slash in path', () => {
               },
             };
           },
-          parser: I18nJsonParser,
         }),
       ],
     }).compile();
@@ -97,7 +95,6 @@ describe('i18n async module with fallbacks', () => {
               },
             };
           },
-          parser: I18nJsonParser,
         }),
       ],
     }).compile();

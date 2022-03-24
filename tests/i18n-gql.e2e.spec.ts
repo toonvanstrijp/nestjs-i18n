@@ -41,7 +41,6 @@ describe('i18n module e2e graphql', () => {
             new AcceptLanguageResolver(),
             new CookieResolver(),
           ],
-          parser: I18nJsonParser,
           parserOptions: {
             path: path.join(__dirname, '/i18n/'),
           },

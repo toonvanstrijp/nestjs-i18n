@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Render } from '@nestjs/common';
 import { I18n, I18nContext, I18nLang, I18nService } from '../../../src';
 import { I18nRequestScopeService } from '../../../src/services/i18n-request-scope.service';
 
@@ -12,6 +12,12 @@ export class HelloController {
   @Get()
   hello(@I18nLang() lang: string): any {
     return this.i18n.translate('test.HELLO', { lang });
+  }
+
+  @Get('/index')
+  @Render('index')
+  index(): any {
+    return { count: 1 };
   }
 
   @Get('/short')

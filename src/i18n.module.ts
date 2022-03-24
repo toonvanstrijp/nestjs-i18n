@@ -1,6 +1,7 @@
 import {
   DynamicModule,
   Global,
+  Inject,
   Logger,
   Module,
   Provider,
@@ -48,11 +49,29 @@ const defaultOptions: Partial<I18nOptions> = {
 @Global()
 @Module({})
 export class I18nModule implements OnModuleInit {
-  constructor(private readonly i18n: I18nService) {}
+  constructor(private readonly i18n: I18nService, @Inject(I18N_OPTIONS) private readonly i18nOptions: I18nOptions) {}
 
   async onModuleInit() {
     // makes sure languages & translations are loaded before application loads
     await this.i18n.refresh();
+
+    // Register handlebars helper
+    if (this.i18nOptions.viewEngine == 'hbs') {
+      try {
+        const hbs = await import("hbs")
+        hbs.registerHelper('t', (key: string, args: any, options: any) => {
+          if (!options) {
+            options = args;
+          }
+          
+          const lang = options.lookupProperty(options.data.root, 'i18nLang');
+          return this.i18n.t(key, {lang, args});
+        });
+        logger.log("Handlebars helper registered");
+      }catch(e) {
+        logger.error('hbs module failed to load', e);
+      }
+    }
   }
 
   static forRoot(options: I18nOptions): DynamicModule {

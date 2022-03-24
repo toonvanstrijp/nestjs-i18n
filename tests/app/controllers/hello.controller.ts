@@ -65,6 +65,11 @@ export class HelloController {
     return this.i18nRequestScope.translate('test.nested', { args: { count }});
   }
 
+  @Get('/nested-no-args')
+  nestedNoArgs(): any {
+    return this.i18nRequestScope.translate('test.nested-no-args');
+  }
+
   @Get('/deeply-nested')
   deeplyNested(
     @Query('count') count: number

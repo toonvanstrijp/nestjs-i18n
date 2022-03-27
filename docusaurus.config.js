@@ -9,7 +9,7 @@ const config = {
   title: 'nestjs-i18n',
   tagline: 'The i18n module for Nest.',
   url: 'https://nestjs-i18n.github.io',
-  baseUrl: '/',
+  baseUrl: '/nestjs-i18n/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   organizationName: 'toonvanstrijp', // Usually your GitHub org/user name.

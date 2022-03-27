@@ -34,6 +34,11 @@ export class I18nLanguageInterceptor implements NestInterceptor {
 
     const ctx = getContextObject(context);
 
+    // Skip interceptor if language is already resolved (in case of http middleware)
+    if (!!ctx.i18nLang) {
+      return next.handle();
+    }
+
     if (ctx) {
       ctx.i18nService = this.i18nService;
 
@@ -52,6 +57,11 @@ export class I18nLanguageInterceptor implements NestInterceptor {
       }
 
       ctx.i18nLang = language || this.i18nOptions.fallbackLanguage;
+
+      // Pass down language to handlebars
+      if (ctx.app) {
+        ctx.app.locals.i18nLang = ctx.i18nLang;
+      }
     }
 
     return next.handle();
@@ -59,7 +69,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
 
   private async getResolver(r: I18nOptionResolver): Promise<I18nResolver> {
     if (shouldResolve(r)) {
-      if (r.hasOwnProperty('use') && r.hasOwnProperty('options')) {
+      if (r['use'] && r['options']) {
         const resolver = r as ResolverWithOptions;
         return this.moduleRef.get(resolver.use);
       } else {

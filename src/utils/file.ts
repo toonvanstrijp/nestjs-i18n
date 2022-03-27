@@ -18,7 +18,7 @@ export async function filterAsync<T>(
   callbackfn: (value: T, index: number, array: T[]) => Promise<boolean>,
 ): Promise<T[]> {
   const filterMap = await mapAsync(array, callbackfn);
-  return array.filter((value, index) => filterMap[index]);
+  return array.filter((_, index) => filterMap[index]);
 }
 
 export const isDirectory = async (source: string) =>
@@ -27,7 +27,7 @@ export const isDirectory = async (source: string) =>
 export const getDirectories = async (source: string) => {
   const dirs = await readdir(source);
   return filterAsync(
-    dirs.map(name => path.join(source, name)),
+    dirs.map((name) => path.join(source, name)),
     isDirectory,
   );
 };
@@ -47,5 +47,5 @@ export const getFiles = async (dirPath: string, pattern: RegExp) => {
         return false;
       }
     })
-  ).map(f => path.join(dirPath, typeof f === 'string' ? f : f.name));
+  ).map((f) => path.join(dirPath, typeof f === 'string' ? f : f.name));
 };

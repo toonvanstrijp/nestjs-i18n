@@ -1,0 +1,21 @@
+name: test-docs
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+          cache: npm
+      - name: Build Docusaurus website
+        run: |
+          npm ci 
+          npm run doc:build

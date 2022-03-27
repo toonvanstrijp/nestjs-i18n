@@ -17,6 +17,7 @@
     "other": "A cada {count} dias",
     "zero": "Nunca"
   },
-  "nested": "Vamos fazer compras: $t(test.day_interval, {\"count\": {count} })",
-  "nested-no-args": "Vamos fazer compras: $t(dot.test)"
+  "nested": "Mensagem: $t(test.set-up-password.heading, {{\"username\":  \"{username}\" }})",
+  "nested-no-args": "Vamos fazer compras: $t(dot.test)",
+  "CURRENT_LANGUAGE": "idioma atual: {lang}"
 }

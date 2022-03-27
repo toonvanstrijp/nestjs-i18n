@@ -4,7 +4,7 @@ import { I18nResolverOptions } from '../decorators/i18n-resolver-options.decorat
 
 @Injectable()
 export class QueryResolver implements I18nResolver {
-  constructor(@I18nResolverOptions() private keys: string[]) {}
+  constructor(@I18nResolverOptions() private keys: string[] = []) {}
 
   resolve(context: ExecutionContext) {
     let req: any;

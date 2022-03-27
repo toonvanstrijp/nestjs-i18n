@@ -4,7 +4,6 @@ import { I18nLang, I18nService, I18n } from '../../../src';
 import { I18nContext } from '../../../src/i18n.context';
 import { Inject } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
-import { async } from 'rxjs';
 
 @Resolver('Cat')
 export class CatResolver {
@@ -23,7 +22,7 @@ export class CatResolver {
   async getCat(@Args('id') id: number, @I18nLang() lang: string) {
     const cat = await this.catService.findById(id);
     // we manually overwrite this property to indicate a value that is translated!
-    cat.description = await this.i18nService.translate('test.cat', {
+    cat.description = this.i18nService.translate('test.cat', {
       lang: lang,
     });
     return cat;
@@ -33,7 +32,7 @@ export class CatResolver {
   async getCatUsingContext(@Args('id') id: number, @I18n() i18n: I18nContext) {
     const cat = await this.catService.findById(id);
     // we manually overwrite this property to indicate a value that is translated!
-    cat.description = await i18n.translate('test.cat');
+    cat.description = i18n.translate('test.cat');
     return cat;
   }
 
@@ -43,11 +42,11 @@ export class CatResolver {
     return args;
   }
 
-  @Subscription('catAdded', {resolve: async (payload: any, args: any, context: any) => {
+  @Subscription('catAdded', {resolve: async (payload: any, args: any, ctx: any) => {
     const {catAdded} = payload;
-    const i18nService: I18nService = context.i18nService;
+    const i18nService: I18nService = ctx.i18nService;
 
-    return await i18nService.translate('test.cat_name', {lang: context.i18nLang, args: {name: catAdded}});
+    return i18nService.translate('test.cat_name', {lang: ctx.i18nLang, args: {name: catAdded}});
   }})
   catAdded() {
     return this.pubSub.asyncIterator('catAdded');

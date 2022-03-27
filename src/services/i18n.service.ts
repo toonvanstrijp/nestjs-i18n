@@ -8,8 +8,8 @@ import {
 } from '../i18n.constants';
 import { I18nOptions } from '..';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { I18nParser } from '../parsers/i18n.parser';
+import { Observable, BehaviorSubject, lastValueFrom } from 'rxjs';
+import { I18nLoader } from '../loaders/i18n.loader';
 import { take } from 'rxjs/operators';
 import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
 
@@ -21,25 +21,32 @@ export type translateOptions = {
 
 @Injectable()
 export class I18nService {
+  private supportedLanguages: string[];
+  private translations: I18nTranslation;
+
   constructor(
     @Inject(I18N_OPTIONS)
     private readonly i18nOptions: I18nOptions,
     @Inject(I18N_TRANSLATIONS)
-    private readonly translations: Observable<I18nTranslation>,
+    translations: Observable<I18nTranslation>,
     @Inject(I18N_LANGUAGES)
-    private readonly supportedLanguages: Observable<string[]>,
+    supportedLanguages: Observable<string[]>,
     private readonly logger: Logger,
-    private readonly parser: I18nParser,
+    private readonly loader: I18nLoader,
     @Inject(I18N_LANGUAGES_SUBJECT)
     private readonly languagesSubject: BehaviorSubject<string[]>,
     @Inject(I18N_TRANSLATIONS_SUBJECT)
     private readonly translationsSubject: BehaviorSubject<I18nTranslation>,
-  ) {}
+  ) {
+    supportedLanguages.subscribe((languages) => {
+      this.supportedLanguages = languages;
+    });
+    translations.subscribe((t) => {
+      this.translations = t;
+    });
+  }
 
-  public async translate(
-    key: string,
-    options?: translateOptions,
-  ): Promise<any> {
+  public translate(key: string, options?: translateOptions): any {
     options = {
       lang: this.i18nOptions.fallbackLanguage,
       ...options,
@@ -53,13 +60,11 @@ export class I18nService {
         ? this.i18nOptions.fallbackLanguage
         : lang;
 
-    lang = await this.handleFallbacks(lang);
+    lang = this.handleFallbacks(lang);
 
-    const translationsByLanguage = (
-      await this.translations.pipe(take(1)).toPromise()
-    )[lang];
+    const translationsByLanguage = this.translations[lang];
 
-    const translation = await this.translateObject(
+    const translation = this.translateObject(
       key,
       translationsByLanguage ? translationsByLanguage : key,
       options,
@@ -90,51 +95,57 @@ export class I18nService {
     return this.translate(key, options);
   }
 
-  public async getSupportedLanguages() {
-    return this.supportedLanguages.pipe(take(1)).toPromise();
+  public getSupportedLanguages() {
+    return this.supportedLanguages;
   }
 
   public async refresh(
     translations?: I18nTranslation | Observable<I18nTranslation>,
-    languages?: string[] | Observable<string[]>) {
-    if(!translations){
-      translations = await this.parser.parse();
+    languages?: string[] | Observable<string[]>,
+  ) {
+    if (!translations) {
+      translations = await this.loader.load();
     }
     if (translations instanceof Observable) {
       this.translationsSubject.next(
-        await translations.pipe(take(1)).toPromise(),
+        await lastValueFrom(translations.pipe(take(1))),
       );
     } else {
       this.translationsSubject.next(translations);
     }
 
-    if(!languages){
-      languages = await this.parser.languages();
+    if (!languages) {
+      languages = await this.loader.languages();
     }
 
     if (languages instanceof Observable) {
-      this.languagesSubject.next(await languages.pipe(take(1)).toPromise());
+      this.languagesSubject.next(await lastValueFrom(languages.pipe(take(1))));
     } else {
       this.languagesSubject.next(languages);
     }
   }
 
-  private async translateObject(
+  private translateObject(
     key: string,
     translations: I18nTranslation | string,
     options?: translateOptions,
-    rootTranslations?: I18nTranslation | string
-  ): Promise<I18nTranslation | string> {
+    rootTranslations?: I18nTranslation | string,
+  ): I18nTranslation | string {
     const keys = key.split('.');
     const [firstKey] = keys;
 
     const args = options?.args ?? {};
 
-    if (keys.length > 1 && !translations.hasOwnProperty(key)) {
+    if (keys.length > 1 && !translations[key]) {
       const newKey = keys.slice(1, keys.length).join('.');
 
-      return translations && translations.hasOwnProperty(firstKey)
-        ? await this.translateObject(newKey, translations[firstKey], options, rootTranslations)
+      return translations && translations[firstKey]
+        ? this.translateObject(
+            newKey,
+            translations[firstKey],
+            options,
+            rootTranslations,
+          )
         : undefined;
     }
 
@@ -142,28 +153,28 @@ export class I18nService {
 
     if (translation && (args || (args instanceof Array && args.length > 0))) {
       const pluralObject = this.getPluralObject(translation);
-      if(pluralObject && args && args.hasOwnProperty('count')) {
+      if (pluralObject && args && args['count']) {
         const count = Number(args['count']);
 
-        if(count == 0 && !!pluralObject.zero) {
-          translation = pluralObject.zero
-        } else if(count == 1 && !!pluralObject.one) {
-          translation = pluralObject.one
-        } else if(!!pluralObject.other){
-          translation = pluralObject.other
+        if (count == 0 && !!pluralObject.zero) {
+          translation = pluralObject.zero;
+        } else if (count == 1 && !!pluralObject.one) {
+          translation = pluralObject.one;
+        } else if (pluralObject.other) {
+          translation = pluralObject.other;
         }
-      }else if (translation instanceof Object) {
-        const result = await Object.keys(translation).reduce(async (obj, nestedKey) => {
+      } else if (translation instanceof Object) {
+        const result = Object.keys(translation).reduce((obj, nestedKey) => {
           return {
-            ...(await obj),
-            [nestedKey]: await this.translateObject(
+            ...obj,
+            [nestedKey]: this.translateObject(
               nestedKey,
               translation,
               options,
-              rootTranslations
+              rootTranslations,
             ),
           };
-        }, Promise.resolve({}));
+        }, {});
 
         if (translation instanceof Array) {
           return Object.values(result) as unknown as I18nTranslation;
@@ -176,12 +187,24 @@ export class I18nService {
         ...(args instanceof Array ? args || [] : [args]),
       );
       const nestedTranslations = this.getNestedTranslations(translation);
-      if(nestedTranslations && nestedTranslations.length > 0) {
-        var offset = 0;
+      if (nestedTranslations && nestedTranslations.length > 0) {
+        let offset = 0;
         for (const nestedTranslation of nestedTranslations) {
-          const result = await this.translateObject(nestedTranslation.key, rootTranslations, {...options, args: { parent: options.args, ...nestedTranslation.args }}) as string;
-          translation = translation.substring(0, nestedTranslation.index - offset) + result + translation.substring(nestedTranslation.index + nestedTranslation.length - offset)
-          offset = offset + (nestedTranslation.length -result.length);
+          const result = this.translateObject(
+            nestedTranslation.key,
+            rootTranslations,
+            {
+              ...options,
+              args: { parent: options.args, ...nestedTranslation.args },
+            },
+          ) as string;
+          translation =
+            translation.substring(0, nestedTranslation.index - offset) +
+            result +
+            translation.substring(
+              nestedTranslation.index + nestedTranslation.length - offset,
+            );
+          offset = offset + (nestedTranslation.length - result.length);
         }
       }
     }
@@ -189,9 +212,8 @@ export class I18nService {
     return translation;
   }
 
-  private async handleFallbacks(lang: string) {
-    const supportedLanguages = await this.getSupportedLanguages();
-    if (this.i18nOptions.fallbacks && !supportedLanguages.includes(lang)) {
+  private handleFallbacks(lang: string) {
+    if (this.i18nOptions.fallbacks && !this.supportedLanguages.includes(lang)) {
       const sanitizedLang = lang.includes('-')
         ? lang.substring(0, lang.indexOf('-')).concat('-*')
         : lang;
@@ -207,34 +229,36 @@ export class I18nService {
   }
 
   private getPluralObject(translation: any): I18nPluralObject | undefined {
-    if(translation.hasOwnProperty('one') || translation.hasOwnProperty('zero') || translation.hasOwnProperty('other')) {
+    if (translation['one'] || translation['zero'] || translation['other']) {
       return translation as I18nPluralObject;
     }
-    return undefined
+    return undefined;
   }
 
-  private getNestedTranslations(translation: string): { index: number, length: number, key: string, args: {} }[] | undefined  {
-    var list = [];
+  private getNestedTranslations(
+    translation: string,
+  ): { index: number; length: number; key: string; args: any }[] | undefined {
+    const list = [];
     const regex = /\$t\((.*?)(,(.*?))?\)/g;
-    var result: RegExpExecArray;
-    while(result =  regex.exec(translation)) {
-      var key = undefined;
-      var args = {};
-      var index = undefined;
-      var length = undefined;
-      if(result && result.length > 0) {
+    let result: RegExpExecArray;
+    while ((result = regex.exec(translation))) {
+      let key = undefined;
+      let args = {};
+      let index = undefined;
+      let length = undefined;
+      if (result && result.length > 0) {
         key = result[1].trim();
-        index = result.index
-        length = result[0].length
-        if(result.length >= 3) {
+        index = result.index;
+        length = result[0].length;
+        if (result.length >= 3) {
           try {
-            args = JSON.parse(result[3])
-          }catch(e) {
-
+            args = JSON.parse(result[3]);
+          } catch (e) {
+            this.logger.error(`Error while parsing JSON`, e);
           }
         }
       }
-      if(!!key) {
+      if (key) {
         list.push({ index, length, key, args });
       }
       result = undefined;

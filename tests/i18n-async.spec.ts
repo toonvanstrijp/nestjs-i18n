@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
-import { I18nModule, I18nService, I18nJsonParser } from '../src';
+import { I18nModule, I18nService } from '../src';
 
 describe('i18n async module', () => {
   let i18nService: I18nService;
@@ -13,12 +13,11 @@ describe('i18n async module', () => {
           useFactory: () => {
             return {
               fallbackLanguage: 'en',
-              parserOptions: {
+              loaderOptions: {
                 path: path.join(__dirname, '/i18n/'),
               },
             };
           },
-          parser: I18nJsonParser,
         }),
       ],
     }).compile();
@@ -31,10 +30,10 @@ describe('i18n async module', () => {
   });
 
   it('i18n service should return correct translation', async () => {
-    expect(await i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
+    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
       'Hello',
     );
-    expect(await i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
+    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
       'Hallo',
     );
   });
@@ -50,28 +49,27 @@ describe('i18n module without trailing slash in path', () => {
           useFactory: () => {
             return {
               fallbackLanguage: 'en',
-              parserOptions: {
+              loaderOptions: {
                 path: path.join(__dirname, '/i18n'),
               },
             };
           },
-          parser: I18nJsonParser,
         }),
       ],
     }).compile();
 
-    i18nService = module.get(I18nService);
+    i18nService = await module.get(I18nService);
   });
 
-  it('i18n service should be defined', async () => {
-    expect(await i18nService).toBeTruthy();
+  it('i18n service should be defined', () => {
+    expect(i18nService).toBeTruthy();
   });
 
-  it('i18n service should return correct translation', async () => {
-    expect(await i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
+  it('i18n service should return correct translation', () => {
+    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
       'Hello',
     );
-    expect(await i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
+    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
       'Hallo',
     );
   });
@@ -107,12 +105,11 @@ describe('i18n async module with fallbacks', () => {
                 'fr-*': 'fr',
                 pt: 'pt-BR',
               },
-              parserOptions: {
+              loaderOptions: {
                 path: path.join(__dirname, '/i18n/'),
               },
             };
           },
-          parser: I18nJsonParser,
         }),
       ],
     }).compile();
@@ -124,30 +121,30 @@ describe('i18n async module with fallbacks', () => {
     expect(i18nService).toBeTruthy();
   });
 
-  it('i18n service should return correct translation', async () => {
-    expect(await i18nService.translate('test.HELLO')).toBe('Hello');
-    expect(await i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
+  it('i18n service should return correct translation', () => {
+    expect(i18nService.translate('test.HELLO')).toBe('Hello');
+    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
       'Hello',
     );
-    expect(await i18nService.translate('test.HELLO', { lang: 'en-US' })).toBe(
+    expect(i18nService.translate('test.HELLO', { lang: 'en-US' })).toBe(
       'Hello',
     );
-    expect(await i18nService.translate('test.HELLO', { lang: 'en-CA' })).toBe(
+    expect(i18nService.translate('test.HELLO', { lang: 'en-CA' })).toBe(
       'Bonjour',
     );
-    expect(await i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
+    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
       'Hallo',
     );
-    expect(await i18nService.translate('test.HELLO', { lang: 'fr' })).toBe(
+    expect(i18nService.translate('test.HELLO', { lang: 'fr' })).toBe(
       'Bonjour',
     );
-    expect(await i18nService.translate('test.HELLO', { lang: 'fr-BE' })).toBe(
+    expect(i18nService.translate('test.HELLO', { lang: 'fr-BE' })).toBe(
       'Bonjour',
     );
-    expect(await i18nService.translate('test.HELLO', { lang: 'pt' })).toBe(
+    expect(i18nService.translate('test.HELLO', { lang: 'pt' })).toBe(
       'Olá',
     );
-    expect(await i18nService.translate('test.HELLO', { lang: 'pt-BR' })).toBe(
+    expect(i18nService.translate('test.HELLO', { lang: 'pt-BR' })).toBe(
       'Olá',
     );
   });

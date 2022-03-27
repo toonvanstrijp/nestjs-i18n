@@ -8,7 +8,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'nestjs-i18n',
   tagline: 'The i18n module for Nest.',
-  url: 'nestjs-i18n.com',
+  url: 'https://nestjs-i18n.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',

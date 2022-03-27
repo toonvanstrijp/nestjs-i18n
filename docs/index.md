@@ -16,8 +16,8 @@ slug: /
 - **Live** reloading 🎉
 - **Plurals** support ([instructions](guides/plurals.md))
 - **GraphQL** support ([instructions](guides/graphql.md))
-- **DTO** validation translations
-- View engine support (**hbs**)
+- **DTO** validation translations ([instructions](guides/dto-validation.md))
+- View engine support (**hbs**) ([instructions](guides/view-engine/handlebars.md))
 - **RPC** support
 - Custom resolvers
 - Custom loaders

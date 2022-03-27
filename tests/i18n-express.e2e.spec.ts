@@ -6,8 +6,8 @@ import {
   AcceptLanguageResolver,
   I18nModule,
   QueryResolver,
-  I18nJsonParser,
-  I18nJsonParserOptions,
+  I18nJsonLoader,
+  I18nJsonLoaderOptions,
 } from '../src';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
@@ -34,7 +34,7 @@ describe('i18n module e2e express', () => {
             new CookieResolver(),
             AcceptLanguageResolver,
           ],
-          parserOptions: {
+          loaderOptions: {
             path: path.join(__dirname, '/i18n/'),
           },
         }),
@@ -554,14 +554,14 @@ describe('i18n module e2e express', () => {
 
   it('/GET hello/nested should return correct translation', async () => {
     await request(app.getHttpServer())
-      .get('/hello/nested?count=2')
+      .get('/hello/nested?username=test')
       .expect(200)
-      .expect('We go shopping: Every 2 days');
+      .expect('Message: Hello, test');
     await request(app.getHttpServer())
-      .get('/hello/nested?count=2')
+      .get('/hello/nested?username=test')
       .set('x-custom-lang', 'nl')
       .expect(200)
-      .expect('Wij gaan winkelen: Iedere 2 dagen');
+      .expect('Bericht: Hello, test');
   });
 
   it('/GET hello/nested-no-args should return correct translation', async () => {
@@ -586,6 +586,30 @@ describe('i18n module e2e express', () => {
       .set('x-custom-lang', 'nl')
       .expect(200)
       .expect('Wij gaan winkelen: Iedere 2 dagen');
+  });
+
+  it('/GET hello/guard should return correct translation', async () => {
+    await request(app.getHttpServer())
+      .get('/hello/guard')
+      .expect(200)
+      .expect((res) => expect(res.headers['x-test']).toBe('Current language: en'))
+    await request(app.getHttpServer())
+      .get('/hello/guard')
+      .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect((res) => expect(res.headers['x-test']).toBe('Huidige taal: nl'))
+  });
+
+  it('/GET hello/exception should return correct lang', async () => {
+    await request(app.getHttpServer())
+      .get('/hello/exception')
+      .expect(500)
+      .expect({lang: 'en'})
+    await request(app.getHttpServer())
+      .get('/hello/exception')
+      .set('x-custom-lang', 'nl')
+      .expect(500)
+      .expect({lang: 'nl'})
   });
 
   afterAll(async () => {

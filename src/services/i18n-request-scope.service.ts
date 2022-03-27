@@ -5,14 +5,17 @@ import { I18nService, translateOptions } from './i18n.service';
 @Injectable({ scope: Scope.REQUEST })
 export class I18nRequestScopeService {
   constructor(
-    @Inject(REQUEST) private readonly req,
+    @Inject(REQUEST) private readonly req: any,
     private readonly i18nService: I18nService,
   ) {}
 
   public translate(key: string, options?: translateOptions) {
-    const lang = (!this.req.i18nLang && this.req.context) ? this.req.context.i18nLang : this.req.i18nLang;
+    const lang =
+      !this.req.i18nLang && this.req.context
+        ? this.req.context.i18nLang
+        : this.req.i18nLang;
     options = {
-        lang,
+      lang,
       ...options,
     };
     return this.i18nService.translate(key, options);

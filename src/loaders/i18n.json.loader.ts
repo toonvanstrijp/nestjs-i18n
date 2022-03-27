@@ -1,5 +1,5 @@
-import { I18nParser } from './i18n.parser';
-import { I18N_PARSER_OPTIONS } from '../i18n.constants';
+import { I18nLoader } from './i18n.loader';
+import { I18N_LOADER_OPTIONS } from '../i18n.constants';
 import { Inject, OnModuleDestroy } from '@nestjs/common';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -17,25 +17,25 @@ import { switchMap } from 'rxjs/operators';
 const readFile = promisify(fs.readFile);
 const exists = promisify(fs.exists);
 
-export interface I18nJsonParserOptions {
+export interface I18nJsonLoaderOptions {
   path: string;
   filePattern?: string;
   watch?: boolean;
 }
 
-const defaultOptions: Partial<I18nJsonParserOptions> = {
+const defaultOptions: Partial<I18nJsonLoaderOptions> = {
   filePattern: '*.json',
   watch: false,
 };
 
-export class I18nJsonParser extends I18nParser implements OnModuleDestroy {
+export class I18nJsonLoader extends I18nLoader implements OnModuleDestroy {
   private watcher?: chokidar.FSWatcher;
 
   private events: Subject<string> = new Subject();
 
   constructor(
-    @Inject(I18N_PARSER_OPTIONS)
-    private options: I18nJsonParserOptions,
+    @Inject(I18N_LOADER_OPTIONS)
+    private options: I18nJsonLoaderOptions,
   ) {
     super();
     this.options = this.sanitizeOptions(options);
@@ -65,7 +65,7 @@ export class I18nJsonParser extends I18nParser implements OnModuleDestroy {
     return this.parseLanguages();
   }
 
-  async parse(): Promise<I18nTranslation | Observable<I18nTranslation>> {
+  async load(): Promise<I18nTranslation | Observable<I18nTranslation>> {
     if (this.options.watch) {
       return ObservableMerge(
         ObservableFrom(this.parseTranslations()),
@@ -146,7 +146,7 @@ export class I18nJsonParser extends I18nParser implements OnModuleDestroy {
     );
   }
 
-  private sanitizeOptions(options: I18nJsonParserOptions) {
+  private sanitizeOptions(options: I18nJsonLoaderOptions) {
     options = { ...defaultOptions, ...options };
 
     options.path = path.normalize(options.path + path.sep);

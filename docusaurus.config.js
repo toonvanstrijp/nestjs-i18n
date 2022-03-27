@@ -12,7 +12,6 @@ const config = {
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon.ico',
   organizationName: 'toonvanstrijp', // Usually your GitHub org/user name.
   projectName: 'nestjs-i18n', // Usually your repo name.
   trailingSlash: false,

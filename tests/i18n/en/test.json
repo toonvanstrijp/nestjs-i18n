@@ -19,11 +19,12 @@
     "other": "Every {count} days",
     "zero": "Never"
   },
-  "nested": "We go shopping: $t(test.day_interval, {{\"count\": {count} }})",
+  "nested": "Message: $t(test.set-up-password.heading, {{\"username\":  \"{username}\" }})",
   "nested-no-args": "We go shopping: $t(test.dot.test)",
   "nest1": {
     "nest2": {
       "nest3": "We go shopping: $t(test.day_interval, {{\"count\": {count} }})"
     }
-  }
+  },
+  "CURRENT_LANGUAGE": "Current language: {lang}"
 }

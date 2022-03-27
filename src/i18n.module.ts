@@ -3,6 +3,7 @@ import {
   Global,
   Inject,
   Logger,
+  MiddlewareConsumer,
   Module,
   Provider,
 } from '@nestjs/common';
@@ -11,7 +12,7 @@ import {
   I18N_TRANSLATIONS,
   I18N_LANGUAGES,
   I18N_RESOLVERS,
-  I18N_PARSER_OPTIONS,
+  I18N_LOADER_OPTIONS,
   I18N_LANGUAGES_SUBJECT,
   I18N_TRANSLATIONS_SUBJECT,
 } from './i18n.constants';
@@ -28,16 +29,18 @@ import {
   ValueProvider,
   ClassProvider,
   OnModuleInit,
-} from '@nestjs/common/interfaces';
+  NestModule,
+} from '@nestjs/common';
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
 import { shouldResolve } from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
-import { I18nParser } from './parsers/i18n.parser';
+import { I18nLoader } from './loaders/i18n.loader';
 import { Observable, BehaviorSubject } from 'rxjs';
 import * as format from 'string-format';
-import { I18nJsonParser } from './parsers/i18n.json.parser';
+import { I18nJsonLoader } from './loaders/i18n.json.loader';
+import { I18nMiddleware } from './middlewares/i18n.middleware';
 
 const logger = new Logger('I18nService');
 
@@ -45,35 +48,51 @@ const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
   formatter: format,
   logging: true,
-  parser: I18nJsonParser
+  loader: I18nJsonLoader,
 };
 
 @Global()
 @Module({})
-export class I18nModule implements OnModuleInit {
-  constructor(private readonly i18n: I18nService, @Inject(I18N_OPTIONS) private readonly i18nOptions: I18nOptions) {}
+export class I18nModule implements OnModuleInit, NestModule {
+  constructor(
+    private readonly i18n: I18nService,
+    @Inject(I18N_TRANSLATIONS)
+    private translations: Observable<I18nTranslation>,
+    @Inject(I18N_OPTIONS) private readonly i18nOptions: I18nOptions,
+  ) {}
 
   async onModuleInit() {
+    // TODO: Generate typescript file
+    // this.translations.pipe(
+    //   map(t => Object.keys(t).reduce((result, key) => mergeDeep(result, t[key]), {}))
+    // ).subscribe(t => {
+    //   console.log(t)
+    // });
+
     // makes sure languages & translations are loaded before application loads
     await this.i18n.refresh();
 
     // Register handlebars helper
     if (this.i18nOptions.viewEngine == 'hbs') {
       try {
-        const hbs = await import("hbs")
+        const hbs = await import('hbs');
         hbs.registerHelper('t', (key: string, args: any, options: any) => {
           if (!options) {
             options = args;
           }
-          
+
           const lang = options.lookupProperty(options.data.root, 'i18nLang');
-          return this.i18n.t(key, {lang, args});
+          return this.i18n.t(key, { lang, args });
         });
-        logger.log("Handlebars helper registered");
-      }catch(e) {
+        logger.log('Handlebars helper registered');
+      } catch (e) {
         logger.error('hbs module failed to load', e);
       }
     }
+  }
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(I18nMiddleware).forRoutes('*');
   }
 
   static forRoot(options: I18nOptions): DynamicModule {
@@ -87,14 +106,14 @@ export class I18nModule implements OnModuleInit {
       useValue: options,
     };
 
-    const i18nParserProvider: ClassProvider = {
-      provide: I18nParser,
-      useClass: options.parser,
+    const i18nLoaderProvider: ClassProvider = {
+      provide: I18nLoader,
+      useClass: options.loader,
     };
 
-    const i18nParserOptionsProvider: ValueProvider = {
-      provide: I18N_PARSER_OPTIONS,
-      useValue: options.parserOptions,
+    const i18nLoaderOptionsProvider: ValueProvider = {
+      provide: I18N_LOADER_OPTIONS,
+      useValue: options.loaderOptions,
     };
 
     const i18nLanguagesSubjectProvider: ValueProvider = {
@@ -110,10 +129,10 @@ export class I18nModule implements OnModuleInit {
     const translationsProvider = {
       provide: I18N_TRANSLATIONS,
       useFactory: async (
-        parser: I18nParser,
+        loader: I18nLoader,
       ): Promise<Observable<I18nTranslation>> => {
         try {
-          const translation = await parser.parse();
+          const translation = await loader.load();
           if (translation instanceof Observable) {
             translation.subscribe(i18nTranslationSubject);
           } else {
@@ -124,14 +143,14 @@ export class I18nModule implements OnModuleInit {
         }
         return i18nTranslationSubject.asObservable();
       },
-      inject: [I18nParser],
+      inject: [I18nLoader],
     };
 
     const languagessProvider = {
       provide: I18N_LANGUAGES,
-      useFactory: async (parser: I18nParser): Promise<Observable<string[]>> => {
+      useFactory: async (loader: I18nLoader): Promise<Observable<string[]>> => {
         try {
-          const languages = await parser.languages();
+          const languages = await loader.languages();
           if (languages instanceof Observable) {
             languages.subscribe(i18nLanguagesSubject);
           } else {
@@ -142,7 +161,7 @@ export class I18nModule implements OnModuleInit {
         }
         return i18nLanguagesSubject.asObservable();
       },
-      inject: [I18nParser],
+      inject: [I18nLoader],
     };
 
     const resolversProvider = {
@@ -164,8 +183,8 @@ export class I18nModule implements OnModuleInit {
         translationsProvider,
         languagessProvider,
         resolversProvider,
-        i18nParserProvider,
-        i18nParserOptionsProvider,
+        i18nLoaderProvider,
+        i18nLoaderOptionsProvider,
         i18nLanguagesSubjectProvider,
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
@@ -180,7 +199,7 @@ export class I18nModule implements OnModuleInit {
     const asyncOptionsProvider = this.createAsyncOptionsProvider(options);
     const asyncTranslationProvider = this.createAsyncTranslationProvider();
     const asyncLanguagesProvider = this.createAsyncLanguagesProvider();
-    const asyncParserOptionsProvider = this.createAsyncParserOptionsProvider();
+    const asyncLoaderOptionsProvider = this.createAsyncLoaderOptionsProvider();
 
     const i18nLanguagesSubject = new BehaviorSubject<string[]>([]);
     const i18nTranslationSubject = new BehaviorSubject<I18nTranslation>({});
@@ -190,9 +209,9 @@ export class I18nModule implements OnModuleInit {
       useValue: options.resolvers || [],
     };
 
-    const i18nParserProvider: ClassProvider<I18nParser> = {
-      provide: I18nParser,
-      useClass: options.parser,
+    const i18nLoaderProvider: ClassProvider<I18nLoader> = {
+      provide: I18nLoader,
+      useClass: options.loader,
     };
 
     const i18nLanguagesSubjectProvider: ValueProvider = {
@@ -217,11 +236,11 @@ export class I18nModule implements OnModuleInit {
         asyncOptionsProvider,
         asyncTranslationProvider,
         asyncLanguagesProvider,
-        asyncParserOptionsProvider,
+        asyncLoaderOptionsProvider,
         I18nService,
         I18nRequestScopeService,
         resolversProvider,
-        i18nParserProvider,
+        i18nLoaderProvider,
         i18nLanguagesSubjectProvider,
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
@@ -237,7 +256,9 @@ export class I18nModule implements OnModuleInit {
       return {
         provide: I18N_OPTIONS,
         useFactory: async (...args) => {
-          return this.sanitizeI18nOptions(await options.useFactory(...args) as any)
+          return this.sanitizeI18nOptions(
+            (await options.useFactory(...args)) as any,
+          );
         },
         inject: options.inject || [],
       };
@@ -245,16 +266,18 @@ export class I18nModule implements OnModuleInit {
     return {
       provide: I18N_OPTIONS,
       useFactory: async (optionsFactory: I18nOptionsFactory) =>
-      this.sanitizeI18nOptions(await optionsFactory.createI18nOptions() as any),
+        this.sanitizeI18nOptions(
+          (await optionsFactory.createI18nOptions()) as any,
+        ),
       inject: [options.useClass || options.useExisting],
     };
   }
 
-  private static createAsyncParserOptionsProvider(): Provider {
+  private static createAsyncLoaderOptionsProvider(): Provider {
     return {
-      provide: I18N_PARSER_OPTIONS,
+      provide: I18N_LOADER_OPTIONS,
       useFactory: async (options: I18nOptions): Promise<any> => {
-        return this.sanitizeI18nOptions(options.parserOptions);
+        return this.sanitizeI18nOptions(options.loaderOptions);
       },
       inject: [I18N_OPTIONS],
     };
@@ -264,11 +287,11 @@ export class I18nModule implements OnModuleInit {
     return {
       provide: I18N_TRANSLATIONS,
       useFactory: async (
-        parser: I18nParser,
+        loader: I18nLoader,
         translationsSubject: BehaviorSubject<I18nTranslation>,
       ): Promise<Observable<I18nTranslation>> => {
         try {
-          const translation = await parser.parse();
+          const translation = await loader.load();
           if (translation instanceof Observable) {
             translation.subscribe(translationsSubject);
           } else {
@@ -279,7 +302,7 @@ export class I18nModule implements OnModuleInit {
         }
         return translationsSubject.asObservable();
       },
-      inject: [I18nParser, I18N_TRANSLATIONS_SUBJECT],
+      inject: [I18nLoader, I18N_TRANSLATIONS_SUBJECT],
     };
   }
 
@@ -287,11 +310,11 @@ export class I18nModule implements OnModuleInit {
     return {
       provide: I18N_LANGUAGES,
       useFactory: async (
-        parser: I18nParser,
+        loader: I18nLoader,
         languagesSubject: BehaviorSubject<string[]>,
       ): Promise<Observable<string[]>> => {
         try {
-          const languages = await parser.languages();
+          const languages = await loader.languages();
           if (languages instanceof Observable) {
             languages.subscribe(languagesSubject);
           } else {
@@ -302,11 +325,13 @@ export class I18nModule implements OnModuleInit {
         }
         return languagesSubject.asObservable();
       },
-      inject: [I18nParser, I18N_LANGUAGES_SUBJECT],
+      inject: [I18nLoader, I18N_LANGUAGES_SUBJECT],
     };
   }
 
-  private static sanitizeI18nOptions<T = I18nOptions | I18nAsyncOptions>(options: T) {
+  private static sanitizeI18nOptions<T = I18nOptions | I18nAsyncOptions>(
+    options: T,
+  ) {
     options = { ...defaultOptions, ...options };
     return options;
   }
@@ -318,7 +343,7 @@ export class I18nModule implements OnModuleInit {
         if (r['use'] && r['options']) {
           const resolver = r as ResolverWithOptions;
           const optionsToken = getI18nResolverOptionsToken(
-            (resolver.use as unknown) as () => void,
+            resolver.use as unknown as () => void,
           );
           providers.push({
             provide: resolver.use,
@@ -331,7 +356,7 @@ export class I18nModule implements OnModuleInit {
           });
         } else {
           const optionsToken = getI18nResolverOptionsToken(
-            (r as unknown) as () => void,
+            r as unknown as () => void,
           );
           providers.push({
             provide: r,

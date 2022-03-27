@@ -1,0 +1,169 @@
+---
+sidebar_position: 2
+---
+
+# Quickstart
+
+In this quick start you'll learn how to do a basic i18n setup.
+
+## Installation
+
+```bash
+npm install --save nestjs-i18n
+```
+
+## Setup translation files
+
+By default `nestjs-i18n` uses the `I18nJsonLoader` loader class. This loader reads translations from `json` files. Create a folder named `i18n` in the `src` folder of your project. 
+
+```
+package.json
+package-lock.json
+...
+src
+└── i18n
+    ├── en
+    │   ├── events.json
+    │   └── test.json
+    └── nl
+        ├── events.json
+        └── test.json
+```
+
+```json title="src/i18n/en/test.json"
+{
+  "HELLO": "Hello",
+  "PRODUCT": {
+    "NEW": "New Product: {name}"
+  },
+  "ENGLISH": "English",
+  "ARRAY": ["ONE", "TWO", "THREE"],
+  "cat": "Cat",
+  "cat_name": "Cat: {name}",
+  "set-up-password": {
+    "heading": "Hello, {username}",
+    "title": "Forgot password",
+    "followLink": "Please follow the link to set up your password"
+  },
+  "day_interval": {
+    "one": "Every day",
+    "other": "Every {count} days",
+    "zero": "Never"
+  },
+  "nested": "We go shopping: $t(test.day_interval, {{\"count\": {count} }})"
+}
+```
+
+:::caution
+
+The `i18n` folder isn't automatically copied to your `dist` folder during the build process. To enable `nestjs` to do this modify the `compilerOptions` inside `nest-cli.json`.
+
+```json title="nest-cli.json"
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "assets": [
+      { "include": "i18n/**/*", "watchAssets": true }
+    ]
+  }
+}
+```
+
+:::
+
+## Module setup
+
+```typescript title="src/app.module.ts"
+import { Module } from '@nestjs/common';
+import * as path from 'path';
+import { I18nModule } from 'nestjs-i18n';
+
+@Module({
+  imports: [
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      loaderOptions: {
+        path: path.join(__dirname, '/i18n/'),
+        watch: true,
+      },
+    }),
+  ],
+  controllers: [],
+})
+export class AppModule {}
+```
+:::caution
+
+The `I18nModule` is a [**global**](https://docs.nestjs.com/modules#global-modules) module. This means you'll only need to register the module once (in the root module). After that it's accessible throughout the whole application.
+
+:::
+
+:::tip Live reloading 🎉
+
+Setting the `watch` option to **`true`** in the `loaderOptions` enables live reloading 🎉.
+
+:::
+
+## Add resolvers
+
+Resolvers are used for getting the current language of our request. In basic web applications this is done via the `Accept-Language` header. But in many cases you want to override this language by your logged in user settings, or some header you define yourself.
+
+`nestjs-i18n` comes with a set of built-in resolvers.
+
+import Resolvers from './partials/_resolvers.md'
+
+<Resolvers />
+
+To add resolvers add them to the `resolvers` array in your `I18nModule` options. The way `nestjs-i18n` works it's going to resolve the language in order. So in this case it tries the `QueryResolver` first, if it can't resolve a language it'll jump to the next one.
+
+```typescript title="src/app.module.ts"
+import { Module } from '@nestjs/common';
+import * as path from 'path';
+import {
+  AcceptLanguageResolver,
+  I18nJsonLoader,
+  I18nModule,
+  QueryResolver,
+} from 'nestjs-i18n';
+
+@Module({
+  imports: [
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      loaderOptions: {
+        path: path.join(__dirname, '/i18n/'),
+        watch: true,
+      },
+      resolvers: [
+        { use: QueryResolver, options: ['lang'] },
+        AcceptLanguageResolver,
+      ],
+    }),
+  ],
+  controllers: [],
+})
+export class AppModule {}
+```
+:::tip
+
+It's possible to create your own **resolvers**! For example if you want to resolve the language from your logged-in user's settings. Please see the [**resolvers**](concepts/resolver.md) page for instructions.
+
+:::
+
+## Translate stuff 🎉
+
+Now that we've setup everything we can start to do translations! The easiest way to do this is in your `controller`.
+
+```typescript title="src/app.controller.ts"
+import { Controller, Get } from '@nestjs/common';
+import { I18n, I18nContext } from 'nestjs-i18n';
+
+@Controller()
+export class AppController {
+  @Get()
+  async getHello(@I18n() i18n: I18nContext) {
+    return await i18n.t('test.HELLO');
+  }
+}
+```

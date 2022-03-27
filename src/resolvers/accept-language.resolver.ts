@@ -4,7 +4,7 @@ import { pick } from 'accept-language-parser';
 import { I18nService } from '../services/i18n.service';
 
 interface AcceptLanguageResolverOptions {
-  matchType: 'strict' | 'loose' | 'strict-loose'
+  matchType: 'strict' | 'loose' | 'strict-loose';
 }
 
 @Injectable()
@@ -12,8 +12,8 @@ export class AcceptLanguageResolver implements I18nResolver {
   constructor(
     @I18nResolverOptions()
     private options: AcceptLanguageResolverOptions = {
-      matchType: 'strict-loose'
-    }
+      matchType: 'strict-loose',
+    },
   ) {}
 
   async resolve(
@@ -29,7 +29,7 @@ export class AcceptLanguageResolver implements I18nResolver {
         break;
       case 'graphql':
         [, , { req, i18nService: service }] = context.getArgs();
-        if(!req) return undefined;
+        if (!req) return undefined;
         break;
       default:
         return undefined;
@@ -42,11 +42,14 @@ export class AcceptLanguageResolver implements I18nResolver {
     if (lang) {
       const supportedLangs = service.getSupportedLanguages();
       if (this.options.matchType === 'strict') {
-        return pick(supportedLangs, lang)
+        return pick(supportedLangs, lang);
       } else if (this.options.matchType === 'loose') {
         return pick(supportedLangs, lang, { loose: true });
       }
-      return pick(supportedLangs, lang) ?? pick(supportedLangs, lang, { loose: true })
+      return (
+        pick(supportedLangs, lang) ??
+        pick(supportedLangs, lang, { loose: true })
+      );
     }
     return lang;
   }

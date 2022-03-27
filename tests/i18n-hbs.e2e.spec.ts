@@ -6,7 +6,7 @@ import {
   AcceptLanguageResolver,
   I18nModule,
   QueryResolver,
-  I18nJsonParser,
+  I18nJsonLoader,
 } from '../src';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
@@ -36,7 +36,7 @@ describe('i18n module e2e hbs', () => {
             new CookieResolver(),
             AcceptLanguageResolver,
           ],
-          parserOptions: {
+          loaderOptions: {
             path: path.join(__dirname, '/i18n/'),
           },
           viewEngine: 'hbs'

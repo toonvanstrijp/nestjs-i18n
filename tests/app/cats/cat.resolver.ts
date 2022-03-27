@@ -4,7 +4,6 @@ import { I18nLang, I18nService, I18n } from '../../../src';
 import { I18nContext } from '../../../src/i18n.context';
 import { Inject } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
-import { async } from 'rxjs';
 
 @Resolver('Cat')
 export class CatResolver {
@@ -43,11 +42,11 @@ export class CatResolver {
     return args;
   }
 
-  @Subscription('catAdded', {resolve: async (payload: any, args: any, context: any) => {
+  @Subscription('catAdded', {resolve: async (payload: any, args: any, ctx: any) => {
     const {catAdded} = payload;
-    const i18nService: I18nService = context.i18nService;
+    const i18nService: I18nService = ctx.i18nService;
 
-    return i18nService.translate('test.cat_name', {lang: context.i18nLang, args: {name: catAdded}});
+    return i18nService.translate('test.cat_name', {lang: ctx.i18nLang, args: {name: catAdded}});
   }})
   catAdded() {
     return this.pubSub.asyncIterator('catAdded');

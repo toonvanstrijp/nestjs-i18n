@@ -8,8 +8,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'nestjs-i18n',
   tagline: 'The i18n module for Nest.',
-  url: 'https://nestjs-i18n.github.io',
-  baseUrl: '/nestjs-i18n/',
+  url: 'https://nestjs-i18n.com',
+  baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   organizationName: 'toonvanstrijp', // Usually your GitHub org/user name.
@@ -62,6 +62,12 @@ const config = {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },
+      algolia: {
+        appId: '4QSCSRMRXX',
+        apiKey: '25838fffe3d103d0e180fc4ef4121c50',
+        indexName: 'nestjs_i18n',
+        contextualSearch: true
+      }
     }),
 };
 

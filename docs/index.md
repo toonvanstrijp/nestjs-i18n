@@ -13,6 +13,7 @@ slug: /
 
 - **Variable** formatting ([instructions](guides/formatting.md))
 - **Nested** translations ([instructions](guides/nested.md))
+- **Fallback** languages ([instructions](guides/fallback-languages.md))
 - **Live** reloading 🎉
 - **Plurals** support ([instructions](guides/plurals.md))
 - **GraphQL** support ([instructions](guides/graphql.md))

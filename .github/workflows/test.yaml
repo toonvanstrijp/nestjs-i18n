@@ -17,11 +17,10 @@ jobs:
         with:
           node-version: "16"
           cache: npm
-      - name: npm install, make test-coverage
+      - name: test
         run: |
           npm install
-          make test-coverage
-
+          npm run test:cov
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:

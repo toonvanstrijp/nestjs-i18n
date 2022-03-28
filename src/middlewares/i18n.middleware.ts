@@ -7,7 +7,7 @@ import {
   RpcArgumentsHost,
   WsArgumentsHost,
 } from '@nestjs/common/interfaces';
-import { HttpAdapterHost, ModuleRef } from '@nestjs/core';
+import { ModuleRef } from '@nestjs/core';
 import { shouldResolve } from '../utils/util';
 import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
 import { I18nOptions, I18nResolver, ResolverWithOptions } from '../index';
@@ -27,16 +27,10 @@ export class I18nMiddleware implements NestMiddleware {
     private readonly i18nResolvers: I18nOptionResolver[],
     private readonly i18nService: I18nService,
     private readonly moduleRef: ModuleRef,
-    private readonly adapter: HttpAdapterHost,
   ) {}
 
   async use(req: any, res: any, next: any) {
     let language = null;
-
-    if (this.adapter.httpAdapter.getType() == 'fastify') {
-      req = req.raw ?? req;
-      res = res.raw ?? res;
-    }
 
     req.i18nService = this.i18nService;
 

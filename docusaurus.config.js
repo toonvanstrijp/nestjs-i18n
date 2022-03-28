@@ -26,11 +26,10 @@ const config = {
           // Please change this to your repo.
           editUrl: 'https://github.com/toonvanstrijp/nestjs-i18n/tree/main',
         },
-        blog: false
+        blog: false,
       }),
     ],
   ],
-
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
@@ -66,8 +65,8 @@ const config = {
         appId: '4QSCSRMRXX',
         apiKey: '25838fffe3d103d0e180fc4ef4121c50',
         indexName: 'nestjs_i18n',
-        contextualSearch: true
-      }
+        contextualSearch: true,
+      },
     }),
 };
 

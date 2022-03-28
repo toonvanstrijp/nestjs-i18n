@@ -11,13 +11,14 @@ slug: /
 
 **nestjs-i18n** comes with a bunch of tools to help add multiple language support to your project.
 
-- **Variable** formatting ([instructions](guides/formatting.md))
+- **Variable formatting** ([instructions](guides/formatting.md))
 - **Nested** translations ([instructions](guides/nested.md))
 - **Fallback** languages ([instructions](guides/fallback-languages.md))
 - **Live** reloading 🎉
 - **Plurals** support ([instructions](guides/plurals.md))
 - **GraphQL** support ([instructions](guides/graphql.md))
-- **DTO** validation translations ([instructions](guides/dto-validation.md))
+- **DTO** transformation ([instructions](guides/dto/transformation.md))
+- **DTO** validation ([instructions](guides/dto/validation.md))
 - View engine support (**hbs**) ([instructions](guides/view-engine/handlebars.md))
 - **RPC** support
 - Custom resolvers

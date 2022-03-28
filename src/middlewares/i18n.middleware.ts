@@ -33,11 +33,6 @@ export class I18nMiddleware implements NestMiddleware {
   async use(req: any, res: any, next: any) {
     let language = null;
 
-    if (this.adapter.httpAdapter.getType() == 'fastify') {
-      req = req.raw ?? req;
-      res = res.raw ?? res;
-    }
-
     req.i18nService = this.i18nService;
 
     for (const r of this.i18nResolvers) {

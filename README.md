@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/ToonvanStrijp/nestjs-i18n.svg?branch=master)](https://travis-ci.org/ToonvanStrijp/nestjs-i18n)
 ![npm](https://img.shields.io/npm/dm/nestjs-i18n)
-[![Coverage Status](https://coveralls.io/repos/github/ToonvanStrijp/nestjs-i18n/badge.svg?branch=master)](https://coveralls.io/github/ToonvanStrijp/nestjs-i18n?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/toonvanstrijp/nestjs-i18n/badge.svg?branch=main)](https://coveralls.io/github/toonvanstrijp/nestjs-i18n?branch=main)
 
 ## Description
 

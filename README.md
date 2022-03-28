@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ToonvanStrijp/nestjs-i18n.svg?branch=master)](https://travis-ci.org/ToonvanStrijp/nestjs-i18n)
+[![test](https://github.com/toonvanstrijp/nestjs-i18n/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/toonvanstrijp/nestjs-i18n/actions/workflows/test.yaml)
 ![npm](https://img.shields.io/npm/dm/nestjs-i18n)
 [![Coverage Status](https://coveralls.io/repos/github/toonvanstrijp/nestjs-i18n/badge.svg?branch=main)](https://coveralls.io/github/toonvanstrijp/nestjs-i18n?branch=main)
 

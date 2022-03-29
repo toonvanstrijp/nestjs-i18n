@@ -23,6 +23,6 @@ export class CatService {
   }
 
   findById(id: number): CatModel {
-    return this.cats.find(cat => cat.id === id);
+    return this.cats.find((cat) => cat.id === id);
   }
 }

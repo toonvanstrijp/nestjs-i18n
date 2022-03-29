@@ -11,12 +11,12 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
 import { GraphQLModule } from '@nestjs/graphql';
-import {ApolloDriver, ApolloDriverConfig} from '@nestjs/apollo'
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CatModule } from './app/cats/cat.module';
 import { createClient } from 'graphql-ws';
 import ApolloClient from 'apollo-client';
 import * as WebSocket from 'ws';
-import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import gql from 'graphql-tag';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
@@ -29,7 +29,6 @@ describe('i18n module e2e graphql', () => {
   let apolloOldWebsocket: ApolloClient<NormalizedCacheObject>;
   let oldSubscriptionClient: SubscriptionClient;
   let subscriptionClient: ReturnType<typeof createClient>;
-
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -56,10 +55,10 @@ describe('i18n module e2e graphql', () => {
           driver: ApolloDriver,
           subscriptions: {
             'graphql-ws': true,
-            "subscriptions-transport-ws": {
+            'subscriptions-transport-ws': {
               onConnect: (params) => ({ connectionParams: params }),
-              path: '/graphql'
-            }
+              path: '/graphql',
+            },
           },
           typePaths: ['*/**/*.graphql'],
           context: (ctx) => ctx,
@@ -76,12 +75,16 @@ describe('i18n module e2e graphql', () => {
     subscriptionClient = createClient({
       url: 'ws://localhost:3000/graphql',
       webSocketImpl: WebSocket,
-      connectionParams: { lang: 'fr' }
+      connectionParams: { lang: 'fr' },
     });
-    oldSubscriptionClient = new SubscriptionClient('ws://localhost:3000/graphql', {
-      reconnect: true,
-      connectionParams: { lang: 'fr' }
-    }, WebSocket);
+    oldSubscriptionClient = new SubscriptionClient(
+      'ws://localhost:3000/graphql',
+      {
+        reconnect: true,
+        connectionParams: { lang: 'fr' },
+      },
+      WebSocket,
+    );
     apollo = new ApolloClient({
       link: new GraphQLWsLink(subscriptionClient) as any,
       cache: new InMemoryCache(),
@@ -131,7 +134,7 @@ describe('i18n module e2e graphql', () => {
       });
 
     // wait for subscription
-    await new Promise<void>(resolve => setTimeout(resolve, 500));
+    await new Promise<void>((resolve) => setTimeout(resolve, 500));
 
     await request(app.getHttpServer())
       .post('/graphql')
@@ -150,12 +153,14 @@ describe('i18n module e2e graphql', () => {
         },
       });
 
-    return new Promise<void>(resolve => setTimeout(() => {
-      expect(count).toEqual(2);
-      resolve();
-    }, 500));
+    return new Promise<void>((resolve) =>
+      setTimeout(() => {
+        expect(count).toEqual(2);
+        resolve();
+      }, 500),
+    );
   });
-  
+
   it(`should query a particular cat in NL`, () => {
     return request(app.getHttpServer())
       .post('/graphql')

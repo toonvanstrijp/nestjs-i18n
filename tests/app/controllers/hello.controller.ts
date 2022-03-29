@@ -1,4 +1,11 @@
-import { Controller, Get, Query, Render, UseFilters, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  Render,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 import { I18n, I18nContext, I18nLang, I18nService } from '../../../src';
 import { I18nRequestScopeService } from '../../../src/services/i18n-request-scope.service';
 import { TestExceptionFilter } from '../filter/test.filter';
@@ -61,17 +68,17 @@ export class HelloController {
   }
 
   @Get('/plurarization')
-  plurarization(
-    @Query('count') count: number
-  ): any {
-    return this.i18nRequestScope.translate('test.day_interval', { args: { count }});
+  plurarization(@Query('count') count: number): any {
+    return this.i18nRequestScope.translate('test.day_interval', {
+      args: { count },
+    });
   }
 
   @Get('/nested')
-  nested(
-    @Query('username') username: string
-  ): any {
-    return this.i18nRequestScope.translate('test.nested', { args: { username }});
+  nested(@Query('username') username: string): any {
+    return this.i18nRequestScope.translate('test.nested', {
+      args: { username },
+    });
   }
 
   @Get('/nested-no-args')
@@ -80,10 +87,10 @@ export class HelloController {
   }
 
   @Get('/deeply-nested')
-  deeplyNested(
-    @Query('count') count: number
-  ): any {
-    return this.i18nRequestScope.translate('test.nest1.nest2.nest3', { args: { count }});
+  deeplyNested(@Query('count') count: number): any {
+    return this.i18nRequestScope.translate('test.nest1.nest2.nest3', {
+      args: { count },
+    });
   }
 
   @Get('/guard')

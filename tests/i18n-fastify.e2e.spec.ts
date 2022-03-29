@@ -148,7 +148,7 @@ describe('i18n module e2e fastify', () => {
       .expect(200)
       .expect('Hallo');
   });
-  
+
   it(`/GET hello should return translation when providing accept-language with exact match`, () => {
     return request(app.getHttpServer())
       .get('/hello')
@@ -514,7 +514,7 @@ describe('i18n module e2e fastify', () => {
     return request(app.getHttpServer())
       .get('/hello/array')
       .expect(200)
-      .expect(res => expect(res.body).toEqual(['ONE', 'TWO', 'THREE']));
+      .expect((res) => expect(res.body).toEqual(['ONE', 'TWO', 'THREE']));
   });
 
   it('/GET hello/plurarization should return correct plural', async () => {
@@ -588,26 +588,28 @@ describe('i18n module e2e fastify', () => {
     await request(app.getHttpServer())
       .get('/hello/guard')
       .expect(200)
-      .expect((res) => expect(res.headers['x-test']).toBe('Current language: en'))
+      .expect((res) =>
+        expect(res.headers['x-test']).toBe('Current language: en'),
+      );
     await request(app.getHttpServer())
       .get('/hello/guard')
       .set('x-custom-lang', 'nl')
       .expect(200)
-      .expect((res) => expect(res.headers['x-test']).toBe('Huidige taal: nl'))
+      .expect((res) => expect(res.headers['x-test']).toBe('Huidige taal: nl'));
   });
 
   it('/GET hello/exception should return correct lang', async () => {
     await request(app.getHttpServer())
       .get('/hello/exception')
       .expect(500)
-      .expect({lang: 'en'})
+      .expect({ lang: 'en' });
     await request(app.getHttpServer())
       .get('/hello/exception')
       .set('x-custom-lang', 'nl')
       .expect(500)
-      .expect({lang: 'nl'})
+      .expect({ lang: 'nl' });
   });
-  
+
   afterAll(async () => {
     await app.close();
   });

@@ -10,9 +10,7 @@ import {
 } from '../src';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
-import {
-  NestExpressApplication,
-} from '@nestjs/platform-express';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 
 describe('i18n module e2e hbs', () => {
@@ -27,7 +25,7 @@ describe('i18n module e2e hbs', () => {
             'en-CA': 'fr',
             'en-*': 'en',
             'fr-*': 'fr',
-            'fr': 'fr-FR',
+            fr: 'fr-FR',
             pt: 'pt-BR',
           },
           resolvers: [
@@ -39,7 +37,7 @@ describe('i18n module e2e hbs', () => {
           loaderOptions: {
             path: path.join(__dirname, '/i18n/'),
           },
-          viewEngine: 'hbs'
+          viewEngine: 'hbs',
         }),
       ],
       controllers: [HelloController],
@@ -63,8 +61,8 @@ describe('i18n module e2e hbs', () => {
       .get('/hello/index?l=nl')
       .expect(200)
       .expect('Iedere dag');
-  })
-  
+  });
+
   afterAll(async () => {
     await app.close();
   });

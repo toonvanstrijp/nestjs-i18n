@@ -42,12 +42,17 @@ export class CatResolver {
     return args;
   }
 
-  @Subscription('catAdded', {resolve: async (payload: any, args: any, ctx: any) => {
-    const {catAdded} = payload;
-    const i18nService: I18nService = ctx.i18nService;
+  @Subscription('catAdded', {
+    resolve: async (payload: any, args: any, ctx: any) => {
+      const { catAdded } = payload;
+      const i18nService: I18nService = ctx.i18nService;
 
-    return i18nService.translate('test.cat_name', {lang: ctx.i18nLang, args: {name: catAdded}});
-  }})
+      return i18nService.translate('test.cat_name', {
+        lang: ctx.i18nLang,
+        args: { name: catAdded },
+      });
+    },
+  })
   catAdded() {
     return this.pubSub.asyncIterator('catAdded');
   }

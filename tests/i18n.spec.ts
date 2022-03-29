@@ -28,12 +28,8 @@ describe('i18n module', () => {
   });
 
   it('i18n service should return correct translation', () => {
-    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
-      'Hello',
-    );
-    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
-      'Hallo',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe('Hello');
+    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe('Hallo');
   });
 
   it('i18n service should fallback to the fallback language if none is provided', () => {
@@ -63,25 +59,13 @@ describe('i18n module', () => {
   });
 
   it('i18n service should return array translation', () => {
-    expect(i18nService.translate('test.ARRAY.0', { lang: 'en' })).toBe(
-      'ONE',
-    );
-    expect(i18nService.translate('test.ARRAY.1', { lang: 'en' })).toBe(
-      'TWO',
-    );
-    expect(i18nService.translate('test.ARRAY.2', { lang: 'en' })).toBe(
-      'THREE',
-    );
+    expect(i18nService.translate('test.ARRAY.0', { lang: 'en' })).toBe('ONE');
+    expect(i18nService.translate('test.ARRAY.1', { lang: 'en' })).toBe('TWO');
+    expect(i18nService.translate('test.ARRAY.2', { lang: 'en' })).toBe('THREE');
 
-    expect(i18nService.translate('test.ARRAY.0', { lang: 'nl' })).toBe(
-      'EEN',
-    );
-    expect(i18nService.translate('test.ARRAY.1', { lang: 'nl' })).toBe(
-      'TWEE',
-    );
-    expect(i18nService.translate('test.ARRAY.2', { lang: 'nl' })).toBe(
-      'DRIE',
-    );
+    expect(i18nService.translate('test.ARRAY.0', { lang: 'nl' })).toBe('EEN');
+    expect(i18nService.translate('test.ARRAY.1', { lang: 'nl' })).toBe('TWEE');
+    expect(i18nService.translate('test.ARRAY.2', { lang: 'nl' })).toBe('DRIE');
   });
 
   it('i18n service should return fallback translation', () => {
@@ -109,7 +93,7 @@ describe('i18n module', () => {
       'nl',
       'pt-BR',
       'zh-CN',
-      'zh-TW'
+      'zh-TW',
     ]);
   });
 
@@ -117,6 +101,17 @@ describe('i18n module', () => {
     expect(i18nService.translate('test.HELLO', { lang: 'debug' })).toBe(
       'test.HELLO',
     );
+  });
+
+  it('i18n service should use defaultValue if translation is missing', () => {
+    expect(
+      i18nService.translate('test.missing', {
+        lang: 'bla',
+        defaultValue:
+          'the translation is missing, nested: $t(test.HELLO), arg: {hello}',
+        args: { hello: 'world' },
+      }),
+    ).toBe('the translation is missing, nested: Hello, arg: world');
   });
 
   describe('i18n should refresh manually', () => {
@@ -185,18 +180,14 @@ describe('i18n module without trailing slash in path', () => {
   });
 
   it('i18n service should return correct translation', () => {
-    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
-      'Hello',
-    );
-    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
-      'Hallo',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe('Hello');
+    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe('Hallo');
   });
 
   it('i18n service should return key if translation is not found', () => {
-    expect(
-      i18nService.translate('NOT_EXISTING_KEY', { lang: 'en' }),
-    ).toBe('NOT_EXISTING_KEY');
+    expect(i18nService.translate('NOT_EXISTING_KEY', { lang: 'en' })).toBe(
+      'NOT_EXISTING_KEY',
+    );
   });
 });
 
@@ -364,24 +355,18 @@ describe('i18n module with fallbacks', () => {
 
   it('i18n service should return english translation', () => {
     expect(i18nService.translate('test.HELLO')).toBe('Hello');
-    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
-      'Hello',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe('Hello');
     expect(i18nService.translate('test.HELLO', { lang: 'en-US' })).toBe(
       'Hello',
     );
   });
 
   it('i18n service should return dutch translation', () => {
-    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
-      'Hallo',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe('Hallo');
   });
 
   it('i18n service should return french translation', () => {
-    expect(i18nService.translate('test.HELLO', { lang: 'fr' })).toBe(
-      'Bonjour',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'fr' })).toBe('Bonjour');
     expect(i18nService.translate('test.HELLO', { lang: 'fr-BE' })).toBe(
       'Bonjour',
     );
@@ -391,12 +376,8 @@ describe('i18n module with fallbacks', () => {
   });
 
   it('i18n service should return portuguese-brazil translation', () => {
-    expect(i18nService.translate('test.HELLO', { lang: 'pt' })).toBe(
-      'Olá',
-    );
-    expect(i18nService.translate('test.HELLO', { lang: 'pt-BR' })).toBe(
-      'Olá',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'pt' })).toBe('Olá');
+    expect(i18nService.translate('test.HELLO', { lang: 'pt-BR' })).toBe('Olá');
   });
 
   it('i18n service should return translation with . in key', () => {

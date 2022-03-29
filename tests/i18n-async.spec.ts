@@ -30,12 +30,8 @@ describe('i18n async module', () => {
   });
 
   it('i18n service should return correct translation', async () => {
-    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
-      'Hello',
-    );
-    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
-      'Hallo',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe('Hello');
+    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe('Hallo');
   });
 });
 
@@ -66,12 +62,8 @@ describe('i18n module without trailing slash in path', () => {
   });
 
   it('i18n service should return correct translation', () => {
-    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
-      'Hello',
-    );
-    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
-      'Hallo',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe('Hello');
+    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe('Hallo');
   });
 });
 
@@ -80,10 +72,10 @@ describe('i18n module without trailing slash in path', () => {
   providers: [
     {
       provide: 'FALLBACK_LANGUAGE',
-      useValue: 'en'
-    }
+      useValue: 'en',
+    },
   ],
-  exports: ['FALLBACK_LANGUAGE']
+  exports: ['FALLBACK_LANGUAGE'],
 })
 export class TestModule {}
 
@@ -123,29 +115,19 @@ describe('i18n async module with fallbacks', () => {
 
   it('i18n service should return correct translation', () => {
     expect(i18nService.translate('test.HELLO')).toBe('Hello');
-    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
-      'Hello',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe('Hello');
     expect(i18nService.translate('test.HELLO', { lang: 'en-US' })).toBe(
       'Hello',
     );
     expect(i18nService.translate('test.HELLO', { lang: 'en-CA' })).toBe(
       'Bonjour',
     );
-    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe(
-      'Hallo',
-    );
-    expect(i18nService.translate('test.HELLO', { lang: 'fr' })).toBe(
-      'Bonjour',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe('Hallo');
+    expect(i18nService.translate('test.HELLO', { lang: 'fr' })).toBe('Bonjour');
     expect(i18nService.translate('test.HELLO', { lang: 'fr-BE' })).toBe(
       'Bonjour',
     );
-    expect(i18nService.translate('test.HELLO', { lang: 'pt' })).toBe(
-      'Olá',
-    );
-    expect(i18nService.translate('test.HELLO', { lang: 'pt-BR' })).toBe(
-      'Olá',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'pt' })).toBe('Olá');
+    expect(i18nService.translate('test.HELLO', { lang: 'pt-BR' })).toBe('Olá');
   });
 });

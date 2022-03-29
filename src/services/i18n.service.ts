@@ -13,9 +13,10 @@ import { I18nLoader } from '../loaders/i18n.loader';
 import { take } from 'rxjs/operators';
 import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
 
-export type translateOptions = {
+export type TranslateOptions = {
   lang?: string;
   args?: ({ [k: string]: any } | string)[] | { [k: string]: any };
+  defaultValue?: string;
   debug?: boolean;
 };
 
@@ -46,13 +47,13 @@ export class I18nService {
     });
   }
 
-  public translate(key: string, options?: translateOptions): any {
+  public translate(key: string, options?: TranslateOptions): any {
     options = {
       lang: this.i18nOptions.fallbackLanguage,
       ...options,
     };
 
-    const { args } = options;
+    const { defaultValue } = options;
     let { lang } = options;
 
     if (lang === 'debug') {
@@ -80,22 +81,22 @@ export class I18nService {
       translationsByLanguage === null ||
       !translation
     ) {
-      if (lang !== this.i18nOptions.fallbackLanguage) {
+      if (lang !== this.i18nOptions.fallbackLanguage || !!defaultValue) {
         if (this.i18nOptions.logging) {
           const message = `Translation "${key}" in "${lang}" does not exist.`;
           this.logger.error(message);
         }
         return this.translate(key, {
+          ...options,
           lang: this.i18nOptions.fallbackLanguage,
-          args,
         });
       }
     }
 
-    return translation || key;
+    return translation ?? key;
   }
 
-  public t(key: string, options?: translateOptions) {
+  public t(key: string, options?: TranslateOptions) {
     return this.translate(key, options);
   }
 
@@ -132,7 +133,7 @@ export class I18nService {
   private translateObject(
     key: string,
     translations: I18nTranslation | string,
-    options?: translateOptions,
+    options?: TranslateOptions,
     rootTranslations?: I18nTranslation | string,
   ): I18nTranslation | string {
     const keys = key.split('.');
@@ -153,7 +154,7 @@ export class I18nService {
         : undefined;
     }
 
-    let translation = translations[key];
+    let translation = translations[key] ?? options?.defaultValue;
 
     if (translation && (args || (args instanceof Array && args.length > 0))) {
       const pluralObject = this.getPluralObject(translation);

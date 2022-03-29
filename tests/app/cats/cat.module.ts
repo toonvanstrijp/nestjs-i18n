@@ -5,12 +5,12 @@ import { PubSub } from 'graphql-subscriptions';
 
 @Module({
   providers: [
-    CatService, 
-    CatResolver, 
-    { 
+    CatService,
+    CatResolver,
+    {
       provide: 'PUB_SUB',
       useValue: new PubSub(),
-    }
+    },
   ],
 })
 export class CatModule {}

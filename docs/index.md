@@ -5,7 +5,11 @@ slug: /
 
 # Welcome
 
-**nestjs-i18n** is the i18n package for [nestjs](https://nestjs.com). It makes working with languages in your nestjs project easy. Everything is made to be hightly configurable. You can write and plug-in your own language resolvers or loaders. *(to connect with a database for example)*
+<head>
+  <title>nestjs-i18n - nestjs i18n made easy</title>
+</head>
+
+**nestjs-i18n** is the i18n library for [nestjs](https://nestjs.com). It makes working with languages in your nestjs project easy. Everything is made to be highly configurable. You can write and plug-in your own language resolvers or loaders. *(to connect with a database for example)*
 
 ## Features
 

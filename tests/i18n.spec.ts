@@ -113,6 +113,12 @@ describe('i18n module', () => {
     ]);
   });
 
+  it('i18n service should return key if lang is debug', () => {
+    expect(i18nService.translate('test.HELLO', { lang: 'debug' })).toBe(
+      'test.HELLO',
+    );
+  });
+
   describe('i18n should refresh manually', () => {
     const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
     const newLanguagePath = path.join(__dirname, '/i18n/de/');

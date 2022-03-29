@@ -55,6 +55,10 @@ export class I18nService {
     const { args } = options;
     let { lang } = options;
 
+    if (lang === 'debug') {
+      return key;
+    }
+
     lang =
       lang === undefined || lang === null
         ? this.i18nOptions.fallbackLanguage

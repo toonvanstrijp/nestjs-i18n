@@ -1,32 +1,9 @@
 import { I18nContext } from '../i18n.context';
-import { I18nTranslation } from '../interfaces/i18n-translation.interface';
 import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
 import { ArgumentsHost } from '@nestjs/common';
 
 export function shouldResolve(e: I18nOptionResolver) {
   return typeof e === 'function' || (e['use'] && e['options']);
-}
-
-function isObject(item: any) {
-  return item && typeof item === 'object' && !Array.isArray(item);
-}
-
-export function mergeDeep(target: I18nTranslation, ...sources: any) {
-  if (!sources.length) return target;
-  const source = sources.shift();
-
-  if (isObject(target) && isObject(source)) {
-    for (const key in source) {
-      if (isObject(source[key])) {
-        if (!target[key]) Object.assign(target, { [key]: {} });
-        mergeDeep(target[key] as I18nTranslation, source[key]);
-      } else {
-        Object.assign(target, { [key]: source[key] });
-      }
-    }
-  }
-
-  return mergeDeep(target, ...sources);
 }
 
 export function getI18nContextFromRequest(req: any): I18nContext {

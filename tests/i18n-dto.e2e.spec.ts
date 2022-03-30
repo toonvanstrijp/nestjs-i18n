@@ -46,7 +46,51 @@ describe('i18n module e2e dto', () => {
 
     await app.init();
   });
-
+  var toon = {
+    statusCode: 400,
+    errors: [
+      {
+        property: 'email',
+        children: [],
+        constraints: {
+          isEmail: 'email is invalid',
+          isNotEmpty: 'email cannot be empty',
+        },
+      },
+      {
+        property: 'password',
+        children: [],
+        constraints: { isNotEmpty: 'password cannot be empty' },
+      },
+      {
+        property: 'extra',
+        children: [
+          {
+            property: 'subscribeToEmail',
+            children: [],
+            constraints: {
+              isBoolean: 'subscribeToEmail is not a boolean',
+            },
+          },
+          {
+            property: 'min',
+            children: [],
+            constraints: {
+              min: 'min with value: "1" needs to be at least 5, ow and COOL',
+            },
+          },
+          {
+            property: 'max',
+            children: [],
+            constraints: {
+              max: 'max with value: "100" needs to be less than 10, ow and SUPER',
+            },
+          },
+        ],
+        constraints: {},
+      },
+    ],
+  };
   it(`should translate validation messages`, async () => {
     await request(app.getHttpServer())
       .post('/hello/validation')

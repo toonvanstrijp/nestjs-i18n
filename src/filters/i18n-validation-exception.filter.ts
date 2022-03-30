@@ -7,7 +7,7 @@ import {
 import { getI18nContextFromArgumentsHost } from '../utils/util';
 
 @Catch(I18nValidationException)
-export class I18nExceptionFilter implements ExceptionFilter {
+export class I18nValidationExceptionFilter implements ExceptionFilter {
   catch(exception: I18nValidationException, host: ArgumentsHost) {
     const i18n = getI18nContextFromArgumentsHost(host);
     const response = host.switchToHttp().getResponse<any>();

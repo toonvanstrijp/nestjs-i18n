@@ -13,7 +13,7 @@ import {
   I18nContext,
   I18nLang,
   I18nService,
-  I18nExceptionFilter,
+  I18nValidationExceptionFilter,
 } from '../../../src';
 import { I18nRequestScopeService } from '../../../src/services/i18n-request-scope.service';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -114,7 +114,7 @@ export class HelloController {
   }
 
   @Post('/validation')
-  @UseFilters(new I18nExceptionFilter())
+  @UseFilters(new I18nValidationExceptionFilter())
   validation(@Body() createUserDto: CreateUserDto): any {
     return 'This action adds a new user';
   }

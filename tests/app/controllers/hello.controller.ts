@@ -1,14 +1,23 @@
 import {
+  Body,
   Controller,
   Get,
+  Post,
   Query,
   Render,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import { I18n, I18nContext, I18nLang, I18nService } from '../../../src';
+import {
+  I18n,
+  I18nContext,
+  I18nLang,
+  I18nService,
+  I18nValidationExceptionFilter,
+} from '../../../src';
 import { I18nRequestScopeService } from '../../../src/services/i18n-request-scope.service';
-import { TestExceptionFilter } from '../filter/test.filter';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { TestException, TestExceptionFilter } from '../filter/test.filter';
 import { TestGuard } from '../guards/test.guard';
 
 @Controller('hello')
@@ -101,6 +110,12 @@ export class HelloController {
 
   @Get('/exception')
   exception(): any {
-    throw new Error('Test exception');
+    throw new TestException();
+  }
+
+  @Post('/validation')
+  @UseFilters(new I18nValidationExceptionFilter())
+  validation(@Body() createUserDto: CreateUserDto): any {
+    return 'This action adds a new user';
   }
 }

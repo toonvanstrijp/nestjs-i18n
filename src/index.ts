@@ -17,6 +17,7 @@ export * from './services/i18n-request-scope.service';
 export * from './interfaces/i18n-options.interface';
 export * from './interfaces/i18n-language-resolver.interface';
 export * from './interfaces/i18n-translation.interface';
+export * from './interfaces/i18n-validation-error.interface';
 
 // decorators
 export * from './decorators/i18n-lang.decorator';
@@ -38,10 +39,15 @@ export * from './loaders/i18n.json.loader';
 // interceptor
 export * from './interceptors/i18n-language.interceptor';
 
+// filters
+export * from './filters/i18n-validation-exception.filter';
+
 // utils
 export {
   getI18nContextFromRequest,
   getI18nServiceFromGraphQLContext,
   getI18nServiceFromRpcContext,
   getI18nContextFromArgumentsHost,
+  i18nValidationErrorFactory,
+  i18nValidationMessage,
 } from './utils/util';

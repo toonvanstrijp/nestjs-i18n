@@ -1,6 +1,11 @@
 import { I18nContext } from '../i18n.context';
 import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
 import { ArgumentsHost } from '@nestjs/common';
+import { ValidationArguments, ValidationError } from 'class-validator';
+import {
+  I18nValidationError,
+  I18nValidationException,
+} from '../interfaces/i18n-validation-error.interface';
 
 export function shouldResolve(e: I18nOptionResolver) {
   return typeof e === 'function' || (e['use'] && e['options']);
@@ -39,4 +44,34 @@ export function getI18nContextFromArgumentsHost(
         `can't resolve i18n context for type: ${ctx.getType()} not supported yet)`,
       );
   }
+}
+
+function validationErrorToI18n(e: ValidationError): I18nValidationError {
+  return {
+    property: e.property,
+    children: e.children.map(validationErrorToI18n),
+    constraints: !!e.constraints
+      ? Object.keys(e.constraints).reduce((result, key) => {
+          result[key] = e.constraints[key];
+          return result;
+        }, {})
+      : {},
+  };
+}
+
+export function i18nValidationErrorFactory(
+  errors: ValidationError[],
+): I18nValidationException {
+  return new I18nValidationException(
+    errors.map((e) => {
+      return validationErrorToI18n(e);
+    }),
+  );
+}
+
+export function i18nValidationMessage(key: string, args?: any) {
+  return (a: ValidationArguments) => {
+    const { value, constraints } = a;
+    return `${key}|${JSON.stringify({ value, constraints, ...args })}`;
+  };
 }

@@ -25,7 +25,6 @@ slug: /
 - **Live** reloading 🎉
 - **Plurals** support ([instructions](guides/plurals.md))
 - **GraphQL** support ([instructions](guides/graphql.md))
-- **DTO** transformation ([instructions](guides/dto/transformation.md))
 - **DTO** validation ([instructions](guides/dto/validation.md))
 - View engine support (**hbs**) ([instructions](guides/view-engine/handlebars.md))
 - **RPC** support

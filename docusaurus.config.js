@@ -62,9 +62,9 @@ const config = {
         darkTheme: darkCodeTheme,
       },
       algolia: {
-        appId: '4QSCSRMRXX',
-        apiKey: '25838fffe3d103d0e180fc4ef4121c50',
-        indexName: 'nestjs_i18n',
+        appId: 'OY3TO41FL5',
+        apiKey: '5386b9f525ec76279a8fdf64c38ab950',
+        indexName: 'nestjs-i18n',
         contextualSearch: true,
       },
     }),

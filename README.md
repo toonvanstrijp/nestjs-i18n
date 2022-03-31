@@ -26,8 +26,8 @@ To get started follow the [**quickstart**](https://nestjs-i18n.com/quick-start),
 
 - from V8.0.0 on we changed the internal `18n-middleware` for an `interceptor` this way we can provide the `ExecutionContext` so that `nestjs-i18n` works on different protocols as well, such as gRPC and WebSockets. This contains one breaking change. It only applies to your code if you've made a custom `resolver`. To resolve this breaking change take a look at this [example](https://nestjs-i18n.com/concepts/resolver). Instead of providing the `req` in the `resolve` method, change this to take the `ExecutionContext` as argument.
 
-- from V6.0.0 on we implemented the `I18nParser`, by using this we can easily support different formats other than JSON. To migrate to this change look at the [Quick start](https://nestjs-i18n.com/quick-start). There are some changes in the declaration of the `I18nModule`. Note: the `translate` function returns a `Promise<string>`. So you need to call it using `await i18n.translate('HELLO')`;
+- from V6.0.0 on we implemented the `I18nParser`, by using this we can easily support different formats other than JSON. To migrate to this change look at the [quickstart](https://nestjs-i18n.com/quick-start). There are some changes in the declaration of the `I18nModule`. Note: the `translate` function returns a `Promise<string>`. So you need to call it using `await i18n.translate('HELLO')`;
 
 - from V4.0.0 on we changed the signature of the `translate` function, the `language` is now optional, if no `language` is given it'll fallback to the `fallbackLanguage`.
 
-- from V3.0.0 on we load translations based on their directory name instead of file name. Change your translations files to the structure found in the [Quick start](https://nestjs-i18n.com/quick-start#setup-translation-files).
+- from V3.0.0 on we load translations based on their directory name instead of file name. Change your translations files to the structure found in the [quickstart](https://nestjs-i18n.com/quick-start#setup-translation-files).

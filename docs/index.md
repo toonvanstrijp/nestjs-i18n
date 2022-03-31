@@ -10,7 +10,7 @@ slug: /
 </head>
 
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs-i18n.com/img/logo.svg" width="600" alt="nestjs-i18n Logo" /></a>
+  <a href="https://nestjs-i18n.com/" target="blank"><img src="https://nestjs-i18n.com/img/logo.svg" width="600" alt="nestjs-i18n Logo" /></a>
 </p>
 <p align="center">
   The i18n library for <a href="https://nestjs.com" target="_blank">nestjs</a>. It makes working with languages in your nestjs project easy. Everything is made to be highly configurable. You can write and plug-in your own language resolvers or loaders.
@@ -33,9 +33,9 @@ slug: /
 - **Live** reloading 🎉
 - **Plurals** support ([instructions](guides/plurals.md))
 - **GraphQL** support ([instructions](guides/graphql.md))
-- **DTO** validation ([instructions](guides/dto/validation.md))
-- View engine support (**hbs**) ([instructions](guides/view-engine/handlebars.md))
-- **RPC** support
+- **gRPC** support ([instructions](guides/grpc.md))
+- **DTO** validation ([instructions](guides/dto-validation.md))
+- View engine support (**hbs**) ([instructions](guides/handlebars.md))
 - Custom resolvers
 - Custom loaders
 - Custom formatters

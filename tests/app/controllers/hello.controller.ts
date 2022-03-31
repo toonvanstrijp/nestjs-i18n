@@ -7,6 +7,7 @@ import {
   Render,
   UseFilters,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   I18n,
@@ -19,6 +20,8 @@ import { I18nRequestScopeService } from '../../../src/services/i18n-request-scop
 import { CreateUserDto } from '../dto/create-user.dto';
 import { TestException, TestExceptionFilter } from '../filter/test.filter';
 import { TestGuard } from '../guards/test.guard';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
+import { Hero, HeroById } from '../interfaces/hero.interface';
 
 @Controller('hello')
 @UseFilters(new TestExceptionFilter())
@@ -117,5 +120,19 @@ export class HelloController {
   @UseFilters(new I18nValidationExceptionFilter())
   validation(@Body() createUserDto: CreateUserDto): any {
     return 'This action adds a new user';
+  }
+
+  @GrpcMethod('HeroesService', 'FindOne')
+  findOne(@Payload() data: HeroById, @I18n() i18n: I18nContext): Hero {
+    const items = [
+      {
+        id: 1,
+        name: i18n.t('test.set-up-password.heading', {
+          args: { username: 'John' },
+        }),
+      },
+      { id: 2, name: 'Doe' },
+    ];
+    return items.find(({ id }) => id === data.id);
   }
 }

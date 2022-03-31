@@ -6,8 +6,6 @@ import {
   AcceptLanguageResolver,
   I18nModule,
   QueryResolver,
-  I18nJsonLoader,
-  I18nJsonLoaderOptions,
 } from '../src';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';

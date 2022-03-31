@@ -31,6 +31,7 @@ export * from './resolvers/accept-language.resolver';
 export * from './resolvers/query.resolver';
 export * from './resolvers/cookie.resolver';
 export * from './resolvers/graphql-websocket.resolver';
+export * from './resolvers/grpc-metadata.resolver';
 
 // build in loaders
 export * from './loaders/i18n.loader';

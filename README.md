@@ -12,6 +12,23 @@
   </p>
 </p>
 
+## Features
+
+**nestjs-i18n** comes with a bunch of tools to help add multiple language support to your project.
+
+- **Variable formatting** ([instructions](https://nestjs-i18n.com/guides/formatting))
+- **Nested** translations ([instructions](https://nestjs-i18n.com/guides/nested))
+- **Fallback** languages ([instructions](https://nestjs-i18n.com/guides/fallback-languages))
+- **Live** reloading 🎉
+- **Plurals** support ([instructions](https://nestjs-i18n.com/guides/plurals))
+- **GraphQL** support ([instructions](https://nestjs-i18n.com/guides/graphql))
+- **gRPC** support ([instructions](https://nestjs-i18n.com/guides/grpc))
+- **DTO** validation ([instructions](https://nestjs-i18n.com/guides/dto-validation))
+- View engine support (**hbs**) ([instructions](https://nestjs-i18n.com/guides/handlebars))
+- Custom resolvers
+- Custom loaders
+- Custom formatters
+
 ## Getting started
 
 To get started follow the [**quickstart**](https://nestjs-i18n.com/quick-start), or take a look at the [**docs**](https://nestjs-i18n.com/). 

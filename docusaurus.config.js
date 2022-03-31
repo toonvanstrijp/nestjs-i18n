@@ -34,7 +34,12 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: 'nestjs-i18n',
+        logo: {
+          alt: 'nestjs-i18n logo',
+          src: 'img/logo.svg',
+          href: '/',
+          target: '_self',
+        },
         items: [
           {
             href: 'https://github.com/toonvanstrijp/nestjs-i18n',

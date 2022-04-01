@@ -31,4 +31,6 @@ export class TestGuard implements CanActivate {
 
 This only works when running in an `http` context! So it works with `express`, `fastify` and `graphql` (most parts).
 
+Internally `nestjs-i8n` uses a middleware instead of an interceptor when running in an `http` context. To disable this behaviour set the `disableMiddleware` option to `true`.
+
 :::

@@ -50,6 +50,13 @@ const config = {
       },
       footer: {
         style: 'dark',
+        logo: {
+          src: 'img/debugged-dark.svg',
+          srcDark: 'img/debugged.svg',
+          width: 400,
+          alt: 'debugged logo',
+        },
+        copyright: `Sponsered by <a href="https://www.debugged.nl" target="_blank">Debugged</a>`,
         links: [
           {
             title: 'More',

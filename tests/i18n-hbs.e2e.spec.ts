@@ -57,10 +57,20 @@ describe('i18n module e2e hbs', () => {
       .expect(200)
       .expect('Every day');
 
-    return request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get('/hello/index?l=nl')
       .expect(200)
       .expect('Iedere dag');
+
+    await request(app.getHttpServer())
+      .get('/hello/index2')
+      .expect(200)
+      .expect('Hello');
+
+    return request(app.getHttpServer())
+      .get('/hello/index2?l=nl')
+      .expect(200)
+      .expect('Hallo');
   });
 
   afterAll(async () => {

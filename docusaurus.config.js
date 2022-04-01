@@ -56,7 +56,7 @@ const config = {
           width: 400,
           alt: 'debugged logo',
         },
-        copyright: `Sponsered by <a href="https://www.debugged.nl" target="_blank">Debugged</a>`,
+        copyright: `Sponsored by <a href="https://www.debugged.nl" target="_blank">Debugged</a>`,
         links: [
           {
             title: 'More',

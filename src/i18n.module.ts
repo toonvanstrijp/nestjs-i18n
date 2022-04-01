@@ -92,6 +92,7 @@ export class I18nModule implements OnModuleInit, NestModule {
   }
 
   configure(consumer: MiddlewareConsumer) {
+    if (this.i18nOptions.disableMiddleware) return;
     consumer.apply(I18nMiddleware).forRoutes('*');
   }
 

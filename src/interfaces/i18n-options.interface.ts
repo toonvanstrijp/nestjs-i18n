@@ -32,6 +32,7 @@ export interface I18nOptions {
   formatter?: Formatter;
   logging?: boolean;
   viewEngine?: 'hbs';
+  disableMiddleware?: boolean;
 }
 
 export interface I18nOptionsFactory {

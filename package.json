@@ -1,6 +1,6 @@
 {
   "name": "nestjs-i18n",
-  "version": "9.0.2",
+  "version": "9.0.3",
   "homepage": "https://nestjs-i18n.com",
   "description": "The i18n module for Nest.",
   "author": "Toon van Strijp",

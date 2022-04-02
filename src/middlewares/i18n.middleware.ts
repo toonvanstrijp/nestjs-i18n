@@ -60,7 +60,7 @@ export class I18nMiddleware implements NestMiddleware {
 
   private async getResolver(r: I18nOptionResolver): Promise<I18nResolver> {
     if (shouldResolve(r)) {
-      if (r['use'] && r['options']) {
+      if (r['use']) {
         const resolver = r as ResolverWithOptions;
         return this.moduleRef.get(resolver.use);
       } else {

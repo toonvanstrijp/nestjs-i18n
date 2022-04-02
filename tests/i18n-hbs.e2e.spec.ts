@@ -12,6 +12,19 @@ import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { Global, Module } from '@nestjs/common';
+
+@Global()
+@Module({
+  providers: [
+    {
+      provide: 'OPTIONS',
+      useValue: ['lang', 'locale', 'l'],
+    },
+  ],
+  exports: ['OPTIONS'],
+})
+export class OptionsModule {}
 
 describe('i18n module e2e hbs', () => {
   let app: NestExpressApplication;
@@ -19,6 +32,7 @@ describe('i18n module e2e hbs', () => {
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [
+        OptionsModule,
         I18nModule.forRoot({
           fallbackLanguage: 'en',
           fallbacks: {
@@ -29,7 +43,13 @@ describe('i18n module e2e hbs', () => {
             pt: 'pt-BR',
           },
           resolvers: [
-            { use: QueryResolver, options: ['lang', 'locale', 'l'] },
+            {
+              use: QueryResolver,
+              useFactory: (options) => {
+                return options;
+              },
+              inject: ['OPTIONS'],
+            },
             new HeaderResolver(['x-custom-lang']),
             new CookieResolver(),
             AcceptLanguageResolver,

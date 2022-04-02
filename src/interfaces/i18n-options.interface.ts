@@ -1,12 +1,28 @@
 import { Type } from '@nestjs/common';
-import { ModuleMetadata } from '@nestjs/common/interfaces';
+import {
+  ClassProvider,
+  ExistingProvider,
+  FactoryProvider,
+  ModuleMetadata,
+  ValueProvider,
+} from '@nestjs/common/interfaces';
 import { I18nResolver } from './i18n-language-resolver.interface';
 import { I18nLoader } from '../loaders/i18n.loader';
 
+export interface OptionsProvider {
+  options: any;
+}
+
+export type OptionProvider<T = any> =
+  | Omit<ClassProvider<T>, 'provide'>
+  | Omit<ValueProvider<T>, 'provide'>
+  | Omit<FactoryProvider<T>, 'provide'>
+  | Omit<ExistingProvider<T>, 'provide'>
+  | OptionsProvider;
+
 export type ResolverWithOptions = {
   use: Type<I18nResolver>;
-  options: any;
-};
+} & OptionProvider;
 
 export type I18nOptionsWithoutResolvers = Omit<
   I18nOptions,

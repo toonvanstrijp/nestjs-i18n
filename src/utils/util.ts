@@ -8,7 +8,7 @@ import {
 } from '../interfaces/i18n-validation-error.interface';
 
 export function shouldResolve(e: I18nOptionResolver) {
-  return typeof e === 'function' || (e['use'] && e['options']);
+  return typeof e === 'function' || e['use'];
 }
 
 export function getI18nContextFromRequest(req: any): I18nContext {

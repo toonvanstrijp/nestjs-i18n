@@ -341,19 +341,22 @@ export class I18nModule implements OnModuleInit, NestModule {
     return (resolvers || [])
       .filter(shouldResolve)
       .reduce<Provider[]>((providers, r) => {
-        if (r['use'] && r['options']) {
-          const resolver = r as ResolverWithOptions;
+        if (r['use']) {
+          const { use: resolver, options, ...rest } = r as any;
           const optionsToken = getI18nResolverOptionsToken(
-            resolver.use as unknown as () => void,
+            resolver as unknown as () => void,
           );
           providers.push({
-            provide: resolver.use,
-            useClass: resolver.use,
+            provide: resolver,
+            useClass: resolver,
             inject: [optionsToken],
           });
+          if (options) {
+            (rest as any).useValue = options;
+          }
           providers.push({
             provide: optionsToken,
-            useFactory: () => resolver.options,
+            ...(rest as any),
           });
         } else {
           const optionsToken = getI18nResolverOptionsToken(

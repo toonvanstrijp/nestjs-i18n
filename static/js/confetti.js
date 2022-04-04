@@ -10,5 +10,11 @@ window.addEventListener('load', function () {
       particleCount: randomInRange(50, 100),
       origin: { y: 0.8 },
     });
+    var audio = new Audio();
+    var popper = document.createElement('source');
+    popper.type = 'audio/mpeg';
+    popper.src = 'mp3/popper.mp3';
+    audio.appendChild(popper);
+    audio.play();
   };
 });

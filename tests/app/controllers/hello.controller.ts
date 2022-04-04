@@ -7,7 +7,6 @@ import {
   Render,
   UseFilters,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import {
   I18n,
@@ -36,6 +35,11 @@ export class HelloController {
     return this.i18n.translate('test.HELLO', { lang });
   }
 
+  @Get('/typed')
+  helloTyped(@I18nLang() lang: string): string {
+    return this.i18n.translate<string>('test.HELLO', { lang });
+  }
+
   @Get('/index')
   @Render('index')
   index(): any {
@@ -51,9 +55,19 @@ export class HelloController {
     return this.i18n.t('test.HELLO', { lang });
   }
 
+  @Get('/short/typed')
+  helloShortTyped(@I18nLang() lang: string): string {
+    return this.i18n.t<string>('test.HELLO', { lang });
+  }
+
   @Get('/context')
   helloContext(@I18n() i18n: I18nContext): any {
     return i18n.translate('test.HELLO');
+  }
+
+  @Get('/context/typed')
+  helloContextTyped(@I18n() i18n: I18nContext): string {
+    return i18n.translate<string>('test.HELLO');
   }
 
   @Get('/short/context')
@@ -61,14 +75,29 @@ export class HelloController {
     return i18n.t('test.HELLO');
   }
 
+  @Get('/short/context/typed')
+  helloShortContextTyped(@I18n() i18n: I18nContext): string {
+    return i18n.t<string>('test.HELLO');
+  }
+
   @Get('/request-scope')
   helloRequestScope(): any {
     return this.i18nRequestScope.translate('test.HELLO');
   }
 
+  @Get('/request-scope/typed')
+  helloRequestScopeTyped(): string {
+    return this.i18nRequestScope.translate<string>('test.HELLO');
+  }
+
   @Get('/short/request-scope')
   helloShortRequestScope(): any {
     return this.i18nRequestScope.t('test.HELLO');
+  }
+
+  @Get('/short/request-scope/typed')
+  helloShortRequestScopeTyped(): string {
+    return this.i18nRequestScope.t<string>('test.HELLO');
   }
 
   @Get('/object')

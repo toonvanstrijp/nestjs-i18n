@@ -47,7 +47,7 @@ export class I18nService {
     });
   }
 
-  public translate(key: string, options?: TranslateOptions): any {
+  public translate<T = any>(key: string, options?: TranslateOptions): T {
     options = {
       lang: this.i18nOptions.fallbackLanguage,
       ...options,
@@ -57,7 +57,7 @@ export class I18nService {
     let { lang } = options;
 
     if (lang === 'debug') {
-      return key;
+      return key as unknown as T;
     }
 
     lang =
@@ -93,11 +93,11 @@ export class I18nService {
       }
     }
 
-    return translation ?? key;
+    return (translation ?? key) as unknown as T;
   }
 
-  public t(key: string, options?: TranslateOptions) {
-    return this.translate(key, options);
+  public t<T = any>(key: string, options?: TranslateOptions): T {
+    return this.translate<T>(key, options);
   }
 
   public getSupportedLanguages() {

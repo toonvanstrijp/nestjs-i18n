@@ -102,8 +102,8 @@ export class HelloController {
     return this.i18n.translate('test.ARRAY');
   }
 
-  @Get('/pluralization')
-  pluralization(@Query('count') count: number): any {
+  @Get('/plurarization')
+  plurarization(@Query('count') count: number): any {
     return this.i18nRequestScope.translate('test.day_interval', {
       args: { count },
     });

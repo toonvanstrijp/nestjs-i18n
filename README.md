@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://nestjs-i18n.com/" target="blank"><img src="https://nestjs-i18n.com/img/logo.svg" width="600" alt="nestjs-i18n Logo" /></a>
+  <a href="https://nestjs-i18n.com/" target="_blank"><img src="https://nestjs-i18n.com/img/logo.svg" width="600" alt="nestjs-i18n Logo" /></a>
 </p>
 <p align="center">
   The i18n library for <a href="https://nestjs.com" target="_blank">nestjs</a>. It makes working with languages in your nestjs project easy. Everything is made to be highly configurable. You can write and plug-in your own language resolvers or loaders.

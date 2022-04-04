@@ -85,9 +85,19 @@ export class HelloController {
     return this.i18nRequestScope.translate('test.HELLO');
   }
 
+  @Get('/request-scope/typed')
+  helloRequestScopeTyped(): string {
+    return this.i18nRequestScope.translate<string>('test.HELLO');
+  }
+
   @Get('/short/request-scope')
   helloShortRequestScope(): any {
     return this.i18nRequestScope.t('test.HELLO');
+  }
+
+  @Get('/short/request-scope/typed')
+  helloShortRequestScopeTyped(): string {
+    return this.i18nRequestScope.t<string>('test.HELLO');
   }
 
   @Get('/object')

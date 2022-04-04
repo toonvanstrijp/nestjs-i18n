@@ -58,8 +58,7 @@ const config = {
       footer: {
         style: 'dark',
         logo: {
-          src: 'img/debugged-dark.svg',
-          srcDark: 'img/debugged.svg',
+          src: 'img/debugged.svg',
           width: 400,
           alt: 'debugged',
         },

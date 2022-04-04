@@ -15,9 +15,13 @@ const config = {
   organizationName: 'toonvanstrijp', // Usually your GitHub org/user name.
   projectName: 'nestjs-i18n', // Usually your repo name.
   trailingSlash: false,
+  scripts: [
+    'https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js',
+    'js/confetti.js',
+  ],
   presets: [
     [
-      'classic',
+      '@docusaurus/preset-classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
@@ -25,6 +29,9 @@ const config = {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl: 'https://github.com/toonvanstrijp/nestjs-i18n/tree/main',
+        },
+        theme: {
+          customCss: [require.resolve('./static/css/custom.css')],
         },
         blog: false,
       }),
@@ -54,7 +61,7 @@ const config = {
           src: 'img/debugged-dark.svg',
           srcDark: 'img/debugged.svg',
           width: 400,
-          alt: 'debugged logo',
+          alt: 'debugged',
         },
         copyright: `Sponsored by <a href="https://www.debugged.nl" target="_blank">Debugged</a>`,
         links: [

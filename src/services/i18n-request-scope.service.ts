@@ -9,7 +9,7 @@ export class I18nRequestScopeService {
     private readonly i18nService: I18nService,
   ) {}
 
-  public translate(key: string, options?: TranslateOptions) {
+  public translate<T = any>(key: string, options?: TranslateOptions): T {
     const lang =
       !this.req.i18nLang && this.req.context
         ? this.req.context.i18nLang
@@ -18,10 +18,10 @@ export class I18nRequestScopeService {
       lang,
       ...options,
     };
-    return this.i18nService.translate(key, options);
+    return this.i18nService.translate<T>(key, options);
   }
 
-  public t(key: string, options?: TranslateOptions) {
-    return this.translate(key, options);
+  public t<T = any>(key: string, options?: TranslateOptions): T {
+    return this.translate<T>(key, options);
   }
 }

@@ -113,9 +113,9 @@ export class HelloController {
   }
 
   @Get('/plurarization')
-  plurarization(@Query('count') count: number): any {
+  plurarization(@Query('count') count: string): any {
     return this.i18nRequestScope.translate('test.day_interval', {
-      args: { count },
+      args: { count: parseInt(count) },
     });
   }
 

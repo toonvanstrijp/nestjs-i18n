@@ -22,7 +22,6 @@ import {
   I18nAsyncOptions,
   I18nOptions,
   I18nOptionsFactory,
-  ResolverWithOptions,
   I18nOptionResolver,
 } from './interfaces/i18n-options.interface';
 import {

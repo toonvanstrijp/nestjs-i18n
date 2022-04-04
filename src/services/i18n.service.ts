@@ -158,7 +158,7 @@ export class I18nService {
 
     if (translation && (args || (args instanceof Array && args.length > 0))) {
       const pluralObject = this.getPluralObject(translation);
-      if (pluralObject && args && args['count']) {
+      if (pluralObject && args && args['count'] !== undefined) {
         const count = Number(args['count']);
 
         if (count == 0 && !!pluralObject.zero) {

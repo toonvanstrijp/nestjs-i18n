@@ -7,7 +7,6 @@ import {
   Render,
   UseFilters,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import {
   I18n,
@@ -36,6 +35,11 @@ export class HelloController {
     return this.i18n.translate('test.HELLO', { lang });
   }
 
+  @Get('/typed')
+  helloTyped(@I18nLang() lang: string): string {
+    return this.i18n.translate<string>('test.HELLO', { lang });
+  }
+
   @Get('/index')
   @Render('index')
   index(): any {
@@ -51,14 +55,29 @@ export class HelloController {
     return this.i18n.t('test.HELLO', { lang });
   }
 
+  @Get('/short/typed')
+  helloShortTyped(@I18nLang() lang: string): string {
+    return this.i18n.t<string>('test.HELLO', { lang });
+  }
+
   @Get('/context')
   helloContext(@I18n() i18n: I18nContext): any {
     return i18n.translate('test.HELLO');
   }
 
+  @Get('/context/typed')
+  helloContextTyped(@I18n() i18n: I18nContext): string {
+    return i18n.translate<string>('test.HELLO');
+  }
+
   @Get('/short/context')
   helloShortContext(@I18n() i18n: I18nContext): any {
     return i18n.t('test.HELLO');
+  }
+
+  @Get('/short/context/typed')
+  helloShortContextTyped(@I18n() i18n: I18nContext): string {
+    return i18n.t<string>('test.HELLO');
   }
 
   @Get('/request-scope')
@@ -83,8 +102,8 @@ export class HelloController {
     return this.i18n.translate('test.ARRAY');
   }
 
-  @Get('/plurarization')
-  plurarization(@Query('count') count: number): any {
+  @Get('/pluralization')
+  pluralization(@Query('count') count: number): any {
     return this.i18nRequestScope.translate('test.day_interval', {
       args: { count },
     });

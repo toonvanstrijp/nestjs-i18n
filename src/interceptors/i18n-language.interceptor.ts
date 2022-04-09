@@ -59,7 +59,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
       ctx.i18nLang = language || this.i18nOptions.fallbackLanguage;
 
       // Pass down language to handlebars
-      if (ctx.app) {
+      if (ctx.app && ctx.app.locals) {
         ctx.app.locals.i18nLang = ctx.i18nLang;
       }
     }

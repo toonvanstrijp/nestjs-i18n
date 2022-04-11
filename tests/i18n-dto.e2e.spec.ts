@@ -167,13 +167,13 @@ describe('i18n module e2e dto', () => {
               children: [],
               constraints: {
                 isEmail: 'email is ongeldig',
-                isNotEmpty: 'email mag niet leeg zijn',
+                isNotEmpty: 'e-mail adres mag niet leeg zijn',
               },
             },
             {
               property: 'password',
               children: [],
-              constraints: { isNotEmpty: 'password mag niet leeg zijn' },
+              constraints: { isNotEmpty: 'wachtwoord mag niet leeg zijn' },
             },
             {
               property: 'extra',

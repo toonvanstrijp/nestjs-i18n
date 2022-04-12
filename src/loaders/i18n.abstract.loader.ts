@@ -23,10 +23,10 @@ export interface I18nAbstractLoaderOptions {
   watch?: boolean;
 }
 
-const defaultOptions: Partial<I18nAbstractLoaderOptions> = {
-  filePattern: '*.json',
-  watch: false,
-};
+// const defaultOptions: Partial<I18nAbstractLoaderOptions> = {
+//   filePattern: '*.json',
+//   watch: false,
+// };
 
 export abstract class I18nAbstractLoader extends I18nLoader implements OnModuleDestroy {
   private watcher?: chokidar.FSWatcher;
@@ -148,7 +148,7 @@ export abstract class I18nAbstractLoader extends I18nLoader implements OnModuleD
   }
 
   private sanitizeOptions(options: I18nAbstractLoaderOptions) {
-    options = { ...defaultOptions, ...options };
+    options = { ...this.getDefaultOptions(), ...options };
 
     options.path = path.normalize(options.path + path.sep);
     if (!options.filePattern.startsWith('*.')) {
@@ -159,4 +159,5 @@ export abstract class I18nAbstractLoader extends I18nLoader implements OnModuleD
   }
 
   abstract formatData(data: any);
+  abstract getDefaultOptions(): Partial<I18nAbstractLoaderOptions>;
 }

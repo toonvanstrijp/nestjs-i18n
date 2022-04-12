@@ -36,6 +36,7 @@ export * from './resolvers/grpc-metadata.resolver';
 // build in loaders
 export * from './loaders/i18n.loader';
 export * from './loaders/i18n.json.loader';
+export * from './loaders/i18n.yaml.loader';
 
 // interceptor
 export * from './interceptors/i18n-language.interceptor';

@@ -31,7 +31,7 @@ import {
   NestModule,
 } from '@nestjs/common';
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
 import { shouldResolve } from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
@@ -58,6 +58,7 @@ export class I18nModule implements OnModuleInit, NestModule {
     @Inject(I18N_TRANSLATIONS)
     private translations: Observable<I18nTranslation>,
     @Inject(I18N_OPTIONS) private readonly i18nOptions: I18nOptions,
+    private adapter: HttpAdapterHost,
   ) {}
 
   async onModuleInit() {
@@ -87,6 +88,13 @@ export class I18nModule implements OnModuleInit, NestModule {
       } catch (e) {
         logger.error('hbs module failed to load', e);
       }
+    }
+
+    if (this.i18nOptions.viewEngine == 'pug') {
+      const app = this.adapter.httpAdapter.getInstance();
+      app.locals['t'] = (key: string, lang: any, args: any) => {
+        return this.i18n.t(key, { lang, args });
+      };
     }
   }
 

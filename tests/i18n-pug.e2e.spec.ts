@@ -6,33 +6,18 @@ import {
   AcceptLanguageResolver,
   I18nModule,
   QueryResolver,
-  I18nJsonLoader,
 } from '../src';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
-import { Global, Module } from '@nestjs/common';
 
-@Global()
-@Module({
-  providers: [
-    {
-      provide: 'OPTIONS',
-      useValue: ['lang', 'locale', 'l'],
-    },
-  ],
-  exports: ['OPTIONS'],
-})
-export class OptionsModule {}
-
-describe('i18n module e2e hbs', () => {
+describe('i18n module e2e pug', () => {
   let app: NestExpressApplication;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [
-        OptionsModule,
         I18nModule.forRoot({
           fallbackLanguage: 'en',
           fallbacks: {
@@ -43,13 +28,7 @@ describe('i18n module e2e hbs', () => {
             pt: 'pt-BR',
           },
           resolvers: [
-            {
-              use: QueryResolver,
-              useFactory: (options) => {
-                return options;
-              },
-              inject: ['OPTIONS'],
-            },
+            new QueryResolver(['lang', 'l']),
             new HeaderResolver(['x-custom-lang']),
             new CookieResolver(),
             AcceptLanguageResolver,
@@ -57,7 +36,7 @@ describe('i18n module e2e hbs', () => {
           loaderOptions: {
             path: path.join(__dirname, '/i18n/'),
           },
-          viewEngine: 'hbs',
+          viewEngine: 'pug',
         }),
       ],
       controllers: [HelloController],
@@ -65,8 +44,8 @@ describe('i18n module e2e hbs', () => {
 
     app = module.createNestApplication<NestExpressApplication>();
 
-    app.setBaseViewsDir(join(__dirname, 'app', 'views/hbs'));
-    app.setViewEngine('hbs');
+    app.setBaseViewsDir(join(__dirname, 'app', 'views/pug'));
+    app.setViewEngine('pug');
 
     await app.init();
   });

@@ -47,7 +47,7 @@ export interface I18nOptions {
   loaderOptions: any;
   formatter?: Formatter;
   logging?: boolean;
-  viewEngine?: 'hbs';
+  viewEngine?: 'hbs' | 'pug';
   disableMiddleware?: boolean;
 }
 

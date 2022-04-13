@@ -15,7 +15,7 @@ describe('i18n yaml module', () => {
           loaderOptions: {
             path: path.join(__dirname, '/i18n/'),
           },
-          loader: I18nYamlLoader
+          loader: I18nYamlLoader,
         }),
       ],
     }).compile();

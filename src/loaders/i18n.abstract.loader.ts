@@ -28,7 +28,10 @@ export interface I18nAbstractLoaderOptions {
 //   watch: false,
 // };
 
-export abstract class I18nAbstractLoader extends I18nLoader implements OnModuleDestroy {
+export abstract class I18nAbstractLoader
+  extends I18nLoader
+  implements OnModuleDestroy
+{
   private watcher?: chokidar.FSWatcher;
 
   private events: Subject<string> = new Subject();

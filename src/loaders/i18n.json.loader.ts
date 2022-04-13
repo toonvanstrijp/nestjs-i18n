@@ -1,4 +1,7 @@
-import { I18nAbstractLoader, I18nAbstractLoaderOptions } from './i18n.abstract.loader';
+import {
+  I18nAbstractLoader,
+  I18nAbstractLoaderOptions,
+} from './i18n.abstract.loader';
 
 export class I18nJsonLoader extends I18nAbstractLoader {
   getDefaultOptions(): Partial<I18nAbstractLoaderOptions> {
@@ -8,6 +11,6 @@ export class I18nJsonLoader extends I18nAbstractLoader {
     };
   }
   formatData(data: any) {
-    return JSON.parse(data)
+    return JSON.parse(data);
   }
 }

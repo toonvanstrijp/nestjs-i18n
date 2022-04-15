@@ -24,7 +24,7 @@
 - **GraphQL** support ([instructions](https://nestjs-i18n.com/guides/graphql))
 - **gRPC** support ([instructions](https://nestjs-i18n.com/guides/grpc))
 - **DTO** validation ([instructions](https://nestjs-i18n.com/guides/dto-validation))
-- View engine support (**hbs**) ([instructions](https://nestjs-i18n.com/guides/handlebars))
+- View engine support ([**hbs**](https://nestjs-i18n.com/guides/view_engines/handlebars) or [**pug**](https://nestjs-i18n.com/guides/view_engines/pug))
 - Custom resolvers
 - Custom loaders
 - Custom formatters

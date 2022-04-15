@@ -35,7 +35,7 @@ slug: /
 - **GraphQL** support ([instructions](guides/graphql.md))
 - **gRPC** support ([instructions](guides/grpc.md))
 - **DTO** validation ([instructions](guides/dto-validation.md))
-- View engine support (**hbs**) ([instructions](guides/handlebars.md))
+- View engine support ([**hbs**](guides/view_engines/handlebars) or [**pug**](guides/view_engines/pug))
 - Custom resolvers
 - Custom loaders
 - Custom formatters

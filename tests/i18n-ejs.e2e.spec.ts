@@ -6,7 +6,6 @@ import {
   AcceptLanguageResolver,
   I18nModule,
   QueryResolver,
-  I18nJsonLoader,
 } from '../src';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
@@ -75,7 +74,7 @@ describe('i18n module e2e ejs', () => {
     await request(app.getHttpServer())
       .get('/hello/index')
       .expect(200)
-      .expect('Every day')
+      .expect('Every day');
 
     await request(app.getHttpServer())
       .get('/hello/index?l=nl')

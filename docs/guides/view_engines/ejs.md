@@ -1,10 +1,10 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 ---
 
-# Pug
+# ejs
 
-To enable [**pug**](https://pugjs.org) support make use of the `viewEngine` option inside your `I18nModule`.
+To enable [**ejs**](https://github.com/mde/ejs) support make use of the `viewEngine` option inside your `I18nModule`.
 
 ```diff title="src/app.module.ts"
   I18nModule.forRoot({
@@ -12,7 +12,7 @@ To enable [**pug**](https://pugjs.org) support make use of the `viewEngine` opti
     loaderOptions: {
       path: path.join(__dirname, '/i18n/'),
     },
-+   viewEngine: 'pug'
++   viewEngine: 'ejs'
   })
 ```
 
@@ -40,7 +40,7 @@ export class TestController {
 ```
 
 ```hbs title="src/view/page.hbs"
-h1= t('test.HELLO', i18nLang, { username })
+<h1><%= t('test.HELLO', i18nLang, { username }) -%></h1>
 ```
 
 :::caution

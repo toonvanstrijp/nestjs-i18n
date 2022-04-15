@@ -54,6 +54,7 @@
     "@tsconfig/docusaurus": "^1.0.4",
     "@types/accept-language-parser": "^1.5.3",
     "@types/cookie": "^0.4.1",
+    "@types/handlebars": "^4.1.0",
     "@types/hbs": "^4.0.1",
     "@types/jest": "^27.4.1",
     "@types/node": "^16.0.0",

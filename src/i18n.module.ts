@@ -76,14 +76,7 @@ export class I18nModule implements OnModuleInit, NestModule {
     if (this.i18nOptions.viewEngine == 'hbs') {
       try {
         const hbs = await import('hbs');
-        hbs.registerHelper('t', (key: string, args: any, options: any) => {
-          if (!options) {
-            options = args;
-          }
-
-          const lang = options.lookupProperty(options.data.root, 'i18nLang');
-          return this.i18n.t(key, { lang, args });
-        });
+        hbs.registerHelper('t', this.i18n.hbsHelper);
         logger.log('Handlebars helper registered');
       } catch (e) {
         logger.error('hbs module failed to load', e);

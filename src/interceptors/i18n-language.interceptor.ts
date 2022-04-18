@@ -34,8 +34,8 @@ export class I18nLanguageInterceptor implements NestInterceptor {
 
     const ctx = getContextObject(context);
 
-    // Skip interceptor if language is already resolved (in case of http middleware)
-    if (!!ctx.i18nLang) {
+    // Skip interceptor if language is already resolved (in case of http middleware) or when ctx is undefined (unsupported context)
+    if (ctx === undefined || !!ctx.i18nLang) {
       return next.handle();
     }
 

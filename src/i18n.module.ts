@@ -147,7 +147,7 @@ export class I18nModule implements OnModuleInit, NestModule {
       inject: [I18nLoader],
     };
 
-    const languagessProvider = {
+    const languagesProvider = {
       provide: I18N_LANGUAGES,
       useFactory: async (loader: I18nLoader): Promise<Observable<string[]>> => {
         try {
@@ -182,7 +182,7 @@ export class I18nModule implements OnModuleInit, NestModule {
         I18nRequestScopeService,
         i18nOptions,
         translationsProvider,
-        languagessProvider,
+        languagesProvider,
         resolversProvider,
         i18nLoaderProvider,
         i18nLoaderOptionsProvider,
@@ -190,7 +190,7 @@ export class I18nModule implements OnModuleInit, NestModule {
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
       ],
-      exports: [I18nService, I18nRequestScopeService, languagessProvider],
+      exports: [I18nService, I18nRequestScopeService, languagesProvider],
     };
   }
 

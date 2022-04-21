@@ -1,9 +1,10 @@
 import { I18nResolver } from '../index';
-import { Injectable, ExecutionContext } from '@nestjs/common';
+import { Injectable, ExecutionContext, Logger } from '@nestjs/common';
 import { I18nResolverOptions } from '../decorators/i18n-resolver-options.decorator';
 
 @Injectable()
 export class HeaderResolver implements I18nResolver {
+  private logger = new Logger('I18nService');
   constructor(
     @I18nResolverOptions()
     private keys: string[] = [],
@@ -26,7 +27,7 @@ export class HeaderResolver implements I18nResolver {
     if (req) {
       for (const key of this.keys) {
         if (key === 'accept-language') {
-          console.warn(
+          this.logger.warn(
             'HeaderResolver does not support RFC4647 Accept-Language header. Please use AcceptLanguageResolver instead.',
           );
         }

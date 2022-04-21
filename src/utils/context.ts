@@ -1,4 +1,6 @@
-import { ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, Logger } from '@nestjs/common';
+
+const logger = new Logger('I18nService');
 
 export function getContextObject(context: ExecutionContext): any {
   switch (context.getType() as string) {
@@ -9,6 +11,6 @@ export function getContextObject(context: ExecutionContext): any {
     case 'rpc':
       return context.switchToRpc().getContext();
     default:
-      console.warn(`context type: ${context.getType()} not supported`);
+      logger.warn(`context type: ${context.getType()} not supported`);
   }
 }

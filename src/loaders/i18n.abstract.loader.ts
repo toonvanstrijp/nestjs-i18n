@@ -10,7 +10,7 @@ import {
   Observable,
   Subject,
   merge as ObservableMerge,
-  from as ObservableFrom,
+  of as ObservableOf,
 } from 'rxjs';
 import * as chokidar from 'chokidar';
 import { switchMap } from 'rxjs/operators';
@@ -61,7 +61,7 @@ export abstract class I18nAbstractLoader
   async languages(): Promise<string[] | Observable<string[]>> {
     if (this.options.watch) {
       return ObservableMerge(
-        ObservableFrom(this.parseLanguages()),
+        ObservableOf(await this.parseLanguages()),
         this.events.pipe(switchMap(() => this.parseLanguages())),
       );
     }
@@ -71,7 +71,7 @@ export abstract class I18nAbstractLoader
   async load(): Promise<I18nTranslation | Observable<I18nTranslation>> {
     if (this.options.watch) {
       return ObservableMerge(
-        ObservableFrom(this.parseTranslations()),
+        ObservableOf(await this.parseTranslations()),
         this.events.pipe(switchMap(() => this.parseTranslations())),
       );
     }

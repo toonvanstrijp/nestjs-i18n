@@ -300,6 +300,13 @@ describe('i18n module with loader watch', () => {
     }
   });
 
+  it('i18n should load before init finished', async () => {
+    const translation = i18nService.translate('test.HELLO', {
+      lang: 'nl',
+    });
+    expect(translation).toEqual('Hallo');
+  });
+
   it('i18n should load new translations', async () => {
     fs.writeFileSync(
       newTranslationPath,

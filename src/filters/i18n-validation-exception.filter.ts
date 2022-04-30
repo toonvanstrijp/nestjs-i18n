@@ -12,7 +12,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     const i18n = getI18nContextFromArgumentsHost(host);
     const response = host.switchToHttp().getResponse<any>();
 
-    const errors = this.translateErrors(exception.errors, i18n);
+    const errors = this.translateErrors(exception.errors ?? [], i18n);
 
     response
       .status(exception.getStatus())
@@ -24,7 +24,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     i18n: I18nContext,
   ): I18nValidationError[] {
     return errors.map((error) => {
-      error.children = this.translateErrors(error.children, i18n);
+      error.children = this.translateErrors(error.children ?? [], i18n);
       error.constraints = Object.keys(error.constraints).reduce(
         (result, key) => {
           const [translationKey, argsString] =

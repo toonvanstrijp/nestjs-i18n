@@ -40,6 +40,9 @@ describe('i18n module e2e dto', () => {
 
     app.useGlobalPipes(
       new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
         exceptionFactory: i18nValidationErrorFactory,
       }),
     );
@@ -105,6 +108,71 @@ describe('i18n module e2e dto', () => {
         expect(res.body).toMatchObject({
           statusCode: 400,
           errors: [
+            {
+              property: 'email',
+              children: [],
+              constraints: {
+                isEmail: 'email is invalid',
+                isNotEmpty: 'email cannot be empty',
+              },
+            },
+            {
+              property: 'password',
+              children: [],
+              constraints: { isNotEmpty: 'password cannot be empty' },
+            },
+            {
+              property: 'extra',
+              children: [
+                {
+                  property: 'subscribeToEmail',
+                  children: [],
+                  constraints: {
+                    isBoolean: 'subscribeToEmail is not a boolean',
+                  },
+                },
+                {
+                  property: 'min',
+                  children: [],
+                  constraints: {
+                    min: 'min with value: "1" needs to be at least 5, ow and COOL',
+                  },
+                },
+                {
+                  property: 'max',
+                  children: [],
+                  constraints: {
+                    max: 'max with value: "100" needs to be less than 10, ow and SUPER',
+                  },
+                },
+              ],
+              constraints: {},
+            },
+          ],
+        });
+      });
+
+    await request(app.getHttpServer())
+      .post('/hello/validation')
+      .send({
+        test: 'test',
+        email: '',
+        password: '',
+        extra: { subscribeToEmail: '', min: 1, max: 100 },
+      })
+      .set('Accept', 'application/json')
+      .expect(400)
+      .expect((res) => {
+        expect(res.body).toMatchObject({
+          statusCode: 400,
+          errors: [
+            {
+              children: [],
+              constraints: {
+                whitelistValidation: 'property test should not exist',
+              },
+              property: 'test',
+            },
             {
               property: 'email',
               children: [],

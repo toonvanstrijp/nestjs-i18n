@@ -12,8 +12,13 @@ import {
 } from '../interfaces/i18n-validation-error.interface';
 import { getI18nContextFromArgumentsHost } from '../utils/util';
 
+interface I18nValidationExceptionFilterOptions {
+  detailedErrors?: boolean;
+}
+
 @Catch(I18nValidationException)
 export class I18nValidationExceptionFilter implements ExceptionFilter {
+  constructor(private readonly options: I18nValidationExceptionFilterOptions = { detailedErrors: true} ){}
   catch(exception: I18nValidationException, host: ArgumentsHost) {
     const i18n = getI18nContextFromArgumentsHost(host);
     const response = host.switchToHttp().getResponse<any>();
@@ -25,7 +30,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       .send({
         statusCode: exception.getStatus(),
         message: exception.getResponse(),
-        errors: this.flattenValidationErrors(errors),
+        errors: this.options.detailedErrors ? errors : this.flattenValidationErrors(errors),
       });
   }
 

@@ -50,9 +50,55 @@ describe('i18n module e2e dto', () => {
     await app.init();
   });
 
-  it(`should translate validation messages`, async () => {
+  var toon = {
+    statusCode: 400,
+    errors: [
+      {
+        property: 'email',
+        children: [],
+        constraints: {
+          isEmail: 'email is invalid',
+          isNotEmpty: 'email cannot be empty',
+        },
+      },
+      {
+        property: 'password',
+        children: [],
+        constraints: { isNotEmpty: 'password cannot be empty' },
+      },
+      {
+        property: 'extra',
+        children: [
+          {
+            property: 'subscribeToEmail',
+            children: [],
+            constraints: {
+              isBoolean: 'subscribeToEmail is not a boolean',
+            },
+          },
+          {
+            property: 'min',
+            children: [],
+            constraints: {
+              min: 'min with value: "1" needs to be at least 5, ow and COOL',
+            },
+          },
+          {
+            property: 'max',
+            children: [],
+            constraints: {
+              max: 'max with value: "100" needs to be less than 10, ow and SUPER',
+            },
+          },
+        ],
+        constraints: {},
+      },
+    ],
+  };
+
+  it(`should translate validation messages without detailed errors`, async () => {
     await request(app.getHttpServer())
-      .post('/hello/validation')
+      .post('/hello/validation-without-details')
       .send({
         email: '',
         password: '',
@@ -61,6 +107,7 @@ describe('i18n module e2e dto', () => {
       .set('Accept', 'application/json')
       .expect(400)
       .expect((res) => {
+
         expect(res.body).toMatchObject({
           statusCode: 400,
           message: 'Bad Request',
@@ -76,7 +123,7 @@ describe('i18n module e2e dto', () => {
       });
 
     await request(app.getHttpServer())
-      .post('/hello/validation')
+      .post('/hello/validation-without-details')
       .send({
         test: 'test',
         email: '',
@@ -102,7 +149,7 @@ describe('i18n module e2e dto', () => {
       });
 
     return request(app.getHttpServer())
-      .post('/hello/validation?l=nl')
+      .post('/hello/validation-without-details?l=nl')
       .send({
         email: '',
         password: '',
@@ -121,6 +168,187 @@ describe('i18n module e2e dto', () => {
             'extra.subscribeToEmail is geen boolean',
             'extra.min met waarde: "1" moet hoger zijn dan 5, ow en COOL',
             'extra.max met waarde: "100" moet lager zijn dan 10, ow en SUPER',
+          ],
+        });
+      });
+  });
+
+  it(`should translate validation messages with detailed error`, async () => {
+    await request(app.getHttpServer())
+      .post('/hello/validation')
+      .send({
+        email: '',
+        password: '',
+        extra: { subscribeToEmail: '', min: 1, max: 100 },
+      })
+      .set('Accept', 'application/json')
+      .expect(400)
+      .expect((res) => {
+        expect(res.body).toMatchObject({
+          statusCode: 400,
+          errors: [
+            {
+              property: 'email',
+              children: [],
+              constraints: {
+                isEmail: 'email is invalid',
+                isNotEmpty: 'email cannot be empty',
+              },
+            },
+            {
+              property: 'password',
+              children: [],
+              constraints: { isNotEmpty: 'password cannot be empty' },
+            },
+            {
+              property: 'extra',
+              children: [
+                {
+                  property: 'subscribeToEmail',
+                  children: [],
+                  constraints: {
+                    isBoolean: 'subscribeToEmail is not a boolean',
+                  },
+                },
+                {
+                  property: 'min',
+                  children: [],
+                  constraints: {
+                    min: 'min with value: "1" needs to be at least 5, ow and COOL',
+                  },
+                },
+                {
+                  property: 'max',
+                  children: [],
+                  constraints: {
+                    max: 'max with value: "100" needs to be less than 10, ow and SUPER',
+                  },
+                },
+              ],
+              constraints: {},
+            },
+          ],
+        });
+      });
+
+    await request(app.getHttpServer())
+      .post('/hello/validation')
+      .send({
+        test: 'test',
+        email: '',
+        password: '',
+        extra: { subscribeToEmail: '', min: 1, max: 100 },
+      })
+      .set('Accept', 'application/json')
+      .expect(400)
+      .expect((res) => {
+        expect(res.body).toMatchObject({
+          statusCode: 400,
+          errors: [
+            {
+              children: [],
+              constraints: {
+                whitelistValidation: 'property test should not exist',
+              },
+              property: 'test',
+            },
+            {
+              property: 'email',
+              children: [],
+              constraints: {
+                isEmail: 'email is invalid',
+                isNotEmpty: 'email cannot be empty',
+              },
+            },
+            {
+              property: 'password',
+              children: [],
+              constraints: { isNotEmpty: 'password cannot be empty' },
+            },
+            {
+              property: 'extra',
+              children: [
+                {
+                  property: 'subscribeToEmail',
+                  children: [],
+                  constraints: {
+                    isBoolean: 'subscribeToEmail is not a boolean',
+                  },
+                },
+                {
+                  property: 'min',
+                  children: [],
+                  constraints: {
+                    min: 'min with value: "1" needs to be at least 5, ow and COOL',
+                  },
+                },
+                {
+                  property: 'max',
+                  children: [],
+                  constraints: {
+                    max: 'max with value: "100" needs to be less than 10, ow and SUPER',
+                  },
+                },
+              ],
+              constraints: {},
+            },
+          ],
+        });
+      });
+
+    return request(app.getHttpServer())
+      .post('/hello/validation?l=nl')
+      .send({
+        email: '',
+        password: '',
+        extra: { subscribeToEmail: '', min: 1, max: 100 },
+      })
+      .set('Accept', 'application/json')
+      .expect(400)
+      .expect((res) => {
+        expect(res.body).toMatchObject({
+          statusCode: 400,
+          errors: [
+            {
+              property: 'email',
+              children: [],
+              constraints: {
+                isEmail: 'email is ongeldig',
+                isNotEmpty: 'e-mail adres mag niet leeg zijn',
+              },
+            },
+            {
+              property: 'password',
+              children: [],
+              constraints: { isNotEmpty: 'wachtwoord mag niet leeg zijn' },
+            },
+            {
+              property: 'extra',
+              children: [
+                {
+                  property: 'subscribeToEmail',
+                  children: [],
+                  constraints: {
+                    isBoolean: 'subscribeToEmail is geen boolean',
+                  },
+                },
+                {
+                  property: 'min',
+                  children: [],
+                  constraints: {
+                    min: 'min met waarde: "1" moet hoger zijn dan 5, ow en COOL',
+                  },
+                },
+                {
+                  property: 'max',
+                  children: [],
+                  constraints: {
+                    max: 'max met waarde: "100" moet lager zijn dan 10, ow en SUPER',
+                  },
+                },
+              ],
+              constraints: {},
+            },
           ],
         });
       });

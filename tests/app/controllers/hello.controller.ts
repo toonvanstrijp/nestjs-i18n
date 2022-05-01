@@ -155,6 +155,12 @@ export class HelloController {
     return 'This action adds a new user';
   }
 
+  @Post('/validation-without-details')
+  @UseFilters(new I18nValidationExceptionFilter({detailedErrors: false}))
+  validationWithoutDetails(@Body() createUserDto: CreateUserDto): any {
+    return 'This action adds a new user';
+  }
+
   @GrpcMethod('HeroesService', 'FindOne')
   findOne(@Payload() data: HeroById, @I18n() i18n: I18nContext): Hero {
     const items = [

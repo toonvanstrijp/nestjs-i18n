@@ -49,6 +49,7 @@ describe('i18n module e2e dto', () => {
 
     await app.init();
   });
+
   var toon = {
     statusCode: 400,
     errors: [
@@ -94,7 +95,85 @@ describe('i18n module e2e dto', () => {
       },
     ],
   };
-  it(`should translate validation messages`, async () => {
+
+  it(`should translate validation messages without detailed errors`, async () => {
+    await request(app.getHttpServer())
+      .post('/hello/validation-without-details')
+      .send({
+        email: '',
+        password: '',
+        extra: { subscribeToEmail: '', min: 1, max: 100 },
+      })
+      .set('Accept', 'application/json')
+      .expect(400)
+      .expect((res) => {
+
+        expect(res.body).toMatchObject({
+          statusCode: 400,
+          message: 'Bad Request',
+          errors: [
+            'email is invalid',
+            'email cannot be empty',
+            'password cannot be empty',
+            'extra.subscribeToEmail is not a boolean',
+            'extra.min with value: "1" needs to be at least 5, ow and COOL',
+            'extra.max with value: "100" needs to be less than 10, ow and SUPER',
+          ],
+        });
+      });
+
+    await request(app.getHttpServer())
+      .post('/hello/validation-without-details')
+      .send({
+        test: 'test',
+        email: '',
+        password: '',
+        extra: { subscribeToEmail: '', min: 1, max: 100 },
+      })
+      .set('Accept', 'application/json')
+      .expect(400)
+      .expect((res) => {
+        expect(res.body).toMatchObject({
+          statusCode: 400,
+          message: 'Bad Request',
+          errors: [
+            'property test should not exist',
+            'email is invalid',
+            'email cannot be empty',
+            'password cannot be empty',
+            'extra.subscribeToEmail is not a boolean',
+            'extra.min with value: "1" needs to be at least 5, ow and COOL',
+            'extra.max with value: "100" needs to be less than 10, ow and SUPER',
+          ],
+        });
+      });
+
+    return request(app.getHttpServer())
+      .post('/hello/validation-without-details?l=nl')
+      .send({
+        email: '',
+        password: '',
+        extra: { subscribeToEmail: '', min: 1, max: 100 },
+      })
+      .set('Accept', 'application/json')
+      .expect(400)
+      .expect((res) => {
+        expect(res.body).toMatchObject({
+          statusCode: 400,
+          message: 'Bad Request',
+          errors: [
+            'email is ongeldig',
+            'e-mail adres mag niet leeg zijn',
+            'wachtwoord mag niet leeg zijn',
+            'extra.subscribeToEmail is geen boolean',
+            'extra.min met waarde: "1" moet hoger zijn dan 5, ow en COOL',
+            'extra.max met waarde: "100" moet lager zijn dan 10, ow en SUPER',
+          ],
+        });
+      });
+  });
+
+  it(`should translate validation messages with detailed error`, async () => {
     await request(app.getHttpServer())
       .post('/hello/validation')
       .send({

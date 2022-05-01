@@ -156,7 +156,7 @@ export class HelloController {
   }
 
   @Post('/validation-without-details')
-  @UseFilters(new I18nValidationExceptionFilter({detailedErrors: false}))
+  @UseFilters(new I18nValidationExceptionFilter({ detailedErrors: false }))
   validationWithoutDetails(@Body() createUserDto: CreateUserDto): any {
     return 'This action adds a new user';
   }

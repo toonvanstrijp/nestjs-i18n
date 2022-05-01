@@ -18,20 +18,24 @@ interface I18nValidationExceptionFilterOptions {
 
 @Catch(I18nValidationException)
 export class I18nValidationExceptionFilter implements ExceptionFilter {
-  constructor(private readonly options: I18nValidationExceptionFilterOptions = { detailedErrors: true} ){}
+  constructor(
+    private readonly options: I18nValidationExceptionFilterOptions = {
+      detailedErrors: true,
+    },
+  ) {}
   catch(exception: I18nValidationException, host: ArgumentsHost) {
     const i18n = getI18nContextFromArgumentsHost(host);
     const response = host.switchToHttp().getResponse<any>();
 
     let errors = this.translateErrors(exception.errors ?? [], i18n);
 
-    response
-      .status(exception.getStatus())
-      .send({
-        statusCode: exception.getStatus(),
-        message: exception.getResponse(),
-        errors: this.options.detailedErrors ? errors : this.flattenValidationErrors(errors),
-      });
+    response.status(exception.getStatus()).send({
+      statusCode: exception.getStatus(),
+      message: exception.getResponse(),
+      errors: this.options.detailedErrors
+        ? errors
+        : this.flattenValidationErrors(errors),
+    });
   }
 
   private translateErrors(

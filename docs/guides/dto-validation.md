@@ -96,6 +96,18 @@ create(@Body() createUserDto: CreateUserDto): any {
 }
 ```
 
+```typescript title="src/main.ts"
+import { I18nValidationExceptionFilter } from 'nestjs-i18n';
+
+  app.useGlobalFilters(new I18nValidationExceptionFilter());
+
+```
+:::info
+
+ `I18nValidationExceptionFilter` also takes an argument of type `I18nValidationExceptionFilterOptions` for simplifying error messages.
+
+:::
+
 ### Response
 
 Now your validation errors are being translated 🎉!

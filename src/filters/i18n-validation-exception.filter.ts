@@ -27,7 +27,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     const i18n = getI18nContextFromArgumentsHost(host);
     const response = host.switchToHttp().getResponse<any>();
 
-    let errors = this.translateErrors(exception.errors ?? [], i18n);
+    const errors = this.translateErrors(exception.errors ?? [], i18n);
 
     response.status(exception.getStatus()).send({
       statusCode: exception.getStatus(),

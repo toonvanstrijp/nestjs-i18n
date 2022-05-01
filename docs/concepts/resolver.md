@@ -5,7 +5,7 @@ sidebar_position: 2
 # Resolvers
 
 
-The `resolvers` option is used to configure resolvers, default being `I18nJsonLoader`.The resolvers takes in array of resolvers so you can add in any number of resolvers you like.
+The `resolvers` option is used to configure resolvers. The resolvers takes in array of resolvers so you can add in any number of resolvers you like.
 `nestjs-i18n` comes with a set of built-in resolvers.
 
 | Name                       | Default value                |

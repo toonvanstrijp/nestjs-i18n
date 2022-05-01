@@ -18,7 +18,7 @@ The `loader` option is used to configure loaders, default being `I18nJsonLoader`
 
 :::tip
 
-If you need to implement custom loaders , your resolver needs to extend  `src/loaders/i18n.abstract.loader.ts` interface. Also you can check the `src/loaders` to see how to default resolvers are implemented.
+If you need to implement custom loaders , your loader needs to extend  `src/loaders/i18n.abstract.loader.ts` interface. Also you can check the `src/loaders` to see how to default loaders are implemented.
 
 :::
 

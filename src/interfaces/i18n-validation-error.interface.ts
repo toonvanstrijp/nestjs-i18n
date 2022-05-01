@@ -1,11 +1,6 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, ValidationError } from '@nestjs/common';
 
-export interface I18nValidationError {
-  property: string;
-  children: I18nValidationError[];
-  value?: any;
-  constraints: { [key: string]: string };
-}
+export interface I18nValidationError extends ValidationError {}
 
 export class I18nValidationException extends HttpException {
   constructor(public errors: I18nValidationError[]) {

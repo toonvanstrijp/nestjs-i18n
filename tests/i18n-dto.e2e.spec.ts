@@ -49,51 +49,7 @@ describe('i18n module e2e dto', () => {
 
     await app.init();
   });
-  var toon = {
-    statusCode: 400,
-    errors: [
-      {
-        property: 'email',
-        children: [],
-        constraints: {
-          isEmail: 'email is invalid',
-          isNotEmpty: 'email cannot be empty',
-        },
-      },
-      {
-        property: 'password',
-        children: [],
-        constraints: { isNotEmpty: 'password cannot be empty' },
-      },
-      {
-        property: 'extra',
-        children: [
-          {
-            property: 'subscribeToEmail',
-            children: [],
-            constraints: {
-              isBoolean: 'subscribeToEmail is not a boolean',
-            },
-          },
-          {
-            property: 'min',
-            children: [],
-            constraints: {
-              min: 'min with value: "1" needs to be at least 5, ow and COOL',
-            },
-          },
-          {
-            property: 'max',
-            children: [],
-            constraints: {
-              max: 'max with value: "100" needs to be less than 10, ow and SUPER',
-            },
-          },
-        ],
-        constraints: {},
-      },
-    ],
-  };
+
   it(`should translate validation messages`, async () => {
     await request(app.getHttpServer())
       .post('/hello/validation')
@@ -107,47 +63,14 @@ describe('i18n module e2e dto', () => {
       .expect((res) => {
         expect(res.body).toMatchObject({
           statusCode: 400,
+          message: 'Bad Request',
           errors: [
-            {
-              property: 'email',
-              children: [],
-              constraints: {
-                isEmail: 'email is invalid',
-                isNotEmpty: 'email cannot be empty',
-              },
-            },
-            {
-              property: 'password',
-              children: [],
-              constraints: { isNotEmpty: 'password cannot be empty' },
-            },
-            {
-              property: 'extra',
-              children: [
-                {
-                  property: 'subscribeToEmail',
-                  children: [],
-                  constraints: {
-                    isBoolean: 'subscribeToEmail is not a boolean',
-                  },
-                },
-                {
-                  property: 'min',
-                  children: [],
-                  constraints: {
-                    min: 'min with value: "1" needs to be at least 5, ow and COOL',
-                  },
-                },
-                {
-                  property: 'max',
-                  children: [],
-                  constraints: {
-                    max: 'max with value: "100" needs to be less than 10, ow and SUPER',
-                  },
-                },
-              ],
-              constraints: {},
-            },
+            'email is invalid',
+            'email cannot be empty',
+            'password cannot be empty',
+            'extra.subscribeToEmail is not a boolean',
+            'extra.min with value: "1" needs to be at least 5, ow and COOL',
+            'extra.max with value: "100" needs to be less than 10, ow and SUPER',
           ],
         });
       });
@@ -165,54 +88,15 @@ describe('i18n module e2e dto', () => {
       .expect((res) => {
         expect(res.body).toMatchObject({
           statusCode: 400,
+          message: 'Bad Request',
           errors: [
-            {
-              children: [],
-              constraints: {
-                whitelistValidation: 'property test should not exist',
-              },
-              property: 'test',
-            },
-            {
-              property: 'email',
-              children: [],
-              constraints: {
-                isEmail: 'email is invalid',
-                isNotEmpty: 'email cannot be empty',
-              },
-            },
-            {
-              property: 'password',
-              children: [],
-              constraints: { isNotEmpty: 'password cannot be empty' },
-            },
-            {
-              property: 'extra',
-              children: [
-                {
-                  property: 'subscribeToEmail',
-                  children: [],
-                  constraints: {
-                    isBoolean: 'subscribeToEmail is not a boolean',
-                  },
-                },
-                {
-                  property: 'min',
-                  children: [],
-                  constraints: {
-                    min: 'min with value: "1" needs to be at least 5, ow and COOL',
-                  },
-                },
-                {
-                  property: 'max',
-                  children: [],
-                  constraints: {
-                    max: 'max with value: "100" needs to be less than 10, ow and SUPER',
-                  },
-                },
-              ],
-              constraints: {},
-            },
+            'property test should not exist',
+            'email is invalid',
+            'email cannot be empty',
+            'password cannot be empty',
+            'extra.subscribeToEmail is not a boolean',
+            'extra.min with value: "1" needs to be at least 5, ow and COOL',
+            'extra.max with value: "100" needs to be less than 10, ow and SUPER',
           ],
         });
       });
@@ -229,47 +113,14 @@ describe('i18n module e2e dto', () => {
       .expect((res) => {
         expect(res.body).toMatchObject({
           statusCode: 400,
+          message: 'Bad Request',
           errors: [
-            {
-              property: 'email',
-              children: [],
-              constraints: {
-                isEmail: 'email is ongeldig',
-                isNotEmpty: 'e-mail adres mag niet leeg zijn',
-              },
-            },
-            {
-              property: 'password',
-              children: [],
-              constraints: { isNotEmpty: 'wachtwoord mag niet leeg zijn' },
-            },
-            {
-              property: 'extra',
-              children: [
-                {
-                  property: 'subscribeToEmail',
-                  children: [],
-                  constraints: {
-                    isBoolean: 'subscribeToEmail is geen boolean',
-                  },
-                },
-                {
-                  property: 'min',
-                  children: [],
-                  constraints: {
-                    min: 'min met waarde: "1" moet hoger zijn dan 5, ow en COOL',
-                  },
-                },
-                {
-                  property: 'max',
-                  children: [],
-                  constraints: {
-                    max: 'max met waarde: "100" moet lager zijn dan 10, ow en SUPER',
-                  },
-                },
-              ],
-              constraints: {},
-            },
+            'email is ongeldig',
+            'e-mail adres mag niet leeg zijn',
+            'wachtwoord mag niet leeg zijn',
+            'extra.subscribeToEmail is geen boolean',
+            'extra.min met waarde: "1" moet hoger zijn dan 5, ow en COOL',
+            'extra.max met waarde: "100" moet lager zijn dan 10, ow en SUPER',
           ],
         });
       });

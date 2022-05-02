@@ -107,7 +107,6 @@ describe('i18n module e2e dto', () => {
       .set('Accept', 'application/json')
       .expect(400)
       .expect((res) => {
-
         expect(res.body).toMatchObject({
           statusCode: 400,
           message: 'Bad Request',

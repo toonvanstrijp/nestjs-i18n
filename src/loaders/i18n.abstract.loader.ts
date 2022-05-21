@@ -78,7 +78,7 @@ export abstract class I18nAbstractLoader
     return this.parseTranslations();
   }
 
-  private async parseTranslations(): Promise<I18nTranslation> {
+  protected async parseTranslations(): Promise<I18nTranslation> {
     const i18nPath = path.normalize(this.options.path + path.sep);
 
     const translations: I18nTranslation = {};
@@ -143,14 +143,14 @@ export abstract class I18nAbstractLoader
     return translations;
   }
 
-  private async parseLanguages(): Promise<string[]> {
+  protected async parseLanguages(): Promise<string[]> {
     const i18nPath = path.normalize(this.options.path + path.sep);
     return (await getDirectories(i18nPath)).map((dir) =>
       path.relative(i18nPath, dir),
     );
   }
 
-  private sanitizeOptions(options: I18nAbstractLoaderOptions) {
+  protected sanitizeOptions(options: I18nAbstractLoaderOptions) {
     options = { ...this.getDefaultOptions(), ...options };
 
     options.path = path.normalize(options.path + path.sep);

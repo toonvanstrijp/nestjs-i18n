@@ -5,6 +5,11 @@ import {
   ValidationError,
 } from '@nestjs/common';
 import iterate from 'iterare';
+import {
+  I18nValidationExceptionFilterDetailedErrorsOption,
+  I18nValidationExceptionFilterErrorFormatterOption,
+} from 'src/interfaces/i18n-validation-exception-filter.interface';
+import { Either } from 'src/types/either.type';
 import { I18nContext } from '../i18n.context';
 import {
   I18nValidationError,
@@ -12,9 +17,10 @@ import {
 } from '../interfaces/i18n-validation-error.interface';
 import { getI18nContextFromArgumentsHost } from '../utils/util';
 
-interface I18nValidationExceptionFilterOptions {
-  detailedErrors?: boolean;
-}
+type I18nValidationExceptionFilterOptions = Either<
+  I18nValidationExceptionFilterDetailedErrorsOption,
+  I18nValidationExceptionFilterErrorFormatterOption
+>;
 
 @Catch(I18nValidationException)
 export class I18nValidationExceptionFilter implements ExceptionFilter {

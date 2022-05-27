@@ -5,6 +5,12 @@ import {
   ValidationError,
 } from '@nestjs/common';
 import iterate from 'iterare';
+import {
+  I18nValidationExceptionFilterDetailedErrorsOption,
+  I18nValidationExceptionFilterErrorFormatterOption,
+} from 'src/interfaces/i18n-validation-exception-filter.interface';
+import { Either } from 'src/types/either.type';
+import { mapChildrenToValidationErrors } from '../utils/format';
 import { I18nContext } from '../i18n.context';
 import {
   I18nValidationError,
@@ -12,9 +18,10 @@ import {
 } from '../interfaces/i18n-validation-error.interface';
 import { getI18nContextFromArgumentsHost } from '../utils/util';
 
-interface I18nValidationExceptionFilterOptions {
-  detailedErrors?: boolean;
-}
+type I18nValidationExceptionFilterOptions = Either<
+  I18nValidationExceptionFilterDetailedErrorsOption,
+  I18nValidationExceptionFilterErrorFormatterOption
+>;
 
 @Catch(I18nValidationException)
 export class I18nValidationExceptionFilter implements ExceptionFilter {
@@ -32,9 +39,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     response.status(exception.getStatus()).send({
       statusCode: exception.getStatus(),
       message: exception.getResponse(),
-      errors: this.options.detailedErrors
-        ? errors
-        : this.flattenValidationErrors(errors),
+      errors: this.normalizeValidationErrors(errors),
     });
   }
 
@@ -60,53 +65,28 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     });
   }
 
+  protected normalizeValidationErrors(
+    validationErrors: ValidationError[],
+  ): string[] | I18nValidationError[] | object {
+    switch (true) {
+      case !this.options.detailedErrors && !('errorFormatter' in this.options):
+        return this.flattenValidationErrors(validationErrors);
+      case !this.options.detailedErrors && 'errorFormatter' in this.options:
+        return this.options.errorFormatter(validationErrors);
+      default:
+        return validationErrors;
+    }
+  }
+
   protected flattenValidationErrors(
     validationErrors: ValidationError[],
   ): string[] {
     return iterate(validationErrors)
-      .map((error) => this.mapChildrenToValidationErrors(error))
+      .map((error) => mapChildrenToValidationErrors(error))
       .flatten()
       .filter((item) => !!item.constraints)
       .map((item) => Object.values(item.constraints))
       .flatten()
       .toArray();
-  }
-
-  protected mapChildrenToValidationErrors(
-    error: ValidationError,
-    parentPath?: string,
-  ): ValidationError[] {
-    if (!(error.children && error.children.length)) {
-      return [error];
-    }
-    const validationErrors = [];
-    parentPath = parentPath
-      ? `${parentPath}.${error.property}`
-      : error.property;
-    for (const item of error.children) {
-      if (item.children && item.children.length) {
-        validationErrors.push(
-          ...this.mapChildrenToValidationErrors(item, parentPath),
-        );
-      }
-      validationErrors.push(
-        this.prependConstraintsWithParentProp(parentPath, item),
-      );
-    }
-    return validationErrors;
-  }
-
-  protected prependConstraintsWithParentProp(
-    parentPath: string,
-    error: ValidationError,
-  ): ValidationError {
-    const constraints = {};
-    for (const key in error.constraints) {
-      constraints[key] = `${parentPath}.${error.constraints[key]}`;
-    }
-    return {
-      ...error,
-      constraints,
-    };
   }
 }

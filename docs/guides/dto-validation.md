@@ -104,8 +104,8 @@ app.useGlobalFilters(new I18nValidationExceptionFilter());
 ```
 :::info
 
- `I18nValidationExceptionFilter` also takes an argument of type `I18nValidationExceptionFilterOptions` for simplifying error messages.
- `new I18nValidationExceptionFilter({detailedErrors: false})` will return the simplified error message.
+`I18nValidationExceptionFilter` also takes an argument of type `I18nValidationExceptionFilterOptions` for simplifying error messages.
+`new I18nValidationExceptionFilter({detailedErrors: false})` will return the simplified error message. `new I18nValidationExceptionFilter({errorFormatter: /* your custom error formatter function */ })` will return the validation errors in a format that you specify. Note that only one of the properties can be used at the time.
 
 :::
 

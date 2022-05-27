@@ -8,8 +8,8 @@ import iterate from 'iterare';
 import {
   I18nValidationExceptionFilterDetailedErrorsOption,
   I18nValidationExceptionFilterErrorFormatterOption,
-} from 'src/interfaces/i18n-validation-exception-filter.interface';
-import { Either } from 'src/types/either.type';
+} from '../interfaces/i18n-validation-exception-filter.interface';
+import { Either } from '../types/either.type';
 import { mapChildrenToValidationErrors } from '../utils/format';
 import { I18nContext } from '../i18n.context';
 import {

@@ -38,9 +38,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     response.status(exception.getStatus()).send({
       statusCode: exception.getStatus(),
       message: exception.getResponse(),
-      errors: this.options.detailedErrors
-        ? errors
-        : this.flattenValidationErrors(errors),
+      errors: this.normalizeErrors(errors),
     });
   }
 
@@ -64,6 +62,19 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       );
       return error;
     });
+  }
+
+  protected normalizeErrors(
+    validationErrors: ValidationError[],
+  ): string[] | I18nValidationError[] | object {
+    switch (true) {
+      case !this.options.detailedErrors && !('errorFormatter' in this.options):
+        return this.flattenValidationErrors(validationErrors);
+      case !this.options.detailedErrors && 'errorFormatter' in this.options:
+        return this.options.errorFormatter(validationErrors);
+      default:
+        return validationErrors;
+    }
   }
 
   protected flattenValidationErrors(

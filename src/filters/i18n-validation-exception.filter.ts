@@ -39,7 +39,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     response.status(exception.getStatus()).send({
       statusCode: exception.getStatus(),
       message: exception.getResponse(),
-      errors: this.normalizeErrors(errors),
+      errors: this.normalizeValidationErrors(errors),
     });
   }
 
@@ -65,7 +65,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     });
   }
 
-  protected normalizeErrors(
+  protected normalizeValidationErrors(
     validationErrors: ValidationError[],
   ): string[] | I18nValidationError[] | object {
     switch (true) {

@@ -10,6 +10,7 @@ import {
   I18nValidationExceptionFilterErrorFormatterOption,
 } from 'src/interfaces/i18n-validation-exception-filter.interface';
 import { Either } from 'src/types/either.type';
+import { mapChildrenToValidationErrors } from 'src/utils/format';
 import { I18nContext } from '../i18n.context';
 import {
   I18nValidationError,
@@ -81,49 +82,11 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     validationErrors: ValidationError[],
   ): string[] {
     return iterate(validationErrors)
-      .map((error) => this.mapChildrenToValidationErrors(error))
+      .map((error) => mapChildrenToValidationErrors(error))
       .flatten()
       .filter((item) => !!item.constraints)
       .map((item) => Object.values(item.constraints))
       .flatten()
       .toArray();
-  }
-
-  protected mapChildrenToValidationErrors(
-    error: ValidationError,
-    parentPath?: string,
-  ): ValidationError[] {
-    if (!(error.children && error.children.length)) {
-      return [error];
-    }
-    const validationErrors = [];
-    parentPath = parentPath
-      ? `${parentPath}.${error.property}`
-      : error.property;
-    for (const item of error.children) {
-      if (item.children && item.children.length) {
-        validationErrors.push(
-          ...this.mapChildrenToValidationErrors(item, parentPath),
-        );
-      }
-      validationErrors.push(
-        this.prependConstraintsWithParentProp(parentPath, item),
-      );
-    }
-    return validationErrors;
-  }
-
-  protected prependConstraintsWithParentProp(
-    parentPath: string,
-    error: ValidationError,
-  ): ValidationError {
-    const constraints = {};
-    for (const key in error.constraints) {
-      constraints[key] = `${parentPath}.${error.constraints[key]}`;
-    }
-    return {
-      ...error,
-      constraints,
-    };
   }
 }

@@ -10,7 +10,7 @@ import {
   I18nValidationExceptionFilterErrorFormatterOption,
 } from 'src/interfaces/i18n-validation-exception-filter.interface';
 import { Either } from 'src/types/either.type';
-import { mapChildrenToValidationErrors } from 'src/utils/format';
+import { mapChildrenToValidationErrors } from '../utils/format';
 import { I18nContext } from '../i18n.context';
 import {
   I18nValidationError,

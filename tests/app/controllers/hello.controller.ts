@@ -21,6 +21,7 @@ import { TestException, TestExceptionFilter } from '../filter/test.filter';
 import { TestGuard } from '../guards/test.guard';
 import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { Hero, HeroById } from '../interfaces/hero.interface';
+import { exampleErrorFormatter } from '../examples/example.functions';
 
 @Controller('hello')
 @UseFilters(new TestExceptionFilter())
@@ -158,6 +159,14 @@ export class HelloController {
   @Post('/validation-without-details')
   @UseFilters(new I18nValidationExceptionFilter({ detailedErrors: false }))
   validationWithoutDetails(@Body() createUserDto: CreateUserDto): any {
+    return 'This action adds a new user';
+  }
+
+  @Post('/validation-custom-formatter')
+  @UseFilters(new I18nValidationExceptionFilter({ 
+    errorFormatter: exampleErrorFormatter
+  }))
+  validationCustomFormatter(@Body() createUserDto: CreateUserDto): any {
     return 'This action adds a new user';
   }
 

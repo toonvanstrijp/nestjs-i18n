@@ -261,7 +261,7 @@ export class I18nService {
         key = result[1].trim();
         index = result.index;
         length = result[0].length;
-        if (result.length >= 3) {
+        if (result.length >= 3 && result[3]) {
           try {
             args = JSON.parse(result[3]);
           } catch (e) {

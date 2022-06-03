@@ -9,7 +9,7 @@ To access the `I18nContext` inside your guards use the `getI18nContextFromReques
 ```typescript title="src/test.guard.ts"
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Observable } from "rxjs";
-import { resolveI18nContextFromRequest } from "nestjs-i18n";
+import { getI18nContextFromRequest } from "nestjs-i18n";
 
 @Injectable()
 export class TestGuard implements CanActivate {

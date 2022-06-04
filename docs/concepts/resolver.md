@@ -34,7 +34,7 @@ The `resolvers` option is used to configure resolvers. The resolvers takes in ar
 
 :::tip
 
-If you need to implement custom resolver , your resolver needs to extend  `src/interfaces/i18n-language-resolver.interface.ts` interface. Also you can check the `src/resolvers` to see how to default resolvers are implemented.
+If you need to implement a custom resolver, your resolver needs to extend  `src/interfaces/i18n-language-resolver.interface.ts` interface. Also you can check the `src/resolvers` to see how the default resolvers are implemented.
 
 :::
 

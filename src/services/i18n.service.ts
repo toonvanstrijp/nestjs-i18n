@@ -48,11 +48,6 @@ export class I18nService {
   }
 
   public translate<T = any>(key: string, options?: TranslateOptions): T {
-    options = {
-      lang: this.i18nOptions.fallbackLanguage,
-      ...options,
-    };
-
     const { defaultValue } = options;
     let { lang } = options;
 

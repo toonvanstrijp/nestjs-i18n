@@ -17,6 +17,8 @@ import {
   I18nValidationException,
 } from '../interfaces/i18n-validation-error.interface';
 import { getI18nContextFromArgumentsHost } from '../utils/util';
+import { Request, Response } from "express";
+import { GqlExceptionFilter } from '@nestjs/graphql';
 
 type I18nValidationExceptionFilterOptions = Either<
   I18nValidationExceptionFilterDetailedErrorsOption,
@@ -24,7 +26,7 @@ type I18nValidationExceptionFilterOptions = Either<
 >;
 
 @Catch(I18nValidationException)
-export class I18nValidationExceptionFilter implements ExceptionFilter {
+export class I18nValidationExceptionFilter implements ExceptionFilter,GqlExceptionFilter {
   constructor(
     private readonly options: I18nValidationExceptionFilterOptions = {
       detailedErrors: true,
@@ -32,15 +34,22 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
   ) {}
   catch(exception: I18nValidationException, host: ArgumentsHost) {
     const i18n = getI18nContextFromArgumentsHost(host);
-    const response = host.switchToHttp().getResponse<any>();
+    const response = host.switchToHttp().getResponse<Response>();
+    const request = host.switchToHttp().getRequest<Request>();
 
     const errors = this.translateErrors(exception.errors ?? [], i18n);
 
+    if(request){
     response.status(exception.getStatus()).send({
       statusCode: exception.getStatus(),
       message: exception.getResponse(),
       errors: this.normalizeValidationErrors(errors),
     });
+  }
+  else{
+    exception.errors = this.normalizeValidationErrors(errors) as I18nValidationError[]
+    return exception
+  }
   }
 
   private translateErrors(

@@ -461,6 +461,31 @@ describe('i18n module e2e dto', () => {
       });
   });
 
+  it('should accept input with pipe characters', async () => {
+    await request(app.getHttpServer())
+      .post('/hello/validation-without-details')
+      .send({
+        email: 'example|||',
+        password: '',
+        extra: { subscribeToEmail: '', min: 1, max: 100 },
+      })
+      .set('Accept', 'application/json')
+      .expect(400)
+      .expect((res) => {
+        expect(res.body).toMatchObject({
+          statusCode: 400,
+          message: 'Bad Request',
+          errors: [
+            'email is invalid',
+            'password cannot be empty',
+            'extra.subscribeToEmail is not a boolean',
+            'extra.min with value: "1" needs to be at least 5, ow and COOL',
+            'extra.max with value: "100" needs to be less than 10, ow and SUPER',
+          ],
+        });
+      });
+  });
+
   afterAll(async () => {
     await app.close();
   });

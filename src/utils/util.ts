@@ -71,7 +71,11 @@ export function i18nValidationErrorFactory(
 
 export function i18nValidationMessage(key: string, args?: any) {
   return (a: ValidationArguments) => {
-    const { value, constraints } = a;
+    const { constraints } = a;
+    let { value } = a;
+    if (typeof value === 'string') {
+      value = value.replace(/\|/g, '');
+    }
     return `${key}|${JSON.stringify({ value, constraints, ...args })}`;
   };
 }

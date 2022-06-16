@@ -1,7 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as path from 'path';
 import * as fs from 'fs';
-import { I18nModule, I18nService, I18nLoader } from '../src';
+import {
+  I18nModule,
+  I18nService,
+  I18nLoader,
+  i18nValidationMessage,
+} from '../src';
 
 describe('i18n module', () => {
   let i18nService: I18nService;
@@ -389,5 +394,17 @@ describe('i18n module with fallbacks', () => {
 
   it('i18n service should return translation with . in key', () => {
     expect(i18nService.translate('test.dot.test')).toBe('test');
+  });
+
+  it('should santize values from pipe caharacters', () => {
+    expect(
+      i18nValidationMessage('test.HELLO')({
+        value: 'example|||',
+        constraints: [],
+        targetName: null,
+        property: null,
+        object: undefined,
+      }),
+    ).toBe('test.HELLO|{\"value\":\"example\",\"constraints\":[]}');
   });
 });

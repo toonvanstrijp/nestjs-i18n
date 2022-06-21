@@ -405,6 +405,6 @@ describe('i18n module with fallbacks', () => {
         property: null,
         object: undefined,
       }),
-    ).toBe('test.HELLO|{\"value\":\"example\",\"constraints\":[]}');
+    ).toBe('test.HELLO|{"value":"example","constraints":[]}');
   });
 });

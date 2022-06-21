@@ -1,9 +1,16 @@
 import { Resolver, Args, Query, Subscription, Mutation } from '@nestjs/graphql';
 import { CatService } from './cat.service';
-import { I18nLang, I18nService, I18n } from '../../../src';
+import {
+  I18nLang,
+  I18nService,
+  I18n,
+  I18nValidationException,
+  I18nValidationExceptionFilter,
+} from '../../../src';
 import { I18nContext } from '../../../src/i18n.context';
-import { Inject } from '@nestjs/common';
+import { Inject, UseFilters } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
+import { CreateCatInput } from './cat.input';
 
 @Resolver('Cat')
 export class CatResolver {
@@ -55,5 +62,11 @@ export class CatResolver {
   })
   catAdded() {
     return this.pubSub.asyncIterator('catAdded');
+  }
+
+  @Mutation('validation')
+  @UseFilters(new I18nValidationExceptionFilter())
+  validation(@Args('createCatInput') data: CreateCatInput) {
+    return;
   }
 }

@@ -6,8 +6,9 @@ import {
   I18nModule,
   GraphQLWebsocketResolver,
   AcceptLanguageResolver,
+  i18nValidationErrorFactory,
 } from '../src';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -70,6 +71,13 @@ describe('i18n module e2e graphql', () => {
     }).compile();
 
     app = module.createNestApplication();
+
+    app.useGlobalPipes(
+      new ValidationPipe({
+        exceptionFactory: i18nValidationErrorFactory,
+      }),
+    );
+
     await app.listen(3000);
 
     subscriptionClient = createClient({
@@ -408,6 +416,52 @@ describe('i18n module e2e graphql', () => {
             age: 6,
             description: 'Gato',
           },
+        },
+      });
+  });
+
+  it(`graphl validation`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        operationName: null,
+        variables: {},
+        query:
+          'mutation {  validation(createCatInput: {name: "Haya", age: 2})  { name, age }  }',
+      })
+      .expect(200, {
+        errors: [
+          {
+            message: 'Bad Request',
+            locations: [
+              {
+                line: 1,
+                column: 13,
+              },
+            ],
+            path: ['validation'],
+            extensions: {
+              code: 'INTERNAL_SERVER_ERROR',
+              exception: {
+                response: 'Bad Request',
+                status: 400,
+                message: 'Bad Request',
+                name: 'I18nValidationException',
+                errors: [
+                  {
+                    property: 'age',
+                    children: [],
+                    constraints: {
+                      min: 'age with value: "2" needs to be at least 10, ow and COOL',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        ],
+        data: {
+          validation: null,
         },
       });
   });

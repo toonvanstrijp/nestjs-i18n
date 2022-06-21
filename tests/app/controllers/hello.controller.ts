@@ -163,9 +163,11 @@ export class HelloController {
   }
 
   @Post('/validation-custom-formatter')
-  @UseFilters(new I18nValidationExceptionFilter({ 
-    errorFormatter: exampleErrorFormatter
-  }))
+  @UseFilters(
+    new I18nValidationExceptionFilter({
+      errorFormatter: exampleErrorFormatter,
+    }),
+  )
   validationCustomFormatter(@Body() createUserDto: CreateUserDto): any {
     return 'This action adds a new user';
   }

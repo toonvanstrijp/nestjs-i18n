@@ -13,6 +13,7 @@ type Query {
 
 type Mutation {
   createCat(createCatInput: CreateCatInput): Cat
+  validation(createCatInput: CreateCatInput): Cat
 }
 
 type Subscription {

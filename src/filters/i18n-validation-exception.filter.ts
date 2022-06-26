@@ -17,7 +17,6 @@ import {
   I18nValidationException,
 } from '../interfaces/i18n-validation-error.interface';
 import { getI18nContextFromArgumentsHost } from '../utils/util';
-import { GqlExceptionFilter } from '@nestjs/graphql';
 
 type I18nValidationExceptionFilterOptions = Either<
   I18nValidationExceptionFilterDetailedErrorsOption,
@@ -25,9 +24,7 @@ type I18nValidationExceptionFilterOptions = Either<
 >;
 
 @Catch(I18nValidationException)
-export class I18nValidationExceptionFilter
-  implements ExceptionFilter, GqlExceptionFilter
-{
+export class I18nValidationExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly options: I18nValidationExceptionFilterOptions = {
       detailedErrors: true,

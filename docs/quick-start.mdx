@@ -72,6 +72,27 @@ The `i18n` folder isn't automatically copied to your `dist` folder during the bu
 
 :::
 
+:::caution
+
+When using a monorepo structure don't forget to set the `outDir`
+```diff title="nest-cli.json"
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "assets": [
+      { 
+        "include": "i18n/**/*", 
+        "watchAssets": true, 
++        "outDir": "dist/apps/api" 
+      }
+    ]
+  }
+}
+```
+
+:::
+
 ## Module setup
 
 ```typescript title="src/app.module.ts"

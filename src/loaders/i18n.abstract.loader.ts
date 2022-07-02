@@ -2,9 +2,8 @@ import { I18nLoader } from './i18n.loader';
 import { I18N_LOADER_OPTIONS } from '../i18n.constants';
 import { Inject, OnModuleDestroy } from '@nestjs/common';
 import * as path from 'path';
-import * as fs from 'fs';
-import { getDirectories, getFiles } from '../utils/file';
-import { promisify } from 'util';
+import { readFile } from 'fs/promises';
+import { exists, getDirectories, getFiles } from '../utils/file';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
 import {
   Observable,
@@ -14,8 +13,6 @@ import {
 } from 'rxjs';
 import * as chokidar from 'chokidar';
 import { switchMap } from 'rxjs/operators';
-const readFile = promisify(fs.readFile);
-const exists = promisify(fs.exists);
 
 export interface I18nAbstractLoaderOptions {
   path: string;

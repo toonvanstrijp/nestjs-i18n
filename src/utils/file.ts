@@ -1,10 +1,10 @@
-import * as fs from 'fs';
+import { readdir, lstat, stat } from 'fs/promises';
+import type { Dirent } from 'fs';
 import * as path from 'path';
-import { promisify } from 'util';
 
-const readdir = promisify(fs.readdir);
-const lstat = promisify(fs.lstat);
-const exists = promisify(fs.exists);
+export const exists = async (path: string): Promise<boolean> => {
+  return !!(await stat(path));
+};
 
 export function mapAsync<T, U>(
   array: T[],
@@ -36,7 +36,7 @@ export const getFiles = async (dirPath: string, pattern: RegExp) => {
   const dirs = await readdir(dirPath, { withFileTypes: true });
 
   return (
-    await filterAsync(dirs, async (f: fs.Dirent | string) => {
+    await filterAsync(dirs, async (f: Dirent | string) => {
       try {
         if (typeof f === 'string') {
           return (await exists(path.join(dirPath, f))) && pattern.test(f);

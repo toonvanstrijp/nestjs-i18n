@@ -60,12 +60,34 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       error.children = this.translateErrors(error.children ?? [], i18n);
       error.constraints = Object.keys(error.constraints).reduce(
         (result, key) => {
+          // separate translation key and args
           const [translationKey, argsString] =
             error.constraints[key].split('|');
+
+          // jsonify args
           const args = !!argsString ? JSON.parse(argsString) : {};
+
           result[key] = i18n.t(translationKey, {
             args: { property: error.property, ...args },
           });
+
+          // replace error.property with translated property
+          const errorPropertyInString = (result[key] as string).match(
+            error.property,
+          );
+          let replacementKey = error.property;
+          if (errorPropertyInString) {
+            const baseKey = translationKey.split('.')[0];
+            const replacementKeySub = i18n.t(
+              baseKey + '.' + errorPropertyInString[0],
+            ) as string;
+            if (!replacementKeySub.includes(baseKey)) {
+              replacementKey = replacementKeySub;
+            }
+          }
+
+          result[key] = result[key].replace(error.property, replacementKey);
+
           return result;
         },
         {},

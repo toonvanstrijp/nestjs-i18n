@@ -29,7 +29,7 @@ export class HelloController {
   constructor(
     private i18n: I18nService,
     private i18nRequestScope: I18nRequestScopeService,
-  ) {}
+  ) { }
 
   @Get()
   hello(@I18nLang() lang: string): any {
@@ -49,7 +49,7 @@ export class HelloController {
 
   @Get('/index2')
   @Render('index2')
-  index2(): any {}
+  index2(): any { }
 
   @Get('/short')
   helloShort(@I18nLang() lang: string): any {
@@ -162,6 +162,12 @@ export class HelloController {
     return 'This action adds a new user';
   }
 
+  @Post('/validation-with-keys')
+  @UseFilters(new I18nValidationExceptionFilter({ detailedErrors: false }))
+  validationWithKeys(@Body() createUserDto: CreateUserDto): any {
+    return 'This action adds a new user';
+  }
+
   @Post('/validation-custom-formatter')
   @UseFilters(
     new I18nValidationExceptionFilter({
@@ -171,6 +177,8 @@ export class HelloController {
   validationCustomFormatter(@Body() createUserDto: CreateUserDto): any {
     return 'This action adds a new user';
   }
+
+
 
   @GrpcMethod('HeroesService', 'FindOne')
   findOne(@Payload() data: HeroById, @I18n() i18n: I18nContext): Hero {

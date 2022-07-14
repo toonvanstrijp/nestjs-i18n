@@ -1,0 +1,9 @@
+{
+    "email": "ایمیل",
+    "password": "رمز عبور",
+    "NOT_EMPTY": "{property} نباید خالی باشد",
+    "INVALID_EMAIL": "ایمیل نامعتبر است",
+    "INVALID_BOOLEAN": "{property} باید بله یا خیر باشد",
+    "MIN": "{property} با مقادیر: \"{value}\" باید کمتر از {constraints.0}, یا {message}",
+    "MAX": "{property} با مقادیر: \"{value}\" باید کمتر از {constraints.0}, یا {message}"
+}

@@ -5,17 +5,17 @@ import {
   ValidationError,
 } from '@nestjs/common';
 import iterate from 'iterare';
+import { I18nContext } from '../i18n.context';
+import {
+  I18nValidationError,
+  I18nValidationException,
+} from '../interfaces/i18n-validation-error.interface';
 import {
   I18nValidationExceptionFilterDetailedErrorsOption,
   I18nValidationExceptionFilterErrorFormatterOption,
 } from '../interfaces/i18n-validation-exception-filter.interface';
 import { Either } from '../types/either.type';
 import { mapChildrenToValidationErrors } from '../utils/format';
-import { I18nContext } from '../i18n.context';
-import {
-  I18nValidationError,
-  I18nValidationException,
-} from '../interfaces/i18n-validation-error.interface';
 import { getI18nContextFromArgumentsHost } from '../utils/util';
 
 type I18nValidationExceptionFilterOptions = Either<
@@ -38,11 +38,14 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     switch (host.getType() as string) {
       case 'http':
         const response = host.switchToHttp().getResponse();
-        response.status(exception.getStatus()).send({
-          statusCode: exception.getStatus(),
-          message: exception.getResponse(),
-          errors: this.normalizeValidationErrors(errors),
-        });
+        response
+          .status(this.options.errorHttpStatusCode || exception.getStatus())
+          .send({
+            statusCode:
+              this.options.errorHttpStatusCode || exception.getStatus(),
+            message: exception.getResponse(),
+            errors: this.normalizeValidationErrors(errors),
+          });
         break;
       case 'graphql':
         exception.errors = this.normalizeValidationErrors(

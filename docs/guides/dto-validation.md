@@ -5,13 +5,14 @@ sidebar_position: 7
 # DTO Validation
 
 To use `nestjs-i18n` in your DTO validation you first need to follow the [**nestjs instructions**](https://docs.nestjs.com/techniques/validation). After that you need to use the `i18nValidationErrorFactory` function in your `ValidationPipe`.
+
 ```typescript title="src/main.ts"
 import { i18nValidationErrorFactory } from 'nestjs-i18n';
 
 app.useGlobalPipes(
-    new ValidationPipe({
-        exceptionFactory: i18nValidationErrorFactory,
-    }),
+  new ValidationPipe({
+    exceptionFactory: i18nValidationErrorFactory,
+  }),
 );
 ```
 
@@ -74,11 +75,11 @@ Inside your translation you now can use `class-validator` properties such as `pr
 
 ```json title="src/i18n/en/validation.json"
 {
-    "NOT_EMPTY": "{property} cannot be empty",
-    "INVALID_EMAIL": "email is invalid",
-    "INVALID_BOOLEAN": "{property} is not a boolean",
-    "MIN": "{property} with value: \"{value}\" needs to be at least {constraints.0}, ow and {message}",
-    "MAX": "{property} with value: \"{value}\" needs to be less than {constraints.0}, ow and {message}"
+  "NOT_EMPTY": "{property} cannot be empty",
+  "INVALID_EMAIL": "email is invalid",
+  "INVALID_BOOLEAN": "{property} is not a boolean",
+  "MIN": "{property} with value: \"{value}\" needs to be at least {constraints.0}, ow and {message}",
+  "MAX": "{property} with value: \"{value}\" needs to be less than {constraints.0}, ow and {message}"
 }
 ```
 
@@ -100,12 +101,21 @@ create(@Body() createUserDto: CreateUserDto): any {
 import { I18nValidationExceptionFilter } from 'nestjs-i18n';
 
 app.useGlobalFilters(new I18nValidationExceptionFilter());
-
 ```
+
+#### I18nValidationExceptionFilterOptions
+
+`I18nValidationExceptionFilter` also takes an argument of type `I18nValidationExceptionFilterOptions`
+
+| Name                  | Type                                    | Required | Default | Description                                                            |
+| --------------------- | --------------------------------------- | -------- | ------- | ---------------------------------------------------------------------- |
+| `detailedErrors`      | `boolean`                               | false    | `true`  | Simplify error messages                                                |
+| `errorFormatter`      | `(errors: ValidationError[]) => object` | false    |         | Return the validation errors in a format that you specify.             |
+| `errorHttpStatusCode` | `HttpStatus`                            | false    | `400`   | Change the default http status code for the `I18nValidationException`. |
+
 :::info
 
-`I18nValidationExceptionFilter` also takes an argument of type `I18nValidationExceptionFilterOptions` for simplifying error messages.
-`new I18nValidationExceptionFilter({detailedErrors: false})` will return the simplified error message. `new I18nValidationExceptionFilter({errorFormatter: /* your custom error formatter function */ })` will return the validation errors in a format that you specify. Note that only one of the properties can be used at the time.
+Note that only one of the properties `detailedErrors` and `errorFormatter` can be used at the time.
 
 :::
 
@@ -115,49 +125,49 @@ Now your validation errors are being translated 🎉!
 
 ```json title="response"
 {
-    "statusCode": 400,
-    "errors": [
-      {
-        "property": "email",
-        "children": [],
-        "constraints": {
-          "isEmail": "email is invalid",
-          "isNotEmpty": "email cannot be empty",
+  "statusCode": 400,
+  "errors": [
+    {
+      "property": "email",
+      "children": [],
+      "constraints": {
+        "isEmail": "email is invalid",
+        "isNotEmpty": "email cannot be empty"
+      }
+    },
+    {
+      "property": "password",
+      "children": [],
+      "constraints": { "isNotEmpty": "password cannot be empty" }
+    },
+    {
+      "property": "extra",
+      "children": [
+        {
+          "property": "subscribeToEmail",
+          "children": [],
+          "constraints": {
+            "isBoolean": "subscribeToEmail is not a boolean"
+          }
         },
-      },
-      {
-        "property": "password",
-        "children": [],
-        "constraints": { "isNotEmpty": "password cannot be empty" },
-      },
-      {
-        "property": "extra",
-        "children": [
-          {
-            "property": "subscribeToEmail",
-            "children": [],
-            "constraints": {
-              "isBoolean": "subscribeToEmail is not a boolean",
-            },
-          },
-          {
-            "property": "min",
-            "children": [],
-            "constraints": {
-              "min": "min with value: \"1\" needs to be at least 5, ow and COOL",
-            },
-          },
-          {
-            "property": "max",
-            "children": [],
-            "constraints": {
-              "max": "max with value: \"100\" needs to be less than 10, ow and SUPER",
-            },
-          },
-        ],
-        "constraints": {},
-      },
-    ]
+        {
+          "property": "min",
+          "children": [],
+          "constraints": {
+            "min": "min with value: \"1\" needs to be at least 5, ow and COOL"
+          }
+        },
+        {
+          "property": "max",
+          "children": [],
+          "constraints": {
+            "max": "max with value: \"100\" needs to be less than 10, ow and SUPER"
+          }
+        }
+      ],
+      "constraints": {}
+    }
+  ]
 }
 ```
 

@@ -1,17 +1,17 @@
+import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
+import * as request from 'supertest';
 import {
+  AcceptLanguageResolver,
   CookieResolver,
   HeaderResolver,
-  AcceptLanguageResolver,
   I18nModule,
   QueryResolver,
 } from '../src';
-import * as request from 'supertest';
-import { HelloController } from './app/controllers/hello.controller';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { ValidationPipe } from '@nestjs/common';
 import { i18nValidationErrorFactory } from '../src/utils/util';
+import { HelloController } from './app/controllers/hello.controller';
 
 describe('i18n module e2e dto', () => {
   let app: NestExpressApplication;
@@ -469,6 +469,32 @@ describe('i18n module e2e dto', () => {
           message: 'Bad Request',
           errors: [
             'email is invalid',
+            'password cannot be empty',
+            'extra.subscribeToEmail is not a boolean',
+            'extra.min with value: "1" needs to be at least 5, ow and COOL',
+            'extra.max with value: "100" needs to be less than 10, ow and SUPER',
+          ],
+        });
+      });
+  });
+
+  it(`should translate validation messages with custom http code`, async () => {
+    await request(app.getHttpServer())
+      .post('/hello/validation-with-custom-http-code')
+      .send({
+        email: '',
+        password: '',
+        extra: { subscribeToEmail: '', min: 1, max: 100 },
+      })
+      .set('Accept', 'application/json')
+      .expect(422)
+      .expect((res) => {
+        expect(res.body).toMatchObject({
+          statusCode: 422,
+          message: 'Bad Request',
+          errors: [
+            'email is invalid',
+            'email cannot be empty',
             'password cannot be empty',
             'extra.subscribeToEmail is not a boolean',
             'extra.min with value: "1" needs to be at least 5, ow and COOL',

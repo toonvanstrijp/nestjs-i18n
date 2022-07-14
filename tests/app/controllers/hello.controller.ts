@@ -8,6 +8,7 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 import {
   I18n,
   I18nContext,
@@ -17,11 +18,10 @@ import {
 } from '../../../src';
 import { I18nRequestScopeService } from '../../../src/services/i18n-request-scope.service';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { exampleErrorFormatter } from '../examples/example.functions';
 import { TestException, TestExceptionFilter } from '../filter/test.filter';
 import { TestGuard } from '../guards/test.guard';
-import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { Hero, HeroById } from '../interfaces/hero.interface';
-import { exampleErrorFormatter } from '../examples/example.functions';
 
 @Controller('hello')
 @UseFilters(new TestExceptionFilter())
@@ -159,6 +159,12 @@ export class HelloController {
   @Post('/validation-without-details')
   @UseFilters(new I18nValidationExceptionFilter({ detailedErrors: false }))
   validationWithoutDetails(@Body() createUserDto: CreateUserDto): any {
+    return 'This action adds a new user';
+  }
+
+  @Post('/validation-with-custom-http-code')
+  @UseFilters(new I18nValidationExceptionFilter({ errorHttpStatusCode: 422 }))
+  validationWithCustomHttpCode(@Body() createUserDto: CreateUserDto): any {
     return 'This action adds a new user';
   }
 

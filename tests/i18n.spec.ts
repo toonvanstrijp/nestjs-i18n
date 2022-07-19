@@ -103,6 +103,17 @@ describe('i18n module', () => {
     ]);
   });
 
+  it('i18n service should return translations', () => {
+    expect(Object.keys(i18nService.getTranslations())).toEqual([
+      'en',
+      'fr',
+      'nl',
+      'pt-BR',
+      'zh-CN',
+      'zh-TW',
+    ]);
+  });
+
   it('i18n service should return key if lang is debug', () => {
     expect(i18nService.translate('test.HELLO', { lang: 'debug' })).toBe(
       'test.HELLO',
@@ -159,6 +170,8 @@ describe('i18n module', () => {
       await i18nService.refresh();
       const languages = i18nService.getSupportedLanguages();
       expect(languages).toContain('de');
+      const translations = i18nService.getTranslations();
+      expect(Object.keys(translations)).toContain('de');
     });
   });
 });
@@ -335,6 +348,8 @@ describe('i18n module with loader watch', () => {
     await new Promise((resolve) => setTimeout(resolve, 500));
     const languages = i18nService.getSupportedLanguages();
     expect(languages).toContain('de');
+    const translations = i18nService.getTranslations();
+    expect(Object.keys(translations)).toContain('de');
   });
 });
 

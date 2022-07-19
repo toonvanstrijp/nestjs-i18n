@@ -104,6 +104,10 @@ export class I18nService {
     return this.supportedLanguages;
   }
 
+  public getTranslations() {
+    return this.translations;
+  }
+
   public async refresh(
     translations?: I18nTranslation | Observable<I18nTranslation>,
     languages?: string[] | Observable<string[]>,

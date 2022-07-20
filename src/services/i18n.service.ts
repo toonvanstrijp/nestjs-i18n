@@ -152,7 +152,7 @@ export class I18nService {
     const keys = key.split('.');
     const [firstKey] = keys;
 
-    const args = options?.args ?? {};
+    const args = options?.args;
 
     if (keys.length > 1 && !translations[key]) {
       const newKey = keys.slice(1, keys.length).join('.');

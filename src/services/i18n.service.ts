@@ -169,7 +169,7 @@ export class I18nService {
 
     let translation = translations[key] ?? options?.defaultValue;
 
-    if (translation && (args || (args instanceof Array && args.length > 0))) {
+    if (translation) {
       const pluralObject = this.getPluralObject(translation);
       if (pluralObject && args && args['count'] !== undefined) {
         const count = Number(args['count']);
@@ -256,7 +256,7 @@ export class I18nService {
     const list = [];
     const regex = /\$t\((.*?)(,(.*?))?\)/g;
     let result: RegExpExecArray;
-    while ((result = regex.exec(translation))) {
+    while (result = regex.exec(translation)) {
       let key = undefined;
       let args = {};
       let index = undefined;

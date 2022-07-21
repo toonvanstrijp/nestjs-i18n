@@ -169,7 +169,7 @@ export class I18nService {
 
     let translation = translations[key] ?? options?.defaultValue;
 
-    if (translation) {
+    if (translation && (args || (args instanceof Array && args.length > 0))) {
       const pluralObject = this.getPluralObject(translation);
       if (pluralObject && args && args['count'] !== undefined) {
         const count = Number(args['count']);

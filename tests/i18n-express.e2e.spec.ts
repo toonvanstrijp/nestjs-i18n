@@ -562,16 +562,16 @@ describe('i18n module e2e express', () => {
       .expect('Bericht: Hello, test');
   });
 
-  it('/GET hello/nested-no-args should return correct translation', async () => {
+  it('/GET hello/nested-no-args should return the template', async () => {
     await request(app.getHttpServer())
       .get('/hello/nested-no-args')
       .expect(200)
-      .expect('We go shopping: test');
+      .expect('We go shopping: $t(test.dot.test)');
     await request(app.getHttpServer())
       .get('/hello/nested-no-args')
       .set('x-custom-lang', 'nl')
       .expect(200)
-      .expect('Wij gaan winkelen: test');
+      .expect('Wij gaan winkelen: $t(test.dot.test)');
   });
 
   it('/GET hello/deeply-nested should return correct translation', async () => {

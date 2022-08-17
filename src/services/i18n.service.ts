@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import {
   I18N_OPTIONS,
   I18N_TRANSLATIONS,
@@ -8,9 +8,9 @@ import {
 } from '../i18n.constants';
 import { I18nOptions } from '..';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
-import { Observable, BehaviorSubject, lastValueFrom } from 'rxjs';
+import { Observable, BehaviorSubject, lastValueFrom, Subject } from 'rxjs';
 import { I18nLoader } from '../loaders/i18n.loader';
-import { take } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
 
 export type TranslateOptions = {
@@ -21,9 +21,11 @@ export type TranslateOptions = {
 };
 
 @Injectable()
-export class I18nService {
+export class I18nService implements OnModuleDestroy {
   private supportedLanguages: string[];
   private translations: I18nTranslation;
+
+  private unsubscribe = new Subject<void>();
 
   constructor(
     @Inject(I18N_OPTIONS)
@@ -39,12 +41,17 @@ export class I18nService {
     @Inject(I18N_TRANSLATIONS_SUBJECT)
     private readonly translationsSubject: BehaviorSubject<I18nTranslation>,
   ) {
-    supportedLanguages.subscribe((languages) => {
+    supportedLanguages.pipe(takeUntil(this.unsubscribe)).subscribe((languages) => {
       this.supportedLanguages = languages;
     });
-    translations.subscribe((t) => {
+    translations.pipe(takeUntil(this.unsubscribe)).subscribe((t) => {
       this.translations = t;
     });
+  }
+
+  public onModuleDestroy(): void {
+    this.unsubscribe.next(null);
+    this.unsubscribe.complete();
   }
 
   public translate<T = any>(key: string, options?: TranslateOptions): T {

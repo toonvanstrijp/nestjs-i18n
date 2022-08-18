@@ -1,45 +1,45 @@
 import {
+  ClassProvider,
   DynamicModule,
   Global,
   Inject,
   Logger,
   MiddlewareConsumer,
   Module,
+  NestModule,
+  OnModuleInit,
   Provider,
+  ValueProvider
 } from '@nestjs/common';
+import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import * as format from 'string-format';
+import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
 import {
-  I18N_OPTIONS,
-  I18N_TRANSLATIONS,
+  I18N_CUSTOM_CONTEXT,
   I18N_LANGUAGES,
-  I18N_RESOLVERS,
-  I18N_LOADER_OPTIONS,
   I18N_LANGUAGES_SUBJECT,
-  I18N_TRANSLATIONS_SUBJECT,
+  I18N_LOADER_OPTIONS,
+  I18N_OPTIONS,
+  I18N_RESOLVERS,
+  I18N_TRANSLATIONS,
+  I18N_TRANSLATIONS_SUBJECT
 } from './i18n.constants';
-import { I18nService } from './services/i18n.service';
-import { I18nRequestScopeService } from './services/i18n-request-scope.service';
+import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import {
   I18nAsyncOptions,
-  I18nOptions,
-  I18nOptionsFactory,
   I18nOptionResolver,
+  I18nOptions,
+  I18nOptionsFactory
 } from './interfaces/i18n-options.interface';
-import {
-  ValueProvider,
-  ClassProvider,
-  OnModuleInit,
-  NestModule,
-} from '@nestjs/common';
-import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
-import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
-import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
-import { shouldResolve } from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
-import { I18nLoader } from './loaders/i18n.loader';
-import { Observable, BehaviorSubject } from 'rxjs';
-import * as format from 'string-format';
 import { I18nJsonLoader } from './loaders/i18n.json.loader';
+import { I18nLoader } from './loaders/i18n.loader';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
+import { I18nContextService } from './services/i18n-context.service';
+import { I18nRequestScopeService } from './services/i18n-request-scope.service';
+import { I18nService } from './services/i18n.service';
+import { shouldResolve } from './utils/util';
 
 const logger = new Logger('I18nService');
 
@@ -170,6 +170,11 @@ export class I18nModule implements OnModuleInit, NestModule {
       useValue: options.resolvers || [],
     };
 
+    const customContextProvider = {
+      provide: I18N_CUSTOM_CONTEXT,
+      useValue: options.contexts ? options.contexts : [],
+    };
+
     return {
       module: I18nModule,
       providers: [
@@ -179,11 +184,13 @@ export class I18nModule implements OnModuleInit, NestModule {
           useClass: I18nLanguageInterceptor,
         },
         I18nService,
+        I18nContextService,
         I18nRequestScopeService,
         i18nOptions,
         translationsProvider,
         languagesProvider,
         resolversProvider,
+        customContextProvider,
         i18nLoaderProvider,
         i18nLoaderOptionsProvider,
         i18nLanguagesSubjectProvider,
@@ -225,6 +232,11 @@ export class I18nModule implements OnModuleInit, NestModule {
       useValue: i18nTranslationSubject,
     };
 
+    const customContextProvider = {
+      provide: I18N_CUSTOM_CONTEXT,
+      useValue: options.contexts ? options.contexts : [],
+    };
+
     return {
       module: I18nModule,
       imports: options.imports || [],
@@ -239,8 +251,10 @@ export class I18nModule implements OnModuleInit, NestModule {
         asyncLanguagesProvider,
         asyncLoaderOptionsProvider,
         I18nService,
+        I18nContextService,
         I18nRequestScopeService,
         resolversProvider,
+        customContextProvider,
         i18nLoaderProvider,
         i18nLanguagesSubjectProvider,
         i18nTranslationSubjectProvider,

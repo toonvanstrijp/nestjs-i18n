@@ -4,6 +4,7 @@ export const I18N_LANGUAGES = 'I18nLanguages';
 export const I18N_RESOLVER_OPTIONS = 'I18nResolverOptions';
 export const I18N_RESOLVERS = 'I18nResolvers';
 export const I18N_LOADER_OPTIONS = 'I18nLoaderOptions';
+export const I18N_CUSTOM_CONTEXT = 'I18nCustomContext';
 
 // private consts
 export const I18N_LANGUAGES_SUBJECT = 'I18nLanguagesSubject';

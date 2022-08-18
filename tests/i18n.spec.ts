@@ -6,10 +6,12 @@ import {
   I18nService,
   I18nLoader,
   i18nValidationMessage,
+  I18nContextService
 } from '../src';
 
 describe('i18n module', () => {
   let i18nService: I18nService;
+  let i18nContextService: I18nContextService;
   let i18nLoader: I18nLoader;
 
   beforeAll(async () => {
@@ -25,11 +27,16 @@ describe('i18n module', () => {
     }).compile();
 
     i18nService = module.get(I18nService);
+    i18nContextService = module.get(I18nContextService);
     i18nLoader = module.get(I18nLoader);
   });
 
   it('i18n service should be defined', async () => {
     expect(i18nService).toBeTruthy();
+  });
+
+  it('i18n context service should be defined', async () => {
+    expect(i18nContextService).toBeTruthy();
   });
 
   it('i18n service should return correct translation', () => {

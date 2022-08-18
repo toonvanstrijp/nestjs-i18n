@@ -2,15 +2,17 @@ import { ModuleRef } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
 import {
+  I18nContextService,
+  I18nLanguageInterceptor,
   I18nModule,
   I18nService,
-  I18nLanguageInterceptor,
   I18N_OPTIONS,
   I18N_RESOLVERS,
 } from '../src';
 
 describe('i18n interceptor', () => {
   let i18nService: I18nService;
+  let i18nContextService: I18nContextService;
   let i18nInterceptor: I18nLanguageInterceptor;
 
   beforeAll(async () => {
@@ -26,10 +28,12 @@ describe('i18n interceptor', () => {
     }).compile();
 
     i18nService = module.get(I18nService);
+    i18nContextService = module.get(I18nContextService);
     i18nInterceptor = new I18nLanguageInterceptor(
       module.get(I18N_OPTIONS),
       module.get(I18N_RESOLVERS),
       i18nService,
+      i18nContextService,
       module.get(ModuleRef),
     );
   });

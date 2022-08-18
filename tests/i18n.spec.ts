@@ -94,6 +94,7 @@ describe('i18n module', () => {
   it('i18n service should return supported languages', () => {
     expect(i18nService.getSupportedLanguages()).toEqual([
       'en',
+      'fa',
       'fr',
       'nl',
       'pt-BR',
@@ -365,6 +366,7 @@ describe('i18n module with fallbacks', () => {
             'en-*': 'en',
             'fr-*': 'fr',
             pt: 'pt-BR',
+            'fa': 'fa',
           },
           loaderOptions: {
             path: path.join(__dirname, '/i18n'),
@@ -386,6 +388,7 @@ describe('i18n module with fallbacks', () => {
     expect(i18nService.translate('test.HELLO', { lang: 'en-US' })).toBe(
       'Hello',
     );
+    expect(i18nService.translate('test.HELLO', { lang: 'fa' })).toBe('سلام');
   });
 
   it('i18n service should return dutch translation', () => {
@@ -405,6 +408,10 @@ describe('i18n module with fallbacks', () => {
   it('i18n service should return portuguese-brazil translation', () => {
     expect(i18nService.translate('test.HELLO', { lang: 'pt' })).toBe('Olá');
     expect(i18nService.translate('test.HELLO', { lang: 'pt-BR' })).toBe('Olá');
+  });
+
+  it('i18n service should return farsi translation', () => {
+    expect(i18nService.translate('test.HELLO', { lang: 'fa' })).toBe('سلام');
   });
 
   it('i18n service should return translation with . in key', () => {

@@ -96,6 +96,21 @@ describe('i18n module e2e dto', () => {
     ],
   };
 
+  it('should return translation of keys too', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/hello/validation-with-keys')
+      .set('x-custom-lang', 'fa')
+      .set('Accept', 'application/json')
+      .send({
+        email: '',
+        password: '',
+        extra: { subscribeToEmail: true, min: 1, max: 100 },
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.errors[1]).toEqual("ایمیل نباید خالی باشد");
+  })
+
   it(`should translate validation messages in a custom format if specified`, async () => {
     await request(app.getHttpServer())
       .post('/hello/validation-custom-formatter')
@@ -167,7 +182,7 @@ describe('i18n module e2e dto', () => {
           statusCode: 400,
           message: 'Bad Request',
           errors: {
-            email: ['email is ongeldig', 'e-mail adres mag niet leeg zijn'],
+            email: ['e-mail adres is ongeldig', 'e-mail adres mag niet leeg zijn'],
             password: ['wachtwoord mag niet leeg zijn'],
             subscribeToEmail: ['extra.subscribeToEmail is geen boolean'],
             min: [
@@ -246,7 +261,7 @@ describe('i18n module e2e dto', () => {
           statusCode: 400,
           message: 'Bad Request',
           errors: [
-            'email is ongeldig',
+            'e-mail adres is ongeldig',
             'e-mail adres mag niet leeg zijn',
             'wachtwoord mag niet leeg zijn',
             'extra.subscribeToEmail is geen boolean',
@@ -397,7 +412,7 @@ describe('i18n module e2e dto', () => {
               property: 'email',
               children: [],
               constraints: {
-                isEmail: 'email is ongeldig',
+                isEmail: 'e-mail adres is ongeldig',
                 isNotEmpty: 'e-mail adres mag niet leeg zijn',
               },
             },

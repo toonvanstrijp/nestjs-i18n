@@ -180,7 +180,6 @@ export class I18nService implements OnModuleDestroy {
       const pluralObject = this.getPluralObject(translation);
       if (pluralObject && args && args['count'] !== undefined) {
         const count = Number(args['count']);
-
         if (count == 0 && !!pluralObject.zero) {
           translation = pluralObject.zero;
         } else if (count == 1 && !!pluralObject.one) {

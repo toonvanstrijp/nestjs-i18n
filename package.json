@@ -22,6 +22,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
     "test": "jest --config ./tests/jest-test.json",
     "test:cov": "jest --config ./tests/jest-test.json --coverage",
+    "test:watch": "jest --config ./tests/jest-test.json --watch",
     "coveralls": "npm run test:cov && cat ./coverage/lcov.info | coveralls",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",

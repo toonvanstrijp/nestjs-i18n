@@ -6,6 +6,7 @@ import {
   I18nValidationError,
   I18nValidationException,
 } from '../interfaces/i18n-validation-error.interface';
+import { I18nService, TranslateOptions } from 'src/services/i18n.service';
 
 export function shouldResolve(e: I18nOptionResolver) {
   return typeof e === 'function' || e['use'];
@@ -78,4 +79,24 @@ export function i18nValidationMessage(key: string, args?: any) {
     }
     return `${key}|${JSON.stringify({ value, constraints, ...args })}`;
   };
+}
+
+export function formatI18nErrors(
+  errors: I18nValidationError[],
+  i18n: I18nService,
+  options?: TranslateOptions,
+): I18nValidationError[] {
+  return errors.map((error) => {
+    error.children = formatI18nErrors(error.children ?? [], i18n, options);
+    error.constraints = Object.keys(error.constraints).reduce((result, key) => {
+      const [translationKey, argsString] = error.constraints[key].split('|');
+      const args = !!argsString ? JSON.parse(argsString) : {};
+      result[key] = i18n.translate(translationKey, {
+        ...options,
+        args: { property: error.property, ...args },
+      });
+      return result;
+    }, {});
+    return error;
+  });
 }

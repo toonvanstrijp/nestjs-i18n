@@ -173,6 +173,6 @@ Now your validation errors are being translated 🎉!
 
 :::tip
 
-If you want a different output, create your own interceptor! For an example look at the [`I18nValidationExceptionFilter`](http://google.com).
+If you want a different output, create your own interceptor! For an example look at the [`I18nValidationExceptionFilter`](https://github.com/toonvanstrijp/nestjs-i18n/blob/main/src/filters/i18n-validation-exception.filter.ts).
 
 :::

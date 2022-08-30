@@ -5,7 +5,6 @@ import {
   ValidationError,
 } from '@nestjs/common';
 import iterate from 'iterare';
-import { I18nContext } from '../i18n.context';
 import {
   I18nValidationError,
   I18nValidationException,
@@ -16,7 +15,10 @@ import {
 } from '../interfaces/i18n-validation-exception-filter.interface';
 import { Either } from '../types/either.type';
 import { mapChildrenToValidationErrors } from '../utils/format';
-import { getI18nContextFromArgumentsHost } from '../utils/util';
+import {
+  formatI18nErrors,
+  getI18nContextFromArgumentsHost,
+} from '../utils/util';
 
 type I18nValidationExceptionFilterOptions = Either<
   I18nValidationExceptionFilterDetailedErrorsOption,
@@ -33,7 +35,9 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
   catch(exception: I18nValidationException, host: ArgumentsHost) {
     const i18n = getI18nContextFromArgumentsHost(host);
 
-    const errors = this.translateErrors(exception.errors ?? [], i18n);
+    const errors = formatI18nErrors(exception.errors ?? [], i18n.service, {
+      lang: i18n.lang,
+    });
 
     switch (host.getType() as string) {
       case 'http':
@@ -53,28 +57,6 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
         ) as I18nValidationError[];
         return exception;
     }
-  }
-
-  private translateErrors(
-    errors: I18nValidationError[],
-    i18n: I18nContext,
-  ): I18nValidationError[] {
-    return errors.map((error) => {
-      error.children = this.translateErrors(error.children ?? [], i18n);
-      error.constraints = Object.keys(error.constraints).reduce(
-        (result, key) => {
-          const [translationKey, argsString] =
-            error.constraints[key].split('|');
-          const args = !!argsString ? JSON.parse(argsString) : {};
-          result[key] = i18n.t(translationKey, {
-            args: { property: error.property, ...args },
-          });
-          return result;
-        },
-        {},
-      );
-      return error;
-    });
   }
 
   protected normalizeValidationErrors(

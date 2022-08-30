@@ -1,8 +1,8 @@
 ---
-sidebar_position: 7
+sidebar_position: 1
 ---
 
-# DTO Validation
+# Global validation
 
 To use `nestjs-i18n` in your DTO validation you first need to follow the [**nestjs instructions**](https://docs.nestjs.com/techniques/validation). After that you need to use the `i18nValidationErrorFactory` function in your `ValidationPipe`.
 

@@ -489,6 +489,43 @@ describe('i18n module e2e dto', () => {
       });
   });
 
+  it(`should translate validation messages when doing a manual validation`, async () => {
+    await request(app.getHttpServer())
+      .post('/hello/custom-validation')
+      .send({
+        email: '',
+        password: '',
+        extra: { subscribeToEmail: '', min: 1, max: 100 },
+      })
+      .set('Accept', 'application/json')
+      .expect(201)
+      .expect((res) => {
+        expect(res.body).toMatchObject([
+          {
+            target: {},
+            property: 'email',
+            children: [],
+            constraints: {
+              isEmail: 'email is invalid',
+              isNotEmpty: 'email cannot be empty',
+            },
+          },
+          {
+            target: {},
+            property: 'password',
+            children: [],
+            constraints: { isNotEmpty: 'password cannot be empty' },
+          },
+          {
+            target: {},
+            property: 'extra',
+            children: [],
+            constraints: { isDefined: 'extra should not be null or undefined' },
+          },
+        ]);
+      });
+  });
+
   afterAll(async () => {
     await app.close();
   });

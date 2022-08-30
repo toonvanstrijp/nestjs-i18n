@@ -23,7 +23,7 @@
 - **Plurals** support ([instructions](https://nestjs-i18n.com/guides/plurals))
 - **GraphQL** support ([instructions](https://nestjs-i18n.com/guides/graphql))
 - **gRPC** support ([instructions](https://nestjs-i18n.com/guides/grpc))
-- **DTO** validation ([instructions](https://nestjs-i18n.com/dto_validation/global-validation))
+- **DTO** validation ([instructions](https://nestjs-i18n.com/guides/dto_validation/global-validation))
 - View engine support ([**hbs**](https://nestjs-i18n.com/guides/view_engines/handlebars) or [**pug**](https://nestjs-i18n.com/guides/view_engines/pug) or [**ejs**](https://nestjs-i18n.com/guides/view_engines/ejs))
 - Custom resolvers
 - Custom loaders

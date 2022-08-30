@@ -1,4 +1,4 @@
-import { I18nValidationError } from 'dist';
+import { I18nValidationError } from './interfaces/i18n-validation-error.interface';
 import { I18nService, TranslateOptions } from './services/i18n.service';
 
 export class I18nContext {

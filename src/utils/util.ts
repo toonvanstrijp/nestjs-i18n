@@ -6,7 +6,7 @@ import {
   I18nValidationError,
   I18nValidationException,
 } from '../interfaces/i18n-validation-error.interface';
-import { I18nService, TranslateOptions } from 'src/services/i18n.service';
+import { I18nService, TranslateOptions } from '../services/i18n.service';
 
 export function shouldResolve(e: I18nOptionResolver) {
   return typeof e === 'function' || e['use'];

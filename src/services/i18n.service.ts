@@ -6,12 +6,14 @@ import {
   I18N_LANGUAGES_SUBJECT,
   I18N_TRANSLATIONS_SUBJECT,
 } from '../i18n.constants';
-import { I18nOptions } from '..';
+import { I18nOptions, I18nValidationError } from '..';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
 import { Observable, BehaviorSubject, lastValueFrom, Subject } from 'rxjs';
 import { I18nLoader } from '../loaders/i18n.loader';
 import { take, takeUntil } from 'rxjs/operators';
 import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
+import { validate } from 'class-validator';
+import { formatI18nErrors } from '../utils/util';
 
 export type TranslateOptions = {
   lang?: string;
@@ -41,9 +43,11 @@ export class I18nService implements OnModuleDestroy {
     @Inject(I18N_TRANSLATIONS_SUBJECT)
     private readonly translationsSubject: BehaviorSubject<I18nTranslation>,
   ) {
-    supportedLanguages.pipe(takeUntil(this.unsubscribe)).subscribe((languages) => {
-      this.supportedLanguages = languages;
-    });
+    supportedLanguages
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((languages) => {
+        this.supportedLanguages = languages;
+      });
     translations.pipe(takeUntil(this.unsubscribe)).subscribe((t) => {
       this.translations = t;
     });
@@ -263,7 +267,7 @@ export class I18nService implements OnModuleDestroy {
     const list = [];
     const regex = /\$t\((.*?)(,(.*?))?\)/g;
     let result: RegExpExecArray;
-    while (result = regex.exec(translation)) {
+    while ((result = regex.exec(translation))) {
       let key = undefined;
       let args = {};
       let index = undefined;
@@ -287,5 +291,13 @@ export class I18nService implements OnModuleDestroy {
     }
 
     return list.length > 0 ? list : undefined;
+  }
+
+  public async validate(
+    value: any,
+    options?: TranslateOptions,
+  ): Promise<I18nValidationError[]> {
+    const errors = await validate(value, this.i18nOptions.validatorOptions);
+    return formatI18nErrors(errors, this, options);
   }
 }

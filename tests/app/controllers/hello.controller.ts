@@ -178,6 +178,12 @@ export class HelloController {
     return 'This action adds a new user';
   }
 
+  @Post('/custom-validation')
+  customValidation(@I18n() i18n: I18nContext): any {
+    let createUserDto = new CreateUserDto();
+    return i18n.validate(createUserDto);
+  }
+
   @GrpcMethod('HeroesService', 'FindOne')
   findOne(@Payload() data: HeroById, @I18n() i18n: I18nContext): Hero {
     const items = [

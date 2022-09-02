@@ -9,6 +9,7 @@ import {
 import { I18nLoader } from '../loaders/i18n.loader';
 import { I18nCustomContext } from './i18n-custom-context.interface';
 import { I18nResolver } from './i18n-language-resolver.interface';
+import { ValidatorOptions } from 'class-validator';
 
 export interface OptionsProvider {
   options: any;
@@ -51,6 +52,7 @@ export interface I18nOptions {
   logging?: boolean;
   viewEngine?: 'hbs' | 'pug' | 'ejs';
   disableMiddleware?: boolean;
+  validatorOptions?: I18nValidatorOptions;
 }
 
 export interface I18nOptionsFactory {
@@ -72,3 +74,5 @@ export interface I18nAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
   inject?: any[];
   logging?: boolean;
 }
+
+export type I18nValidatorOptions = ValidatorOptions;

@@ -1,8 +1,8 @@
 ---
-sidebar_position: 7
+sidebar_position: 1
 ---
 
-# DTO Validation
+# Global validation
 
 To use `nestjs-i18n` in your DTO validation you first need to follow the [**nestjs instructions**](https://docs.nestjs.com/techniques/validation). After that you need to use the `i18nValidationErrorFactory` function in your `ValidationPipe`.
 
@@ -173,6 +173,6 @@ Now your validation errors are being translated 🎉!
 
 :::tip
 
-If you want a different output, create your own interceptor! For an example look at the [`I18nValidationExceptionFilter`](http://google.com).
+If you want a different output, create your own interceptor! For an example look at the [`I18nValidationExceptionFilter`](https://github.com/toonvanstrijp/nestjs-i18n/blob/main/src/filters/i18n-validation-exception.filter.ts).
 
 :::

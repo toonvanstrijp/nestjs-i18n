@@ -44,6 +44,9 @@ export * from './interceptors/i18n-language.interceptor';
 // filters
 export * from './filters/i18n-validation-exception.filter';
 
+// middleware
+export { I18nMiddleware } from './middlewares/i18n.middleware';
+
 // utils
 export {
   getI18nContextFromRequest,

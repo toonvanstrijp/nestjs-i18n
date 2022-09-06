@@ -24,3 +24,22 @@ export class TestExceptionFilter implements ExceptionFilter {
   }
 }
 ```
+
+:::caution
+
+When using **http** or **graphql** `nestjs-i18n` uses `middleware` to make things work. However when throwing exceptions in [**middleware**](https://docs.nestjs.com/middleware#middleware) this can lead to throwing your exception before the `nestjs-i18n` middleware had been reached. To solve this problem you'll need to register the `I18nMiddleware` globally.
+
+```typescript title="src/main.ts"
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { I18nMiddleware } from 'nestjs-i18n';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.use(I18nMiddleware);
+  await app.listen(3001);
+}
+bootstrap();
+```
+
+:::

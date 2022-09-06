@@ -37,9 +37,26 @@ import { I18nMiddleware } from 'nestjs-i18n';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(I18nMiddleware);
-  await app.listen(3001);
+  await app.listen(3000);
 }
 bootstrap();
+```
+
+or
+
+```typescript title="src/app.module.ts"
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { I18nMiddleware } from 'nestjs-i18n';
+
+@Module({
+  ...
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(I18nMiddleware, MyMiddleware).forRoutes('*');
+  }
+}
+
 ```
 
 :::

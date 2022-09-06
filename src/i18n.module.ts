@@ -190,7 +190,13 @@ export class I18nModule implements OnModuleInit, NestModule {
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
       ],
-      exports: [I18nService, I18nRequestScopeService, languagesProvider],
+      exports: [
+        I18N_OPTIONS,
+        I18N_RESOLVERS,
+        I18nService,
+        I18nRequestScopeService,
+        languagesProvider,
+      ],
     };
   }
 
@@ -246,7 +252,13 @@ export class I18nModule implements OnModuleInit, NestModule {
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
       ],
-      exports: [I18nService, I18nRequestScopeService, asyncLanguagesProvider],
+      exports: [
+        I18N_OPTIONS,
+        I18N_RESOLVERS,
+        I18nService,
+        I18nRequestScopeService,
+        asyncLanguagesProvider,
+      ],
     };
   }
 

@@ -15,6 +15,8 @@ import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
 import { validate } from 'class-validator';
 import { formatI18nErrors } from '../utils/util';
 
+const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
+
 export type TranslateOptions = {
   lang?: string;
   args?: ({ [k: string]: any } | string)[] | { [k: string]: any };
@@ -26,6 +28,7 @@ export type TranslateOptions = {
 export class I18nService implements OnModuleDestroy {
   private supportedLanguages: string[];
   private translations: I18nTranslation;
+  private pluralRules = new Map<string, Intl.PluralRules>();
 
   private unsubscribe = new Subject<void>();
 
@@ -83,6 +86,7 @@ export class I18nService implements OnModuleDestroy {
     const translation = this.translateObject(
       key,
       translationsByLanguage ? translationsByLanguage : key,
+      lang,
       options,
       translationsByLanguage ? translationsByLanguage : undefined,
     );
@@ -157,6 +161,7 @@ export class I18nService implements OnModuleDestroy {
   private translateObject(
     key: string,
     translations: I18nTranslation | string,
+    lang: string,
     options?: TranslateOptions,
     rootTranslations?: I18nTranslation | string,
   ): I18nTranslation | string {
@@ -172,6 +177,7 @@ export class I18nService implements OnModuleDestroy {
         ? this.translateObject(
             newKey,
             translations[firstKey],
+            lang,
             options,
             rootTranslations,
           )
@@ -185,12 +191,17 @@ export class I18nService implements OnModuleDestroy {
       if (pluralObject && args && args['count'] !== undefined) {
         const count = Number(args['count']);
 
-        if (count == 0 && !!pluralObject.zero) {
-          translation = pluralObject.zero;
-        } else if (count == 1 && !!pluralObject.one) {
-          translation = pluralObject.one;
-        } else if (pluralObject.other) {
-          translation = pluralObject.other;
+        if (!this.pluralRules.has(lang)) {
+          this.pluralRules.set(lang, new Intl.PluralRules(lang));
+        }
+
+        const pluralRules = this.pluralRules.get(lang);
+        const pluralCategory = pluralRules.select(count);
+
+        if (count === 0 && pluralObject['zero']) {
+          translation = pluralObject['zero'];
+        } else if (pluralObject[pluralCategory]) {
+          translation = pluralObject[pluralCategory];
         }
       } else if (translation instanceof Object) {
         const result = Object.keys(translation).reduce((obj, nestedKey) => {
@@ -199,6 +210,7 @@ export class I18nService implements OnModuleDestroy {
             [nestedKey]: this.translateObject(
               nestedKey,
               translation,
+              lang,
               options,
               rootTranslations,
             ),
@@ -220,10 +232,15 @@ export class I18nService implements OnModuleDestroy {
         let offset = 0;
         for (const nestedTranslation of nestedTranslations) {
           const result =
-            (this.translateObject(nestedTranslation.key, rootTranslations, {
-              ...options,
-              args: { parent: options.args, ...nestedTranslation.args },
-            }) as string) ?? '';
+            (this.translateObject(
+              nestedTranslation.key,
+              rootTranslations,
+              lang,
+              {
+                ...options,
+                args: { parent: options.args, ...nestedTranslation.args },
+              },
+            ) as string) ?? '';
           translation =
             translation.substring(0, nestedTranslation.index - offset) +
             result +
@@ -255,9 +272,12 @@ export class I18nService implements OnModuleDestroy {
   }
 
   private getPluralObject(translation: any): I18nPluralObject | undefined {
-    if (translation['one'] || translation['zero'] || translation['other']) {
-      return translation as I18nPluralObject;
+    for (const k of pluralKeys) {
+      if (translation[k]) {
+        return translation as I18nPluralObject;
+      }
     }
+
     return undefined;
   }
 

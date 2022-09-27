@@ -504,5 +504,12 @@ describe('i18n module with fallbacks', () => {
         args: { count: 22 },
       }),
     ).toBe('22 дні');
+
+    expect(
+      await i18nService.translate('test.day_interval', {
+        lang: 'uk',
+        args: { count: 1.5 },
+      }),
+    ).toBe('1.5 дня');
   });
 });

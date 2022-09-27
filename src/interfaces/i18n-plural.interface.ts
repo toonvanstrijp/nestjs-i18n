@@ -1,5 +1,8 @@
 export interface I18nPluralObject {
-  one?: string;
-  other?: string;
   zero?: string;
+  one?: string;
+  two?: string;
+  few?: string;
+  many?: string;
+  other?: string;
 }

@@ -1,0 +1,8 @@
+{
+  "day_interval": {
+    "one": "{count} день",
+    "few": "{count} дні",
+    "many": "{count} днів",
+    "other": "{count} дня"
+  }
+}

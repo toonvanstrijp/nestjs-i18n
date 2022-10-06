@@ -168,14 +168,14 @@ export class I18nService implements OnModuleDestroy {
     if (keys.length > 1 && !translations[key]) {
       const newKey = keys.slice(1, keys.length).join('.');
 
-      return translations && translations[firstKey]
-        ? this.translateObject(
-            newKey,
-            translations[firstKey],
-            options,
-            rootTranslations,
-          )
-        : undefined;
+      if (translations && translations[firstKey]) {
+        return this.translateObject(
+          newKey,
+          translations[firstKey],
+          options,
+          rootTranslations,
+        )
+      }
     }
 
     let translation = translations[key] ?? options?.defaultValue;

@@ -97,6 +97,8 @@ describe('i18n module', () => {
       'fr',
       'nl',
       'pt-BR',
+      'ru',
+      'uk',
       'zh-CN',
       'zh-TW',
     ]);
@@ -108,6 +110,8 @@ describe('i18n module', () => {
       'fr',
       'nl',
       'pt-BR',
+      'ru',
+      'uk',
       'zh-CN',
       'zh-TW',
     ]);
@@ -431,5 +435,91 @@ describe('i18n module with fallbacks', () => {
         object: undefined,
       }),
     ).toBe('test.HELLO|{"value":"example","constraints":[]}');
+  });
+
+  it('i18n service should return correct plural form', async () => {
+    expect(
+      await i18nService.translate('test.day_interval', {
+        lang: 'en',
+        args: { count: 0 },
+      }),
+    ).toBe('Never');
+
+    expect(
+      await i18nService.translate('test.day_interval', {
+        lang: 'en',
+        args: { count: 1 },
+      }),
+    ).toBe('Every day');
+
+    expect(
+      await i18nService.translate('test.day_interval', {
+        lang: 'en',
+        args: { count: 5 },
+      }),
+    ).toBe('Every 5 days');
+
+    expect(
+      await i18nService.translate('test.day_interval', {
+        lang: 'ru',
+        args: { count: 1 },
+      }),
+    ).toBe('1 день');
+
+    expect(
+      await i18nService.translate('test.day_interval', {
+        lang: 'ru',
+        args: { count: 3 },
+      }),
+    ).toBe('3 дня');
+
+    expect(
+      await i18nService.translate('test.day_interval', {
+        lang: 'ru',
+        args: { count: 7 },
+      }),
+    ).toBe('7 дней');
+
+    expect(
+      await i18nService.translate('test.day_interval', {
+        lang: 'ru',
+        args: { count: 25 },
+      }),
+    ).toBe('25 дней');
+
+    expect(
+      await i18nService.translate('test.day_interval', {
+        lang: 'uk',
+        args: { count: 1 },
+      }),
+    ).toBe('1 день');
+
+    expect(
+      await i18nService.translate('test.day_interval', {
+        lang: 'uk',
+        args: { count: 2 },
+      }),
+    ).toBe('2 дні');
+
+    expect(
+      await i18nService.translate('test.day_interval', {
+        lang: 'uk',
+        args: { count: 9 },
+      }),
+    ).toBe('9 днів');
+
+    expect(
+      await i18nService.translate('test.day_interval', {
+        lang: 'uk',
+        args: { count: 22 },
+      }),
+    ).toBe('22 дні');
+
+    expect(
+      await i18nService.translate('test.day_interval', {
+        lang: 'uk',
+        args: { count: 1.5 },
+      }),
+    ).toBe('1.5 дня');
   });
 });

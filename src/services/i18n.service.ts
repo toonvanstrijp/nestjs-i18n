@@ -231,16 +231,17 @@ export class I18nService implements OnModuleDestroy {
       if (nestedTranslations && nestedTranslations.length > 0) {
         let offset = 0;
         for (const nestedTranslation of nestedTranslations) {
-          const result =
-            (this.translateObject(
-              nestedTranslation.key,
-              rootTranslations,
-              lang,
-              {
-                ...options,
-                args: { parent: options.args, ...nestedTranslation.args },
-              },
-            ) as string) ?? '';
+          const result = rootTranslations
+            ? (this.translateObject(
+                nestedTranslation.key,
+                rootTranslations,
+                lang,
+                {
+                  ...options,
+                  args: { parent: options.args, ...nestedTranslation.args },
+                },
+              ) as string) ?? ''
+            : '';
           translation =
             translation.substring(0, nestedTranslation.index - offset) +
             result +

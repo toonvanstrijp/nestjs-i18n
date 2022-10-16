@@ -12,7 +12,7 @@ The `resolvers` option is used to configure resolvers. The resolvers takes in ar
 | -------------------------- | ---------------------------- |
 | `QueryResolver`            | `['lang']`                   |
 | `HeaderResolver`           | `[]`                         |
-| `AcceptLanguageResolver`   | `{matchType: 'strict-loose'` |
+| `AcceptLanguageResolver`   | `{matchType: 'strict-loose'}` |
 | `CookieResolver`           | `lang`                       |
 | `GraphQLWebsocketResolver` | `N/A`                        |
 | `GrpcMetadataResolver`     | `['lang']`                   |

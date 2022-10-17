@@ -134,6 +134,16 @@ describe('i18n module', () => {
     ).toBe('the translation is missing, nested: Hello, arg: world');
   });
 
+  it('i18n service should use defaultValue if translation is missing for nested keys', () => {
+    const result = i18nService.translate('test.missing.nested.keys', {
+      defaultValue:
+        'the translation is missing, nested: $t(test.HELLO), arg: {hello}',
+      args: { hello: 'world' },
+
+    });
+    expect(result).toBe('the translation is missing, nested: Hello, arg: world');
+  });
+
   describe('i18n should refresh manually', () => {
     const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
     const newLanguagePath = path.join(__dirname, '/i18n/de/');

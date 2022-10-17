@@ -360,7 +360,7 @@ export class I18nModule implements OnModuleInit, NestModule {
           );
           providers.push({
             provide: resolver,
-            useClass: resolver
+            useClass: resolver,
           });
           if (options) {
             (rest as any).useValue = options;

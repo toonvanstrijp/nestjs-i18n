@@ -23,6 +23,14 @@ I18nModule.forRoot({
 });
 ```
 
+You can also use this resolution logic in your own code, using the `I18nService.resolveLanguage` method.
+
+```typescript title="src/static-media.service.ts"
+async serveLocalizedMedia(lang: string) {
+  return this.getMediaForLanguage(this.i18nService.resolveLanguage(lang));
+}
+```
+
 :::tip
 
 With the `fallbacks` option you can have different `fallbackLanguage` for each language. (It works like a regex `en-ZA` will fallback to `en`).

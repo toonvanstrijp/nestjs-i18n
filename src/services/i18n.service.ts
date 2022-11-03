@@ -79,7 +79,7 @@ export class I18nService implements OnModuleDestroy {
         ? this.i18nOptions.fallbackLanguage
         : lang;
 
-    lang = this.handleFallbacks(lang);
+    lang = this.resolveLanguage(lang);
 
     const translationsByLanguage = this.translations[lang];
 
@@ -256,7 +256,7 @@ export class I18nService implements OnModuleDestroy {
     return translation;
   }
 
-  private handleFallbacks(lang: string) {
+  public resolveLanguage(lang: string) {
     if (this.i18nOptions.fallbacks && !this.supportedLanguages.includes(lang)) {
       const sanitizedLang = lang.includes('-')
         ? lang.substring(0, lang.indexOf('-')).concat('-*')

@@ -1,8 +1,8 @@
 ---
-sidebar_position: 4
+sidebar_position: 3
 ---
 
-# Plurals
+# Arrays
 
 You can use arrays inside your translations as followed.
 

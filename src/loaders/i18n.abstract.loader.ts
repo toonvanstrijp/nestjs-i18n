@@ -16,6 +16,7 @@ import { switchMap } from 'rxjs/operators';
 
 export interface I18nAbstractLoaderOptions {
   path: string;
+  includeDeepFolders?: boolean;
   filePattern?: string;
   watch?: boolean;
 }
@@ -100,16 +101,19 @@ export abstract class I18nAbstractLoader
       ...languages.map((l) => path.join(i18nPath, l)),
       i18nPath,
     ].reduce(async (f: Promise<string[]>, p: string) => {
-      (await f).push(...(await getFiles(p, pattern)));
+      (await f).push(
+        ...(await getFiles(p, pattern, this.options.includeDeepFolders)),
+      );
       return f;
     }, Promise.resolve([]));
 
     for (const file of files) {
       let global = false;
 
-      const key = path
+      const pathParts = path
         .dirname(path.relative(i18nPath, file))
-        .split(path.sep)[0];
+        .split(path.sep);
+      const key = pathParts[0];
 
       if (key === '.') {
         global = true;
@@ -118,7 +122,7 @@ export abstract class I18nAbstractLoader
       // const data = JSON.parse(await readFile(file, 'utf8'));
       const data = this.formatData(await readFile(file, 'utf8'));
 
-      const prefix = path.basename(file).split('.')[0];
+      const prefix = [...pathParts.slice(1), path.basename(file).split('.')[0]];
 
       for (const property of Object.keys(data)) {
         [...(global ? languages : [key])].forEach((lang) => {
@@ -127,17 +131,39 @@ export abstract class I18nAbstractLoader
           if (global) {
             translations[lang][property] = data[property];
           } else {
-            translations[lang][prefix] = translations[lang][prefix]
-              ? translations[lang][prefix]
-              : {};
-
-            translations[lang][prefix][property] = data[property];
+            this.assignPrefixedTranslation(
+              translations[lang],
+              prefix,
+              property,
+              data[property],
+            );
           }
         });
       }
     }
 
     return translations;
+  }
+
+  protected assignPrefixedTranslation(
+    translations: I18nTranslation | string,
+    prefix: string[],
+    property: string,
+    value: string,
+  ) {
+    if (prefix.length) {
+      translations[prefix[0]] = translations[prefix[0]]
+        ? translations[prefix[0]]
+        : {};
+      this.assignPrefixedTranslation(
+        translations[prefix[0]],
+        prefix.slice(1),
+        property,
+        value,
+      );
+    } else {
+      translations[property] = value;
+    }
   }
 
   protected async parseLanguages(): Promise<string[]> {

@@ -32,20 +32,41 @@ export const getDirectories = async (source: string) => {
   );
 };
 
-export const getFiles = async (dirPath: string, pattern: RegExp) => {
-  const dirs = await readdir(dirPath, { withFileTypes: true });
+export const getFiles = async (
+  dirPath: string,
+  pattern: RegExp,
+  includeDeepFolders: boolean,
+): Promise<string[]> => {
+  const dirs: (Dirent | string)[] = await readdir(dirPath, {
+    withFileTypes: true,
+  });
 
-  return (
-    await filterAsync(dirs, async (f: Dirent | string) => {
-      try {
-        if (typeof f === 'string') {
-          return (await exists(path.join(dirPath, f))) && pattern.test(f);
-        } else {
-          return f.isFile() && pattern.test(f.name);
+  const files: (Dirent | string)[] = [];
+  const deepFiles: string[] = [];
+
+  for (const f of dirs) {
+    try {
+      if (typeof f === 'string') {
+        if ((await exists(path.join(dirPath, f))) && pattern.test(f)) {
+          files.push(f);
         }
-      } catch {
-        return false;
+      } else if (f.isFile() && pattern.test(f.name)) {
+        files.push(f);
+      } else if (includeDeepFolders && f.isDirectory()) {
+        deepFiles.push(
+          ...(await getFiles(
+            path.join(dirPath, f.name),
+            pattern,
+            includeDeepFolders,
+          )),
+        );
       }
-    })
-  ).map((f) => path.join(dirPath, typeof f === 'string' ? f : f.name));
+    } catch {
+      continue;
+    }
+  }
+
+  return files
+    .map((f) => path.join(dirPath, typeof f === 'string' ? f : f.name))
+    .concat(deepFiles);
 };

@@ -23,7 +23,10 @@ export function getI18nServiceFromGraphQLContext(
   graphqlContext: any,
 ): I18nContext {
   const [, , ctx] = graphqlContext;
-  return new I18nContext(ctx.i18nLang, ctx.i18nService);
+  return new I18nContext(
+    ctx.i18nLang ?? ctx.req.i18nLang,
+    ctx.i18nService ?? ctx.req.i18nService,
+  );
 }
 
 export function getI18nServiceFromRpcContext(rpcContext: any): I18nContext {

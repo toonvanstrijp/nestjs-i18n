@@ -23,3 +23,9 @@ await i18n.t('test.animals.0'); // cat
 await i18n.t('test.animals.1'); // dog
 await i18n.t('test.animals.2'); // elephant
 ```
+
+You can also get the whole array, but translated.
+
+```typescript title="src/app.controller.ts"
+await i18n.t('test.animals') // ['cat', 'dog', 'elephant']
+```

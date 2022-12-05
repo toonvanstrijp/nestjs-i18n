@@ -16,7 +16,7 @@ import {
   I18nService,
   I18nValidationExceptionFilter,
 } from '../../../src';
-import { I18nRequestScopeService } from '../../../src/services/i18n-request-scope.service';
+import { RequestContext } from '../../../src/utils/context';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { exampleErrorFormatter } from '../examples/example.functions';
 import { TestException, TestExceptionFilter } from '../filter/test.filter';
@@ -26,10 +26,7 @@ import { Hero, HeroById } from '../interfaces/hero.interface';
 @Controller('hello')
 @UseFilters(new TestExceptionFilter())
 export class HelloController {
-  constructor(
-    private i18n: I18nService,
-    private i18nRequestScope: I18nRequestScopeService,
-  ) {}
+  constructor(private i18n: I18nService) {}
 
   @Get()
   hello(@I18nLang() lang: string): any {
@@ -83,22 +80,22 @@ export class HelloController {
 
   @Get('/request-scope')
   helloRequestScope(): any {
-    return this.i18nRequestScope.translate('test.HELLO');
+    return RequestContext.getI18nContext().translate('test.HELLO');
   }
 
   @Get('/request-scope/typed')
   helloRequestScopeTyped(): string {
-    return this.i18nRequestScope.translate<string>('test.HELLO');
+    return RequestContext.getI18nContext().translate<string>('test.HELLO');
   }
 
   @Get('/short/request-scope')
   helloShortRequestScope(): any {
-    return this.i18nRequestScope.t('test.HELLO');
+    return RequestContext.getI18nContext().t('test.HELLO');
   }
 
   @Get('/short/request-scope/typed')
   helloShortRequestScopeTyped(): string {
-    return this.i18nRequestScope.t<string>('test.HELLO');
+    return RequestContext.getI18nContext().t<string>('test.HELLO');
   }
 
   @Get('/object')
@@ -115,26 +112,26 @@ export class HelloController {
 
   @Get('/plurarization')
   plurarization(@Query('count') count: string): any {
-    return this.i18nRequestScope.translate('test.day_interval', {
+    return RequestContext.getI18nContext().translate('test.day_interval', {
       args: { count: parseInt(count) },
     });
   }
 
   @Get('/nested')
   nested(@Query('username') username: string): any {
-    return this.i18nRequestScope.translate('test.nested', {
+    return RequestContext.getI18nContext().translate('test.nested', {
       args: { username },
     });
   }
 
   @Get('/nested-no-args')
   nestedNoArgs(): any {
-    return this.i18nRequestScope.translate('test.nested-no-args');
+    return RequestContext.getI18nContext().translate('test.nested-no-args');
   }
 
   @Get('/deeply-nested')
   deeplyNested(@Query('count') count: number): any {
-    return this.i18nRequestScope.translate('test.nest1.nest2.nest3', {
+    return RequestContext.getI18nContext().translate('test.nest1.nest2.nest3', {
       args: { count },
     });
   }

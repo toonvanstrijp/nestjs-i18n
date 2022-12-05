@@ -14,11 +14,9 @@ import {
   I18nValidationExceptionFilterErrorFormatterOption,
 } from '../interfaces/i18n-validation-exception-filter.interface';
 import { Either } from '../types/either.type';
+import { RequestContext } from '../utils/context';
 import { mapChildrenToValidationErrors } from '../utils/format';
-import {
-  formatI18nErrors,
-  getI18nContextFromArgumentsHost,
-} from '../utils/util';
+import { formatI18nErrors } from '../utils/util';
 
 type I18nValidationExceptionFilterOptions = Either<
   I18nValidationExceptionFilterDetailedErrorsOption,
@@ -33,7 +31,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     },
   ) {}
   catch(exception: I18nValidationException, host: ArgumentsHost) {
-    const i18n = getI18nContextFromArgumentsHost(host);
+    const i18n = RequestContext.getI18nContext();
 
     const errors = formatI18nErrors(exception.errors ?? [], i18n.service, {
       lang: i18n.lang,

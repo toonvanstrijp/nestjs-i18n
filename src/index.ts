@@ -11,7 +11,6 @@ export * from './i18n.context';
 
 // services
 export * from './services/i18n.service';
-export * from './services/i18n-request-scope.service';
 
 // interfaces
 export * from './interfaces/i18n-options.interface';
@@ -49,10 +48,6 @@ export { I18nMiddleware } from './middlewares/i18n.middleware';
 
 // utils
 export {
-  getI18nContextFromRequest,
-  getI18nServiceFromGraphQLContext,
-  getI18nServiceFromRpcContext,
-  getI18nContextFromArgumentsHost,
   i18nValidationErrorFactory,
   i18nValidationMessage,
 } from './utils/util';

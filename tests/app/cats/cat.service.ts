@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { RequestContext } from '../../../src/utils/context';
 import { CatModel } from './cat.model';
 
 @Injectable()
@@ -23,6 +24,8 @@ export class CatService {
   }
 
   findById(id: number): CatModel {
-    return this.cats.find((cat) => cat.id === id);
+    const cat = this.cats.find((cat) => cat.id === id);
+    cat.description = RequestContext.getI18nContext().translate('test.cat');
+    return cat;
   }
 }

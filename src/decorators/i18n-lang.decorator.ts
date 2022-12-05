@@ -1,14 +1,9 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { getContextObject } from '../utils/context';
+import { createParamDecorator } from '@nestjs/common';
+import { getContextObject, RequestContext } from '../utils/context';
 
-export const I18nLang = createParamDecorator(
-  (data, context: ExecutionContext) => {
-    const ctx = getContextObject(context);
+export const I18nLang = createParamDecorator((data, context) => {
+  const i18n =
+    RequestContext.getI18nContext() ?? getContextObject(context)?.i18nContext;
 
-    if (!ctx) {
-      throw Error(`context type: ${context.getType()} not supported`);
-    }
-
-    return ctx.i18nLang;
-  },
-);
+  return i18n.lang;
+});

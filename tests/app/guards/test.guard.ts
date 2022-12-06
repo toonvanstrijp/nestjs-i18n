@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { RequestContext } from '../../../src/utils/context';
+import { I18nContext } from '../../../src';
 
 @Injectable()
 export class TestGuard implements CanActivate {
@@ -10,7 +10,7 @@ export class TestGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     let response = context.switchToHttp().getResponse();
 
-    const i18n = RequestContext.getI18nContext();
+    const i18n = I18nContext.current();
     response.header(
       'X-Test',
       i18n.t('test.CURRENT_LANGUAGE', { args: { lang: i18n.lang } }),

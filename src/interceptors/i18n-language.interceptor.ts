@@ -18,7 +18,7 @@ import { ModuleRef } from '@nestjs/core';
 import { shouldResolve } from '../utils/util';
 import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
 import { Observable } from 'rxjs';
-import { getContextObject, RequestContext } from '../utils/context';
+import { getContextObject } from '../utils/context';
 
 @Injectable()
 export class I18nLanguageInterceptor implements NestInterceptor {
@@ -35,7 +35,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Promise<Observable<any>> {
-    const requestContext = RequestContext.currentRequestContext();
+    const i18nContext = I18nContext.current();
     let language = null;
 
     const ctx = getContextObject(context);
@@ -68,9 +68,9 @@ export class I18nLanguageInterceptor implements NestInterceptor {
       ctx.app.locals.i18nLang = ctx.i18nLang;
     }
 
-    if (!requestContext) {
-      const i18nContext = new I18nContext(ctx.i18nLang, this.i18nService);
-      return RequestContext.createAsync(i18nContext, async (error) => {
+    if (!i18nContext) {
+      ctx.i18nContext = new I18nContext(ctx.i18nLang, this.i18nService);
+      return I18nContext.createAsync(ctx.i18nContext, async (error) => {
         if (error) {
           throw error;
         }

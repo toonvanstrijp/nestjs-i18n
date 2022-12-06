@@ -16,7 +16,6 @@ import {
   I18nService,
   I18nValidationExceptionFilter,
 } from '../../../src';
-import { RequestContext } from '../../../src/utils/context';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { exampleErrorFormatter } from '../examples/example.functions';
 import { TestException, TestExceptionFilter } from '../filter/test.filter';
@@ -80,22 +79,22 @@ export class HelloController {
 
   @Get('/request-scope')
   helloRequestScope(): any {
-    return RequestContext.getI18nContext().translate('test.HELLO');
+    return I18nContext.current().translate('test.HELLO');
   }
 
   @Get('/request-scope/typed')
   helloRequestScopeTyped(): string {
-    return RequestContext.getI18nContext().translate<string>('test.HELLO');
+    return I18nContext.current().translate<string>('test.HELLO');
   }
 
   @Get('/short/request-scope')
   helloShortRequestScope(): any {
-    return RequestContext.getI18nContext().t('test.HELLO');
+    return I18nContext.current().t('test.HELLO');
   }
 
   @Get('/short/request-scope/typed')
   helloShortRequestScopeTyped(): string {
-    return RequestContext.getI18nContext().t<string>('test.HELLO');
+    return I18nContext.current().t<string>('test.HELLO');
   }
 
   @Get('/object')
@@ -112,26 +111,26 @@ export class HelloController {
 
   @Get('/plurarization')
   plurarization(@Query('count') count: string): any {
-    return RequestContext.getI18nContext().translate('test.day_interval', {
+    return I18nContext.current().translate('test.day_interval', {
       args: { count: parseInt(count) },
     });
   }
 
   @Get('/nested')
   nested(@Query('username') username: string): any {
-    return RequestContext.getI18nContext().translate('test.nested', {
+    return I18nContext.current().translate('test.nested', {
       args: { username },
     });
   }
 
   @Get('/nested-no-args')
   nestedNoArgs(): any {
-    return RequestContext.getI18nContext().translate('test.nested-no-args');
+    return I18nContext.current().translate('test.nested-no-args');
   }
 
   @Get('/deeply-nested')
   deeplyNested(@Query('count') count: number): any {
-    return RequestContext.getI18nContext().translate('test.nest1.nest2.nest3', {
+    return I18nContext.current().translate('test.nest1.nest2.nest3', {
       args: { count },
     });
   }

@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import * as path from 'path';
 import { I18nLoader, I18nModule, I18nService } from '../src';
 
-describe('i18n module including deep folders', () => {
+describe('i18n module including subfolders', () => {
   let i18nService: I18nService;
   let i18nLoader: I18nLoader;
 
@@ -27,15 +27,15 @@ describe('i18n module including deep folders', () => {
     expect(i18nService).toBeTruthy();
   });
 
-  it('i18n service should return translation from deep folder for default language', () => {
-    expect(i18nService.translate('deep-folder.deep-test.HELLO')).toBe(
-      'Hello Deep Folder',
+  it('i18n service should return translation from subfolder for default language', () => {
+    expect(i18nService.translate('subfolder.sub-test.HELLO')).toBe(
+      'Hello Subfolder',
     );
   });
 
-  it('i18n service should return translation from deep folder for French', () => {
+  it('i18n service should return translation from subfolder for French', () => {
     expect(
-      i18nService.translate('deep-folder.deep-test.HELLO', { lang: 'fr' }),
-    ).toBe('Bonjour dossier profond');
+      i18nService.translate('subfolder.sub-test.HELLO', { lang: 'fr' }),
+    ).toBe('Bonjour sous-dossier');
   });
 });

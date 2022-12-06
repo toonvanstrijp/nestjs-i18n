@@ -145,9 +145,9 @@ describe('i18n module', () => {
     );
   });
 
-  it('i18n service should NOT return translation from deep folder by default', () => {
-    expect(i18nService.translate('deep-folder.deep-test.HELLO')).toBe(
-      'deep-folder.deep-test.HELLO',
+  it('i18n service should NOT return translation from subfolders by default', () => {
+    expect(i18nService.translate('subfolder.sub-test.HELLO')).toBe(
+      'subfolder.sub-test.HELLO',
     );
   });
 

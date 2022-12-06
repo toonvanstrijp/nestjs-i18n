@@ -18,7 +18,7 @@
 
 - **Variable formatting** ([instructions](https://nestjs-i18n.com/guides/formatting))
 - **Nested** translations ([instructions](https://nestjs-i18n.com/guides/nested))
-- **Deep** folders ([instructions](https://nestjs-i18n.com/guides/deep))
+- **Subfolders** ([instructions](https://nestjs-i18n.com/concepts/loader#subfolders))
 - **Fallback** languages ([instructions](https://nestjs-i18n.com/guides/fallback-languages))
 - **Live** reloading 🎉
 - **Plurals** support ([instructions](https://nestjs-i18n.com/guides/plurals))

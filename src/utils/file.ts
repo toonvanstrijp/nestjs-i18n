@@ -35,7 +35,7 @@ export const getDirectories = async (source: string) => {
 export const getFiles = async (
   dirPath: string,
   pattern: RegExp,
-  includeDeepFolders: boolean,
+  includeSubfolders: boolean,
 ): Promise<string[]> => {
   const dirs: (Dirent | string)[] = await readdir(dirPath, {
     withFileTypes: true,
@@ -52,12 +52,12 @@ export const getFiles = async (
         }
       } else if (f.isFile() && pattern.test(f.name)) {
         files.push(f);
-      } else if (includeDeepFolders && f.isDirectory()) {
+      } else if (includeSubfolders && f.isDirectory()) {
         deepFiles.push(
           ...(await getFiles(
             path.join(dirPath, f.name),
             pattern,
-            includeDeepFolders,
+            includeSubfolders,
           )),
         );
       }

@@ -16,7 +16,7 @@ import { switchMap } from 'rxjs/operators';
 
 export interface I18nAbstractLoaderOptions {
   path: string;
-  includeDeepFolders?: boolean;
+  includeSubfolders?: boolean;
   filePattern?: string;
   watch?: boolean;
 }
@@ -102,7 +102,7 @@ export abstract class I18nAbstractLoader
       i18nPath,
     ].reduce(async (f: Promise<string[]>, p: string) => {
       (await f).push(
-        ...(await getFiles(p, pattern, this.options.includeDeepFolders)),
+        ...(await getFiles(p, pattern, this.options.includeSubfolders)),
       );
       return f;
     }, Promise.resolve([]));

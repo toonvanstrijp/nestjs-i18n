@@ -6,13 +6,13 @@ sidebar_position: 3
 
 `nestjs-i18n` supports translations in deep (nested) folders.
 
-You can use deep (nested) translation folders by setting the loader option `includeDeepFolders: true`.
+You can use deep (nested) translation folders by setting the loader option `includeSubfolders: true`.
 
 ```ts
 I18nModule.forRoot({
   loaderOptions: {
     path: path.join(__dirname, '/i18n/'),
-    includeDeepFolders: true,
+    includeSubfolders: true,
   },
 }),
 ```

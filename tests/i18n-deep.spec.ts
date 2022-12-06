@@ -13,7 +13,7 @@ describe('i18n module including deep folders', () => {
           fallbackLanguage: 'en',
           loaderOptions: {
             path: path.join(__dirname, '/i18n/'),
-            includeDeepFolders: true,
+            includeSubfolders: true,
           },
         }),
       ],

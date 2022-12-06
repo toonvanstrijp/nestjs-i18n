@@ -66,7 +66,12 @@ export class I18nMiddleware implements NestMiddleware {
     }
 
     req.i18nContext = new I18nContext(req.i18nLang, this.i18nService);
-    I18nContext.create(req.i18nContext, next);
+
+    if (this.i18nOptions.skipAsyncHook) {
+      next();
+    } else {
+      I18nContext.create(req.i18nContext, next);
+    }
   }
 
   private async getResolver(r: I18nOptionResolver): Promise<I18nResolver> {

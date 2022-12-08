@@ -139,9 +139,16 @@ describe('i18n module', () => {
       defaultValue:
         'the translation is missing, nested: $t(test.HELLO), arg: {hello}',
       args: { hello: 'world' },
-
     });
-    expect(result).toBe('the translation is missing, nested: Hello, arg: world');
+    expect(result).toBe(
+      'the translation is missing, nested: Hello, arg: world',
+    );
+  });
+
+  it('i18n service should NOT return translation from subfolders by default', () => {
+    expect(i18nService.translate('subfolder.sub-test.HELLO')).toBe(
+      'subfolder.sub-test.HELLO',
+    );
   });
 
   describe('i18n should refresh manually', () => {

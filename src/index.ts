@@ -11,6 +11,7 @@ export * from './i18n.context';
 
 // services
 export * from './services/i18n.service';
+export * from './services/i18n-context.service';
 export * from './services/i18n-request-scope.service';
 
 // interfaces

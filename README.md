@@ -39,6 +39,7 @@ To get started follow the [**quickstart**](https://nestjs-i18n.com/quick-start),
 `nestjs-i18n` is MIT licensed.
 
 ## Breaking changes:
+- from V9.3.0 on we removed the `I18nRequestScopeService`. This because we now have `async_hooks` support. This allows you to get the current `I18nContext` by doing `I18nContext.current()`.
 
 - from V9.0.0 on we renamed the `parser` property to `loader`. The `translate` function no longer returns a promise 🎉. A lot of new features and new docs, see [nestjs-i18n.com](https://nestjs-i18n.com/).
 

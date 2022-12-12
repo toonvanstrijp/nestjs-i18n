@@ -1,10 +1,13 @@
 {
   "name": "nestjs-i18n",
-  "version": "9.3.0",
+  "version": "10.0.0",
   "homepage": "https://nestjs-i18n.com",
   "description": "The i18n module for Nest.",
   "author": "Toon van Strijp",
   "license": "MIT",
+  "engines": {
+    "node": ">=16"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ToonvanStrijp/nestjs-i18n"
@@ -39,9 +42,9 @@
   },
   "devDependencies": {
     "@apollo/client": "^3.6.9",
-    "@docusaurus/core": "^2.0.0-beta.21",
-    "@docusaurus/module-type-aliases": "^2.0.0-beta.21",
-    "@docusaurus/preset-classic": "^2.0.0-beta.21",
+    "@docusaurus/core": "^2.2.0",
+    "@docusaurus/module-type-aliases": "^2.2.0",
+    "@docusaurus/preset-classic": "^2.2.0",
     "@grpc/grpc-js": "^1.6.7",
     "@grpc/proto-loader": "^0.6.13",
     "@mdx-js/react": "^1.6.22",
@@ -91,7 +94,6 @@
   },
   "dependencies": {
     "accept-language-parser": "^1.5.0",
-    "async_hooks": "^1.0.0",
     "chokidar": "^3.5.3",
     "cookie": "^0.5.0",
     "iterare": "^1.2.1",

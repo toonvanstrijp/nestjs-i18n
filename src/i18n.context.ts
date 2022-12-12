@@ -1,6 +1,8 @@
+import { ExecutionContext } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
 import { I18nValidationError } from './interfaces/i18n-validation-error.interface';
 import { I18nService, TranslateOptions } from './services/i18n.service';
+import { getContextObject } from './utils/context';
 
 export class I18nContext {
   private static storage = new AsyncLocalStorage<I18nContext>();
@@ -47,7 +49,7 @@ export class I18nContext {
     return this.storage.run(ctx, next);
   }
 
-  static current(): I18nContext | undefined {
-    return this.storage.getStore();
+  static current(context?: ExecutionContext): I18nContext | undefined {
+    return this.storage.getStore() ?? getContextObject(context)?.i18nContext;
   }
 }

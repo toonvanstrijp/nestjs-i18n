@@ -2,8 +2,10 @@ import { ExecutionContext, Logger } from '@nestjs/common';
 
 const logger = new Logger('I18nService');
 
-export function getContextObject(context: ExecutionContext): any {
-  switch (context.getType() as string) {
+export function getContextObject(context?: ExecutionContext): any {
+  const contextType = context?.getType<string>() ?? 'undefined';
+
+  switch (contextType) {
     case 'http':
       return context.switchToHttp().getRequest();
     case 'graphql':
@@ -11,6 +13,6 @@ export function getContextObject(context: ExecutionContext): any {
     case 'rpc':
       return context.switchToRpc().getContext();
     default:
-      logger.warn(`context type: ${context.getType()} not supported`);
+      logger.warn(`context type: ${contextType} not supported`);
   }
 }

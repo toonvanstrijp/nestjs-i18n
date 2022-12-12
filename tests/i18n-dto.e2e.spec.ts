@@ -44,6 +44,8 @@ describe('i18n module e2e dto', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         exceptionFactory: i18nValidationErrorFactory,
+        // Enable this as soon as https://github.com/nestjs/nest/pull/10697 is merged
+        // validateCustomDecorators: true,
       }),
     );
 

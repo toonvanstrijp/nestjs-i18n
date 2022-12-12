@@ -17,7 +17,6 @@ import {
   I18N_TRANSLATIONS_SUBJECT,
 } from './i18n.constants';
 import { I18nService } from './services/i18n.service';
-import { I18nRequestScopeService } from './services/i18n-request-scope.service';
 import {
   I18nAsyncOptions,
   I18nOptions,
@@ -33,7 +32,7 @@ import {
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
-import { shouldResolve } from './utils/util';
+import { isNestMiddleware, shouldResolve, usingFastify } from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
 import { Observable, BehaviorSubject } from 'rxjs';
@@ -93,7 +92,12 @@ export class I18nModule implements OnModuleInit, NestModule {
 
   configure(consumer: MiddlewareConsumer) {
     if (this.i18nOptions.disableMiddleware) return;
-    consumer.apply(I18nMiddleware).forRoutes('*');
+
+    consumer
+      .apply(I18nMiddleware)
+      .forRoutes(
+        isNestMiddleware(consumer) && usingFastify(consumer) ? '(.*)' : '*',
+      );
   }
 
   static forRoot(options: I18nOptions): DynamicModule {
@@ -179,7 +183,6 @@ export class I18nModule implements OnModuleInit, NestModule {
           useClass: I18nLanguageInterceptor,
         },
         I18nService,
-        I18nRequestScopeService,
         i18nOptions,
         translationsProvider,
         languagesProvider,
@@ -190,13 +193,7 @@ export class I18nModule implements OnModuleInit, NestModule {
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
       ],
-      exports: [
-        I18N_OPTIONS,
-        I18N_RESOLVERS,
-        I18nService,
-        I18nRequestScopeService,
-        languagesProvider,
-      ],
+      exports: [I18N_OPTIONS, I18N_RESOLVERS, I18nService, languagesProvider],
     };
   }
 
@@ -245,7 +242,6 @@ export class I18nModule implements OnModuleInit, NestModule {
         asyncLanguagesProvider,
         asyncLoaderOptionsProvider,
         I18nService,
-        I18nRequestScopeService,
         resolversProvider,
         i18nLoaderProvider,
         i18nLanguagesSubjectProvider,
@@ -256,7 +252,6 @@ export class I18nModule implements OnModuleInit, NestModule {
         I18N_OPTIONS,
         I18N_RESOLVERS,
         I18nService,
-        I18nRequestScopeService,
         asyncLanguagesProvider,
       ],
     };

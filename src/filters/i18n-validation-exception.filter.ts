@@ -5,6 +5,7 @@ import {
   ValidationError,
 } from '@nestjs/common';
 import iterate from 'iterare';
+import { I18nContext } from '../i18n.context';
 import {
   I18nValidationError,
   I18nValidationException,
@@ -15,10 +16,7 @@ import {
 } from '../interfaces/i18n-validation-exception-filter.interface';
 import { Either } from '../types/either.type';
 import { mapChildrenToValidationErrors } from '../utils/format';
-import {
-  formatI18nErrors,
-  getI18nContextFromArgumentsHost,
-} from '../utils/util';
+import { formatI18nErrors } from '../utils/util';
 
 type I18nValidationExceptionFilterOptions = Either<
   I18nValidationExceptionFilterDetailedErrorsOption,
@@ -33,7 +31,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     },
   ) {}
   catch(exception: I18nValidationException, host: ArgumentsHost) {
-    const i18n = getI18nContextFromArgumentsHost(host);
+    const i18n = I18nContext.current();
 
     const errors = formatI18nErrors(exception.errors ?? [], i18n.service, {
       lang: i18n.lang,

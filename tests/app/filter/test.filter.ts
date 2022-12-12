@@ -5,7 +5,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { getI18nContextFromArgumentsHost } from '../../../src/utils/util';
+import { I18nContext } from '../../../src';
 
 export class TestException extends HttpException {
   constructor() {
@@ -16,7 +16,7 @@ export class TestException extends HttpException {
 @Catch(TestException)
 export class TestExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
-    const i18n = getI18nContextFromArgumentsHost(host);
+    const i18n = I18nContext.current();
     const response = host.switchToHttp().getResponse<any>();
 
     response.status(500).send({

@@ -7,7 +7,12 @@ import {
   CallHandler,
 } from '@nestjs/common';
 import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
-import { I18nOptions, I18nResolver, ResolverWithOptions } from '../index';
+import {
+  I18nContext,
+  I18nOptions,
+  I18nResolver,
+  ResolverWithOptions,
+} from '../index';
 import { I18nService } from '../services/i18n.service';
 import { ModuleRef } from '@nestjs/core';
 import { shouldResolve } from '../utils/util';
@@ -30,6 +35,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Promise<Observable<any>> {
+    const i18nContext = I18nContext.current();
     let language = null;
 
     const ctx = getContextObject(context);
@@ -39,28 +45,39 @@ export class I18nLanguageInterceptor implements NestInterceptor {
       return next.handle();
     }
 
-    if (ctx) {
-      ctx.i18nService = this.i18nService;
+    ctx.i18nService = this.i18nService;
 
-      for (const r of this.i18nResolvers) {
-        const resolver = await this.getResolver(r);
+    for (const r of this.i18nResolvers) {
+      const resolver = await this.getResolver(r);
 
-        language = resolver.resolve(context);
+      language = resolver.resolve(context);
 
-        if (language instanceof Promise) {
-          language = await (language as Promise<string>);
-        }
-
-        if (language !== undefined) {
-          break;
-        }
+      if (language instanceof Promise) {
+        language = await (language as Promise<string>);
       }
 
-      ctx.i18nLang = language || this.i18nOptions.fallbackLanguage;
+      if (language !== undefined) {
+        break;
+      }
+    }
 
-      // Pass down language to handlebars
-      if (ctx.app && ctx.app.locals) {
-        ctx.app.locals.i18nLang = ctx.i18nLang;
+    ctx.i18nLang = language || this.i18nOptions.fallbackLanguage;
+
+    // Pass down language to handlebars
+    if (ctx.app && ctx.app.locals) {
+      ctx.app.locals.i18nLang = ctx.i18nLang;
+    }
+
+    if (!i18nContext) {
+      ctx.i18nContext = new I18nContext(ctx.i18nLang, this.i18nService);
+
+      if (!this.i18nOptions.skipAsyncHook) {
+        return I18nContext.createAsync(ctx.i18nContext, async (error) => {
+          if (error) {
+            throw error;
+          }
+          return next.handle();
+        });
       }
     }
 

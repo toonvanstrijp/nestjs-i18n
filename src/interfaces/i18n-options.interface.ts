@@ -50,6 +50,7 @@ export interface I18nOptions {
   logging?: boolean;
   viewEngine?: 'hbs' | 'pug' | 'ejs';
   disableMiddleware?: boolean;
+  skipAsyncHook?: boolean;
   validatorOptions?: I18nValidatorOptions;
 }
 

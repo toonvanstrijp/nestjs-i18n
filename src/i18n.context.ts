@@ -2,7 +2,7 @@ import { ExecutionContext } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
 import { I18nValidationError } from './interfaces/i18n-validation-error.interface';
 import { I18nService, TranslateOptions } from './services/i18n.service';
-import { IfAny, Path, PathValue } from './types';
+import { Path, PathValue } from './types';
 import { getContextObject } from './utils/context';
 
 export class I18nContext<K = Record<string, unknown>> {

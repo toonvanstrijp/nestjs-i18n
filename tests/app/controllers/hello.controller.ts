@@ -16,6 +16,7 @@ import {
   I18nService,
   I18nValidationExceptionFilter,
 } from '../../../src';
+import { I18nTranslations } from '../../generated/i18n.generated';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { exampleErrorFormatter } from '../examples/example.functions';
 import { TestException, TestExceptionFilter } from '../filter/test.filter';
@@ -25,7 +26,7 @@ import { Hero, HeroById } from '../interfaces/hero.interface';
 @Controller('hello')
 @UseFilters(new TestExceptionFilter())
 export class HelloController {
-  constructor(private i18n: I18nService) {}
+  constructor(private i18n: I18nService<I18nTranslations>) {}
 
   @Get()
   hello(@I18nLang() lang: string): any {

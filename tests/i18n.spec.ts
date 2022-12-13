@@ -198,7 +198,7 @@ describe('i18n module', () => {
 });
 
 describe('i18n module without trailing slash in path', () => {
-  let i18nService: I18nService;
+  let i18nService: I18nService<I18nTranslations>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -225,14 +225,14 @@ describe('i18n module without trailing slash in path', () => {
   });
 
   it('i18n service should return key if translation is not found', () => {
-    expect(i18nService.translate('NOT_EXISTING_KEY', { lang: 'en' })).toBe(
+    expect(i18nService.translate<any>('NOT_EXISTING_KEY', { lang: 'en' })).toBe(
       'NOT_EXISTING_KEY',
     );
   });
 });
 
 describe('i18n module loads custom files', () => {
-  let i18nService: I18nService;
+  let i18nService: I18nService<I18nTranslations>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -255,7 +255,7 @@ describe('i18n module loads custom files', () => {
   });
 
   it('i18n service should return correct translation', () => {
-    expect(i18nService.translate('test.custom', { lang: 'en' })).toBe(
+    expect(i18nService.translate<any>('test.custom', { lang: 'en' })).toBe(
       'my custom text',
     );
   });
@@ -268,7 +268,7 @@ describe('i18n module loads custom files', () => {
 });
 
 describe('i18n module loads custom files with wrong file pattern', () => {
-  let i18nService: I18nService;
+  let i18nService: I18nService<I18nTranslations>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -290,7 +290,7 @@ describe('i18n module loads custom files with wrong file pattern', () => {
   });
 
   it('i18n service should return correct translation', () => {
-    expect(i18nService.translate('test.custom', { lang: 'en' })).toBe(
+    expect(i18nService.translate<any>('test.custom', { lang: 'en' })).toBe(
       'my custom text',
     );
   });
@@ -303,7 +303,7 @@ describe('i18n module loads custom files with wrong file pattern', () => {
 });
 
 describe('i18n module with loader watch', () => {
-  let i18nService: I18nService;
+  let i18nService: I18nService<I18nTranslations>;
   let i18nLoader: I18nLoader;
 
   const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
@@ -354,7 +354,7 @@ describe('i18n module with loader watch', () => {
       'utf8',
     );
     await new Promise((resolve) => setTimeout(resolve, 500));
-    const translation = i18nService.translate('test2.WORLD', {
+    const translation = i18nService.translate<any>('test2.WORLD', {
       lang: 'nl',
     });
     expect(translation).toEqual('wereld');
@@ -373,12 +373,6 @@ describe('i18n module with loader watch', () => {
     expect(Object.keys(translations)).toContain('de');
   });
 });
-
-type I18N = {
-  test: {
-    HELLO: (params: { test: string }) => string;
-  };
-};
 
 describe('i18n module with fallbacks', () => {
   let i18nService: I18nService<I18nTranslations>;

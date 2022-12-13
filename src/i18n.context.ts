@@ -2,7 +2,7 @@ import { ExecutionContext } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
 import { I18nValidationError } from './interfaces/i18n-validation-error.interface';
 import { I18nService, TranslateOptions } from './services/i18n.service';
-import { Path, PathValue } from './types';
+import { IfAny, Path, PathValue } from './types';
 import { getContextObject } from './utils/context';
 
 export class I18nContext<K = Record<string, unknown>> {
@@ -10,28 +10,28 @@ export class I18nContext<K = Record<string, unknown>> {
   private static counter = 1;
   readonly id = I18nContext.counter++;
 
-  get i18n(): I18nContext | undefined {
+  get i18n(): I18nContext<K> | undefined {
     return this;
   }
 
-  constructor(readonly lang: string, readonly service: I18nService) {}
+  constructor(readonly lang: string, readonly service: I18nService<K>) {}
 
   public translate<P extends Path<K> = any, R = PathValue<K, P>>(
     key: P,
     options?: TranslateOptions,
-  ): R {
+  ) {
     options = {
       lang: this.lang,
       ...options,
     };
-    return this.service.translate(key, options);
+    return this.service.translate<P, R>(key, options);
   }
 
   public t<P extends Path<K> = any, R = PathValue<K, P>>(
     key: P,
     options?: TranslateOptions,
-  ): R {
-    return this.translate(key, options);
+  ) {
+    return this.translate<P, R>(key, options);
   }
 
   public validate(

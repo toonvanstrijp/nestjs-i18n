@@ -44,3 +44,5 @@ export type PathValue<
   : P extends keyof T
   ? T[P]
   : never;
+
+export type IfAny<T, Y, N> = 0 extends 1 & T ? Y : N;

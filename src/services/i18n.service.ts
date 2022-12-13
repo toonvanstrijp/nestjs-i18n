@@ -14,7 +14,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
 import { validate } from 'class-validator';
 import { formatI18nErrors } from '../utils/util';
-import { Path, PathValue } from '../types';
+import { IfAny, Path, PathValue } from '../types';
 
 const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
 
@@ -67,7 +67,7 @@ export class I18nService<K = Record<string, unknown>>
   public translate<P extends Path<K> = any, R = PathValue<K, P>>(
     key: P,
     options?: TranslateOptions,
-  ): R {
+  ): IfAny<R, string, R> {
     options = {
       lang: this.i18nOptions.fallbackLanguage,
       ...options,
@@ -77,7 +77,7 @@ export class I18nService<K = Record<string, unknown>>
     let { lang } = options;
 
     if (lang === 'debug') {
-      return key as unknown as R;
+      return key as unknown as IfAny<R, string, R>;
     }
 
     lang =
@@ -116,13 +116,13 @@ export class I18nService<K = Record<string, unknown>>
       }
     }
 
-    return (translation ?? key) as unknown as R;
+    return (translation ?? key) as unknown as IfAny<R, string, R>;
   }
 
   public t<P extends Path<K> = any, R = PathValue<K, P>>(
     key: P,
     options?: TranslateOptions,
-  ): R {
+  ): IfAny<R, string, R> {
     return this.translate(key, options);
   }
 

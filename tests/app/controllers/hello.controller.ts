@@ -34,7 +34,7 @@ export class HelloController {
 
   @Get('/typed')
   helloTyped(@I18nLang() lang: string): string {
-    return this.i18n.translate<string>('test.HELLO', { lang });
+    return this.i18n.translate('test.HELLO', { lang });
   }
 
   @Get('/index')
@@ -54,7 +54,7 @@ export class HelloController {
 
   @Get('/short/typed')
   helloShortTyped(@I18nLang() lang: string): string {
-    return this.i18n.t<string>('test.HELLO', { lang });
+    return this.i18n.t('test.HELLO', { lang });
   }
 
   @Get('/context')
@@ -64,7 +64,7 @@ export class HelloController {
 
   @Get('/context/typed')
   helloContextTyped(@I18n() i18n: I18nContext): string {
-    return i18n.translate<string>('test.HELLO');
+    return i18n.translate('test.HELLO');
   }
 
   @Get('/short/context')
@@ -74,7 +74,7 @@ export class HelloController {
 
   @Get('/short/context/typed')
   helloShortContextTyped(@I18n() i18n: I18nContext): string {
-    return i18n.t<string>('test.HELLO');
+    return i18n.t('test.HELLO');
   }
 
   @Get('/request-scope')
@@ -84,7 +84,7 @@ export class HelloController {
 
   @Get('/request-scope/typed')
   helloRequestScopeTyped(): string {
-    return I18nContext.current().translate<string>('test.HELLO');
+    return I18nContext.current().translate('test.HELLO');
   }
 
   @Get('/short/request-scope')
@@ -94,7 +94,7 @@ export class HelloController {
 
   @Get('/short/request-scope/typed')
   helloShortRequestScopeTyped(): string {
-    return I18nContext.current().t<string>('test.HELLO');
+    return I18nContext.current().t('test.HELLO');
   }
 
   @Get('/object')

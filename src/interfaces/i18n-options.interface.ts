@@ -52,6 +52,7 @@ export interface I18nOptions {
   disableMiddleware?: boolean;
   skipAsyncHook?: boolean;
   validatorOptions?: I18nValidatorOptions;
+  outputPath?: string;
 }
 
 export interface I18nOptionsFactory {

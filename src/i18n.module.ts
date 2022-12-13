@@ -5,6 +5,7 @@ import {
   Logger,
   MiddlewareConsumer,
   Module,
+  OnModuleDestroy,
   Provider,
 } from '@nestjs/common';
 import {
@@ -32,13 +33,23 @@ import {
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
-import { isNestMiddleware, shouldResolve, usingFastify } from './utils/util';
+import {
+  convertObjectToTypeDefinition,
+  isNestMiddleware,
+  shouldResolve,
+  usingFastify,
+} from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import * as format from 'string-format';
 import { I18nJsonLoader } from './loaders/i18n.json.loader';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
+import { mergeDeep } from './utils/merge';
+import * as ts from 'typescript';
+import { factory } from 'typescript';
+import { writeFileSync, mkdirSync } from 'fs';
+import path = require('path');
 
 const logger = new Logger('I18nService');
 
@@ -51,7 +62,9 @@ const defaultOptions: Partial<I18nOptions> = {
 
 @Global()
 @Module({})
-export class I18nModule implements OnModuleInit, NestModule {
+export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
+  private unsubscribe = new Subject<void>();
+
   constructor(
     private readonly i18n: I18nService,
     @Inject(I18N_TRANSLATIONS)
@@ -61,12 +74,44 @@ export class I18nModule implements OnModuleInit, NestModule {
   ) {}
 
   async onModuleInit() {
-    // TODO: Generate typescript file
-    // this.translations.pipe(
-    //   map(t => Object.keys(t).reduce((result, key) => mergeDeep(result, t[key]), {}))
-    // ).subscribe(t => {
-    //   console.log(t)
-    // });
+    if (
+      process.env['NODE_ENV'] !== 'production' &&
+      !!this.i18nOptions.outputPath
+    ) {
+      const sourceFile = ts.createSourceFile(
+        'placeholder.ts',
+        '',
+        ts.ScriptTarget.ESNext,
+        true,
+        ts.ScriptKind.TS,
+      );
+      const printer = ts.createPrinter();
+      this.translations.pipe(takeUntil(this.unsubscribe)).subscribe((t) => {
+        logger.log('generating types');
+        const object = Object.keys(t).reduce(
+          (result, key) => mergeDeep(result, t[key]),
+          {},
+        );
+        const i18nTranslationsType = factory.createTypeAliasDeclaration(
+          [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+          factory.createIdentifier('I18nTranslations'),
+          undefined,
+          factory.createTypeLiteralNode(convertObjectToTypeDefinition(object)),
+        );
+
+        const nodes = factory.createNodeArray([i18nTranslationsType]);
+        const outputFile = printer.printList(
+          ts.ListFormat.MultiLine,
+          nodes,
+          sourceFile,
+        );
+        mkdirSync(path.dirname(this.i18nOptions.outputPath), {
+          recursive: true,
+        });
+        writeFileSync(this.i18nOptions.outputPath, outputFile);
+        logger.log(`types generated in: ${this.i18nOptions.outputPath}`);
+      });
+    }
 
     // makes sure languages & translations are loaded before application loads
     await this.i18n.refresh();
@@ -76,7 +121,7 @@ export class I18nModule implements OnModuleInit, NestModule {
       try {
         const hbs = await import('hbs');
         hbs.registerHelper('t', this.i18n.hbsHelper);
-        logger.log('Handlebars helper registered');
+        logger.log('handlebars helper registered');
       } catch (e) {
         logger.error('hbs module failed to load', e);
       }
@@ -88,6 +133,10 @@ export class I18nModule implements OnModuleInit, NestModule {
         return this.i18n.t(key, { lang, args });
       };
     }
+  }
+
+  onModuleDestroy() {
+    this.unsubscribe.complete();
   }
 
   configure(consumer: MiddlewareConsumer) {

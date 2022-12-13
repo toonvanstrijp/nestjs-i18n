@@ -6,7 +6,9 @@ import {
 } from '../interfaces/i18n-validation-error.interface';
 import { I18nService, TranslateOptions } from '../services/i18n.service';
 import { MiddlewareConsumer } from '@nestjs/common';
-import { NestMiddlewareConsumer } from '../types';
+import { NestMiddlewareConsumer, Path } from '../types';
+import * as ts from 'typescript';
+import { factory } from 'typescript';
 
 export function shouldResolve(e: I18nOptionResolver) {
   return typeof e === 'function' || e['use'];
@@ -46,9 +48,9 @@ export function i18nValidationMessage(key: string, args?: any) {
   };
 }
 
-export function formatI18nErrors(
+export function formatI18nErrors<K = Record<string, unknown>>(
   errors: I18nValidationError[],
-  i18n: I18nService,
+  i18n: I18nService<K>,
   options?: TranslateOptions,
 ): I18nValidationError[] {
   return errors.map((error) => {
@@ -56,7 +58,7 @@ export function formatI18nErrors(
     error.constraints = Object.keys(error.constraints).reduce((result, key) => {
       const [translationKey, argsString] = error.constraints[key].split('|');
       const args = !!argsString ? JSON.parse(argsString) : {};
-      result[key] = i18n.translate(translationKey, {
+      result[key] = i18n.translate(translationKey as Path<K>, {
         ...options,
         args: { property: error.property, ...args },
       });
@@ -76,4 +78,44 @@ export const usingFastify = (consumer: NestMiddlewareConsumer) => {
   return consumer.httpAdapter.constructor.name
     .toLowerCase()
     .startsWith('fastify');
+};
+
+export const convertObjectToTypeDefinition = (
+  object: any,
+): ts.TypeElement[] => {
+  switch (typeof object) {
+    case 'object':
+      return Object.keys(object).map((key) => {
+        if (typeof object[key] === 'string') {
+          return factory.createPropertySignature(
+            undefined,
+            factory.createStringLiteral(key),
+            undefined,
+            factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+          );
+        }
+        if (Array.isArray(object[key])) {
+          return factory.createPropertySignature(
+            undefined,
+            factory.createStringLiteral(key),
+            undefined,
+            factory.createTupleTypeNode(
+              Array(object[key].length).fill(
+                factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+              ),
+            ),
+          );
+        }
+        return factory.createPropertySignature(
+          undefined,
+          factory.createStringLiteral(key),
+          undefined,
+          factory.createTypeLiteralNode(
+            convertObjectToTypeDefinition(object[key]),
+          ),
+        );
+      });
+  }
+
+  return [];
 };

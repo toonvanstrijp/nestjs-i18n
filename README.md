@@ -17,7 +17,6 @@
 **nestjs-i18n** comes with a bunch of tools to help add multiple language support to your project.
 
 - **Variable formatting** ([instructions](https://nestjs-i18n.com/guides/formatting))
-- **Nested** translations ([instructions](https://nestjs-i18n.com/guides/nested))
 - **Subfolders** ([instructions](https://nestjs-i18n.com/concepts/loader#subfolders))
 - **Fallback** languages ([instructions](https://nestjs-i18n.com/guides/fallback-languages))
 - **Live** reloading 🎉

@@ -1,15 +1,12 @@
 {
-  "globals": {
-    "ts-jest": {
-      "diagnostics": true
-    }
-  },
   "moduleFileExtensions": ["js", "json", "ts", "d.ts"],
   "rootDir": "../",
   "testEnvironment": "node",
   "testRegex": ".spec.ts$",
   "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
+    "^.+\\.(t|j)s$": ["ts-jest", {
+      "diagnostics": true
+    }]
   },
   "collectCoverageFrom": ["src/**/*.ts", "!**/node_modules/**", "!src/utils/merge.ts"],
   "moduleNameMapper": {

@@ -6,7 +6,7 @@ import {
 } from '../interfaces/i18n-validation-error.interface';
 import { I18nService, TranslateOptions } from '../services/i18n.service';
 import { MiddlewareConsumer } from '@nestjs/common';
-import { NestMiddlewareConsumer, Path } from '../types';
+import { NestMiddlewareConsumer, Path, PathValue } from '../types';
 import * as ts from 'typescript';
 import { factory } from 'typescript';
 
@@ -37,7 +37,10 @@ export function i18nValidationErrorFactory(
   );
 }
 
-export function i18nValidationMessage(key: string, args?: any) {
+export function i18nValidationMessage<K = Record<string, unknown>>(
+  key: Path<K>,
+  args?: any,
+) {
   return (a: ValidationArguments) => {
     const { constraints } = a;
     let { value } = a;

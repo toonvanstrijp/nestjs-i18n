@@ -56,7 +56,9 @@ export class I18nContext<K = Record<string, unknown>> {
     return this.storage.run(ctx, next);
   }
 
-  static current(context?: ExecutionContext): I18nContext | undefined {
+  static current<K = Record<string, unknown>>(
+    context?: ExecutionContext,
+  ): I18nContext<K> | undefined {
     return this.storage.getStore() ?? getContextObject(context)?.i18nContext;
   }
 }

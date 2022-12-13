@@ -37,7 +37,7 @@ export class I18nService<K = Record<string, unknown>>
 
   constructor(
     @Inject(I18N_OPTIONS)
-    private readonly i18nOptions: I18nOptions,
+    protected readonly i18nOptions: I18nOptions,
     @Inject(I18N_TRANSLATIONS)
     translations: Observable<I18nTranslation>,
     @Inject(I18N_LANGUAGES)

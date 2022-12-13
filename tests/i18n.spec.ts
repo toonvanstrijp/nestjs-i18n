@@ -439,7 +439,7 @@ describe('i18n module with fallbacks', () => {
 
   it('should santize values from pipe caharacters', () => {
     expect(
-      i18nValidationMessage('test.HELLO')({
+      i18nValidationMessage<I18nTranslations>('test.HELLO')({
         value: 'example|||',
         constraints: [],
         targetName: 'string',

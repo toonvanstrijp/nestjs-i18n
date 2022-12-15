@@ -16,7 +16,7 @@
 
 **nestjs-i18n** comes with a bunch of tools to help add multiple language support to your project.
 
-- **Type safety** 🎉 ([instructions](https://nestjs-i18n.com/guides/type-safety.md))
+- **Type safety** 🎉 ([instructions](https://nestjs-i18n.com/guides/type-safety))
 - **Variable formatting** ([instructions](https://nestjs-i18n.com/guides/formatting))
 - **Fallback** languages ([instructions](https://nestjs-i18n.com/guides/fallback-languages))
 - **Live** reloading 🎉

@@ -14,6 +14,8 @@ import { take, takeUntil } from 'rxjs/operators';
 import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
 import { validate } from 'class-validator';
 import { formatI18nErrors } from '../utils/util';
+import { IfAny, Path, PathValue } from '../types';
+import { I18nTranslator } from '../interfaces/i18n-translator.interface';
 
 const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
 
@@ -25,7 +27,9 @@ export type TranslateOptions = {
 };
 
 @Injectable()
-export class I18nService implements OnModuleDestroy {
+export class I18nService<K = Record<string, unknown>>
+  implements I18nTranslator<K>, OnModuleDestroy
+{
   private supportedLanguages: string[];
   private translations: I18nTranslation;
   private pluralRules = new Map<string, Intl.PluralRules>();
@@ -34,7 +38,7 @@ export class I18nService implements OnModuleDestroy {
 
   constructor(
     @Inject(I18N_OPTIONS)
-    private readonly i18nOptions: I18nOptions,
+    protected readonly i18nOptions: I18nOptions,
     @Inject(I18N_TRANSLATIONS)
     translations: Observable<I18nTranslation>,
     @Inject(I18N_LANGUAGES)
@@ -61,7 +65,10 @@ export class I18nService implements OnModuleDestroy {
     this.unsubscribe.complete();
   }
 
-  public translate<T = any>(key: string, options?: TranslateOptions): T {
+  public translate<P extends Path<K> = any, R = PathValue<K, P>>(
+    key: P,
+    options?: TranslateOptions,
+  ): IfAny<R, string, R> {
     options = {
       lang: this.i18nOptions.fallbackLanguage,
       ...options,
@@ -71,7 +78,7 @@ export class I18nService implements OnModuleDestroy {
     let { lang } = options;
 
     if (lang === 'debug') {
-      return key as unknown as T;
+      return key as unknown as IfAny<R, string, R>;
     }
 
     lang =
@@ -84,8 +91,8 @@ export class I18nService implements OnModuleDestroy {
     const translationsByLanguage = this.translations[lang];
 
     const translation = this.translateObject(
-      key,
-      translationsByLanguage ? translationsByLanguage : key,
+      key as string,
+      (translationsByLanguage ? translationsByLanguage : key) as string,
       lang,
       options,
       translationsByLanguage ? translationsByLanguage : undefined,
@@ -98,7 +105,9 @@ export class I18nService implements OnModuleDestroy {
     ) {
       if (lang !== this.i18nOptions.fallbackLanguage || !!defaultValue) {
         if (this.i18nOptions.logging) {
-          const message = `Translation "${key}" in "${lang}" does not exist.`;
+          const message = `Translation "${
+            key as string
+          }" in "${lang}" does not exist.`;
           this.logger.error(message);
         }
         return this.translate(key, {
@@ -108,11 +117,14 @@ export class I18nService implements OnModuleDestroy {
       }
     }
 
-    return (translation ?? key) as unknown as T;
+    return (translation ?? key) as unknown as IfAny<R, string, R>;
   }
 
-  public t<T = any>(key: string, options?: TranslateOptions): T {
-    return this.translate<T>(key, options);
+  public t<P extends Path<K> = any, R = PathValue<K, P>>(
+    key: P,
+    options?: TranslateOptions,
+  ): IfAny<R, string, R> {
+    return this.translate(key, options);
   }
 
   public getSupportedLanguages() {
@@ -149,13 +161,17 @@ export class I18nService implements OnModuleDestroy {
     }
   }
 
-  public hbsHelper = (key: string, args: any, options: any) => {
+  public hbsHelper = <P extends Path<K> = any>(
+    key: P,
+    args: any,
+    options: any,
+  ) => {
     if (!options) {
       options = args;
     }
 
     const lang = options.lookupProperty(options.data.root, 'i18nLang');
-    return this.t(key, { lang, args });
+    return this.t<P>(key, { lang, args });
   };
 
   private translateObject(

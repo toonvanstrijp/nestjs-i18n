@@ -1,7 +1,3 @@
----
-sidebar_position: 3
----
-
 # Arrays
 
 You can use arrays inside your translations as followed.

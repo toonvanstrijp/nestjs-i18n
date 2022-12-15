@@ -1,7 +1,3 @@
----
-sidebar_position: 6
----
-
 # GraphQL
 
 When using GraphQL `nestjs-i18n` works out of the box in most cases. With normal requests you can add headers etc. so the resolvers still work like you would expect. But when using GraphQL subscriptions this requires additional steps.

@@ -16,6 +16,7 @@ import {
   I18nService,
   I18nValidationExceptionFilter,
 } from '../../../src';
+import { I18nTranslations } from '../../generated/i18n.generated';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { exampleErrorFormatter } from '../examples/example.functions';
 import { TestException, TestExceptionFilter } from '../filter/test.filter';
@@ -25,7 +26,7 @@ import { Hero, HeroById } from '../interfaces/hero.interface';
 @Controller('hello')
 @UseFilters(new TestExceptionFilter())
 export class HelloController {
-  constructor(private i18n: I18nService) {}
+  constructor(private i18n: I18nService<I18nTranslations>) {}
 
   @Get()
   hello(@I18nLang() lang: string): any {
@@ -34,7 +35,7 @@ export class HelloController {
 
   @Get('/typed')
   helloTyped(@I18nLang() lang: string): string {
-    return this.i18n.translate<string>('test.HELLO', { lang });
+    return this.i18n.translate('test.HELLO', { lang });
   }
 
   @Get('/index')
@@ -54,47 +55,47 @@ export class HelloController {
 
   @Get('/short/typed')
   helloShortTyped(@I18nLang() lang: string): string {
-    return this.i18n.t<string>('test.HELLO', { lang });
+    return this.i18n.t('test.HELLO', { lang });
   }
 
   @Get('/context')
-  helloContext(@I18n() i18n: I18nContext): any {
+  helloContext(@I18n() i18n: I18nContext<I18nTranslations>): any {
     return i18n.translate('test.HELLO');
   }
 
   @Get('/context/typed')
-  helloContextTyped(@I18n() i18n: I18nContext): string {
-    return i18n.translate<string>('test.HELLO');
+  helloContextTyped(@I18n() i18n: I18nContext<I18nTranslations>): string {
+    return i18n.translate('test.HELLO');
   }
 
   @Get('/short/context')
-  helloShortContext(@I18n() i18n: I18nContext): any {
+  helloShortContext(@I18n() i18n: I18nContext<I18nTranslations>): any {
     return i18n.t('test.HELLO');
   }
 
   @Get('/short/context/typed')
-  helloShortContextTyped(@I18n() i18n: I18nContext): string {
-    return i18n.t<string>('test.HELLO');
+  helloShortContextTyped(@I18n() i18n: I18nContext<I18nTranslations>): string {
+    return i18n.t('test.HELLO');
   }
 
   @Get('/request-scope')
   helloRequestScope(): any {
-    return I18nContext.current().translate('test.HELLO');
+    return I18nContext.current<I18nTranslations>().translate('test.HELLO');
   }
 
   @Get('/request-scope/typed')
   helloRequestScopeTyped(): string {
-    return I18nContext.current().translate<string>('test.HELLO');
+    return I18nContext.current<I18nTranslations>().translate('test.HELLO');
   }
 
   @Get('/short/request-scope')
   helloShortRequestScope(): any {
-    return I18nContext.current().t('test.HELLO');
+    return I18nContext.current<I18nTranslations>().t('test.HELLO');
   }
 
   @Get('/short/request-scope/typed')
   helloShortRequestScopeTyped(): string {
-    return I18nContext.current().t<string>('test.HELLO');
+    return I18nContext.current<I18nTranslations>().t('test.HELLO');
   }
 
   @Get('/object')
@@ -111,28 +112,36 @@ export class HelloController {
 
   @Get('/plurarization')
   plurarization(@Query('count') count: string): any {
-    return I18nContext.current().translate('test.day_interval', {
-      args: { count: parseInt(count) },
-    });
+    return I18nContext.current<I18nTranslations>().translate(
+      'test.day_interval',
+      {
+        args: { count: parseInt(count) },
+      },
+    );
   }
 
   @Get('/nested')
   nested(@Query('username') username: string): any {
-    return I18nContext.current().translate('test.nested', {
+    return I18nContext.current<I18nTranslations>().translate('test.nested', {
       args: { username },
     });
   }
 
   @Get('/nested-no-args')
   nestedNoArgs(): any {
-    return I18nContext.current().translate('test.nested-no-args');
+    return I18nContext.current<I18nTranslations>().translate(
+      'test.nested-no-args',
+    );
   }
 
   @Get('/deeply-nested')
   deeplyNested(@Query('count') count: number): any {
-    return I18nContext.current().translate('test.nest1.nest2.nest3', {
-      args: { count },
-    });
+    return I18nContext.current<I18nTranslations>().translate(
+      'test.nest1.nest2.nest3',
+      {
+        args: { count },
+      },
+    );
   }
 
   @Get('/guard')
@@ -175,13 +184,16 @@ export class HelloController {
   }
 
   @Post('/custom-validation')
-  customValidation(@I18n() i18n: I18nContext): any {
+  customValidation(@I18n() i18n: I18nContext<I18nTranslations>): any {
     let createUserDto = new CreateUserDto();
     return i18n.validate(createUserDto);
   }
 
   @GrpcMethod('HeroesService', 'FindOne')
-  findOne(@Payload() data: HeroById, @I18n() i18n: I18nContext): Hero {
+  findOne(
+    @Payload() data: HeroById,
+    @I18n() i18n: I18nContext<I18nTranslations>,
+  ): Hero {
     const items = [
       {
         id: 1,

@@ -7,9 +7,10 @@ import {
   I18nLoader,
   i18nValidationMessage,
 } from '../src';
+import { I18nTranslations } from './generated/i18n.generated';
 
 describe('i18n module', () => {
-  let i18nService: I18nService;
+  let i18nService: I18nService<I18nTranslations>;
   let i18nLoader: I18nLoader;
 
   beforeAll(async () => {
@@ -86,7 +87,7 @@ describe('i18n module', () => {
   });
 
   it('i18n service should not load the custom file', () => {
-    expect(i18nService.translate('test.custom', { lang: 'en' })).toBe(
+    expect(i18nService.translate<any>('test.custom', { lang: 'en' })).toBe(
       'test.custom',
     );
   });
@@ -125,7 +126,7 @@ describe('i18n module', () => {
 
   it('i18n service should use defaultValue if translation is missing', () => {
     expect(
-      i18nService.translate('test.missing', {
+      i18nService.translate<any>('test.missing', {
         lang: 'bla',
         defaultValue:
           'the translation is missing, nested: $t(test.HELLO), arg: {hello}',
@@ -135,7 +136,7 @@ describe('i18n module', () => {
   });
 
   it('i18n service should use defaultValue if translation is missing for nested keys', () => {
-    const result = i18nService.translate('test.missing.nested.keys', {
+    const result = i18nService.translate<any>('test.missing.nested.keys', {
       defaultValue:
         'the translation is missing, nested: $t(test.HELLO), arg: {hello}',
       args: { hello: 'world' },
@@ -146,7 +147,7 @@ describe('i18n module', () => {
   });
 
   it('i18n service should NOT return translation from subfolders by default', () => {
-    expect(i18nService.translate('subfolder.sub-test.HELLO')).toBe(
+    expect(i18nService.translate<any>('subfolder.sub-test.HELLO')).toBe(
       'subfolder.sub-test.HELLO',
     );
   });
@@ -175,7 +176,7 @@ describe('i18n module', () => {
         'utf8',
       );
       await i18nService.refresh();
-      const translation = i18nService.translate('test2.WORLD', {
+      const translation = i18nService.translate<any>('test2.WORLD', {
         lang: 'nl',
       });
       expect(translation).toEqual('wereld');
@@ -197,7 +198,7 @@ describe('i18n module', () => {
 });
 
 describe('i18n module without trailing slash in path', () => {
-  let i18nService: I18nService;
+  let i18nService: I18nService<I18nTranslations>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -224,14 +225,14 @@ describe('i18n module without trailing slash in path', () => {
   });
 
   it('i18n service should return key if translation is not found', () => {
-    expect(i18nService.translate('NOT_EXISTING_KEY', { lang: 'en' })).toBe(
+    expect(i18nService.translate<any>('NOT_EXISTING_KEY', { lang: 'en' })).toBe(
       'NOT_EXISTING_KEY',
     );
   });
 });
 
 describe('i18n module loads custom files', () => {
-  let i18nService: I18nService;
+  let i18nService: I18nService<I18nTranslations>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -254,7 +255,7 @@ describe('i18n module loads custom files', () => {
   });
 
   it('i18n service should return correct translation', () => {
-    expect(i18nService.translate('test.custom', { lang: 'en' })).toBe(
+    expect(i18nService.translate<any>('test.custom', { lang: 'en' })).toBe(
       'my custom text',
     );
   });
@@ -267,7 +268,7 @@ describe('i18n module loads custom files', () => {
 });
 
 describe('i18n module loads custom files with wrong file pattern', () => {
-  let i18nService: I18nService;
+  let i18nService: I18nService<I18nTranslations>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -289,7 +290,7 @@ describe('i18n module loads custom files with wrong file pattern', () => {
   });
 
   it('i18n service should return correct translation', () => {
-    expect(i18nService.translate('test.custom', { lang: 'en' })).toBe(
+    expect(i18nService.translate<any>('test.custom', { lang: 'en' })).toBe(
       'my custom text',
     );
   });
@@ -302,7 +303,7 @@ describe('i18n module loads custom files with wrong file pattern', () => {
 });
 
 describe('i18n module with loader watch', () => {
-  let i18nService: I18nService;
+  let i18nService: I18nService<I18nTranslations>;
   let i18nLoader: I18nLoader;
 
   const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
@@ -353,7 +354,7 @@ describe('i18n module with loader watch', () => {
       'utf8',
     );
     await new Promise((resolve) => setTimeout(resolve, 500));
-    const translation = i18nService.translate('test2.WORLD', {
+    const translation = i18nService.translate<any>('test2.WORLD', {
       lang: 'nl',
     });
     expect(translation).toEqual('wereld');
@@ -374,7 +375,7 @@ describe('i18n module with loader watch', () => {
 });
 
 describe('i18n module with fallbacks', () => {
-  let i18nService: I18nService;
+  let i18nService: I18nService<I18nTranslations>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -390,9 +391,13 @@ describe('i18n module with fallbacks', () => {
           loaderOptions: {
             path: path.join(__dirname, '/i18n'),
           },
+          typesOutputPath: path.join(__dirname, '/generated/i18n.generated.ts'),
         }),
       ],
     }).compile();
+
+    const app = module.createNestApplication();
+    await app.init();
 
     i18nService = module.get(I18nService);
   });
@@ -434,12 +439,12 @@ describe('i18n module with fallbacks', () => {
 
   it('should santize values from pipe caharacters', () => {
     expect(
-      i18nValidationMessage('test.HELLO')({
+      i18nValidationMessage<I18nTranslations>('test.HELLO')({
         value: 'example|||',
         constraints: [],
-        targetName: null,
-        property: null,
-        object: undefined,
+        targetName: 'string',
+        property: 'string',
+        object: {},
       }),
     ).toBe('test.HELLO|{"value":"example","constraints":[]}');
   });

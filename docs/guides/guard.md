@@ -1,25 +1,18 @@
----
-sidebar_position: 9
----
-
 # Guards
 
-To access the `I18nContext` inside your guards use the `getI18nContextFromRequest` helper function.
+To access the `I18nContext` inside your guards use the `I18nContext.current()` helper function.
 
 ```typescript title="src/test.guard.ts"
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Observable } from "rxjs";
-import { getI18nContextFromRequest } from "nestjs-i18n";
+import { I18nContext } from "nestjs-i18n";
 
 @Injectable()
 export class TestGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest();
-    let response = context.switchToHttp().getResponse();
-
-    const i18n = getI18nContextFromRequest(request)
+    const i18n = I18nContext.current();
     console.log('current language', i18n.lang);
 
     return true;

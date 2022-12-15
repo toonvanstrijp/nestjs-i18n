@@ -1,30 +1,41 @@
-import { ExecutionContext } from '@nestjs/common';
+import { ArgumentsHost } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
+import { logger } from './i18n.module';
+import { I18nTranslator } from './interfaces/i18n-translator.interface';
 import { I18nValidationError } from './interfaces/i18n-validation-error.interface';
 import { I18nService, TranslateOptions } from './services/i18n.service';
+import { Path, PathValue } from './types';
 import { getContextObject } from './utils/context';
 
-export class I18nContext {
+export class I18nContext<K = Record<string, unknown>>
+  implements I18nTranslator<K>
+{
   private static storage = new AsyncLocalStorage<I18nContext>();
   private static counter = 1;
   readonly id = I18nContext.counter++;
 
-  get i18n(): I18nContext | undefined {
+  get i18n(): I18nContext<K> | undefined {
     return this;
   }
 
-  constructor(readonly lang: string, readonly service: I18nService) {}
+  constructor(readonly lang: string, readonly service: I18nService<K>) {}
 
-  public translate<T = any>(key: string, options?: TranslateOptions): T {
+  public translate<P extends Path<K> = any, R = PathValue<K, P>>(
+    key: P,
+    options?: TranslateOptions,
+  ) {
     options = {
       lang: this.lang,
       ...options,
     };
-    return this.service.translate<T>(key, options);
+    return this.service.translate<P, R>(key, options);
   }
 
-  public t<T = any>(key: string, options?: TranslateOptions): T {
-    return this.translate<T>(key, options);
+  public t<P extends Path<K> = any, R = PathValue<K, P>>(
+    key: P,
+    options?: TranslateOptions,
+  ) {
+    return this.translate<P, R>(key, options);
   }
 
   public validate(
@@ -49,7 +60,16 @@ export class I18nContext {
     return this.storage.run(ctx, next);
   }
 
-  static current(context?: ExecutionContext): I18nContext | undefined {
-    return this.storage.getStore() ?? getContextObject(context)?.i18nContext;
+  static current<K = Record<string, unknown>>(
+    context?: ArgumentsHost,
+  ): I18nContext<K> | undefined {
+    const i18n =
+      this.storage.getStore() ?? getContextObject(context)?.i18nContext;
+    if (!i18n) {
+      logger.error(
+        'I18n context not found! Is this function triggered by a processor or cronjob? Please use the I18nService',
+      );
+    }
+    return i18n;
   }
 }

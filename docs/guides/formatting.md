@@ -1,7 +1,3 @@
----
-sidebar_position: 1
----
-
 # Formatting
 
 `nestjs-i18n` uses **[string-format](https://www.npmjs.com/package/string-format)** for formatting by default.

@@ -5,6 +5,7 @@ import {
   Logger,
   MiddlewareConsumer,
   Module,
+  OnModuleDestroy,
   Provider,
 } from '@nestjs/common';
 import {
@@ -32,15 +33,24 @@ import {
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
-import { isNestMiddleware, shouldResolve, usingFastify } from './utils/util';
+import {
+  annotateSourceCode,
+  createTypesFile,
+  isNestMiddleware,
+  shouldResolve,
+  usingFastify,
+} from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import * as format from 'string-format';
 import { I18nJsonLoader } from './loaders/i18n.json.loader';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
+import { mergeDeep } from './utils/merge';
+import * as fs from 'fs';
+import path = require('path');
 
-const logger = new Logger('I18nService');
+export const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
@@ -51,7 +61,9 @@ const defaultOptions: Partial<I18nOptions> = {
 
 @Global()
 @Module({})
-export class I18nModule implements OnModuleInit, NestModule {
+export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
+  private unsubscribe = new Subject<void>();
+
   constructor(
     private readonly i18n: I18nService,
     @Inject(I18N_TRANSLATIONS)
@@ -61,12 +73,39 @@ export class I18nModule implements OnModuleInit, NestModule {
   ) {}
 
   async onModuleInit() {
-    // TODO: Generate typescript file
-    // this.translations.pipe(
-    //   map(t => Object.keys(t).reduce((result, key) => mergeDeep(result, t[key]), {}))
-    // ).subscribe(t => {
-    //   console.log(t)
-    // });
+    if (
+      process.env['NODE_ENV'] !== 'production' &&
+      !!this.i18nOptions.typesOutputPath
+    ) {
+      this.translations.pipe(takeUntil(this.unsubscribe)).subscribe((t) => {
+        logger.log('Checking translation changes');
+        const object = Object.keys(t).reduce(
+          (result, key) => mergeDeep(result, t[key]),
+          {},
+        );
+
+        const outputFile = annotateSourceCode(createTypesFile(object));
+
+        fs.mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
+          recursive: true,
+        });
+        let currentFileContent = null;
+        try {
+          currentFileContent = fs.readFileSync(
+            this.i18nOptions.typesOutputPath,
+            'utf8',
+          );
+        } catch (err) {
+          logger.error(err);
+        }
+        if (currentFileContent != outputFile) {
+          fs.writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
+          logger.log(`Types generated in: ${this.i18nOptions.typesOutputPath}`);
+        } else {
+          logger.log('No changes detected');
+        }
+      });
+    }
 
     // makes sure languages & translations are loaded before application loads
     await this.i18n.refresh();
@@ -88,6 +127,10 @@ export class I18nModule implements OnModuleInit, NestModule {
         return this.i18n.t(key, { lang, args });
       };
     }
+  }
+
+  onModuleDestroy() {
+    this.unsubscribe.complete();
   }
 
   configure(consumer: MiddlewareConsumer) {

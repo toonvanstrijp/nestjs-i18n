@@ -1,7 +1,3 @@
----
-sidebar_position: 11
----
-
 # Mailer
 
 To use `nestjs-i18n` with the [**@nestjs-modules/mailer**](https://github.com/nest-modules/mailer) package, you'll need to register the helper function like this:

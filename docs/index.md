@@ -27,6 +27,7 @@ slug: /
 
 **nestjs-i18n** comes with a bunch of tools to help add multiple language support to your project.
 
+- **Type safety** ([instructions](guides/type-safety.md))
 - **Variable formatting** ([instructions](guides/formatting.md))
 - **Nested** translations ([instructions](guides/nested.md))
 - **Fallback** languages ([instructions](guides/fallback-languages.md))

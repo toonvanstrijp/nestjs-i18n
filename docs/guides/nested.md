@@ -1,7 +1,3 @@
----
-sidebar_position: 2
----
-
 # Nested
 
 `nestjs-i18n` supports nested translations. 

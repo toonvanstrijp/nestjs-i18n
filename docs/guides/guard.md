@@ -1,7 +1,3 @@
----
-sidebar_position: 9
----
-
 # Guards
 
 To access the `I18nContext` inside your guards use the `getI18nContextFromRequest` helper function.

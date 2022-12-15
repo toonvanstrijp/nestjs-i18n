@@ -1,7 +1,3 @@
----
-sidebar_position: 12
----
-
 # Debugging
 
 For debugging purposes if you specify the language as **`debug`**, `nestjs-i18n` will only return the translation key instead of the actual translation.

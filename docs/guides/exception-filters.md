@@ -1,7 +1,3 @@
----
-sidebar_position: 10
----
-
 # Exception filters
 
 To access the `I18nContext` inside your exception filters use the `getI18nContextFromArgumentsHost` helper function.

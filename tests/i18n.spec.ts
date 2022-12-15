@@ -391,7 +391,7 @@ describe('i18n module with fallbacks', () => {
           loaderOptions: {
             path: path.join(__dirname, '/i18n'),
           },
-          outputPath: path.join(__dirname, '/generated/i18n.generated.ts'),
+          typesOutputPath: path.join(__dirname, '/generated/i18n.generated.ts'),
         }),
       ],
     }).compile();

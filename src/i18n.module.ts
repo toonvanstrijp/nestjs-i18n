@@ -76,7 +76,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
   async onModuleInit() {
     if (
       process.env['NODE_ENV'] !== 'production' &&
-      !!this.i18nOptions.outputPath
+      !!this.i18nOptions.typesOutputPath
     ) {
       const sourceFile = ts.createSourceFile(
         'placeholder.ts',
@@ -105,11 +105,11 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
           nodes,
           sourceFile,
         );
-        mkdirSync(path.dirname(this.i18nOptions.outputPath), {
+        mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
           recursive: true,
         });
-        writeFileSync(this.i18nOptions.outputPath, outputFile);
-        logger.log(`types generated in: ${this.i18nOptions.outputPath}`);
+        writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
+        logger.log(`types generated in: ${this.i18nOptions.typesOutputPath}`);
       });
     }
 

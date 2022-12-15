@@ -1,7 +1,3 @@
----
-sidebar_position: 7
----
-
 # gRPC
 
 When using a [hybrid](https://docs.nestjs.com/faq/hybrid-application) nestjs app the interceptors won't run on your grpc service out of the box. To fix this use the `inheritAppConfig` option when connecting your microservice. 

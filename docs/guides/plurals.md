@@ -1,7 +1,3 @@
----
-sidebar_position: 4
----
-
 # Plurals
 
 You can use plurals inside your translations as followed. You need to provide some of the listed categories required by your language rules: `zero`, `one`, `two`, `few`, `many`, and `other`. To check which categories you need to specify for your language, you can use this reference: [Language Plural Rules](https://unicode-org.github.io/cldr-staging/charts/37/supplemental/language_plural_rules.html). After finding your language in the table, check out the **Type** column. The **cardinal** type includes all plural categories you must implement. The next **Example** column will help you find out the correct form for each category.

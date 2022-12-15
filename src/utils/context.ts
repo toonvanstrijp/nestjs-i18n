@@ -1,8 +1,10 @@
-import { ExecutionContext, Logger } from '@nestjs/common';
+import { ArgumentsHost, ExecutionContext, Logger } from '@nestjs/common';
 
 const logger = new Logger('I18nService');
 
-export function getContextObject(context?: ExecutionContext): any {
+export function getContextObject(
+  context?: ExecutionContext | ArgumentsHost,
+): any {
   const contextType = context?.getType<string>() ?? 'undefined';
 
   switch (contextType) {

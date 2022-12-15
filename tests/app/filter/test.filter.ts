@@ -17,7 +17,7 @@ export class TestException extends HttpException {
 @Catch(TestException)
 export class TestExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
-    const i18n = I18nContext.current<I18nTranslations>();
+    const i18n = I18nContext.current<I18nTranslations>(host);
     const response = host.switchToHttp().getResponse<any>();
 
     response.status(500).send({

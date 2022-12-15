@@ -1,4 +1,4 @@
-import { ExecutionContext } from '@nestjs/common';
+import { ArgumentsHost } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
 import { logger } from './i18n.module';
 import { I18nTranslator } from './interfaces/i18n-translator.interface';
@@ -61,7 +61,7 @@ export class I18nContext<K = Record<string, unknown>>
   }
 
   static current<K = Record<string, unknown>>(
-    context?: ExecutionContext,
+    context?: ArgumentsHost,
   ): I18nContext<K> | undefined {
     const i18n =
       this.storage.getStore() ?? getContextObject(context)?.i18nContext;

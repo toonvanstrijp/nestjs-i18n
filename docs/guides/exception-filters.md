@@ -1,15 +1,15 @@
 # Exception filters
 
-To access the `I18nContext` inside your exception filters use the `getI18nContextFromArgumentsHost` helper function.
+To access the `I18nContext` inside your exception filters use the `I18nContext.current()` helper function.
 
 ```typescript title="src/test.filter.ts"
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from "@nestjs/common";
-import { getI18nContextFromArgumentsHost } from "nestjs-i18n";
+import { I18nContext } from "nestjs-i18n";
 
 @Catch()
 export class TestExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
-    const i18n = getI18nContextFromArgumentsHost(host);
+    const i18n = I18nContext.current<I18nTranslations>(host);
     const response = host.switchToHttp().getResponse<any>();
 
     console.log('current language', i18n.lang);

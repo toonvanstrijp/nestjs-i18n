@@ -34,7 +34,8 @@ import { I18nLanguageInterceptor } from './interceptors/i18n-language.intercepto
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
 import {
-  convertObjectToTypeDefinition,
+  annotateSourceCode,
+  createTypesFile,
   isNestMiddleware,
   shouldResolve,
   usingFastify,
@@ -46,12 +47,10 @@ import * as format from 'string-format';
 import { I18nJsonLoader } from './loaders/i18n.json.loader';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
 import { mergeDeep } from './utils/merge';
-import * as ts from 'typescript';
-import { factory } from 'typescript';
-import { writeFileSync, mkdirSync } from 'fs';
+import * as fs from 'fs';
 import path = require('path');
 
-const logger = new Logger('I18nService');
+export const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
@@ -78,38 +77,33 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       process.env['NODE_ENV'] !== 'production' &&
       !!this.i18nOptions.typesOutputPath
     ) {
-      const sourceFile = ts.createSourceFile(
-        'placeholder.ts',
-        '',
-        ts.ScriptTarget.ESNext,
-        true,
-        ts.ScriptKind.TS,
-      );
-      const printer = ts.createPrinter();
       this.translations.pipe(takeUntil(this.unsubscribe)).subscribe((t) => {
-        logger.log('generating types');
+        logger.log('Checking translation changes');
         const object = Object.keys(t).reduce(
           (result, key) => mergeDeep(result, t[key]),
           {},
         );
-        const i18nTranslationsType = factory.createTypeAliasDeclaration(
-          [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-          factory.createIdentifier('I18nTranslations'),
-          undefined,
-          factory.createTypeLiteralNode(convertObjectToTypeDefinition(object)),
-        );
 
-        const nodes = factory.createNodeArray([i18nTranslationsType]);
-        const outputFile = printer.printList(
-          ts.ListFormat.MultiLine,
-          nodes,
-          sourceFile,
-        );
-        mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
+        const outputFile = annotateSourceCode(createTypesFile(object));
+
+        fs.mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
           recursive: true,
         });
-        writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
-        logger.log(`types generated in: ${this.i18nOptions.typesOutputPath}`);
+        let currentFileContent = null;
+        try {
+          currentFileContent = fs.readFileSync(
+            this.i18nOptions.typesOutputPath,
+            'utf8',
+          );
+        } catch (err) {
+          logger.error(err);
+        }
+        if (currentFileContent != outputFile) {
+          fs.writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
+          logger.log(`Types generated in: ${this.i18nOptions.typesOutputPath}`);
+        } else {
+          logger.log('No changes detected');
+        }
       });
     }
 
@@ -121,7 +115,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       try {
         const hbs = await import('hbs');
         hbs.registerHelper('t', this.i18n.hbsHelper);
-        logger.log('handlebars helper registered');
+        logger.log('Handlebars helper registered');
       } catch (e) {
         logger.error('hbs module failed to load', e);
       }

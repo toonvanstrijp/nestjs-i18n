@@ -11,7 +11,7 @@ type IsAny<T> = unknown extends T
     : true
   : false;
 
-export type PathImpl<T, Key extends keyof T> = Key extends string
+type PathImpl<T, Key extends keyof T> = Key extends string
   ? IsAny<T[Key]> extends true
     ? never
     : T[Key] extends Record<string, any>
@@ -22,7 +22,7 @@ export type PathImpl<T, Key extends keyof T> = Key extends string
     : never
   : never;
 
-export type PathImpl2<T> = PathImpl<T, keyof T> | keyof T;
+type PathImpl2<T> = PathImpl<T, keyof T> | keyof T;
 
 export type Path<T> = keyof T extends string
   ? PathImpl2<T> extends infer P

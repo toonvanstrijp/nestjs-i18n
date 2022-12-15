@@ -15,6 +15,7 @@ import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
 import { validate } from 'class-validator';
 import { formatI18nErrors } from '../utils/util';
 import { IfAny, Path, PathValue } from '../types';
+import { I18nTranslator } from '../interfaces/i18n-translator.interface';
 
 const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
 
@@ -27,7 +28,7 @@ export type TranslateOptions = {
 
 @Injectable()
 export class I18nService<K = Record<string, unknown>>
-  implements OnModuleDestroy
+  implements I18nTranslator<K>, OnModuleDestroy
 {
   private supportedLanguages: string[];
   private translations: I18nTranslation;

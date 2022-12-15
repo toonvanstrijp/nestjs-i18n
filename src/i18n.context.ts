@@ -1,11 +1,15 @@
 import { ExecutionContext } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
+import { logger } from './i18n.module';
+import { I18nTranslator } from './interfaces/i18n-translator.interface';
 import { I18nValidationError } from './interfaces/i18n-validation-error.interface';
 import { I18nService, TranslateOptions } from './services/i18n.service';
 import { Path, PathValue } from './types';
 import { getContextObject } from './utils/context';
 
-export class I18nContext<K = Record<string, unknown>> {
+export class I18nContext<K = Record<string, unknown>>
+  implements I18nTranslator<K>
+{
   private static storage = new AsyncLocalStorage<I18nContext>();
   private static counter = 1;
   readonly id = I18nContext.counter++;
@@ -59,6 +63,13 @@ export class I18nContext<K = Record<string, unknown>> {
   static current<K = Record<string, unknown>>(
     context?: ExecutionContext,
   ): I18nContext<K> | undefined {
-    return this.storage.getStore() ?? getContextObject(context)?.i18nContext;
+    const i18n =
+      this.storage.getStore() ?? getContextObject(context)?.i18nContext;
+    if (!i18n) {
+      logger.error(
+        'I18n context not found! Is this function triggered by a processor or cronjob? Please use the I18nService',
+      );
+    }
+    return i18n;
   }
 }

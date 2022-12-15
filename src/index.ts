@@ -51,3 +51,6 @@ export {
   i18nValidationErrorFactory,
   i18nValidationMessage,
 } from './utils/util';
+
+// types
+export { Path, PathValue } from './types';

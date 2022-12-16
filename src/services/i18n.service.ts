@@ -113,7 +113,7 @@ export class I18nService<K = Record<string, unknown>>
 
         return this.translate(key, {
           ...options,
-          lang: this.getFallBackLanguage(lang),
+          lang: this.getFallbackLanguage(lang),
         });
       }
     }
@@ -121,7 +121,7 @@ export class I18nService<K = Record<string, unknown>>
     return (translation ?? key) as unknown as IfAny<R, string, R>;
   }
 
-  private getFallBackLanguage(lang: string) {
+  private getFallbackLanguage(lang: string) {
     const regionSepIndex = lang.lastIndexOf('-');
     return regionSepIndex !== -1
       ? lang.slice(0, regionSepIndex)

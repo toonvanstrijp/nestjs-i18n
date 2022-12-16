@@ -114,6 +114,8 @@ describe('i18n module', () => {
 
   it('i18n service should return supported languages', () => {
     expect(i18nService.getSupportedLanguages()).toEqual([
+      'de',
+      'de-DE',
       'en',
       'fr',
       'nl',
@@ -127,6 +129,8 @@ describe('i18n module', () => {
 
   it('i18n service should return translations', () => {
     expect(Object.keys(i18nService.getTranslations())).toEqual([
+      'de',
+      'de-DE',
       'en',
       'fr',
       'nl',
@@ -174,7 +178,7 @@ describe('i18n module', () => {
 
   describe('i18n should refresh manually', () => {
     const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
-    const newLanguagePath = path.join(__dirname, '/i18n/de/');
+    const newLanguagePath = path.join(__dirname, '/i18n/es/');
 
     afterAll(async () => {
       fs.unlinkSync(newTranslationPath);
@@ -210,9 +214,9 @@ describe('i18n module', () => {
       }
       await i18nService.refresh();
       const languages = i18nService.getSupportedLanguages();
-      expect(languages).toContain('de');
+      expect(languages).toContain('es');
       const translations = i18nService.getTranslations();
-      expect(Object.keys(translations)).toContain('de');
+      expect(Object.keys(translations)).toContain('es');
     });
   });
 });

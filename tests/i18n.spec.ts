@@ -86,6 +86,26 @@ describe('i18n module', () => {
     );
   });
 
+  it('i18n service should fallback to base lang if language is not registered', () => {
+    expect(i18nService.translate('test.ENGLISH', { lang: 'de-AT' })).toBe(
+      'Englisch',
+    );
+  });
+
+  it('i18n service should fallback to base lang if translation does not exist', () => {
+    expect(i18nService.translate('test.ENGLISH', { lang: 'de-DE' })).toBe(
+      'Englisch',
+    );
+  });
+
+  it('i18n service should fallback to base sub region if translation does not exist', () => {
+    expect(
+      i18nService.translate('test.CURRENT_LANGUAGE', {
+        lang: 'de-DE-bavarian',
+      }),
+    ).toBe('de-DE');
+  });
+
   it('i18n service should not load the custom file', () => {
     expect(i18nService.translate<any>('test.custom', { lang: 'en' })).toBe(
       'test.custom',

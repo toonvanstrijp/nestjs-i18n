@@ -110,14 +110,22 @@ export class I18nService<K = Record<string, unknown>>
           }" in "${lang}" does not exist.`;
           this.logger.error(message);
         }
+
         return this.translate(key, {
           ...options,
-          lang: this.i18nOptions.fallbackLanguage,
+          lang: this.getFallBackLanguage(lang),
         });
       }
     }
 
     return (translation ?? key) as unknown as IfAny<R, string, R>;
+  }
+
+  private getFallBackLanguage(lang: string) {
+    const regionSepIndex = lang.lastIndexOf('-');
+    return regionSepIndex !== -1
+      ? lang.slice(0, regionSepIndex)
+      : this.i18nOptions.fallbackLanguage;
   }
 
   public t<P extends Path<K> = any, R = PathValue<K, P>>(

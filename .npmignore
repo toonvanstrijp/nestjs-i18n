@@ -7,3 +7,10 @@ tsconfig.json
 .prettierrc
 .idea
 tests
+docs
+static
+sidebars.js
+docusaurus.config.js
+.github
+.eslintrc.js
+babel.config.js

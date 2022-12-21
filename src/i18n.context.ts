@@ -65,11 +65,6 @@ export class I18nContext<K = Record<string, unknown>>
   ): I18nContext<K> | undefined {
     const i18n =
       this.storage.getStore() ?? getContextObject(context)?.i18nContext;
-    if (!i18n) {
-      logger.error(
-        'I18n context not found! Is this function triggered by a processor or cronjob? Please use the I18nService',
-      );
-    }
     return i18n;
   }
 }

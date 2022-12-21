@@ -46,6 +46,9 @@ export * from './filters/i18n-validation-exception.filter';
 // middleware
 export { I18nMiddleware } from './middlewares/i18n.middleware';
 
+// pipes
+export * from './pipes/i18n-validation.pipe';
+
 // utils
 export {
   i18nValidationErrorFactory,

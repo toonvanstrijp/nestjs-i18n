@@ -6,9 +6,9 @@ import {
   I18nModule,
   GraphQLWebsocketResolver,
   AcceptLanguageResolver,
-  i18nValidationErrorFactory,
+  I18nValidationPipe,
 } from '../src';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -73,9 +73,7 @@ describe('i18n module e2e graphql', () => {
     app = module.createNestApplication();
 
     app.useGlobalPipes(
-      new ValidationPipe({
-        exceptionFactory: i18nValidationErrorFactory,
-      }),
+      new I18nValidationPipe(),
     );
 
     await app.listen(3000);

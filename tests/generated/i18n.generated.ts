@@ -3,11 +3,12 @@
 import { Path } from "nestjs-i18n";
 export type I18nTranslations = {
     "test": {
+        "ENGLISH": string;
+        "CURRENT_LANGUAGE": string;
         "HELLO": string;
         "PRODUCT": {
             "NEW": string;
         };
-        "ENGLISH": string;
         "ARRAY": [
             string,
             string,
@@ -36,8 +37,8 @@ export type I18nTranslations = {
                 "nest3": string;
             };
         };
-        "CURRENT_LANGUAGE": string;
     };
+    "APP_NAME": string;
     "validation": {
         "email": string;
         "password": string;
@@ -47,6 +48,5 @@ export type I18nTranslations = {
         "MIN": string;
         "MAX": string;
     };
-    "APP_NAME": string;
 };
 export type I18nPath = Path<I18nTranslations>;

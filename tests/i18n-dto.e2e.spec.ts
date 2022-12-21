@@ -1,4 +1,3 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import * as path from 'path';
@@ -9,8 +8,8 @@ import {
   HeaderResolver,
   I18nModule,
   QueryResolver,
+  I18nValidationPipe,
 } from '../src';
-import { i18nValidationErrorFactory } from '../src/utils/util';
 import { HelloController } from './app/controllers/hello.controller';
 
 describe('i18n module e2e dto', () => {
@@ -39,13 +38,11 @@ describe('i18n module e2e dto', () => {
     app = module.createNestApplication<NestExpressApplication>();
 
     app.useGlobalPipes(
-      new ValidationPipe({
+      new I18nValidationPipe({
         transform: true,
         whitelist: true,
         forbidNonWhitelisted: true,
-        exceptionFactory: i18nValidationErrorFactory,
-        // Enable this as soon as https://github.com/nestjs/nest/pull/10697 is merged
-        // validateCustomDecorators: true,
+        validateCustomDecorators: true,
       }),
     );
 

@@ -4,15 +4,13 @@ sidebar_position: 1
 
 # Global validation
 
-To use `nestjs-i18n` in your DTO validation you first need to follow the [**nestjs instructions**](https://docs.nestjs.com/techniques/validation). After that you need to use the `i18nValidationErrorFactory` function in your `ValidationPipe`.
+To use `nestjs-i18n` in your DTO validation you first need to follow the [**nestjs instructions**](https://docs.nestjs.com/techniques/validation). After that you need to use the `I18nValidationPipe`.
 
 ```typescript title="src/main.ts"
 import { i18nValidationErrorFactory } from 'nestjs-i18n';
 
 app.useGlobalPipes(
-  new ValidationPipe({
-    exceptionFactory: i18nValidationErrorFactory,
-  }),
+  new I18nValidationPipe(),
 );
 ```
 

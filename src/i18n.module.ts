@@ -73,6 +73,27 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
   ) {}
 
   async onModuleInit() {
+    // makes sure languages & translations are loaded before application loads
+    await this.i18n.refresh();
+
+    // Register handlebars helper
+    if (this.i18nOptions.viewEngine == 'hbs') {
+      try {
+        const hbs = await import('hbs');
+        hbs.registerHelper('t', this.i18n.hbsHelper);
+        logger.log('Handlebars helper registered');
+      } catch (e) {
+        logger.error('hbs module failed to load', e);
+      }
+    }
+
+    if (['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
+      const app = this.adapter.httpAdapter.getInstance();
+      app.locals['t'] = (key: string, lang: any, args: any) => {
+        return this.i18n.t(key, { lang, args });
+      };
+    }
+
     if (
       process.env['NODE_ENV'] !== 'production' &&
       !!this.i18nOptions.typesOutputPath
@@ -105,27 +126,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
           logger.log('No changes detected');
         }
       });
-    }
-
-    // makes sure languages & translations are loaded before application loads
-    await this.i18n.refresh();
-
-    // Register handlebars helper
-    if (this.i18nOptions.viewEngine == 'hbs') {
-      try {
-        const hbs = await import('hbs');
-        hbs.registerHelper('t', this.i18n.hbsHelper);
-        logger.log('Handlebars helper registered');
-      } catch (e) {
-        logger.error('hbs module failed to load', e);
-      }
-    }
-
-    if (['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
-      const app = this.adapter.httpAdapter.getInstance();
-      app.locals['t'] = (key: string, lang: any, args: any) => {
-        return this.i18n.t(key, { lang, args });
-      };
     }
   }
 

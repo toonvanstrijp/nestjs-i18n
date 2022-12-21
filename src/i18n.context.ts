@@ -1,6 +1,5 @@
 import { ArgumentsHost } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
-import { logger } from './i18n.module';
 import { I18nTranslator } from './interfaces/i18n-translator.interface';
 import { I18nValidationError } from './interfaces/i18n-validation-error.interface';
 import { I18nService, TranslateOptions } from './services/i18n.service';
@@ -63,8 +62,12 @@ export class I18nContext<K = Record<string, unknown>>
   static current<K = Record<string, unknown>>(
     context?: ArgumentsHost,
   ): I18nContext<K> | undefined {
-    const i18n =
-      this.storage.getStore() ?? getContextObject(context)?.i18nContext;
+    const i18n = this.storage.getStore() as I18nContext<K> | undefined;
+
+    if (!i18n && !!context) {
+      return getContextObject(context)?.i18nContext
+    }
+
     return i18n;
   }
 }

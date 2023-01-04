@@ -65,7 +65,7 @@ export class I18nContext<K = Record<string, unknown>>
     const i18n = this.storage.getStore() as I18nContext<K> | undefined;
 
     if (!i18n && !!context) {
-      return getContextObject(context)?.i18nContext
+      return getContextObject(context)?.i18nContext;
     }
 
     return i18n;

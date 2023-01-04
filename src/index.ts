@@ -55,5 +55,7 @@ export {
   i18nValidationMessage,
 } from './utils/util';
 
+export { getContextObject } from './utils/context';
+
 // types
 export { Path, PathValue } from './types';

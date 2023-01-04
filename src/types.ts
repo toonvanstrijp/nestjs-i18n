@@ -45,4 +45,8 @@ export type PathValue<
   ? T[P]
   : never;
 
-export type IfAnyOrNever<T, Y, N> = 0 extends 1 & T ? Y : [T] extends [never] ? Y : N;
+export type IfAnyOrNever<T, Y, N> = 0 extends 1 & T
+  ? Y
+  : [T] extends [never]
+  ? Y
+  : N;

@@ -14,14 +14,12 @@ import {
   I18nValidationExceptionFilterDetailedErrorsOption,
   I18nValidationExceptionFilterErrorFormatterOption,
 } from '../interfaces/i18n-validation-exception-filter.interface';
-import { Either } from '../types/either.type';
 import { mapChildrenToValidationErrors } from '../utils/format';
 import { formatI18nErrors } from '../utils/util';
 
-type I18nValidationExceptionFilterOptions = Either<
-  I18nValidationExceptionFilterDetailedErrorsOption,
-  I18nValidationExceptionFilterErrorFormatterOption
->;
+type I18nValidationExceptionFilterOptions =
+  | I18nValidationExceptionFilterDetailedErrorsOption
+  | I18nValidationExceptionFilterErrorFormatterOption;
 
 @Catch(I18nValidationException)
 export class I18nValidationExceptionFilter implements ExceptionFilter {
@@ -57,17 +55,25 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     }
   }
 
+  private isWithErrorFormatter(
+    options: I18nValidationExceptionFilterOptions,
+  ): options is I18nValidationExceptionFilterErrorFormatterOption {
+    return 'errorFormatter' in options;
+  }
+
   protected normalizeValidationErrors(
     validationErrors: ValidationError[],
   ): string[] | I18nValidationError[] | object {
-    switch (true) {
-      case !this.options.detailedErrors && !('errorFormatter' in this.options):
-        return this.flattenValidationErrors(validationErrors);
-      case !this.options.detailedErrors && 'errorFormatter' in this.options:
-        return this.options.errorFormatter(validationErrors);
-      default:
-        return validationErrors;
-    }
+    if (
+      this.isWithErrorFormatter(this.options) &&
+      !('detailedErrors' in this.options)
+    )
+      return this.options.errorFormatter(validationErrors);
+
+    if (!this.options.detailedErrors)
+      return this.flattenValidationErrors(validationErrors);
+
+    return validationErrors;
   }
 
   protected flattenValidationErrors(

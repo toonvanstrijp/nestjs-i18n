@@ -7,4 +7,5 @@ export interface I18nValidationExceptionFilterDetailedErrorsOption {
 
 export interface I18nValidationExceptionFilterErrorFormatterOption {
   errorFormatter?: (errors: ValidationError[]) => object;
+  errorHttpStatusCode?: HttpStatus;
 }

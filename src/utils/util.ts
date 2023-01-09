@@ -94,13 +94,15 @@ const loadTypescript = async (): Promise<boolean> => {
       return false;
     }
   }
+
+  return true;
 }
 
 export const convertObjectToTypeDefinition = async (
   object: any,
 ): Promise<ts.TypeElement[]> => {
   if(!(await loadTypescript())) {
-    return;
+    return [];
   }
 
   switch (typeof object) {

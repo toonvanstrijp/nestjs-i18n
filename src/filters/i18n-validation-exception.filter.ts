@@ -70,7 +70,10 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     )
       return this.options.errorFormatter(validationErrors);
 
-    if (!this.options.detailedErrors)
+    if (
+      !this.isWithErrorFormatter(this.options) &&
+      !this.options.detailedErrors
+    )
       return this.flattenValidationErrors(validationErrors);
 
     return validationErrors;

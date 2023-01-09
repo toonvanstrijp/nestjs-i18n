@@ -34,8 +34,6 @@ import { I18nLanguageInterceptor } from './interceptors/i18n-language.intercepto
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
 import {
-  annotateSourceCode,
-  createTypesFile,
   isNestMiddleware,
   shouldResolve,
   usingFastify,
@@ -48,7 +46,7 @@ import { I18nJsonLoader } from './loaders/i18n.json.loader';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
 import { mergeDeep } from './utils/merge';
 import * as fs from 'fs';
-import path = require('path');
+import * as path from 'path';
 
 export const logger = new Logger('I18nService');
 
@@ -94,10 +92,12 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       };
     }
 
-    if (
-      process.env['NODE_ENV'] !== 'production' &&
-      !!this.i18nOptions.typesOutputPath
-    ) {
+    
+
+    if (!!this.i18nOptions.typesOutputPath) {
+     try {
+      const ts = await import('./utils/typescript');
+      
       this.translations.pipe(takeUntil(this.unsubscribe)).subscribe(async (t) => {
         logger.log('Checking translation changes');
         const object = Object.keys(t).reduce(
@@ -105,7 +105,13 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
           {},
         );
 
-        const outputFile = annotateSourceCode(await createTypesFile(object));
+        const rawContent = await ts.createTypesFile(object);
+
+        if (!rawContent) {
+          return;
+        }
+
+        const outputFile = ts.annotateSourceCode(rawContent);
 
         fs.mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
           recursive: true,
@@ -126,6 +132,9 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
           logger.log('No changes detected');
         }
       });
+      } catch (_) {
+        // NOOP: typescript package not found
+      }
     }
   }
 

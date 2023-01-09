@@ -7,8 +7,7 @@ import {
 import { I18nService, TranslateOptions } from '../services/i18n.service';
 import { MiddlewareConsumer } from '@nestjs/common';
 import { NestMiddlewareConsumer, Path } from '../types';
-import * as ts from 'typescript';
-import { factory } from 'typescript';
+import type * as ts from 'typescript';
 
 export function shouldResolve(e: I18nOptionResolver) {
   return typeof e === 'function' || e['use'];
@@ -83,96 +82,119 @@ export const usingFastify = (consumer: NestMiddlewareConsumer) => {
     .startsWith('fastify');
 };
 
-export const convertObjectToTypeDefinition = (
+let t: typeof ts | undefined;
+
+const loadTypescript = async (): Promise<boolean> => {
+  if (t == undefined) {
+    try {
+      t = await import('typescript');
+      return true;
+    } catch (_) {
+      // no typescript found
+      return false;
+    }
+  }
+}
+
+export const convertObjectToTypeDefinition = async (
   object: any,
-): ts.TypeElement[] => {
+): Promise<ts.TypeElement[]> => {
+  if(!(await loadTypescript())) {
+    return;
+  }
+
   switch (typeof object) {
     case 'object':
-      return Object.keys(object).map((key) => {
+      return Promise.all(Object.keys(object).map(async (key) => {
         if (typeof object[key] === 'string') {
-          return factory.createPropertySignature(
+          return t.factory.createPropertySignature(
             undefined,
-            factory.createStringLiteral(key),
+            t.factory.createStringLiteral(key),
             undefined,
-            factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+            t.factory.createKeywordTypeNode(t.SyntaxKind.StringKeyword),
           );
         }
         if (Array.isArray(object[key])) {
-          return factory.createPropertySignature(
+          return t.factory.createPropertySignature(
             undefined,
-            factory.createStringLiteral(key),
+            t.factory.createStringLiteral(key),
             undefined,
-            factory.createTupleTypeNode(
+            t.factory.createTupleTypeNode(
               Array(object[key].length).fill(
-                factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+                t.factory.createKeywordTypeNode(t.SyntaxKind.StringKeyword),
               ),
             ),
           );
         }
-        return factory.createPropertySignature(
+        return t.factory.createPropertySignature(
           undefined,
-          factory.createStringLiteral(key),
+          t.factory.createStringLiteral(key),
           undefined,
-          factory.createTypeLiteralNode(
-            convertObjectToTypeDefinition(object[key]),
+          t.factory.createTypeLiteralNode(
+            await convertObjectToTypeDefinition(object[key]),
           ),
         );
-      });
+      }));
   }
 
   return [];
 };
 
-const printer = ts.createPrinter();
 
-export const createTypesFile = (object: any) => {
-  const sourceFile = ts.createSourceFile(
+export const createTypesFile = async (object: any) => {
+  if(!(await loadTypescript())) {
+    return;
+  }
+  
+  const printer = t.createPrinter();
+
+  const sourceFile = t.createSourceFile(
     'placeholder.ts',
     '',
-    ts.ScriptTarget.ESNext,
+    t.ScriptTarget.ESNext,
     true,
-    ts.ScriptKind.TS,
+    t.ScriptKind.TS,
   );
 
-  const i18nTranslationsType = factory.createTypeAliasDeclaration(
-    [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-    factory.createIdentifier('I18nTranslations'),
+  const i18nTranslationsType = t.factory.createTypeAliasDeclaration(
+    [t.factory.createModifier(t.SyntaxKind.ExportKeyword)],
+    t.factory.createIdentifier('I18nTranslations'),
     undefined,
-    factory.createTypeLiteralNode(convertObjectToTypeDefinition(object)),
+    t.factory.createTypeLiteralNode(await convertObjectToTypeDefinition(object)),
   );
 
-  const nodes = factory.createNodeArray([
-    factory.createImportDeclaration(
+  const nodes = t.factory.createNodeArray([
+    t.factory.createImportDeclaration(
       undefined,
-      factory.createImportClause(
+      t.factory.createImportClause(
         false,
         undefined,
-        factory.createNamedImports([
-          factory.createImportSpecifier(
+        t.factory.createNamedImports([
+          t.factory.createImportSpecifier(
             false,
             undefined,
-            factory.createIdentifier('Path'),
+            t.factory.createIdentifier('Path'),
           ),
         ]),
       ),
-      factory.createStringLiteral('nestjs-i18n'),
+      t.factory.createStringLiteral('nestjs-i18n'),
       undefined,
     ),
     i18nTranslationsType,
-    factory.createTypeAliasDeclaration(
-      [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-      factory.createIdentifier('I18nPath'),
+    t.factory.createTypeAliasDeclaration(
+      [t.factory.createModifier(t.SyntaxKind.ExportKeyword)],
+      t.factory.createIdentifier('I18nPath'),
       undefined,
-      factory.createTypeReferenceNode(factory.createIdentifier('Path'), [
-        factory.createTypeReferenceNode(
-          factory.createIdentifier('I18nTranslations'),
+      t.factory.createTypeReferenceNode(t.factory.createIdentifier('Path'), [
+        t.factory.createTypeReferenceNode(
+          t.factory.createIdentifier('I18nTranslations'),
           undefined,
         ),
       ]),
     ),
   ]);
 
-  return printer.printList(ts.ListFormat.MultiLine, nodes, sourceFile);
+  return printer.printList(t.ListFormat.MultiLine, nodes, sourceFile);
 };
 
 export const annotateSourceCode = (code: string) => {

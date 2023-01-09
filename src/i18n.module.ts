@@ -98,14 +98,14 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       process.env['NODE_ENV'] !== 'production' &&
       !!this.i18nOptions.typesOutputPath
     ) {
-      this.translations.pipe(takeUntil(this.unsubscribe)).subscribe((t) => {
+      this.translations.pipe(takeUntil(this.unsubscribe)).subscribe(async (t) => {
         logger.log('Checking translation changes');
         const object = Object.keys(t).reduce(
           (result, key) => mergeDeep(result, t[key]),
           {},
         );
 
-        const outputFile = annotateSourceCode(createTypesFile(object));
+        const outputFile = annotateSourceCode(await createTypesFile(object));
 
         fs.mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
           recursive: true,

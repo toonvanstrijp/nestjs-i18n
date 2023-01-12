@@ -81,6 +81,8 @@ export class I18nService<K = Record<string, unknown>>
       return key as unknown as IfAnyOrNever<R, string, R>;
     }
 
+	const previousFallbackLang = lang;
+
     lang =
       lang === undefined || lang === null
         ? this.i18nOptions.fallbackLanguage
@@ -111,9 +113,15 @@ export class I18nService<K = Record<string, unknown>>
           this.logger.error(message);
         }
 
+		const nextFallbackLanguage = this.getFallbackLanguage(lang);
+
+		if (previousFallbackLang === nextFallbackLanguage) {
+		  return key as unknown as IfAnyOrNever<R, string, R>;
+		}
+
         return this.translate(key, {
           ...options,
-          lang: this.getFallbackLanguage(lang),
+          lang: nextFallbackLanguage,
         });
       }
     }

@@ -48,6 +48,10 @@ export class HelloController {
   @Render('index2')
   index2(): any {}
 
+  @Get('/index3')
+  @Render('index3')
+  index3(): any {}
+
   @Get('/short')
   helloShort(@I18nLang() lang: string): any {
     return this.i18n.t('test.HELLO', { lang });

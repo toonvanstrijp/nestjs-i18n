@@ -115,14 +115,12 @@ export class I18nService<K = Record<string, unknown>>
 
 		const nextFallbackLanguage = this.getFallbackLanguage(lang);
 
-		if (previousFallbackLang === nextFallbackLanguage) {
-		  return key as unknown as IfAnyOrNever<R, string, R>;
+		if (previousFallbackLang !== nextFallbackLanguage) {
+		  return this.translate(key, {
+		    ...options,
+		    lang: nextFallbackLanguage,
+		  });
 		}
-
-        return this.translate(key, {
-          ...options,
-          lang: nextFallbackLanguage,
-        });
       }
     }
 

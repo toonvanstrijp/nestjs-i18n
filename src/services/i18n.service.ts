@@ -28,8 +28,7 @@ export type TranslateOptions = {
 
 @Injectable()
 export class I18nService<K = Record<string, unknown>>
-  implements I18nTranslator<K>, OnModuleDestroy
-{
+  implements I18nTranslator<K>, OnModuleDestroy {
   private supportedLanguages: string[];
   private translations: I18nTranslation;
   private pluralRules = new Map<string, Intl.PluralRules>();
@@ -81,6 +80,8 @@ export class I18nService<K = Record<string, unknown>>
       return key as unknown as IfAnyOrNever<R, string, R>;
     }
 
+    const previousFallbackLang = lang;
+
     lang =
       lang === undefined || lang === null
         ? this.i18nOptions.fallbackLanguage
@@ -105,16 +106,19 @@ export class I18nService<K = Record<string, unknown>>
     ) {
       if (lang !== this.i18nOptions.fallbackLanguage || !!defaultValue) {
         if (this.i18nOptions.logging) {
-          const message = `Translation "${
-            key as string
-          }" in "${lang}" does not exist.`;
+          const message = `Translation "${key as string
+            }" in "${lang}" does not exist.`;
           this.logger.error(message);
         }
 
-        return this.translate(key, {
-          ...options,
-          lang: this.getFallbackLanguage(lang),
-        });
+        const nextFallbackLanguage = this.getFallbackLanguage(lang);
+
+        if (previousFallbackLang !== nextFallbackLanguage) {
+          return this.translate(key, {
+            ...options,
+            lang: nextFallbackLanguage,
+          });
+        }
       }
     }
 
@@ -257,14 +261,14 @@ export class I18nService<K = Record<string, unknown>>
         for (const nestedTranslation of nestedTranslations) {
           const result = rootTranslations
             ? (this.translateObject(
-                nestedTranslation.key,
-                rootTranslations,
-                lang,
-                {
-                  ...options,
-                  args: { parent: options.args, ...nestedTranslation.args },
-                },
-              ) as string) ?? ''
+              nestedTranslation.key,
+              rootTranslations,
+              lang,
+              {
+                ...options,
+                args: { parent: options.args, ...nestedTranslation.args },
+              },
+            ) as string) ?? ''
             : '';
           translation =
             translation.substring(0, nestedTranslation.index - offset) +

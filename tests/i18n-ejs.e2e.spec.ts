@@ -23,7 +23,7 @@ import { Global, Module } from '@nestjs/common';
   ],
   exports: ['OPTIONS'],
 })
-export class OptionsModule {}
+export class OptionsModule { }
 
 describe('i18n module e2e ejs', () => {
   let app: NestExpressApplication;
@@ -90,6 +90,23 @@ describe('i18n module e2e ejs', () => {
       .get('/hello/index2?l=nl')
       .expect(200)
       .expect('Hallo');
+  });
+
+  it(`should render page showing invalid key`, async () => {
+    await request(app.getHttpServer())
+      .get('/hello/index3')
+      .expect(200)
+      .expect('test.HI');
+
+    await request(app.getHttpServer())
+      .get('/hello/index3?l=pt')
+      .expect(200)
+      .expect('test.HI');
+
+    return request(app.getHttpServer())
+      .get('/hello/index3?l=pt-br')
+      .expect(200)
+      .expect('test.HI');
   });
 
   afterAll(async () => {

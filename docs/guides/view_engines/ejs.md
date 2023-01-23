@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# ejs
+# Ejs
 
 To enable [**ejs**](https://github.com/mde/ejs) support make use of the `viewEngine` option inside your `I18nModule`.
 

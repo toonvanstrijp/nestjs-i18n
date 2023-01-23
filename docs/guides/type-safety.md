@@ -37,13 +37,11 @@ To use the types within your code import the `I18nTranslations` type from the ge
 
 ```typescript title="src/app.controller.ts"
 import { Controller, Get } from '@nestjs/common';
-import { I18n, i18nService, I18nContext } from 'nestjs-i18n';
+import { I18n, I18nContext } from 'nestjs-i18n';
 import { I18nTranslations } from './generated/i18n.generated.ts';
 
 @Controller()
 export class AppController {
-
-  constructor(private readonly i18nService: I18nService<I18nTranslations>){}
 
   @Get()
   async getHello(@I18n() i18n: I18nContext<I18nTranslations>) {

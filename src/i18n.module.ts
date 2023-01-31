@@ -399,7 +399,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
   private static createResolverProviders(resolvers?: I18nOptionResolver[]) {
     if (!resolvers || resolvers.length === 0) {
       logger.error(
-        `No resolvers provided! nestjs-i18n won't workt properly, please follow the quick-start guide: https://nestjs-i18n.com/quick-start`,
+        `No resolvers provided! nestjs-i18n won't work properly, please follow the quick-start guide: https://nestjs-i18n.com/quick-start`,
       );
     }
     return (resolvers || [])

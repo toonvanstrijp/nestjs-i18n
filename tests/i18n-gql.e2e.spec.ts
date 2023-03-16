@@ -7,6 +7,7 @@ import {
   GraphQLWebsocketResolver,
   AcceptLanguageResolver,
   I18nValidationPipe,
+  I18nValidationExceptionFilter,
 } from '../src';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
@@ -71,6 +72,7 @@ describe('i18n module e2e graphql', () => {
 
     app = module.createNestApplication();
 
+    app.useGlobalFilters(new I18nValidationExceptionFilter())
     app.useGlobalPipes(
       new I18nValidationPipe(),
     );
@@ -429,7 +431,7 @@ describe('i18n module e2e graphql', () => {
       .expect(200, {
         errors: [
           {
-            message: 'Bad Request',
+            message: '18 Validation Exception',
             locations: [
               {
                 line: 1,
@@ -438,22 +440,20 @@ describe('i18n module e2e graphql', () => {
             ],
             path: ['validation'],
             extensions: {
-              code: 'INTERNAL_SERVER_ERROR',
-              // exception: {
-              //   response: 'Bad Request',
-              //   status: 400,
-              //   message: 'Bad Request',
-              //   name: 'I18nValidationException',
-              //   errors: [
-              //     {
-              //       property: 'age',
-              //       children: [],
-              //       constraints: {
-              //         min: 'age with value: "2" needs to be at least 10, ow and COOL',
-              //       },
-              //     },
-              //   ],
-              // },
+              code: 'BAD_REQUEST',
+              originalError: {
+                statusCode: 400,
+                error: "Bad Request",
+                message: [
+                  {
+                    property: 'age',
+                    children: [],
+                    constraints: {
+                      min: 'age with value: "2" needs to be at least 10, ow and COOL',
+                    },
+                  },
+                ],
+              },
             },
           },
         ],

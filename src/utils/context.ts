@@ -14,8 +14,6 @@ export function getContextObject(
       return context.getArgs()[2];
     case 'rpc':
       return context.switchToRpc().getContext();
-    case 'telegraf':
-      return context.getArgByIndex(0);
     default:
       logger.warn(`context type: ${contextType} not supported`);
       return context;

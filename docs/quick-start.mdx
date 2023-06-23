@@ -131,16 +131,8 @@ import { I18nModule } from 'nestjs-i18n';
           path: join(__dirname, "/i18n/"),
           watch: true,
         },
-      }),    I18nModule.forRootAsync({
-      useFactory: (configService: ConfigService) => ({
-        fallbackLanguage: "en",
-        loaderOptions: {
-          path: join(__dirname, "/i18n/"),
-          watch: true,
-        },
-      }),
+      })
       inject: [ConfigService]
-    })
     })
   ],
   controllers: [],

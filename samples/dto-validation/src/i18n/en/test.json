@@ -1,0 +1,30 @@
+{
+  "HELLO": "Hello",
+  "PRODUCT": {
+    "NEW": "New Product: {name}"
+  },
+  "ENGLISH": "English",
+  "ARRAY": ["ONE", "TWO", "THREE"],
+  "cat": "Cat",
+  "ONLY_EN_KEY": "this key only exists in en lang",
+  "cat_name": "Cat: {name}",
+  "set-up-password": {
+    "heading": "Hello, {username}",
+    "title": "Forgot password",
+    "followLink": "Please follow the link to set up your password"
+  },
+  "dot.test": "test",
+  "day_interval": {
+    "one": "Every day",
+    "other": "Every {count} days",
+    "zero": "Never"
+  },
+  "nested": "Message: $t(test.set-up-password.heading, {{\"username\":  \"{username}\" }})",
+  "nested-no-args": "We go shopping: $t(test.dot.test)",
+  "nest1": {
+    "nest2": {
+      "nest3": "We go shopping: $t(test.day_interval, {{\"count\": {count} }})"
+    }
+  },
+  "CURRENT_LANGUAGE": "Current language: {lang}"
+}

@@ -14,7 +14,7 @@ npm install --save nestjs-i18n
 
 ## Setup translation files
 
-By default `nestjs-i18n` uses the `I18nJsonLoader` loader class. This loader reads translations from `json` files. Create a folder named `i18n` in the `src` folder of your project. 
+By default `nestjs-i18n` uses the `I18nJsonLoader` loader class. This loader reads translations from `json` files. Create a folder named `i18n` in the `src` folder of your project.
 
 ```
 package.json
@@ -81,10 +81,10 @@ When using a monorepo structure don't forget to set the `outDir`
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": [
-      { 
-        "include": "i18n/**/*", 
-        "watchAssets": true, 
-+        "outDir": "dist/apps/api" 
+      {
+        "include": "i18n/**/*",
+        "watchAssets": true,
++        "outDir": "dist/apps/api"
       }
     ]
   }
@@ -114,6 +114,33 @@ import { I18nModule } from 'nestjs-i18n';
 })
 export class AppModule {}
 ```
+
+The async way `nestjs-i18n` is to use I18nModule.forRootAsync
+
+```typescript title="src/app.module.ts"
+import { Module } from '@nestjs/common';
+import * as path from 'path';
+import { I18nModule } from 'nestjs-i18n';
+
+@Module({
+  imports: [
+    I18nModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        fallbackLanguage: "en",
+        loaderOptions: {
+          path: join(__dirname, "/i18n/"),
+          watch: true,
+        },
+      })
+      inject: [ConfigService]
+    })
+  ],
+  controllers: [],
+})
+export class AppModule {}
+```
+
+
 :::caution
 
 The `I18nModule` is a [**global**](https://docs.nestjs.com/modules#global-modules) module. This means you'll only need to register the module once (in the root module). After that it's accessible throughout the whole application.
@@ -128,7 +155,7 @@ Setting the `watch` option to **`true`** in the `loaderOptions` enables live rel
 
 :::tip Type safety 🎉
 
-`nestjs-i18n` now comes with type safety as well! Click [**here**](https://docs.nestjs.com/guides/type-safety) to see how 🎉.
+`nestjs-i18n` now comes with type safety as well! Click [**here**](https://nestjs-i18n.com/guides/type-safety) to see how 🎉.
 
 :::
 
@@ -172,6 +199,44 @@ import {
 })
 export class AppModule {}
 ```
+
+or in `forRootAsync`
+
+
+```typescript title="src/app.module.ts"
+import { Module } from '@nestjs/common';
+import * as path from 'path';
+import {
+  AcceptLanguageResolver,
+  I18nJsonLoader,
+  I18nModule,
+  QueryResolver,
+} from 'nestjs-i18n';
+
+@Module({
+  imports: [
+    I18nModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        fallbackLanguage: "en",
+        loaderOptions: {
+          path: join(__dirname, "/i18n/"),
+          watch: true,
+        },
+      }),
+      resolvers: [
+        new QueryResolver(["lang", "l"]),
+        new HeaderResolver(["x-custom-lang"]),
+        new CookieResolver(),
+        AcceptLanguageResolver,
+      ],
+      inject: [ConfigService],
+    }),
+  ],
+  controllers: [],
+})
+export class AppModule {}
+```
+
 :::tip
 
 It's possible to create your own **resolvers**! For example if you want to resolve the language from your logged-in user's settings. Please see the [**resolvers**](concepts/resolver.md) page for instructions.

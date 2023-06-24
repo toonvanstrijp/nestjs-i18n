@@ -2,7 +2,7 @@ name: deploy-docs
 
 on:
   push:
-    branches: [main]
+    branches: [gh]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -19,7 +19,7 @@ jobs:
           cache: npm
       - name: Build Docusaurus website
         run: |
-          npm ci 
+          npm ci
           npm run doc:build
       - name: Deploy to GitHub Pages
         if: success()

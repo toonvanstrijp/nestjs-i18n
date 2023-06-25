@@ -1,0 +1,9 @@
+{
+  "email": "e-mail adres",
+  "password": "wachtwoord",
+  "NOT_EMPTY": "$t(validation.{property}) mag niet leeg zijn",
+  "INVALID_EMAIL": "email is ongeldig",
+  "INVALID_BOOLEAN": "{property} is geen boolean",
+  "MIN": "{property} met waarde: \"{value}\" moet hoger zijn dan {constraints.0}, ow en {message}",
+  "MAX": "{property} met waarde: \"{value}\" moet lager zijn dan {constraints.0}, ow en {message}"
+}

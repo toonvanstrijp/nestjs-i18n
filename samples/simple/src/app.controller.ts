@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-import { CreateUserDto } from './dtos/create-user.dto';
+import { I18n, I18nContext } from 'nestjs-i18n';
 
 @Controller()
 export class AppController {
@@ -11,8 +11,8 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Post('/users')
-  async createUser(@Body() dto: CreateUserDto) {
-    console.log(dto);
+  @Get('/hello')
+  async getI18nHello(@I18n() i18n: I18nContext) {
+    return await i18n.t('test.HELLO');
   }
 }

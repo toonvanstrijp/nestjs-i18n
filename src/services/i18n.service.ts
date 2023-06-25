@@ -126,7 +126,16 @@ export class I18nService<K = Record<string, unknown>>
   }
 
   private getFallbackLanguage(lang: string) {
-    const regionSepIndex = lang.lastIndexOf('-');
+    let regionSepIndex =-1
+
+    if(lang.includes("-")){
+      regionSepIndex = lang.lastIndexOf('-');
+    }
+
+    if (lang.includes("_")) {
+      regionSepIndex = lang.lastIndexOf('_');
+    }
+    
     return regionSepIndex !== -1
       ? lang.slice(0, regionSepIndex)
       : this.i18nOptions.fallbackLanguage;

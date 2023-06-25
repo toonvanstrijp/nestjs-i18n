@@ -410,6 +410,8 @@ describe('i18n module with fallbacks', () => {
             'en-CA': 'fr',
             'en-*': 'en',
             'fr-*': 'fr',
+            'en_*': 'en',
+            'fr_*': 'fr',
             pt: 'pt-BR',
           },
           loaderOptions: {
@@ -436,6 +438,9 @@ describe('i18n module with fallbacks', () => {
     expect(i18nService.translate('test.HELLO', { lang: 'en-US' })).toBe(
       'Hello',
     );
+    expect(i18nService.translate('test.HELLO', { lang: 'en_US' })).toBe(
+      'Hello',
+    );
   });
 
   it('i18n service should return dutch translation', () => {
@@ -445,6 +450,9 @@ describe('i18n module with fallbacks', () => {
   it('i18n service should return french translation', () => {
     expect(i18nService.translate('test.HELLO', { lang: 'fr' })).toBe('Bonjour');
     expect(i18nService.translate('test.HELLO', { lang: 'fr-BE' })).toBe(
+      'Bonjour',
+    );
+    expect(i18nService.translate('test.HELLO', { lang: 'fr_BE' })).toBe(
       'Bonjour',
     );
     expect(i18nService.translate('test.HELLO', { lang: 'en-CA' })).toBe(

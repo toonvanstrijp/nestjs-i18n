@@ -39,8 +39,8 @@ export class TestController {
 
 ```
 
-```hbs title="src/view/page.hbs"
-h1= t('test.HELLO', i18nLang, { username })
+```pug title="src/view/page.pug"
+h1 #{t('test.HELLO', i18nLang, {username: username} )}
 ```
 
 :::caution

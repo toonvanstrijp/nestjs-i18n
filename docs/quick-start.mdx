@@ -208,9 +208,11 @@ import { Module } from '@nestjs/common';
 import * as path from 'path';
 import {
   AcceptLanguageResolver,
+  QueryResolver,
+  HeaderResolver,
+  CookieResolver,
   I18nJsonLoader,
   I18nModule,
-  QueryResolver,
 } from 'nestjs-i18n';
 
 @Module({

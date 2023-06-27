@@ -176,4 +176,4 @@ If you want a different output, create your own interceptor! For an example look
 :::
 
 ## Example
-A working example is available [here](https://github.com/toonvanstrijp/nestjs-i18n/tree/main/samples/simple).
+A working example is available [here](https://github.com/toonvanstrijp/nestjs-i18n/tree/main/samples/dt-validation).

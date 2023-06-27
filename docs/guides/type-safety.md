@@ -75,3 +75,27 @@ export class ApiException extends Error {
 :::caution
 For now type safety is optional and need to be enabled. We're planning to make a breaking change where type safety is enabled by default.
 :::
+
+# Type safety with DTOS
+
+You can also use the generated types in your DTOs. This way you can reduce the chance of having a typo in your validation messages.
+
+```typescript title="src/craete-user.dto.ts"
+import { I18nTranslations } from './generated/i18n.generated.ts';
+import {
+  IsEmail,
+  IsNotEmpty,
+} from 'class-validator';
+import { i18nValidationMessage } from 'nestjs-i18n';
+
+export class CreateUserDto {
+  @IsNotEmpty({ message: i18nValidationMessage<I18nTranslations>("validation.isNotEmpty")})
+  @IsEmail({}, { message: i18nValidationMessage<I18nTranslations>("validation.isEmail")})
+  email: string;
+
+  @IsNotEmpty({ message: i18nValidationMessage<I18nTranslations>("validation.isNotEmpty")})
+  password: string;
+
+}
+
+```

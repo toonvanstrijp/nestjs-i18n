@@ -6,7 +6,7 @@ import {
 } from '../interfaces/i18n-validation-error.interface';
 import { I18nService, TranslateOptions } from '../services/i18n.service';
 import { MiddlewareConsumer } from '@nestjs/common';
-import { NestMiddlewareConsumer, Path } from '../types';
+import { NestMiddlewareConsumer, Path, Translations } from '../types';
 
 export function shouldResolve(e: I18nOptionResolver) {
   return typeof e === 'function' || e['use'];
@@ -35,7 +35,7 @@ export function i18nValidationErrorFactory(
   );
 }
 
-export function i18nValidationMessage<K = Record<string, unknown>>(
+export function i18nValidationMessage<K = Translations>(
   key: Path<K>,
   args?: any,
 ) {
@@ -49,7 +49,7 @@ export function i18nValidationMessage<K = Record<string, unknown>>(
   };
 }
 
-export function formatI18nErrors<K = Record<string, unknown>>(
+export function formatI18nErrors<K = Translations>(
   errors: I18nValidationError[],
   i18n: I18nService<K>,
   options?: TranslateOptions,

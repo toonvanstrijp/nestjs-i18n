@@ -7,10 +7,9 @@ import {
   I18nLoader,
   i18nValidationMessage,
 } from '../src';
-import { I18nTranslations } from './generated/i18n.generated';
 
 describe('i18n module', () => {
-  let i18nService: I18nService<I18nTranslations>;
+  let i18nService: I18nService;
   let i18nLoader: I18nLoader;
 
   beforeAll(async () => {
@@ -222,7 +221,7 @@ describe('i18n module', () => {
 });
 
 describe('i18n module without trailing slash in path', () => {
-  let i18nService: I18nService<I18nTranslations>;
+  let i18nService: I18nService;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -256,7 +255,7 @@ describe('i18n module without trailing slash in path', () => {
 });
 
 describe('i18n module loads custom files', () => {
-  let i18nService: I18nService<I18nTranslations>;
+  let i18nService: I18nService;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -292,7 +291,7 @@ describe('i18n module loads custom files', () => {
 });
 
 describe('i18n module loads custom files with wrong file pattern', () => {
-  let i18nService: I18nService<I18nTranslations>;
+  let i18nService: I18nService;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -327,7 +326,7 @@ describe('i18n module loads custom files with wrong file pattern', () => {
 });
 
 describe('i18n module with loader watch', () => {
-  let i18nService: I18nService<I18nTranslations>;
+  let i18nService: I18nService;
   let i18nLoader: I18nLoader;
 
   const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
@@ -399,7 +398,7 @@ describe('i18n module with loader watch', () => {
 });
 
 describe('i18n module with fallbacks', () => {
-  let i18nService: I18nService<I18nTranslations>;
+  let i18nService: I18nService;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -417,7 +416,7 @@ describe('i18n module with fallbacks', () => {
           loaderOptions: {
             path: path.join(__dirname, '/i18n'),
           },
-          typesOutputPath: path.join(__dirname, '/generated/i18n.generated.ts'),
+          typesOutputPath: path.join(__dirname, '/types/nestjs-i18n.d.ts'),
         }),
       ],
     }).compile();
@@ -471,7 +470,7 @@ describe('i18n module with fallbacks', () => {
 
   it('should santize values from pipe caharacters', () => {
     expect(
-      i18nValidationMessage<I18nTranslations>('test.HELLO')({
+      i18nValidationMessage('test.HELLO')({
         value: 'example|||',
         constraints: [],
         targetName: 'string',

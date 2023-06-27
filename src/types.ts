@@ -50,3 +50,7 @@ export type IfAnyOrNever<T, Y, N> = 0 extends 1 & T
   : [T] extends [never]
   ? Y
   : N;
+
+export type Translations = Record<string, unknown>;
+
+export type I18nPath = Path<Translations>;

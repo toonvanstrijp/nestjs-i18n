@@ -3,10 +3,10 @@ import { AsyncLocalStorage } from 'async_hooks';
 import { I18nTranslator } from './interfaces/i18n-translator.interface';
 import { I18nValidationError } from './interfaces/i18n-validation-error.interface';
 import { I18nService, TranslateOptions } from './services/i18n.service';
-import { Path, PathValue } from './types';
+import { Path, PathValue, Translations } from './types';
 import { getContextObject } from './utils/context';
 
-export class I18nContext<K = Record<string, unknown>>
+export class I18nContext<K = Translations>
   implements I18nTranslator<K>
 {
   private static storage = new AsyncLocalStorage<I18nContext>();
@@ -59,7 +59,7 @@ export class I18nContext<K = Record<string, unknown>>
     return this.storage.run(ctx, next);
   }
 
-  static current<K = Record<string, unknown>>(
+  static current<K = Translations>(
     context?: ArgumentsHost,
   ): I18nContext<K> | undefined {
     const i18n = this.storage.getStore() as I18nContext<K> | undefined;

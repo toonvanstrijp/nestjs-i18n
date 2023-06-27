@@ -58,4 +58,4 @@ export {
 export { getContextObject } from './utils/context';
 
 // types
-export { Path, PathValue } from './types';
+export { Path, PathValue, Translations, I18nPath } from './types';

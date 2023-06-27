@@ -1,0 +1,28 @@
+{
+  "HELLO": "Hallo",
+  "PRODUCT": {
+    "NEW": "Nieuw Product: {name}"
+  },
+  "ARRAY": ["EEN", "TWEE", "DRIE"],
+  "cat": "Kat",
+  "cat_name": "Kat: {name}",
+  "set-up-password": {
+    "heading": "Hello, {username}",
+    "title": "Wachtwoord vergeten",
+    "followLink": "Volg deze link om je wachtwoord in te stellen"
+  },
+  "dot.test": "test",
+  "day_interval": {
+    "one": "Iedere dag",
+    "other": "Iedere {count} dagen",
+    "zero": "Nooit"
+  },
+  "nested": "Bericht: $t(test.set-up-password.heading, {{\"username\":  \"{username}\" }})",
+  "nested-no-args": "Wij gaan winkelen: $t(test.dot.test)",
+  "nest1": {
+    "nest2": {
+      "nest3": "Wij gaan winkelen: $t(test.day_interval, {{\"count\": {count} }})"
+    }
+  },
+  "CURRENT_LANGUAGE": "Huidige taal: {lang}"
+}

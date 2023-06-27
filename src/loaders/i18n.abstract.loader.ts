@@ -10,9 +10,9 @@ import {
   Subject,
   merge as ObservableMerge,
   of as ObservableOf,
+  switchMap,
 } from 'rxjs';
 import * as chokidar from 'chokidar';
-import { switchMap } from 'rxjs/operators';
 
 export interface I18nAbstractLoaderOptions {
   path: string;

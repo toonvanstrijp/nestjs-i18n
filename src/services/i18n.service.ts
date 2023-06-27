@@ -8,10 +8,9 @@ import {
 } from '../i18n.constants';
 import { I18nOptions, I18nValidationError } from '..';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
-import { Observable, BehaviorSubject, lastValueFrom, Subject } from 'rxjs';
+import { Observable, BehaviorSubject, lastValueFrom, Subject, takeUntil, take } from 'rxjs';
 import { I18nLoader } from '../loaders/i18n.loader';
-import { take, takeUntil } from 'rxjs/operators';
-import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
+import { I18nPluralObject } from '../interfaces/i18n-plural.interface';
 import { validate } from 'class-validator';
 import { formatI18nErrors } from '../utils/util';
 import { IfAnyOrNever, Path, PathValue } from '../types';
@@ -135,7 +134,7 @@ export class I18nService<K = Record<string, unknown>>
     if (lang.includes("_")) {
       regionSepIndex = lang.lastIndexOf('_');
     }
-    
+
     return regionSepIndex !== -1
       ? lang.slice(0, regionSepIndex)
       : this.i18nOptions.fallbackLanguage;

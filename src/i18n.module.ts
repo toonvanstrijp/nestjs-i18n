@@ -92,12 +92,12 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       };
     }
 
-    
+
 
     if (!!this.i18nOptions.typesOutputPath) {
      try {
       const ts = await import('./utils/typescript');
-      
+
       this.translations.pipe(takeUntil(this.unsubscribe)).subscribe(async (t) => {
         logger.log('Checking translation changes');
         const object = Object.keys(t).reduce(

@@ -19,5 +19,5 @@ jobs:
 
       - name: Build Docusaurus website
         run: |
-          pnpm install
+          pnpm install --shamefully-hoist=true
           pnpm doc:build

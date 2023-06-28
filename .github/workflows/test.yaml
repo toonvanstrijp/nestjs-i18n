@@ -21,7 +21,7 @@ jobs:
 
       - name: test
         run: |
-          pnpm install
+          pnpm install --shamefully-hoist=true
           pnpm test:cov
 
       - name: Coveralls

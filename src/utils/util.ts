@@ -5,7 +5,7 @@ import {
   I18nValidationException,
 } from '../interfaces/i18n-validation-error.interface';
 import { I18nService, TranslateOptions } from '../services/i18n.service';
-import { MiddlewareConsumer } from '@nestjs/common';
+import { HttpStatus, MiddlewareConsumer } from '@nestjs/common';
 import { NestMiddlewareConsumer, Path } from '../types';
 
 export function shouldResolve(e: I18nOptionResolver) {
@@ -26,13 +26,14 @@ function validationErrorToI18n(e: ValidationError): I18nValidationError {
 }
 
 export function i18nValidationErrorFactory(
-  errors: ValidationError[],
-): I18nValidationException {
-  return new I18nValidationException(
-    errors.map((e) => {
-      return validationErrorToI18n(e);
-    }),
-  );
+  status: HttpStatus = HttpStatus.BAD_REQUEST,
+): (errors: ValidationError[]) => I18nValidationException {
+  return (errors: ValidationError[]): I18nValidationException => {
+    return new I18nValidationException(
+      errors.map((e) => validationErrorToI18n(e)),
+      status,
+    );
+  };
 }
 
 export function i18nValidationMessage<K = Record<string, unknown>>(

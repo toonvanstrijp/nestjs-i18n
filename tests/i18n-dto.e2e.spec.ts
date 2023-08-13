@@ -95,7 +95,7 @@ describe('i18n module e2e dto', () => {
     ],
   };
 
-  it(`should translate validation messages in a custom format if specified`, async () => {
+  it(`should translate validation messages using a custom format if specified`, async () => {
     await request(app.getHttpServer())
       .post('/hello/validation-custom-formatter')
       .send({
@@ -166,6 +166,94 @@ describe('i18n module e2e dto', () => {
           statusCode: 400,
           message: 'Bad Request',
           errors: {
+            email: ['email is ongeldig', 'e-mail adres mag niet leeg zijn'],
+            password: ['wachtwoord mag niet leeg zijn'],
+            subscribeToEmail: ['extra.subscribeToEmail is geen boolean'],
+            min: [
+              'extra.min met waarde: "1" moet hoger zijn dan 5, ow en COOL',
+            ],
+            max: [
+              'extra.max met waarde: "100" moet lager zijn dan 10, ow en SUPER',
+            ],
+          },
+        });
+      });
+  });
+
+  it(`should translate validation messages if a custom response body formatter specified`, async () => {
+    await request(app.getHttpServer())
+      .post('/hello/validation-custom-response-body-formatter')
+      .send({
+        email: '',
+        password: '',
+        extra: { subscribeToEmail: '', min: 1, max: 100 },
+      })
+      .set('Accept', 'application/json')
+      .expect(400)
+      .expect((res) => {
+        expect(res.body).toMatchObject({
+          status: 400,
+          type: 'static',
+          message: 'Bad Request',
+          data: {
+            email: ['email is invalid', 'email cannot be empty'],
+            password: ['password cannot be empty'],
+            subscribeToEmail: ['extra.subscribeToEmail is not a boolean'],
+            min: [
+              'extra.min with value: "1" needs to be at least 5, ow and COOL',
+            ],
+            max: [
+              'extra.max with value: "100" needs to be less than 10, ow and SUPER',
+            ],
+          },
+        });
+      });
+
+    await request(app.getHttpServer())
+      .post('/hello/validation-custom-response-body-formatter')
+      .send({
+        test: '',
+        email: '',
+        password: '',
+        extra: { subscribeToEmail: '', min: 1, max: 100 },
+      })
+      .set('Accept', 'application/json')
+      .expect(400)
+      .expect((res) => {
+        expect(res.body).toMatchObject({
+          status: 400,
+          type: 'static',
+          message: 'Bad Request',
+          data: {
+            test: ['property test should not exist'],
+            email: ['email is invalid', 'email cannot be empty'],
+            password: ['password cannot be empty'],
+            subscribeToEmail: ['extra.subscribeToEmail is not a boolean'],
+            min: [
+              'extra.min with value: "1" needs to be at least 5, ow and COOL',
+            ],
+            max: [
+              'extra.max with value: "100" needs to be less than 10, ow and SUPER',
+            ],
+          },
+        });
+      });
+
+    return request(app.getHttpServer())
+      .post('/hello/validation-custom-response-body-formatter?l=nl')
+      .send({
+        email: '',
+        password: '',
+        extra: { subscribeToEmail: '', min: 1, max: 100 },
+      })
+      .set('Accept', 'application/json')
+      .expect(400)
+      .expect((res) => {
+        expect(res.body).toMatchObject({
+          status: 400,
+          type: 'static',
+          message: 'Bad Request',
+          data: {
             email: ['email is ongeldig', 'e-mail adres mag niet leeg zijn'],
             password: ['wachtwoord mag niet leeg zijn'],
             subscribeToEmail: ['extra.subscribeToEmail is geen boolean'],

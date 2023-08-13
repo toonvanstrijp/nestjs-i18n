@@ -35,22 +35,22 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       lang: i18n.lang,
     });
 
+    const normalizedErrors = this.normalizeValidationErrors(
+        errors,
+    );
+
     switch (host.getType() as string) {
       case 'http':
         const response = host.switchToHttp().getResponse();
+
+        const responseBody = this.buildResponseBody(exception, normalizedErrors);
+
         response
           .status(this.options.errorHttpStatusCode || exception.getStatus())
-          .send({
-            statusCode:
-              this.options.errorHttpStatusCode || exception.getStatus(),
-            message: exception.getResponse(),
-            errors: this.normalizeValidationErrors(errors),
-          });
+          .send(responseBody);
         break;
       case 'graphql':
-        exception.errors = this.normalizeValidationErrors(
-          errors,
-        ) as I18nValidationError[];
+        exception.errors = normalizedErrors as I18nValidationError[];
         return exception;
     }
   }
@@ -60,6 +60,24 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
   ): options is I18nValidationExceptionFilterErrorFormatterOption {
     return 'errorFormatter' in options;
   }
+
+
+  protected buildResponseBody(
+      exc: I18nValidationException,
+      errors: string[] | I18nValidationError[] | object,
+      ) {
+
+    if('responseBodyFormatter' in this.options) {
+        return this.options.responseBodyFormatter(exc, errors);
+    } else {
+      return {
+        statusCode: exc.getStatus(),
+        message: exc.getResponse(),
+        errors,
+      };
+    }
+  }
+
 
   protected normalizeValidationErrors(
     validationErrors: ValidationError[],

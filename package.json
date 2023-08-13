@@ -1,5 +1,5 @@
 {
-  "name": "nestjs-i18n",
+  "name": "@saas-buildkit/nestjs-i18n",
   "version": "10.2.6",
   "homepage": "https://nestjs-i18n.com",
   "description": "The i18n module for Nest.",

@@ -43,7 +43,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       case 'http':
         const response = host.switchToHttp().getResponse();
 
-        const responseBody = this.buildResponseBody(exception, normalizedErrors);
+        const responseBody = this.buildResponseBody(host, exception, normalizedErrors);
 
         response
           .status(this.options.errorHttpStatusCode || exception.getStatus())
@@ -63,12 +63,13 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
 
 
   protected buildResponseBody(
+      host: ArgumentsHost,
       exc: I18nValidationException,
       errors: string[] | I18nValidationError[] | object,
       ) {
 
     if('responseBodyFormatter' in this.options) {
-        return this.options.responseBodyFormatter(exc, errors);
+        return this.options.responseBodyFormatter(host, exc, errors);
     } else {
       return {
         statusCode: exc.getStatus(),

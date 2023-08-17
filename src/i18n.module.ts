@@ -33,11 +33,7 @@ import {
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
-import {
-  isNestMiddleware,
-  shouldResolve,
-  usingFastify,
-} from './utils/util';
+import { isNestMiddleware, shouldResolve, usingFastify } from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
 import { Observable, BehaviorSubject, Subject, takeUntil } from 'rxjs';
@@ -47,6 +43,7 @@ import { I18nMiddleware } from './middlewares/i18n.middleware';
 import { mergeDeep } from './utils/merge';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as chalk from 'chalk';
 
 export const logger = new Logger('I18nService');
 
@@ -92,46 +89,51 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       };
     }
 
-    
-
     if (!!this.i18nOptions.typesOutputPath) {
-     try {
-      const ts = await import('./utils/typescript');
-      
-      this.translations.pipe(takeUntil(this.unsubscribe)).subscribe(async (t) => {
-        logger.log('Checking translation changes');
-        const object = Object.keys(t).reduce(
-          (result, key) => mergeDeep(result, t[key]),
-          {},
-        );
+      try {
+        const ts = await import('./utils/typescript');
 
-        const rawContent = await ts.createTypesFile(object);
+        this.translations
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(async (t) => {
+            logger.log('Checking translation changes');
+            const object = Object.keys(t).reduce(
+              (result, key) => mergeDeep(result, t[key]),
+              {},
+            );
 
-        if (!rawContent) {
-          return;
-        }
+            const rawContent = await ts.createTypesFile(object);
 
-        const outputFile = ts.annotateSourceCode(rawContent);
+            if (!rawContent) {
+              return;
+            }
 
-        fs.mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
-          recursive: true,
-        });
-        let currentFileContent = null;
-        try {
-          currentFileContent = fs.readFileSync(
-            this.i18nOptions.typesOutputPath,
-            'utf8',
-          );
-        } catch (err) {
-          logger.error(err);
-        }
-        if (currentFileContent != outputFile) {
-          fs.writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
-          logger.log(`Types generated in: ${this.i18nOptions.typesOutputPath}`);
-        } else {
-          logger.log('No changes detected');
-        }
-      });
+            const outputFile = ts.annotateSourceCode(rawContent);
+
+            fs.mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
+              recursive: true,
+            });
+            let currentFileContent = null;
+            try {
+              currentFileContent = fs.readFileSync(
+                this.i18nOptions.typesOutputPath,
+                'utf8',
+              );
+            } catch (err) {
+              logger.error(err);
+            }
+            if (currentFileContent != outputFile) {
+              fs.writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
+              logger.log(
+                `Types generated in: ${this.i18nOptions.typesOutputPath}.
+                ${chalk.yellow(
+                  `Please also add it to your eslintignore file to avoid linting errors`,
+                )}`,
+              );
+            } else {
+              logger.log('No changes detected');
+            }
+          });
       } catch (_) {
         // NOOP: typescript package not found
       }

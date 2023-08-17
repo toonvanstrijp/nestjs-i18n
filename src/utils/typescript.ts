@@ -1,4 +1,3 @@
-
 import * as ts from 'typescript';
 
 export const convertObjectToTypeDefinition = async (
@@ -6,36 +5,38 @@ export const convertObjectToTypeDefinition = async (
 ): Promise<ts.TypeElement[]> => {
   switch (typeof object) {
     case 'object':
-      return Promise.all(Object.keys(object).map(async (key) => {
-        if (typeof object[key] === 'string') {
-          return ts.factory.createPropertySignature(
-            undefined,
-            ts.factory.createStringLiteral(key),
-            undefined,
-            ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
-          );
-        }
-        if (Array.isArray(object[key])) {
-          return ts.factory.createPropertySignature(
-            undefined,
-            ts.factory.createStringLiteral(key),
-            undefined,
-            ts.factory.createTupleTypeNode(
-              Array(object[key].length).fill(
-                ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+      return Promise.all(
+        Object.keys(object).map(async (key) => {
+          if (typeof object[key] === 'string') {
+            return ts.factory.createPropertySignature(
+              undefined,
+              ts.factory.createStringLiteral(key),
+              undefined,
+              ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+            );
+          }
+          if (Array.isArray(object[key])) {
+            return ts.factory.createPropertySignature(
+              undefined,
+              ts.factory.createStringLiteral(key),
+              undefined,
+              ts.factory.createTupleTypeNode(
+                Array(object[key].length).fill(
+                  ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+                ),
               ),
+            );
+          }
+          return ts.factory.createPropertySignature(
+            undefined,
+            ts.factory.createStringLiteral(key),
+            undefined,
+            ts.factory.createTypeLiteralNode(
+              await convertObjectToTypeDefinition(object[key]),
             ),
           );
-        }
-        return ts.factory.createPropertySignature(
-          undefined,
-          ts.factory.createStringLiteral(key),
-          undefined,
-          ts.factory.createTypeLiteralNode(
-            await convertObjectToTypeDefinition(object[key]),
-          ),
-        );
-      }));
+        }),
+      );
   }
 
   return [];
@@ -44,7 +45,6 @@ export const convertObjectToTypeDefinition = async (
 const printer = ts.createPrinter();
 
 export const createTypesFile = async (object: any) => {
-
   const sourceFile = ts.createSourceFile(
     'placeholder.ts',
     '',
@@ -57,7 +57,9 @@ export const createTypesFile = async (object: any) => {
     [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
     ts.factory.createIdentifier('I18nTranslations'),
     undefined,
-    ts.factory.createTypeLiteralNode(await convertObjectToTypeDefinition(object)),
+    ts.factory.createTypeLiteralNode(
+      await convertObjectToTypeDefinition(object),
+    ),
   );
 
   const nodes = ts.factory.createNodeArray([

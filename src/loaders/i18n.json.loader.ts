@@ -11,15 +11,11 @@ export class I18nJsonLoader extends I18nAbstractLoader {
     };
   }
   formatData(data: any) {
-
-    try{
-    return JSON.parse(data);
-    }
-    catch(e){
-      if(e instanceof SyntaxError){
-        throw new Error(
-          'Invalid JSON file. Please check your JSON syntax.'
-        );
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      if (e instanceof SyntaxError) {
+        throw new Error('Invalid JSON file. Please check your JSON syntax.');
       }
       throw e;
     }

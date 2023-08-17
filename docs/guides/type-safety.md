@@ -31,6 +31,8 @@ import { I18nModule } from 'nestjs-i18n';
 export class AppModule {}
 ```
 
+> The `typesOutputPath` should also be added to `eslintignore` to prevent linting errors.
+
 # Usage
 
 To use the types within your code import the `I18nTranslations` type from the generated file. Pass this type into the generic type properties of the `I18nContext` or `I18nService`.

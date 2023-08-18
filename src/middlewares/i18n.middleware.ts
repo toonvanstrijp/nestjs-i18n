@@ -8,7 +8,7 @@ import {
   WsArgumentsHost,
 } from '@nestjs/common/interfaces';
 import { ModuleRef } from '@nestjs/core';
-import { shouldResolve } from '../utils/util';
+import { shouldResolve } from '../utils';
 import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
 import {
   I18nContext,
@@ -17,7 +17,7 @@ import {
   ResolverWithOptions,
 } from '../index';
 import { I18nService } from '../services/i18n.service';
-import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
+import { I18nOptionResolver } from '../interfaces';
 
 const ExecutionContextMethodNotImplemented = new Error(
   "Method not implemented. nestjs-i18n creates a fake Http context since it's using middleware to resolve your language. Nestjs middlewares don't have access to the ExecutionContext.",

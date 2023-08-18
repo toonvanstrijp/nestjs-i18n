@@ -1,21 +1,25 @@
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { validate } from 'class-validator';
 import {
-  I18N_OPTIONS,
-  I18N_TRANSLATIONS,
+  BehaviorSubject,
+  Observable,
+  Subject,
+  lastValueFrom,
+  take,
+  takeUntil,
+} from 'rxjs';
+import { I18nOptions, I18nTranslation, I18nValidationError } from '..';
+import {
   I18N_LANGUAGES,
   I18N_LANGUAGES_SUBJECT,
+  I18N_OPTIONS,
+  I18N_TRANSLATIONS,
   I18N_TRANSLATIONS_SUBJECT,
 } from '../i18n.constants';
-import { I18nOptions, I18nValidationError } from '..';
-import { I18nTranslation } from '../interfaces/i18n-translation.interface';
-import { Observable, BehaviorSubject, lastValueFrom, Subject } from 'rxjs';
 import { I18nLoader } from '../loaders/i18n.loader';
-import { take, takeUntil } from 'rxjs/operators';
-import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
-import { validate } from 'class-validator';
-import { formatI18nErrors } from '../utils/util';
 import { IfAnyOrNever, Path, PathValue } from '../types';
-import { I18nTranslator } from '../interfaces/i18n-translator.interface';
+import { formatI18nErrors } from '../utils';
+import { I18nTranslator, I18nPluralObject } from '../interfaces';
 
 const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
 

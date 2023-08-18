@@ -5,28 +5,32 @@ import {
   I18nModule,
   I18nService,
   I18nLoader,
-  i18nValidationMessage,
+  i18nValidationMessage, I18nJsonLoader, I18N_LOADERS,
 } from '../src';
 import { I18nTranslations } from './generated/i18n.generated';
+import {I18nAbstractFileLoaderOptions} from "../src/loaders/i18n.abstract-file.loader";
 
 describe('i18n module', () => {
   let i18nService: I18nService<I18nTranslations>;
-  let i18nLoader: I18nLoader;
+  let i18nLoader: I18nLoader<I18nAbstractFileLoaderOptions>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
       ],
     }).compile();
 
     i18nService = module.get(I18nService);
-    i18nLoader = module.get(I18nLoader);
+    const loaders = module.get(I18N_LOADERS);
+    i18nLoader = loaders[0];
   });
 
   it('i18n service should be defined', async () => {
@@ -229,9 +233,11 @@ describe('i18n module without trailing slash in path', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
       ],
     }).compile();
@@ -263,10 +269,12 @@ describe('i18n module loads custom files', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-            filePattern: '*.custom',
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+              filePattern: '*.custom',
+            }),
+          ],
         }),
       ],
     }).compile();
@@ -299,10 +307,12 @@ describe('i18n module loads custom files with wrong file pattern', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-            filePattern: 'custom',
-          },
+          loaders: [
+            new I18nJsonLoader({
+              filePattern: 'custom',
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
       ],
     }).compile();
@@ -328,7 +338,7 @@ describe('i18n module loads custom files with wrong file pattern', () => {
 
 describe('i18n module with loader watch', () => {
   let i18nService: I18nService<I18nTranslations>;
-  let i18nLoader: I18nLoader;
+  let i18nLoader: I18nLoader<I18nAbstractFileLoaderOptions>;
 
   const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
   const newLanguagePath = path.join(__dirname, '/i18n/de/');
@@ -338,16 +348,18 @@ describe('i18n module with loader watch', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-            watch: true,
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+              watch: true,
+            }),
+          ],
         }),
       ],
     }).compile();
 
     i18nService = i18nModule.get(I18nService);
-    i18nLoader = i18nModule.get(I18nLoader);
+    i18nLoader = i18nModule.get(I18N_LOADERS)[0];
   });
 
   afterAll(async () => {
@@ -414,9 +426,11 @@ describe('i18n module with fallbacks', () => {
             'fr_*': 'fr',
             pt: 'pt-BR',
           },
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
           typesOutputPath: path.join(__dirname, '/generated/i18n.generated.ts'),
         }),
       ],

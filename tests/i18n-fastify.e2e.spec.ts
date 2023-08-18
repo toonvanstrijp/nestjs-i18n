@@ -4,7 +4,7 @@ import {
   HeaderResolver,
   AcceptLanguageResolver,
   I18nModule,
-  QueryResolver,
+  QueryResolver, I18nJsonLoader,
 } from '../src';
 import { HelloController } from './app/controllers/hello.controller';
 import {
@@ -35,9 +35,11 @@ describe('i18n module e2e fastify', () => {
             new CookieResolver(),
             AcceptLanguageResolver,
           ],
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
       ],
       controllers: [HelloController],

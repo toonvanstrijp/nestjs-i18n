@@ -5,7 +5,7 @@ import {
   HeaderResolver,
   AcceptLanguageResolver,
   I18nModule,
-  QueryResolver,
+  QueryResolver, I18nJsonLoader,
 } from '../src';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
@@ -32,9 +32,11 @@ describe('i18n module e2e express', () => {
             new CookieResolver(),
             AcceptLanguageResolver,
           ],
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
       ],
       controllers: [HelloController],

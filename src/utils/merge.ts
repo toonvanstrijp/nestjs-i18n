@@ -21,3 +21,10 @@ export function mergeDeep(target: I18nTranslation, ...sources: any) {
 
   return mergeDeep(target, ...sources);
 }
+
+export function mergeTranslations(
+  target: I18nTranslation,
+  ...sources: I18nTranslation[]
+): I18nTranslation {
+  return mergeDeep(target, ...sources);
+}

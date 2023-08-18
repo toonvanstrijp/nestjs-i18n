@@ -6,7 +6,7 @@ import {
   I18nModule,
   GraphQLWebsocketResolver,
   AcceptLanguageResolver,
-  I18nValidationPipe,
+  I18nValidationPipe, I18nJsonLoader,
 } from '../src';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
@@ -48,9 +48,11 @@ describe('i18n module e2e graphql', () => {
             new AcceptLanguageResolver(),
             new CookieResolver(),
           ],
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
           driver: ApolloDriver,

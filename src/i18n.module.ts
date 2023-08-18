@@ -372,17 +372,18 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
             translationsObs.subscribe(translationsSubject);
           } else {
 
-            const mergedTranslations = loadedTranslations
+            const translations = loadedTranslations
                 .filter((translation): translation is I18nTranslation => translation !== undefined)
                 .reduce((acc, translation) => {
-                  return mergedTranslations(acc, translation);
+                  return mergeTranslations(
+                      acc, translation);
                 }, {});
 
-            translationsSubject.next(mergedTranslations);
+            translationsSubject.next(translations);
           }
 
         } catch (e) {
-          logger.error('parsing translation error', e);
+          throw e;
         }
         return translationsSubject.asObservable();
       },

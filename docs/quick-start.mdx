@@ -283,5 +283,42 @@ export class AppService {
 }
 ```
 
+
+Translate options
+
+```typescript
+
+export type TranslateOptions = {
+
+  /**
+   * Language to translate to
+   */
+
+  lang?: string;
+
+
+  /**
+   *  Arguments to pass to the translation
+   */
+
+  args?: ({ [k: string]: any } | string)[] | { [k: string]: any };
+
+
+  /**
+   * Default value to return when no translation is found
+   */
+
+  defaultValue?: string;
+
+
+  /**
+   *  Debug mode
+   */
+
+  debug?: boolean;
+};
+
+```
+
 ## Example
 A working example is available [here](https://github.com/toonvanstrijp/nestjs-i18n/tree/main/samples/simple).

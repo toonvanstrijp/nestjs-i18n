@@ -11,7 +11,6 @@ export class I18nJsonLoader extends I18nAbstractFileLoader {
     getDefaultOptions(): Partial<I18nAbstractFileLoaderOptions> {
         return {
             filePattern: '*.json',
-            watch: false,
         };
     }
 

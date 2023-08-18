@@ -9,7 +9,6 @@ export class I18nYamlLoader extends I18nAbstractFileLoader {
   getDefaultOptions(): Partial<I18nAbstractFileLoaderOptions> {
     return {
       filePattern: '*.yml',
-      watch: false,
     };
   }
 

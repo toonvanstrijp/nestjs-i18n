@@ -16,6 +16,7 @@ import { validate } from 'class-validator';
 import { formatI18nErrors } from '../utils/util';
 import { IfAnyOrNever, Path, PathValue } from '../types';
 import { I18nTranslator } from '../interfaces/i18n-translator.interface';
+import {processLanguages, processTranslations, processTranslationsAndReply} from "../utils/loaders-utils";
 
 const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
 
@@ -157,32 +158,24 @@ export class I18nService<K = Record<string, unknown>>
     return this.translations;
   }
 
-  // todo this one require revisit
   public async refresh() {
+    const translations = await processTranslations(this.loaders);
 
-    for (let loader of this.loaders) {
-      const translations = await loader.load();
-
-      if (translations instanceof Observable) {
-        this.translationsSubject.next(
-            await lastValueFrom(translations.pipe(take(1))),
-        );
-      } else {
-        this.translationsSubject.next(translations);
-      }
-
-      const languages = await loader.languages()
-
-      if (languages instanceof Observable) {
-        this.languagesSubject.next(await lastValueFrom(languages.pipe(take(1))));
-      } else {
-        this.languagesSubject.next(languages);
-      }
+    if (translations instanceof Observable) {
+      this.translationsSubject.next(
+          await lastValueFrom(translations.pipe(take(1))),
+      );
+    } else {
+      this.translationsSubject.next(translations);
     }
 
+    const languages = await processLanguages(this.loaders);
 
-
-
+    if (languages instanceof Observable) {
+      this.languagesSubject.next(await lastValueFrom(languages.pipe(take(1))));
+    } else {
+      this.languagesSubject.next(languages);
+    }
   }
 
   public hbsHelper = <P extends Path<K> = any>(

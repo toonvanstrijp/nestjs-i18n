@@ -36,18 +36,13 @@ import {
   BehaviorSubject,
   Subject,
   takeUntil,
-  of,
-  combineLatest,
-  distinct,
-  flatMap,
-  mergeMap,
-  filter, reduce, map, merge
 } from 'rxjs';
 import * as format from 'string-format';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
 import {mergeDeep, mergeTranslations} from './utils/merge';
 import * as fs from 'fs';
 import * as path from 'path';
+import {processLanguagesAndReply, processTranslationsAndReply} from "./utils/loaders-utils";
 
 export const logger = new Logger('I18nService');
 
@@ -185,19 +180,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       useFactory: async (
         loaders: I18nLoader<unknown>[],
       ): Promise<Observable<I18nTranslation>> => {
-        try {
-          for (let loader of loaders) {
-            const translation = await loader.load();
-            if (translation instanceof Observable) {
-              translation.subscribe(i18nTranslationSubject);
-            } else {
-              i18nTranslationSubject.next(translation);
-            }
-          }
-        } catch (e) {
-          logger.error('parsing translation error', e);
-        }
-        return i18nTranslationSubject.asObservable();
+        return processTranslationsAndReply(loaders, i18nTranslationSubject);
       },
       inject: [I18N_LOADERS],
     };
@@ -207,19 +190,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       useFactory: async (
         loaders: I18nLoader<unknown>[],
       ): Promise<Observable<string[]>> => {
-        try {
-          for (let loader of loaders) {
-            const languages = await loader.languages();
-            if (languages instanceof Observable) {
-              languages.subscribe(i18nLanguagesSubject);
-            } else {
-              i18nLanguagesSubject.next(languages);
-            }
-          }
-        } catch (e) {
-          logger.error('parsing translation error', e);
-        }
-        return i18nLanguagesSubject.asObservable();
+        return processLanguagesAndReply(loaders, i18nLanguagesSubject);
       },
       inject: [I18N_LOADERS],
     };
@@ -267,7 +238,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       useValue: options.resolvers || [],
     };
 
-
     const i18nLanguagesSubjectProvider: ValueProvider = {
       provide: I18N_LANGUAGES_SUBJECT,
       useValue: i18nLanguagesSubject,
@@ -308,7 +278,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
   }
 
   private static createAsyncLoadersProvider(): Provider {
-
     return {
       provide: I18N_LOADERS,
       useFactory: async (options: I18nOptions) => {
@@ -316,7 +285,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       },
       inject: [I18N_OPTIONS],
     };
-
   }
 
   private static createAsyncOptionsProvider(
@@ -350,42 +318,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         loaders: I18nLoader<unknown>[],
         translationsSubject: BehaviorSubject<I18nTranslation>,
       ): Promise<Observable<I18nTranslation>> => {
-        try {
-
-          const loadedTranslations = await Promise.all(loaders.map((loader) => loader.load()));
-
-          const hasAtLeastOneObservable = loadedTranslations.find(
-              (translation) => translation instanceof Observable,
-          ) !== undefined;
-
-          if (hasAtLeastOneObservable) {
-
-            const sources = loadedTranslations.map((translation) => {
-              const observable = translation instanceof Observable;
-              return observable ? translation : of(translation);
-            });
-
-            const translationsObs = merge(...sources).pipe(
-                reduce((acc, translation) => mergeTranslations(acc, translation)),
-            );
-
-            translationsObs.subscribe(translationsSubject);
-          } else {
-
-            const translations = loadedTranslations
-                .filter((translation): translation is I18nTranslation => translation !== undefined)
-                .reduce((acc, translation) => {
-                  return mergeTranslations(
-                      acc, translation);
-                }, {});
-
-            translationsSubject.next(translations);
-          }
-
-        } catch (e) {
-          throw e;
-        }
-        return translationsSubject.asObservable();
+        return processTranslationsAndReply(loaders, translationsSubject);
       },
       inject: [I18N_LOADERS, I18N_TRANSLATIONS_SUBJECT],
     };
@@ -398,43 +331,13 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         loaders: I18nLoader<unknown>[],
         languagesSubject: BehaviorSubject<string[]>,
       ): Promise<Observable<string[]>> => {
-        try {
-          const languagesSource = await Promise.all(
-            loaders.map((loader) => loader.languages()),
-          );
-
-          const hasAtLeastOneObservable = languagesSource.find(
-            (languages) => languages instanceof Observable,
-          ) !== undefined;
-
-
-          if (hasAtLeastOneObservable) {
-            const languagesCombined = merge(languagesSource.map((languages) => {
-              const observable = languages instanceof Observable;
-              return observable ? languages : of(languages);
-            })).pipe(
-                mergeMap((languages) => languages),
-                distinct()
-            );
-
-            languagesCombined.subscribe(languagesSubject);
-
-          } else {
-
-            const languages = languagesSource
-                .filter((languages): languages is string[] => languages !== undefined)
-                .flatMap((languages) => languages);
-
-            languagesSubject.next([...new Set(languages)]);
-          }
-        } catch (e) {
-          logger.error('parsing translation error', e);
-        }
-        return languagesSubject.asObservable();
+        return processLanguagesAndReply(loaders, languagesSubject);
       },
       inject: [I18N_LOADERS, I18N_LANGUAGES_SUBJECT],
     };
   }
+
+
 
   private static sanitizeI18nOptions<T = I18nOptions | I18nAsyncOptions>(
     options: T,

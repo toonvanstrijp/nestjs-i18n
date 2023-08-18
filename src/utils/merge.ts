@@ -1,4 +1,5 @@
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
+import * as mergician from 'mergician';
 
 function isObject(item: any) {
   return item && typeof item === 'object' && !Array.isArray(item);
@@ -23,8 +24,8 @@ export function mergeDeep(target: I18nTranslation, ...sources: any) {
 }
 
 export function mergeTranslations(
-  target: I18nTranslation,
-  ...sources: I18nTranslation[]
+  first: I18nTranslation,
+  second: I18nTranslation
 ): I18nTranslation {
-  return mergeDeep(target, ...sources);
+  return mergician(first, second);
 }

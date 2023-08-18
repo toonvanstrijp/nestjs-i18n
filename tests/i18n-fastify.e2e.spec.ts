@@ -39,6 +39,9 @@ describe('i18n module e2e fastify', () => {
             new I18nJsonLoader({
               path: path.join(__dirname, '/i18n/'),
             }),
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n-second/'),
+            }),
           ],
         }),
       ],

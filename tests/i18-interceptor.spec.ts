@@ -6,7 +6,7 @@ import {
   I18nService,
   I18nLanguageInterceptor,
   I18N_OPTIONS,
-  I18N_RESOLVERS,
+  I18N_RESOLVERS, I18nJsonLoader,
 } from '../src';
 
 describe('i18n interceptor', () => {
@@ -18,9 +18,11 @@ describe('i18n interceptor', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
       ],
     }).compile();

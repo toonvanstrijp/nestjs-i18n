@@ -1,6 +1,4 @@
 import { I18nLoader } from './i18n.loader';
-import { I18N_LOADER_OPTIONS } from '../i18n.constants';
-import { Inject, OnModuleDestroy } from '@nestjs/common';
 import * as path from 'path';
 import { readFile } from 'fs/promises';
 import { exists, getDirectories, getFiles } from '../utils/file';
@@ -8,71 +6,32 @@ import { I18nTranslation } from '../interfaces/i18n-translation.interface';
 import {
   Observable,
   Subject,
-  merge as ObservableMerge,
-  of as ObservableOf,
 } from 'rxjs';
-import * as chokidar from 'chokidar';
-import { switchMap } from 'rxjs/operators';
 
-export interface I18nAbstractLoaderOptions {
+export interface I18nAbstractFileLoaderOptions {
   path: string;
   includeSubfolders?: boolean;
   filePattern?: string;
-  watch?: boolean;
 }
 
-// const defaultOptions: Partial<I18nAbstractLoaderOptions> = {
-//   filePattern: '*.json',
-//   watch: false,
-// };
-
-export abstract class I18nAbstractLoader
-  extends I18nLoader
-  implements OnModuleDestroy
+export abstract class I18nAbstractFileLoader
+  extends I18nLoader<I18nAbstractFileLoaderOptions>
 {
-  private watcher?: chokidar.FSWatcher;
-
   private events: Subject<string> = new Subject();
 
   constructor(
-    @Inject(I18N_LOADER_OPTIONS)
-    private options: I18nAbstractLoaderOptions,
+      options: I18nAbstractFileLoaderOptions,
   ) {
-    super();
+    super(options);
     this.options = this.sanitizeOptions(options);
-
-    if (this.options.watch) {
-      this.watcher = chokidar
-        .watch(this.options.path, { ignoreInitial: true })
-        .on('all', (event) => {
-          this.events.next(event);
-        });
-    }
   }
 
-  async onModuleDestroy() {
-    if (this.watcher) {
-      await this.watcher.close();
-    }
-  }
 
   async languages(): Promise<string[] | Observable<string[]>> {
-    if (this.options.watch) {
-      return ObservableMerge(
-        ObservableOf(await this.parseLanguages()),
-        this.events.pipe(switchMap(() => this.parseLanguages())),
-      );
-    }
     return this.parseLanguages();
   }
 
   async load(): Promise<I18nTranslation | Observable<I18nTranslation>> {
-    if (this.options.watch) {
-      return ObservableMerge(
-        ObservableOf(await this.parseTranslations()),
-        this.events.pipe(switchMap(() => this.parseTranslations())),
-      );
-    }
     return this.parseTranslations();
   }
 
@@ -173,7 +132,7 @@ export abstract class I18nAbstractLoader
     );
   }
 
-  protected sanitizeOptions(options: I18nAbstractLoaderOptions) {
+  protected sanitizeOptions(options: I18nAbstractFileLoaderOptions) {
     options = { ...this.getDefaultOptions(), ...options };
 
     options.path = path.normalize(options.path + path.sep);
@@ -185,5 +144,6 @@ export abstract class I18nAbstractLoader
   }
 
   abstract formatData(data: any);
-  abstract getDefaultOptions(): Partial<I18nAbstractLoaderOptions>;
+  abstract getDefaultOptions(): Partial<I18nAbstractFileLoaderOptions>;
 }
+

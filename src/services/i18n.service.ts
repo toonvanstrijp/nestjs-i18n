@@ -4,7 +4,7 @@ import {
   I18N_TRANSLATIONS,
   I18N_LANGUAGES,
   I18N_LANGUAGES_SUBJECT,
-  I18N_TRANSLATIONS_SUBJECT,
+  I18N_TRANSLATIONS_SUBJECT, I18N_LOADERS,
 } from '../i18n.constants';
 import { I18nOptions, I18nValidationError } from '..';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
@@ -16,6 +16,7 @@ import { validate } from 'class-validator';
 import { formatI18nErrors } from '../utils/util';
 import { IfAnyOrNever, Path, PathValue } from '../types';
 import { I18nTranslator } from '../interfaces/i18n-translator.interface';
+import {processLanguages, processTranslations, processTranslationsAndReply} from "../utils/loaders-utils";
 
 const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
 
@@ -43,7 +44,8 @@ export class I18nService<K = Record<string, unknown>>
     @Inject(I18N_LANGUAGES)
     supportedLanguages: Observable<string[]>,
     private readonly logger: Logger,
-    private readonly loader: I18nLoader,
+    @Inject(I18N_LOADERS)
+    private readonly loaders: I18nLoader<unknown>[],
     @Inject(I18N_LANGUAGES_SUBJECT)
     private readonly languagesSubject: BehaviorSubject<string[]>,
     @Inject(I18N_TRANSLATIONS_SUBJECT)
@@ -156,24 +158,18 @@ export class I18nService<K = Record<string, unknown>>
     return this.translations;
   }
 
-  public async refresh(
-    translations?: I18nTranslation | Observable<I18nTranslation>,
-    languages?: string[] | Observable<string[]>,
-  ) {
-    if (!translations) {
-      translations = await this.loader.load();
-    }
+  public async refresh() {
+    const translations = await processTranslations(this.loaders);
+
     if (translations instanceof Observable) {
       this.translationsSubject.next(
-        await lastValueFrom(translations.pipe(take(1))),
+          await lastValueFrom(translations.pipe(take(1))),
       );
     } else {
       this.translationsSubject.next(translations);
     }
 
-    if (!languages) {
-      languages = await this.loader.languages();
-    }
+    const languages = await processLanguages(this.loaders);
 
     if (languages instanceof Observable) {
       this.languagesSubject.next(await lastValueFrom(languages.pipe(take(1))));

@@ -13,9 +13,9 @@ import {
   I18N_TRANSLATIONS,
   I18N_LANGUAGES,
   I18N_RESOLVERS,
-  I18N_LOADER_OPTIONS,
   I18N_LANGUAGES_SUBJECT,
   I18N_TRANSLATIONS_SUBJECT,
+  I18N_LOADERS,
 } from './i18n.constants';
 import { I18nService } from './services/i18n.service';
 import {
@@ -24,29 +24,25 @@ import {
   I18nOptionsFactory,
   I18nOptionResolver,
 } from './interfaces/i18n-options.interface';
-import {
-  ValueProvider,
-  ClassProvider,
-  OnModuleInit,
-  NestModule,
-} from '@nestjs/common';
+import { ValueProvider, OnModuleInit, NestModule } from '@nestjs/common';
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
-import {
-  isNestMiddleware,
-  shouldResolve,
-  usingFastify,
-} from './utils/util';
+import { isNestMiddleware, shouldResolve, usingFastify } from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
-import { Observable, BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import {
+  Observable,
+  BehaviorSubject,
+  Subject,
+  takeUntil,
+} from 'rxjs';
 import * as format from 'string-format';
-import { I18nJsonLoader } from './loaders/i18n.json.loader';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
-import { mergeDeep } from './utils/merge';
+import {mergeDeep, mergeTranslations} from './utils/merge';
 import * as fs from 'fs';
 import * as path from 'path';
+import {processLanguagesAndReply, processTranslationsAndReply} from "./utils/loaders-utils";
 
 export const logger = new Logger('I18nService');
 
@@ -54,7 +50,6 @@ const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
   formatter: format,
   logging: true,
-  loader: I18nJsonLoader,
 };
 
 @Global()
@@ -92,46 +87,48 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       };
     }
 
-    
-
     if (!!this.i18nOptions.typesOutputPath) {
-     try {
-      const ts = await import('./utils/typescript');
-      
-      this.translations.pipe(takeUntil(this.unsubscribe)).subscribe(async (t) => {
-        logger.log('Checking translation changes');
-        const object = Object.keys(t).reduce(
-          (result, key) => mergeDeep(result, t[key]),
-          {},
-        );
+      try {
+        const ts = await import('./utils/typescript');
 
-        const rawContent = await ts.createTypesFile(object);
+        this.translations
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(async (t) => {
+            logger.log('Checking translation changes');
+            const object = Object.keys(t).reduce(
+              (result, key) => mergeDeep(result, t[key]),
+              {},
+            );
 
-        if (!rawContent) {
-          return;
-        }
+            const rawContent = await ts.createTypesFile(object);
 
-        const outputFile = ts.annotateSourceCode(rawContent);
+            if (!rawContent) {
+              return;
+            }
 
-        fs.mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
-          recursive: true,
-        });
-        let currentFileContent = null;
-        try {
-          currentFileContent = fs.readFileSync(
-            this.i18nOptions.typesOutputPath,
-            'utf8',
-          );
-        } catch (err) {
-          logger.error(err);
-        }
-        if (currentFileContent != outputFile) {
-          fs.writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
-          logger.log(`Types generated in: ${this.i18nOptions.typesOutputPath}`);
-        } else {
-          logger.log('No changes detected');
-        }
-      });
+            const outputFile = ts.annotateSourceCode(rawContent);
+
+            fs.mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
+              recursive: true,
+            });
+            let currentFileContent = null;
+            try {
+              currentFileContent = fs.readFileSync(
+                this.i18nOptions.typesOutputPath,
+                'utf8',
+              );
+            } catch (err) {
+              logger.error(err);
+            }
+            if (currentFileContent != outputFile) {
+              fs.writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
+              logger.log(
+                `Types generated in: ${this.i18nOptions.typesOutputPath}`,
+              );
+            } else {
+              logger.log('No changes detected');
+            }
+          });
       } catch (_) {
         // NOOP: typescript package not found
       }
@@ -163,14 +160,9 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       useValue: options,
     };
 
-    const i18nLoaderProvider: ClassProvider = {
-      provide: I18nLoader,
-      useClass: options.loader,
-    };
-
-    const i18nLoaderOptionsProvider: ValueProvider = {
-      provide: I18N_LOADER_OPTIONS,
-      useValue: options.loaderOptions,
+    const i18nLoaderProvider: ValueProvider = {
+      provide: I18N_LOADERS,
+      useValue: options.loaders,
     };
 
     const i18nLanguagesSubjectProvider: ValueProvider = {
@@ -186,39 +178,21 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     const translationsProvider = {
       provide: I18N_TRANSLATIONS,
       useFactory: async (
-        loader: I18nLoader,
+        loaders: I18nLoader<unknown>[],
       ): Promise<Observable<I18nTranslation>> => {
-        try {
-          const translation = await loader.load();
-          if (translation instanceof Observable) {
-            translation.subscribe(i18nTranslationSubject);
-          } else {
-            i18nTranslationSubject.next(translation);
-          }
-        } catch (e) {
-          logger.error('parsing translation error', e);
-        }
-        return i18nTranslationSubject.asObservable();
+        return processTranslationsAndReply(loaders, i18nTranslationSubject);
       },
-      inject: [I18nLoader],
+      inject: [I18N_LOADERS],
     };
 
     const languagesProvider = {
       provide: I18N_LANGUAGES,
-      useFactory: async (loader: I18nLoader): Promise<Observable<string[]>> => {
-        try {
-          const languages = await loader.languages();
-          if (languages instanceof Observable) {
-            languages.subscribe(i18nLanguagesSubject);
-          } else {
-            i18nLanguagesSubject.next(languages);
-          }
-        } catch (e) {
-          logger.error('parsing translation error', e);
-        }
-        return i18nLanguagesSubject.asObservable();
+      useFactory: async (
+        loaders: I18nLoader<unknown>[],
+      ): Promise<Observable<string[]>> => {
+        return processLanguagesAndReply(loaders, i18nLanguagesSubject);
       },
-      inject: [I18nLoader],
+      inject: [I18N_LOADERS],
     };
 
     const resolversProvider = {
@@ -240,7 +214,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         languagesProvider,
         resolversProvider,
         i18nLoaderProvider,
-        i18nLoaderOptionsProvider,
         i18nLanguagesSubjectProvider,
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
@@ -255,7 +228,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     const asyncOptionsProvider = this.createAsyncOptionsProvider(options);
     const asyncTranslationProvider = this.createAsyncTranslationProvider();
     const asyncLanguagesProvider = this.createAsyncLanguagesProvider();
-    const asyncLoaderOptionsProvider = this.createAsyncLoaderOptionsProvider();
+    const asyncLoadersProvider = this.createAsyncLoadersProvider();
 
     const i18nLanguagesSubject = new BehaviorSubject<string[]>([]);
     const i18nTranslationSubject = new BehaviorSubject<I18nTranslation>({});
@@ -263,11 +236,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     const resolversProvider: ValueProvider = {
       provide: I18N_RESOLVERS,
       useValue: options.resolvers || [],
-    };
-
-    const i18nLoaderProvider: ClassProvider<I18nLoader> = {
-      provide: I18nLoader,
-      useClass: options.loader,
     };
 
     const i18nLanguagesSubjectProvider: ValueProvider = {
@@ -292,10 +260,9 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         asyncOptionsProvider,
         asyncTranslationProvider,
         asyncLanguagesProvider,
-        asyncLoaderOptionsProvider,
         I18nService,
         resolversProvider,
-        i18nLoaderProvider,
+        asyncLoadersProvider,
         i18nLanguagesSubjectProvider,
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
@@ -303,9 +270,20 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       exports: [
         I18N_OPTIONS,
         I18N_RESOLVERS,
+        I18N_LOADERS,
         I18nService,
         asyncLanguagesProvider,
       ],
+    };
+  }
+
+  private static createAsyncLoadersProvider(): Provider {
+    return {
+      provide: I18N_LOADERS,
+      useFactory: async (options: I18nOptions) => {
+        return options.loaders;
+      },
+      inject: [I18N_OPTIONS],
     };
   }
 
@@ -333,36 +311,16 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     };
   }
 
-  private static createAsyncLoaderOptionsProvider(): Provider {
-    return {
-      provide: I18N_LOADER_OPTIONS,
-      useFactory: async (options: I18nOptions): Promise<any> => {
-        return this.sanitizeI18nOptions(options.loaderOptions);
-      },
-      inject: [I18N_OPTIONS],
-    };
-  }
-
   private static createAsyncTranslationProvider(): Provider {
     return {
       provide: I18N_TRANSLATIONS,
       useFactory: async (
-        loader: I18nLoader,
+        loaders: I18nLoader<unknown>[],
         translationsSubject: BehaviorSubject<I18nTranslation>,
       ): Promise<Observable<I18nTranslation>> => {
-        try {
-          const translation = await loader.load();
-          if (translation instanceof Observable) {
-            translation.subscribe(translationsSubject);
-          } else {
-            translationsSubject.next(translation);
-          }
-        } catch (e) {
-          logger.error('parsing translation error', e);
-        }
-        return translationsSubject.asObservable();
+        return processTranslationsAndReply(loaders, translationsSubject);
       },
-      inject: [I18nLoader, I18N_TRANSLATIONS_SUBJECT],
+      inject: [I18N_LOADERS, I18N_TRANSLATIONS_SUBJECT],
     };
   }
 
@@ -370,24 +328,16 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     return {
       provide: I18N_LANGUAGES,
       useFactory: async (
-        loader: I18nLoader,
+        loaders: I18nLoader<unknown>[],
         languagesSubject: BehaviorSubject<string[]>,
       ): Promise<Observable<string[]>> => {
-        try {
-          const languages = await loader.languages();
-          if (languages instanceof Observable) {
-            languages.subscribe(languagesSubject);
-          } else {
-            languagesSubject.next(languages);
-          }
-        } catch (e) {
-          logger.error('parsing translation error', e);
-        }
-        return languagesSubject.asObservable();
+        return processLanguagesAndReply(loaders, languagesSubject);
       },
-      inject: [I18nLoader, I18N_LANGUAGES_SUBJECT],
+      inject: [I18N_LOADERS, I18N_LANGUAGES_SUBJECT],
     };
   }
+
+
 
   private static sanitizeI18nOptions<T = I18nOptions | I18nAsyncOptions>(
     options: T,

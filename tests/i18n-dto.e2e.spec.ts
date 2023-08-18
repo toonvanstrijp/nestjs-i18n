@@ -8,7 +8,7 @@ import {
   HeaderResolver,
   I18nModule,
   QueryResolver,
-  I18nValidationPipe,
+  I18nValidationPipe, I18nJsonLoader,
 } from '../src';
 import { HelloController } from './app/controllers/hello.controller';
 
@@ -26,9 +26,11 @@ describe('i18n module e2e dto', () => {
             new CookieResolver(),
             AcceptLanguageResolver,
           ],
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
       ],
       providers: [],

@@ -1,15 +1,14 @@
 import {
-  I18nAbstractLoader,
-  I18nAbstractLoaderOptions,
-} from './i18n.abstract.loader';
+  I18nAbstractFileLoader,
+  I18nAbstractFileLoaderOptions,
+} from './i18n.abstract-file.loader';
 import * as yaml from 'js-yaml';
 
-export class I18nYamlLoader extends I18nAbstractLoader {
+export class I18nYamlLoader extends I18nAbstractFileLoader {
 
-  getDefaultOptions(): Partial<I18nAbstractLoaderOptions> {
+  getDefaultOptions(): Partial<I18nAbstractFileLoaderOptions> {
     return {
       filePattern: '*.yml',
-      watch: false,
     };
   }
 

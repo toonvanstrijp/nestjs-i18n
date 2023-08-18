@@ -1,6 +1,6 @@
 import { I18nResolver } from '../index';
 import { Injectable, ExecutionContext, Logger } from '@nestjs/common';
-import { I18nResolverOptions } from '../decorators/i18n-resolver-options.decorator';
+import { I18nResolverOptions } from '../decorators';
 
 @Injectable()
 export class HeaderResolver implements I18nResolver {

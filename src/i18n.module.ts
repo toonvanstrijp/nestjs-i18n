@@ -32,15 +32,19 @@ import {
 } from '@nestjs/common';
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
-import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
-import { isNestMiddleware, shouldResolve, usingFastify } from './utils/util';
+import { getI18nResolverOptionsToken } from './decorators';
+import {
+  isNestMiddleware,
+  shouldResolve,
+  usingFastify,
+  mergeDeep,
+} from './utils';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
 import { Observable, BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import * as format from 'string-format';
-import { I18nJsonLoader } from './loaders/i18n.json.loader';
+import { I18nJsonLoader } from './loaders';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
-import { mergeDeep } from './utils/merge';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as chalk from 'chalk';

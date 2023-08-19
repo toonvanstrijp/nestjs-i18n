@@ -1,14 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import * as path from 'path';
 import * as fs from 'fs';
 import {
   I18nModule,
   I18nService,
   I18nLoader,
-  i18nValidationMessage, I18nJsonLoader, I18N_LOADERS,
+  i18n, I18nJsonLoader, I18N_LOADERS,
 } from '../src';
 import { I18nTranslations } from './generated/i18n.generated';
-import {I18nAbstractFileLoaderOptions} from "../src/loaders/i18n.abstract-file.loader";
+import { I18nAbstractFileLoaderOptions } from "../src/loaders/i18n.abstract-file.loader";
 
 describe('i18n module', () => {
   let i18nService: I18nService<I18nTranslations>;
@@ -416,7 +416,7 @@ describe('i18n module with fallbacks', () => {
 
   it('should santize values from pipe caharacters', () => {
     expect(
-      i18nValidationMessage<I18nTranslations>('test.HELLO')({
+      i18n<I18nTranslations>('test.HELLO')({
         value: 'example|||',
         constraints: [],
         targetName: 'string',

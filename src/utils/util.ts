@@ -36,10 +36,7 @@ export function i18nValidationErrorFactory(
   };
 }
 
-export function i18nValidationMessage<K = Record<string, unknown>>(
-  key: Path<K>,
-  args?: any,
-) {
+export function i18n<K = Record<string, unknown>>(key: Path<K>, args?: any) {
   return (a: ValidationArguments) => {
     const { constraints } = a;
     let { value } = a;
@@ -48,6 +45,13 @@ export function i18nValidationMessage<K = Record<string, unknown>>(
     }
     return `${key}|${JSON.stringify({ value, constraints, ...args })}`;
   };
+}
+
+/**
+ * utility function just for type safety
+ * */
+export function i18nString<K = Record<string, unknown>>(key: Path<K>): string {
+  return key;
 }
 
 export function formatI18nErrors<K = Record<string, unknown>>(

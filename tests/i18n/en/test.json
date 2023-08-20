@@ -4,6 +4,7 @@
     "NEW": "New Product: {name}"
   },
   "ENGLISH": "English",
+  "ENGLISH_ONLY_KEY": "English",
   "ARRAY": ["ONE", "TWO", "THREE"],
   "cat": "Cat",
   "ONLY_EN_KEY": "this key only exists in en lang",

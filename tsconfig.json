@@ -6,8 +6,10 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es2017",
+    "importHelpers": true,
     "sourceMap": true,
     "baseUrl": "./",
+    "moduleResolution": "node",
     "incremental": true
   },
   "include": ["**/*"],

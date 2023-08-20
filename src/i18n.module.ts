@@ -31,18 +31,13 @@ import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.
 import { isNestMiddleware, shouldResolve, usingFastify } from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
-import {
-  Observable,
-  BehaviorSubject,
-  Subject,
-  takeUntil,
-} from 'rxjs';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import * as format from 'string-format';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
-import {mergeDeep, mergeTranslations} from './utils/merge';
-import * as fs from 'fs';
-import * as path from 'path';
-import {processLanguagesAndReply, processTranslationsAndReply} from "./utils/loaders-utils";
+import {
+  processLanguagesAndReply,
+  processTranslationsAndReply,
+} from './utils/loaders-utils';
 
 export const logger = new Logger('I18nService');
 
@@ -59,8 +54,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
   constructor(
     private readonly i18n: I18nService,
-    @Inject(I18N_TRANSLATIONS)
-    private translations: Observable<I18nTranslation>,
     @Inject(I18N_OPTIONS) private readonly i18nOptions: I18nOptions,
     private adapter: HttpAdapterHost,
   ) {}
@@ -85,53 +78,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       app.locals['t'] = (key: string, lang: any, args: any) => {
         return this.i18n.t(key, { lang, args });
       };
-    }
-
-    if (!!this.i18nOptions.typesOutputPath) {
-      try {
-        const ts = await import('./utils/typescript');
-
-        this.translations
-          .pipe(takeUntil(this.unsubscribe))
-          .subscribe(async (t) => {
-            logger.log('Checking translation changes');
-            const object = Object.keys(t).reduce(
-              (result, key) => mergeDeep(result, t[key]),
-              {},
-            );
-
-            const rawContent = await ts.createTypesFile(object);
-
-            if (!rawContent) {
-              return;
-            }
-
-            const outputFile = ts.annotateSourceCode(rawContent);
-
-            fs.mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
-              recursive: true,
-            });
-            let currentFileContent = null;
-            try {
-              currentFileContent = fs.readFileSync(
-                this.i18nOptions.typesOutputPath,
-                'utf8',
-              );
-            } catch (err) {
-              logger.error(err);
-            }
-            if (currentFileContent != outputFile) {
-              fs.writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
-              logger.log(
-                `Types generated in: ${this.i18nOptions.typesOutputPath}`,
-              );
-            } else {
-              logger.log('No changes detected');
-            }
-          });
-      } catch (_) {
-        // NOOP: typescript package not found
-      }
     }
   }
 
@@ -336,8 +282,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       inject: [I18N_LOADERS, I18N_LANGUAGES_SUBJECT],
     };
   }
-
-
 
   private static sanitizeI18nOptions<T = I18nOptions | I18nAsyncOptions>(
     options: T,

@@ -50,7 +50,11 @@ export { I18nMiddleware } from './middlewares/i18n.middleware';
 export * from './pipes/i18n-validation.pipe';
 
 // utils
-export { i18nValidationErrorFactory, i18n, i18nString } from './utils/util';
+export {
+  i18nValidationErrorFactory,
+  i18nValidationMessage,
+  i18nValidationMessageString,
+} from './utils/util';
 
 export { getContextObject } from './utils/context';
 

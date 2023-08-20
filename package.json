@@ -1,6 +1,6 @@
 {
   "name": "@saas-buildkit/nestjs-i18n",
-  "version": "11.0.2",
+  "version": "11.1.0",
   "description": "The i18n module for Nest.",
   "license": "MIT",
   "engines": {

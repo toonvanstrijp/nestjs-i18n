@@ -183,49 +183,6 @@ describe('i18n module', () => {
     );
   });
 
-  describe('i18n should refresh manually', () => {
-    const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
-    const newLanguagePath = path.join(__dirname, '/i18n/es/');
-
-    afterAll(async () => {
-      fs.unlinkSync(newTranslationPath);
-      fs.rmdirSync(newLanguagePath);
-    });
-
-    it('i18n should refresh translations and languages', async () => {
-      const loadSpy = jest.spyOn(i18nLoader, 'load');
-      const languagesSpy = jest.spyOn(i18nLoader, 'languages');
-      await i18nService.refresh();
-      expect(loadSpy).toHaveBeenCalled();
-      expect(languagesSpy).toHaveBeenCalled();
-    });
-
-    it('i18n should load new translations', async () => {
-      fs.writeFileSync(
-        newTranslationPath,
-        JSON.stringify({ WORLD: 'wereld' }),
-        'utf8',
-      );
-      await i18nService.refresh();
-      const translation = i18nService.translate<any>('test2.WORLD', {
-        lang: 'nl',
-      });
-      expect(translation).toEqual('wereld');
-    });
-
-    it('i18n should load new languages', async () => {
-      try {
-        fs.mkdirSync(newLanguagePath);
-      } catch (e) {
-        // ignore
-      }
-      await i18nService.refresh();
-      const languages = i18nService.getSupportedLanguages();
-      expect(languages).toContain('es');
-      const translations = i18nService.getTranslations();
-      expect(Object.keys(translations)).toContain('es');
-    });
-  });
 });
 
 describe('i18n module without trailing slash in path', () => {

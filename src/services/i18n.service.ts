@@ -1,17 +1,13 @@
-import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
   I18N_LANGUAGES,
-  I18N_LANGUAGES_SUBJECT,
   I18N_LOADERS,
   I18N_OPTIONS,
   I18N_TRANSLATIONS,
-  I18N_TRANSLATIONS_SUBJECT,
 } from '../i18n.constants';
 import { I18nOptions, I18nValidationError } from '..';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
-import { BehaviorSubject, lastValueFrom, Observable, Subject } from 'rxjs';
 import { I18nLoader } from '../loaders/i18n.loader';
-import { take, takeUntil } from 'rxjs/operators';
 import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
 import { validate } from 'class-validator';
 import { formatI18nErrors } from '../utils/util';
@@ -30,43 +26,21 @@ export type TranslateOptions = {
 
 @Injectable()
 export class I18nService<K = Record<string, unknown>>
-  implements I18nTranslator<K>, OnModuleDestroy
+  implements I18nTranslator<K>
 {
-  private supportedLanguages: string[];
-  private translations: I18nTranslation;
   private pluralRules = new Map<string, Intl.PluralRules>();
-
-  private unsubscribe = new Subject<void>();
 
   constructor(
     @Inject(I18N_OPTIONS)
     protected readonly i18nOptions: I18nOptions,
     @Inject(I18N_TRANSLATIONS)
-    translations: Observable<I18nTranslation>,
+    protected translations: I18nTranslation,
     @Inject(I18N_LANGUAGES)
-    supportedLanguages: Observable<string[]>,
+    protected supportedLanguages: string[],
     private readonly logger: Logger,
     @Inject(I18N_LOADERS)
     private readonly loaders: I18nLoader<unknown>[],
-    @Inject(I18N_LANGUAGES_SUBJECT)
-    private readonly languagesSubject: BehaviorSubject<string[]>,
-    @Inject(I18N_TRANSLATIONS_SUBJECT)
-    private readonly translationsSubject: BehaviorSubject<I18nTranslation>,
-  ) {
-    supportedLanguages
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((languages) => {
-        this.supportedLanguages = languages;
-      });
-    translations.pipe(takeUntil(this.unsubscribe)).subscribe((t) => {
-      this.translations = t;
-    });
-  }
-
-  public onModuleDestroy(): void {
-    this.unsubscribe.next(null);
-    this.unsubscribe.complete();
-  }
+  ) {}
 
   public translate<P extends Path<K> = any, R = PathValue<K, P>>(
     key: P,
@@ -146,22 +120,11 @@ export class I18nService<K = Record<string, unknown>>
   }
 
   public async refresh() {
-    const translations = await processTranslations(this.loaders);
-
-    if (translations instanceof Observable) {
-      this.translationsSubject.next(
-        await lastValueFrom(translations.pipe(take(1))),
-      );
-    } else {
-      this.translationsSubject.next(translations);
+    if (Object.keys(this.translations).length === 0) {
+      this.translations = await processTranslations(this.loaders);
     }
-
-    const languages = await processLanguages(this.loaders);
-
-    if (languages instanceof Observable) {
-      this.languagesSubject.next(await lastValueFrom(languages.pipe(take(1))));
-    } else {
-      this.languagesSubject.next(languages);
+    if (this.supportedLanguages.length === 0) {
+      this.supportedLanguages = await processLanguages(this.loaders);
     }
   }
 

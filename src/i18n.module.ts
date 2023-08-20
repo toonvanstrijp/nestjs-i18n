@@ -6,19 +6,16 @@ import {
   MiddlewareConsumer,
   Module,
   NestModule,
-  OnModuleDestroy,
   OnModuleInit,
   Provider,
   ValueProvider,
 } from '@nestjs/common';
 import {
   I18N_LANGUAGES,
-  I18N_LANGUAGES_SUBJECT,
   I18N_LOADERS,
   I18N_OPTIONS,
   I18N_RESOLVERS,
   I18N_TRANSLATIONS,
-  I18N_TRANSLATIONS_SUBJECT,
 } from './i18n.constants';
 import { I18nService } from './services/i18n.service';
 import {
@@ -33,14 +30,10 @@ import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.
 import { isNestMiddleware, shouldResolve, usingFastify } from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import format from 'string-format';
 import hbs from 'hbs';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
-import {
-  processLanguagesAndReply,
-  processTranslationsAndReply,
-} from './utils/loaders-utils';
+import { processLanguages, processTranslations } from './utils/loaders-utils';
 
 export const logger = new Logger('I18nService');
 
@@ -52,9 +45,7 @@ const defaultOptions: Partial<I18nOptions> = {
 
 @Global()
 @Module({})
-export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
-  private unsubscribe = new Subject<void>();
-
+export class I18nModule implements OnModuleInit, NestModule {
   constructor(
     private readonly i18n: I18nService,
     @Inject(I18N_OPTIONS) private readonly i18nOptions: I18nOptions,
@@ -63,9 +54,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
   static forRoot(options: I18nOptions): DynamicModule {
     options = this.sanitizeI18nOptions(options);
-
-    const i18nLanguagesSubject = new BehaviorSubject<string[]>([]);
-    const i18nTranslationSubject = new BehaviorSubject<I18nTranslation>({});
 
     const i18nOptions: ValueProvider = {
       provide: I18N_OPTIONS,
@@ -77,32 +65,20 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       useValue: options.loaders,
     };
 
-    const i18nLanguagesSubjectProvider: ValueProvider = {
-      provide: I18N_LANGUAGES_SUBJECT,
-      useValue: i18nLanguagesSubject,
-    };
-
-    const i18nTranslationSubjectProvider: ValueProvider = {
-      provide: I18N_TRANSLATIONS_SUBJECT,
-      useValue: i18nTranslationSubject,
-    };
-
     const translationsProvider = {
       provide: I18N_TRANSLATIONS,
       useFactory: async (
         loaders: I18nLoader<unknown>[],
-      ): Promise<Observable<I18nTranslation>> => {
-        return processTranslationsAndReply(loaders, i18nTranslationSubject);
+      ): Promise<I18nTranslation> => {
+        return processTranslations(loaders);
       },
       inject: [I18N_LOADERS],
     };
 
     const languagesProvider = {
       provide: I18N_LANGUAGES,
-      useFactory: async (
-        loaders: I18nLoader<unknown>[],
-      ): Promise<Observable<string[]>> => {
-        return processLanguagesAndReply(loaders, i18nLanguagesSubject);
+      useFactory: async (loaders: I18nLoader<unknown>[]): Promise<string[]> => {
+        return processLanguages(loaders);
       },
       inject: [I18N_LOADERS],
     };
@@ -126,8 +102,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         languagesProvider,
         resolversProvider,
         i18nLoaderProvider,
-        i18nLanguagesSubjectProvider,
-        i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
       ],
       exports: [I18N_OPTIONS, I18N_RESOLVERS, I18nService, languagesProvider],
@@ -142,22 +116,9 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     const asyncLanguagesProvider = this.createAsyncLanguagesProvider();
     const asyncLoadersProvider = this.createAsyncLoadersProvider();
 
-    const i18nLanguagesSubject = new BehaviorSubject<string[]>([]);
-    const i18nTranslationSubject = new BehaviorSubject<I18nTranslation>({});
-
     const resolversProvider: ValueProvider = {
       provide: I18N_RESOLVERS,
       useValue: options.resolvers || [],
-    };
-
-    const i18nLanguagesSubjectProvider: ValueProvider = {
-      provide: I18N_LANGUAGES_SUBJECT,
-      useValue: i18nLanguagesSubject,
-    };
-
-    const i18nTranslationSubjectProvider: ValueProvider = {
-      provide: I18N_TRANSLATIONS_SUBJECT,
-      useValue: i18nTranslationSubject,
     };
 
     return {
@@ -175,8 +136,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         I18nService,
         resolversProvider,
         asyncLoadersProvider,
-        i18nLanguagesSubjectProvider,
-        i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
       ],
       exports: [
@@ -228,24 +187,20 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       provide: I18N_TRANSLATIONS,
       useFactory: async (
         loaders: I18nLoader<unknown>[],
-        translationsSubject: BehaviorSubject<I18nTranslation>,
-      ): Promise<Observable<I18nTranslation>> => {
-        return processTranslationsAndReply(loaders, translationsSubject);
+      ): Promise<I18nTranslation> => {
+        return processTranslations(loaders);
       },
-      inject: [I18N_LOADERS, I18N_TRANSLATIONS_SUBJECT],
+      inject: [I18N_LOADERS],
     };
   }
 
   private static createAsyncLanguagesProvider(): Provider {
     return {
       provide: I18N_LANGUAGES,
-      useFactory: async (
-        loaders: I18nLoader<unknown>[],
-        languagesSubject: BehaviorSubject<string[]>,
-      ): Promise<Observable<string[]>> => {
-        return processLanguagesAndReply(loaders, languagesSubject);
+      useFactory: async (loaders: I18nLoader<unknown>[]): Promise<string[]> => {
+        return processLanguages(loaders);
       },
-      inject: [I18N_LOADERS, I18N_LANGUAGES_SUBJECT],
+      inject: [I18N_LOADERS],
     };
   }
 
@@ -320,10 +275,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         return this.i18n.t(key, { lang, args });
       };
     }
-  }
-
-  onModuleDestroy() {
-    this.unsubscribe.complete();
   }
 
   configure(consumer: MiddlewareConsumer) {

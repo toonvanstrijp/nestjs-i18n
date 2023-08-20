@@ -3,7 +3,6 @@ import path from 'path';
 import { readFile } from 'fs/promises';
 import { exists, getDirectories, getFiles } from '../utils/file';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
-import { Observable, Subject } from 'rxjs';
 
 export interface I18nAbstractFileLoaderOptions {
   path: string;
@@ -12,18 +11,16 @@ export interface I18nAbstractFileLoaderOptions {
 }
 
 export abstract class I18nAbstractFileLoader extends I18nLoader<I18nAbstractFileLoaderOptions> {
-  private events: Subject<string> = new Subject();
-
   constructor(options: I18nAbstractFileLoaderOptions) {
     super(options);
     this.options = this.sanitizeOptions(options);
   }
 
-  async languages(): Promise<string[] | Observable<string[]>> {
+  async languages(): Promise<string[]> {
     return this.parseLanguages();
   }
 
-  async load(): Promise<I18nTranslation | Observable<I18nTranslation>> {
+  async load(): Promise<I18nTranslation> {
     return this.parseTranslations();
   }
 

@@ -8,6 +8,17 @@ export class VersionCommand implements yargs.CommandModule {
   command = 'version';
   describe = 'Prints NestJS I18n version this project uses.';
 
+  protected static executeCommand(command: string) {
+    return new Promise<string>((ok, fail) => {
+      exec(command, (error: any, stdout: any, stderr: any) => {
+        if (stdout) return ok(stdout);
+        if (stderr) return ok(stderr);
+        if (error) return fail(error);
+        ok('');
+      });
+    });
+  }
+
   async handler() {
     const localNpmList = await VersionCommand.executeCommand(
       'npm list --depth=0',
@@ -53,16 +64,5 @@ export class VersionCommand implements yargs.CommandModule {
         'To avoid issues with CLI please make sure your global and local versions match, ',
       );
     }
-  }
-
-  protected static executeCommand(command: string) {
-    return new Promise<string>((ok, fail) => {
-      exec(command, (error: any, stdout: any, stderr: any) => {
-        if (stdout) return ok(stdout);
-        if (stderr) return ok(stderr);
-        if (error) return fail(error);
-        ok('');
-      });
-    });
   }
 }

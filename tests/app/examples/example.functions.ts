@@ -1,7 +1,7 @@
 import { ValidationError } from '@nestjs/common';
 import { mapChildrenToValidationErrors } from '../../../src/utils/format';
-import {I18nValidationException} from "../../../src";
-import {ArgumentsHost} from "@nestjs/common/interfaces";
+import { I18nValidationException } from '../../../src';
+import { ArgumentsHost } from '@nestjs/common/interfaces';
 
 export const exampleErrorFormatter = (errors: ValidationError[]): object => {
   const errorMessages = {};
@@ -18,12 +18,15 @@ export const exampleErrorFormatter = (errors: ValidationError[]): object => {
   return errorMessages;
 };
 
-
-export const exampleResponseBodyFormatter = (host: ArgumentsHost, exc: I18nValidationException, formattedErrors: object) => {
-    return {
-      type: 'static',
-      status: exc.getStatus(),
-      message: exc.getResponse(),
-      data: formattedErrors,
-    };
-}
+export const exampleResponseBodyFormatter = (
+  host: ArgumentsHost,
+  exc: I18nValidationException,
+  formattedErrors: object,
+) => {
+  return {
+    type: 'static',
+    status: exc.getStatus(),
+    message: exc.getResponse(),
+    data: formattedErrors,
+  };
+};

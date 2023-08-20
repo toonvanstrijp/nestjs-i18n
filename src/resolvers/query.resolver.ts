@@ -1,5 +1,5 @@
 import { I18nResolver } from '../index';
-import { Injectable, ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { I18nResolverOptions } from '../decorators/i18n-resolver-options.decorator';
 
 @Injectable()

@@ -352,7 +352,7 @@ describe('i18n module with fallbacks', () => {
             'en-*': 'en',
             'fr-*': 'fr',
             'en_*': 'en',
-            'ua': 'ua',
+            ua: 'ua',
             'fr_*': 'fr',
             pt: 'pt-BR',
           },

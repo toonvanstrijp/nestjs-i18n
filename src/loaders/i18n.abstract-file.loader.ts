@@ -27,6 +27,10 @@ export abstract class I18nAbstractFileLoader extends I18nLoader<I18nAbstractFile
     return this.parseTranslations();
   }
 
+  abstract formatData(data: any, sourceFileName?: string);
+
+  abstract getDefaultOptions(): Partial<I18nAbstractFileLoaderOptions>;
+
   protected async parseTranslations(): Promise<I18nTranslation> {
     const i18nPath = path.normalize(this.options.path + path.sep);
 
@@ -134,7 +138,4 @@ export abstract class I18nAbstractFileLoader extends I18nLoader<I18nAbstractFile
 
     return options;
   }
-
-  abstract formatData(data: any, sourceFileName?: string);
-  abstract getDefaultOptions(): Partial<I18nAbstractFileLoaderOptions>;
 }

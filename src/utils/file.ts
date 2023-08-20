@@ -1,4 +1,4 @@
-import { readdir, lstat, stat } from 'fs/promises';
+import { lstat, readdir, stat } from 'fs/promises';
 import type { Dirent } from 'fs';
 import path from 'path';
 
@@ -61,9 +61,7 @@ export const getFiles = async (
           )),
         );
       }
-    } catch {
-      continue;
-    }
+    } catch {}
   }
 
   return files

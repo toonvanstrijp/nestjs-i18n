@@ -5,33 +5,35 @@ import {
   Logger,
   MiddlewareConsumer,
   Module,
+  NestModule,
   OnModuleDestroy,
+  OnModuleInit,
   Provider,
+  ValueProvider,
 } from '@nestjs/common';
 import {
-  I18N_OPTIONS,
-  I18N_TRANSLATIONS,
   I18N_LANGUAGES,
-  I18N_RESOLVERS,
   I18N_LANGUAGES_SUBJECT,
-  I18N_TRANSLATIONS_SUBJECT,
   I18N_LOADERS,
+  I18N_OPTIONS,
+  I18N_RESOLVERS,
+  I18N_TRANSLATIONS,
+  I18N_TRANSLATIONS_SUBJECT,
 } from './i18n.constants';
 import { I18nService } from './services/i18n.service';
 import {
   I18nAsyncOptions,
+  I18nOptionResolver,
   I18nOptions,
   I18nOptionsFactory,
-  I18nOptionResolver,
 } from './interfaces/i18n-options.interface';
-import { ValueProvider, OnModuleInit, NestModule } from '@nestjs/common';
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
 import { isNestMiddleware, shouldResolve, usingFastify } from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import format from 'string-format';
 import hbs from 'hbs';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
@@ -58,42 +60,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     @Inject(I18N_OPTIONS) private readonly i18nOptions: I18nOptions,
     private adapter: HttpAdapterHost,
   ) {}
-
-  async onModuleInit() {
-    // makes sure languages & translations are loaded before application loads
-    await this.i18n.refresh();
-
-    // Register handlebars helper
-    if (this.i18nOptions.viewEngine == 'hbs') {
-      try {
-        hbs.registerHelper('t', this.i18n.hbsHelper);
-        logger.log('Handlebars helper registered');
-      } catch (e) {
-        logger.error('hbs module failed to load', e);
-      }
-    }
-
-    if (['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
-      const app = this.adapter.httpAdapter.getInstance();
-      app.locals['t'] = (key: string, lang: any, args: any) => {
-        return this.i18n.t(key, { lang, args });
-      };
-    }
-  }
-
-  onModuleDestroy() {
-    this.unsubscribe.complete();
-  }
-
-  configure(consumer: MiddlewareConsumer) {
-    if (this.i18nOptions.disableMiddleware) return;
-
-    consumer
-      .apply(I18nMiddleware)
-      .forRoutes(
-        isNestMiddleware(consumer) && usingFastify(consumer) ? '(.*)' : '*',
-      );
-  }
 
   static forRoot(options: I18nOptions): DynamicModule {
     options = this.sanitizeI18nOptions(options);
@@ -332,5 +298,41 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
         return providers;
       }, []);
+  }
+
+  async onModuleInit() {
+    // makes sure languages & translations are loaded before application loads
+    await this.i18n.refresh();
+
+    // Register handlebars helper
+    if (this.i18nOptions.viewEngine == 'hbs') {
+      try {
+        hbs.registerHelper('t', this.i18n.hbsHelper);
+        logger.log('Handlebars helper registered');
+      } catch (e) {
+        logger.error('hbs module failed to load', e);
+      }
+    }
+
+    if (['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
+      const app = this.adapter.httpAdapter.getInstance();
+      app.locals['t'] = (key: string, lang: any, args: any) => {
+        return this.i18n.t(key, { lang, args });
+      };
+    }
+  }
+
+  onModuleDestroy() {
+    this.unsubscribe.complete();
+  }
+
+  configure(consumer: MiddlewareConsumer) {
+    if (this.i18nOptions.disableMiddleware) return;
+
+    consumer
+      .apply(I18nMiddleware)
+      .forRoutes(
+        isNestMiddleware(consumer) && usingFastify(consumer) ? '(.*)' : '*',
+      );
   }
 }

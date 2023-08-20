@@ -54,4 +54,3 @@ describe('i18n async multiple folders', () => {
     expect(i18nService.translate('test.HELLO', { lang: 'uk' })).toBe('Привіт');
   });
 });
-

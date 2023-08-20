@@ -6,11 +6,10 @@ import { I18nTranslation } from '../interfaces/i18n-translation.interface';
 import { mergeDeep, mergeTranslations } from '../utils/merge';
 import fs from 'fs';
 import path from 'path';
-import { logger } from '../i18n.module';
 import process from 'process';
 import chokidar from 'chokidar';
 import { I18nLoader } from '../loaders/i18n.loader';
-import { createTypesFile, annotateSourceCode } from '../utils/typescript';
+import { annotateSourceCode, createTypesFile } from '../utils/typescript';
 
 export interface GenerateTypesArguments {
   typesOutputPath: string;

@@ -1,14 +1,16 @@
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
-import * as fs from 'fs';
+import path from 'path';
+import fs from 'fs';
 import {
+  i18n,
+  I18N_LOADERS,
+  I18nJsonLoader,
+  I18nLoader,
   I18nModule,
   I18nService,
-  I18nLoader,
-  i18n, I18nJsonLoader, I18N_LOADERS,
 } from '../src';
 import { I18nTranslations } from './generated/i18n.generated';
-import { I18nAbstractFileLoaderOptions } from "../src/loaders/i18n.abstract-file.loader";
+import { I18nAbstractFileLoaderOptions } from '../src/loaders/i18n.abstract-file.loader';
 
 describe('i18n module', () => {
   let i18nService: I18nService<I18nTranslations>;

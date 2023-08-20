@@ -1,16 +1,16 @@
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
+import path, { join } from 'path';
 import {
+  AcceptLanguageResolver,
   CookieResolver,
   HeaderResolver,
-  AcceptLanguageResolver,
+  I18nJsonLoader,
   I18nModule,
-  QueryResolver, I18nJsonLoader,
+  QueryResolver,
 } from '../src';
-import * as request from 'supertest';
+import request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
 import { Global, Module } from '@nestjs/common';
 
 @Global()

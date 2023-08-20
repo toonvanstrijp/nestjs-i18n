@@ -1,7 +1,6 @@
-import { Global, Module } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
-import {I18nJsonLoader, I18nModule, I18nService} from '../src';
+import path from 'path';
+import { I18nJsonLoader, I18nModule, I18nService } from '../src';
 
 describe('i18n async multiple folders', () => {
   let i18nService: I18nService;
@@ -35,11 +34,23 @@ describe('i18n async multiple folders', () => {
   });
 
   it('i18n service should return correct translation', async () => {
-    expect(i18nService.translate('new_file.NEW_VALUE', { lang: 'en' })).toBe('NEW_VALUE');
-    expect(i18nService.translate('new_file.NEW_VALUE_OBJECT.NEW_VALUE_OBJECT_KEY', { lang: 'en' })).toBe('NEW_VALUE');
-    expect(i18nService.translate('validation.NEW_VALUE', { lang: 'en' })).toBe('NEW_VALUE');
-    expect(i18nService.translate('validation.email', { lang: 'en' })).toBe('OVERRIDE');
-    expect(i18nService.translate('validation.password', { lang: 'en' })).toBe('password');
+    expect(i18nService.translate('new_file.NEW_VALUE', { lang: 'en' })).toBe(
+      'NEW_VALUE',
+    );
+    expect(
+      i18nService.translate('new_file.NEW_VALUE_OBJECT.NEW_VALUE_OBJECT_KEY', {
+        lang: 'en',
+      }),
+    ).toBe('NEW_VALUE');
+    expect(i18nService.translate('validation.NEW_VALUE', { lang: 'en' })).toBe(
+      'NEW_VALUE',
+    );
+    expect(i18nService.translate('validation.email', { lang: 'en' })).toBe(
+      'OVERRIDE',
+    );
+    expect(i18nService.translate('validation.password', { lang: 'en' })).toBe(
+      'password',
+    );
     expect(i18nService.translate('test.HELLO', { lang: 'uk' })).toBe('Привіт');
   });
 });

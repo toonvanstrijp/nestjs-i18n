@@ -32,7 +32,8 @@ import { isNestMiddleware, shouldResolve, usingFastify } from './utils/util';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
-import * as format from 'string-format';
+import format from 'string-format';
+import hbs from 'hbs';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
 import {
   processLanguagesAndReply,
@@ -65,7 +66,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     // Register handlebars helper
     if (this.i18nOptions.viewEngine == 'hbs') {
       try {
-        const hbs = await import('hbs');
         hbs.registerHelper('t', this.i18n.hbsHelper);
         logger.log('Handlebars helper registered');
       } catch (e) {

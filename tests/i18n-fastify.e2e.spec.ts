@@ -1,10 +1,11 @@
-import * as path from 'path';
+import path from 'path';
 import {
+  AcceptLanguageResolver,
   CookieResolver,
   HeaderResolver,
-  AcceptLanguageResolver,
+  I18nJsonLoader,
   I18nModule,
-  QueryResolver, I18nJsonLoader,
+  QueryResolver,
 } from '../src';
 import { HelloController } from './app/controllers/hello.controller';
 import {
@@ -12,7 +13,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 
 describe('i18n module e2e fastify', () => {
   let app: NestFastifyApplication;

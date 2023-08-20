@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
-import {I18nJsonLoader, I18nModule, I18nService} from '../src';
+import path from 'path';
+import { I18nJsonLoader, I18nModule, I18nService } from '../src';
 
 describe('i18n async module', () => {
   let i18nService: I18nService;

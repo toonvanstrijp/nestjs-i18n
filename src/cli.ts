@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-
-import * as yargs from 'yargs';
+import 'reflect-metadata';
+import yargs from 'yargs';
 import { GenerateTypesCommand } from './commands/generate-types.command';
 import { VersionCommand } from './commands/version.command';
 import { hideBin } from 'yargs/helpers';

@@ -2,10 +2,10 @@ import {
   GenerateTypesArguments,
   GenerateTypesCommand,
 } from '../src/commands/generate-types.command';
-import * as os from 'os';
-import * as path from 'path';
-import * as yargs from 'yargs';
-import * as fs from 'fs';
+import os from 'os';
+import path from 'path';
+import yargs from 'yargs';
+import fs from 'fs';
 
 describe('generate types test', () => {
   const generateTypesCommand = new GenerateTypesCommand();
@@ -211,15 +211,15 @@ describe('generate types with watch', () => {
     expect(fileContent).toContain('"email": string;');
     expect(fileContent).not.toContain('new_file');
 
-    fs.unlinkSync(
+    fs.rmSync(
         path.join(newI18nPath, 'en', 'test.json'),
     );
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const newFileContent = fs.readFileSync(typesOutputPath).toString();
     expect(newFileContent).not.toContain(`"ENGLISH_ONLY_KEY": string;`);
-    expect(fileContent).toContain('"email": string;');
+    expect(newFileContent).toContain('"email": string;');
   });
 
   it('update file', async () => {
@@ -248,7 +248,7 @@ describe('generate types with watch', () => {
 
     fs.writeFileSync(updateFilePath, JSON.stringify(parsedToUpdate, null, 2));
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const newFileContent = fs.readFileSync(typesOutputPath).toString();
     expect(newFileContent).not.toContain(`"ENGLISH_ONLY_KEY": string;`);
@@ -310,7 +310,7 @@ describe('generate types with watch', () => {
     }));
 
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const newFileContent = fs.readFileSync(typesOutputPath).toString();
     expect(newFileContent).not.toContain(`"ENGLISH_ONLY_KEY": string;`);

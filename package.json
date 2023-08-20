@@ -1,6 +1,6 @@
 {
   "name": "@saas-buildkit/nestjs-i18n",
-  "version": "11.1.0",
+  "version": "11.1.1",
   "description": "The i18n module for Nest.",
   "license": "MIT",
   "engines": {
@@ -32,6 +32,7 @@
   ],
   "scripts": {
     "prepare": "npm run build",
+    "postbuild": "chmod +x ./dist/cli.js",
     "build": "npm run build:lib",
     "build:lib": "npx rimraf dist && tsc -p tsconfig.build.json",
     "prepublish:npm": "npm run build",

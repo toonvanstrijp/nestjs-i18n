@@ -1,6 +1,6 @@
 {
   "name": "@saas-buildkit/nestjs-i18n",
-  "version": "11.0.1",
+  "version": "11.1.0",
   "description": "The i18n module for Nest.",
   "license": "MIT",
   "engines": {
@@ -21,6 +21,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/saas-buildkit/nestjs-i18n.git"
+  },
+  "bin": {
+    "nestjs-i18n": "./dist/cli.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -106,12 +109,14 @@
   },
   "dependencies": {
     "accept-language-parser": "^1.5.0",
+    "chalk": "^4.1.2",
     "chokidar": "^3.5.3",
     "cookie": "^0.5.0",
     "iterare": "^1.2.1",
     "js-yaml": "^4.1.0",
     "mergician": "^1.1.0",
-    "string-format": "^2.0.0"
+    "string-format": "^2.0.0",
+    "yargs": "^17.7.2"
   },
   "peerDependencies": {
     "@nestjs/common": "*",

@@ -1,12 +1,8 @@
 import { I18nLoader } from './i18n.loader';
-import * as path from 'path';
+import path from 'path';
 import { readFile } from 'fs/promises';
 import { exists, getDirectories, getFiles } from '../utils/file';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
-import {
-  Observable,
-  Subject,
-} from 'rxjs';
 
 export interface I18nAbstractFileLoaderOptions {
   path: string;
@@ -14,26 +10,23 @@ export interface I18nAbstractFileLoaderOptions {
   filePattern?: string;
 }
 
-export abstract class I18nAbstractFileLoader
-  extends I18nLoader<I18nAbstractFileLoaderOptions>
-{
-  private events: Subject<string> = new Subject();
-
-  constructor(
-      options: I18nAbstractFileLoaderOptions,
-  ) {
+export abstract class I18nAbstractFileLoader extends I18nLoader<I18nAbstractFileLoaderOptions> {
+  constructor(options: I18nAbstractFileLoaderOptions) {
     super(options);
     this.options = this.sanitizeOptions(options);
   }
 
-
-  async languages(): Promise<string[] | Observable<string[]>> {
+  async languages(): Promise<string[]> {
     return this.parseLanguages();
   }
 
-  async load(): Promise<I18nTranslation | Observable<I18nTranslation>> {
+  async load(): Promise<I18nTranslation> {
     return this.parseTranslations();
   }
+
+  abstract formatData(data: any, sourceFileName?: string);
+
+  abstract getDefaultOptions(): Partial<I18nAbstractFileLoaderOptions>;
 
   protected async parseTranslations(): Promise<I18nTranslation> {
     const i18nPath = path.normalize(this.options.path + path.sep);
@@ -78,8 +71,8 @@ export abstract class I18nAbstractFileLoader
         global = true;
       }
 
-      // const data = JSON.parse(await readFile(file, 'utf8'));
-      const data = this.formatData(await readFile(file, 'utf8'));
+      const source = await readFile(file, 'utf8');
+      const data = this.formatData(source, file);
 
       const prefix = [...pathParts.slice(1), path.basename(file).split('.')[0]];
 
@@ -142,8 +135,4 @@ export abstract class I18nAbstractFileLoader
 
     return options;
   }
-
-  abstract formatData(data: any);
-  abstract getDefaultOptions(): Partial<I18nAbstractFileLoaderOptions>;
 }
-

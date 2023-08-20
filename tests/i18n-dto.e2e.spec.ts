@@ -1,14 +1,15 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
-import * as request from 'supertest';
+import path from 'path';
+import request from 'supertest';
 import {
   AcceptLanguageResolver,
   CookieResolver,
   HeaderResolver,
+  I18nJsonLoader,
   I18nModule,
+  I18nValidationPipe,
   QueryResolver,
-  I18nValidationPipe, I18nJsonLoader,
 } from '../src';
 import { HelloController } from './app/controllers/hello.controller';
 

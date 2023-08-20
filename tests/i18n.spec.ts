@@ -1,14 +1,16 @@
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
-import * as fs from 'fs';
+import path from 'path';
+import fs from 'fs';
 import {
+  i18n,
+  I18N_LOADERS,
+  I18nJsonLoader,
+  I18nLoader,
   I18nModule,
   I18nService,
-  I18nLoader,
-  i18n, I18nJsonLoader, I18N_LOADERS,
 } from '../src';
 import { I18nTranslations } from './generated/i18n.generated';
-import { I18nAbstractFileLoaderOptions } from "../src/loaders/i18n.abstract-file.loader";
+import { I18nAbstractFileLoaderOptions } from '../src/loaders/i18n.abstract-file.loader';
 
 describe('i18n module', () => {
   let i18nService: I18nService<I18nTranslations>;
@@ -181,49 +183,6 @@ describe('i18n module', () => {
     );
   });
 
-  describe('i18n should refresh manually', () => {
-    const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
-    const newLanguagePath = path.join(__dirname, '/i18n/es/');
-
-    afterAll(async () => {
-      fs.unlinkSync(newTranslationPath);
-      fs.rmdirSync(newLanguagePath);
-    });
-
-    it('i18n should refresh translations and languages', async () => {
-      const loadSpy = jest.spyOn(i18nLoader, 'load');
-      const languagesSpy = jest.spyOn(i18nLoader, 'languages');
-      await i18nService.refresh();
-      expect(loadSpy).toHaveBeenCalled();
-      expect(languagesSpy).toHaveBeenCalled();
-    });
-
-    it('i18n should load new translations', async () => {
-      fs.writeFileSync(
-        newTranslationPath,
-        JSON.stringify({ WORLD: 'wereld' }),
-        'utf8',
-      );
-      await i18nService.refresh();
-      const translation = i18nService.translate<any>('test2.WORLD', {
-        lang: 'nl',
-      });
-      expect(translation).toEqual('wereld');
-    });
-
-    it('i18n should load new languages', async () => {
-      try {
-        fs.mkdirSync(newLanguagePath);
-      } catch (e) {
-        // ignore
-      }
-      await i18nService.refresh();
-      const languages = i18nService.getSupportedLanguages();
-      expect(languages).toContain('es');
-      const translations = i18nService.getTranslations();
-      expect(Object.keys(translations)).toContain('es');
-    });
-  });
 });
 
 describe('i18n module without trailing slash in path', () => {
@@ -350,7 +309,7 @@ describe('i18n module with fallbacks', () => {
             'en-*': 'en',
             'fr-*': 'fr',
             'en_*': 'en',
-            'ua': 'ua',
+            ua: 'ua',
             'fr_*': 'fr',
             pt: 'pt-BR',
           },

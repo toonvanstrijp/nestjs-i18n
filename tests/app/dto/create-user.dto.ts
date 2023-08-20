@@ -8,7 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { i18n } from '../../../src';
+import { i18nValidationMessage } from '../../../src';
 import { I18nTranslations } from '../../generated/i18n.generated';
 
 export class ExtraUserDto {
@@ -16,14 +16,14 @@ export class ExtraUserDto {
   subscribeToEmail: string;
 
   @Min(5, {
-    message: i18n<I18nTranslations>('validation.MIN', {
+    message: i18nValidationMessage<I18nTranslations>('validation.MIN', {
       message: 'COOL',
     }),
   })
   min: number;
 
   @Max(10, {
-    message: i18n<I18nTranslations>('validation.MAX', {
+    message: i18nValidationMessage<I18nTranslations>('validation.MAX', {
       message: 'SUPER',
     }),
   })

@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import path from 'path';
 import fs from 'fs';
 import {
-  i18n,
+  i18nValidationMessage,
   I18N_LOADERS,
   I18nJsonLoader,
   I18nLoader,
@@ -375,7 +375,7 @@ describe('i18n module with fallbacks', () => {
 
   it('should santize values from pipe caharacters', () => {
     expect(
-      i18n<I18nTranslations>('test.HELLO')({
+      i18nValidationMessage<I18nTranslations>('test.HELLO')({
         value: 'example|||',
         constraints: [],
         targetName: 'string',

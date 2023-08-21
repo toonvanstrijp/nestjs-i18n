@@ -3,6 +3,7 @@ import {
   I18N_OPTIONS,
   I18N_TRANSLATIONS,
   I18N_LANGUAGES,
+  I18N_LOADERS,
 } from '../i18n.constants';
 import { I18nOptions, I18nValidationError } from '..';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';

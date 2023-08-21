@@ -3,9 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import {
   AcceptLanguageResolver,
-  HeaderResolver,
   I18nModule,
   QueryResolver,
+  HeaderResolver,
 } from 'nestjs-i18n';
 import { join } from 'path';
 

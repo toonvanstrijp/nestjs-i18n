@@ -1,4 +1,4 @@
-import { I18nTranslation } from '../interfaces/i18n-translation.interface';
+import { I18nTranslation } from '../interfaces';
 import mergician from 'mergician';
 
 function isObject(item: any) {

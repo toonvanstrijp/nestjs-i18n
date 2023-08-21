@@ -1,9 +1,9 @@
-import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
-import { ValidationArguments, ValidationError } from 'class-validator';
 import {
+  I18nOptionResolver,
   I18nValidationError,
   I18nValidationException,
-} from '../interfaces/i18n-validation-error.interface';
+} from '../interfaces';
+import { ValidationArguments, ValidationError } from 'class-validator';
 import { I18nService, TranslateOptions } from '../services/i18n.service';
 import { HttpStatus, MiddlewareConsumer } from '@nestjs/common';
 import { NestMiddlewareConsumer, Path } from '../types';

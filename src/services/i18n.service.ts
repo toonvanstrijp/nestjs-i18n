@@ -1,18 +1,16 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
-  I18N_LANGUAGES,
-  I18N_LOADERS,
   I18N_OPTIONS,
   I18N_TRANSLATIONS,
+  I18N_LANGUAGES,
 } from '../i18n.constants';
 import { I18nOptions, I18nValidationError } from '..';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
 import { I18nLoader } from '../loaders/i18n.loader';
-import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
 import { validate } from 'class-validator';
-import { formatI18nErrors } from '../utils/util';
 import { IfAnyOrNever, Path, PathValue } from '../types';
-import { I18nTranslator } from '../interfaces/i18n-translator.interface';
+import { formatI18nErrors } from '../utils';
+import { I18nTranslator, I18nPluralObject } from '../interfaces';
 import { processLanguages, processTranslations } from '../utils/loaders-utils';
 
 const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];

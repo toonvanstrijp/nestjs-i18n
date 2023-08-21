@@ -1,6 +1,6 @@
 {
-  "name": "@saas-buildkit/nestjs-i18n",
-  "version": "11.1.4",
+  "name": "nestjs-i18n",
+  "version": "10.3.0",
   "description": "The i18n module for Nest.",
   "license": "MIT",
   "engines": {
@@ -20,7 +20,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/saas-buildkit/nestjs-i18n.git"
+    "url": "https://github.com/toonvanstrijp/nestjs-i18n"
   },
   "bin": {
     "nestjs-i18n": "./dist/cli.js"

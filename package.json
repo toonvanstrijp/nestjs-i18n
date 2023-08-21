@@ -2,6 +2,7 @@
   "name": "nestjs-i18n",
   "version": "10.3.0",
   "description": "The i18n module for Nest.",
+  "author": "Toon van Strijp",
   "license": "MIT",
   "engines": {
     "node": ">=16"

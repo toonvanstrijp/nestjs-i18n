@@ -21,7 +21,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/toonvanstrijp/nestjs-i18n"
+    "url": "https://github.com/ToonvanStrijp/nestjs-i18n"
   },
   "bin": {
     "nestjs-i18n": "./dist/cli.js"

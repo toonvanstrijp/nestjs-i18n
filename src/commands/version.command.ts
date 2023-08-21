@@ -47,10 +47,10 @@ export class VersionCommand implements yargs.CommandModule {
     if (localNpmVersion) {
       console.log('Local installed version:', localNpmVersion);
     } else {
-      console.log('No local installed TypeORM was found.');
+      console.log('No local installed was found.');
     }
     if (globalNpmVersion) {
-      console.log('Global installed TypeORM version:', globalNpmVersion);
+      console.log('Global installed i18n module version:', globalNpmVersion);
     } else {
       console.log('No global installed was found.');
     }

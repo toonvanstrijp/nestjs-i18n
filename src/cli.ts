@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* istanbul ignore file */
 import 'reflect-metadata';
 import yargs from 'yargs';
 import { GenerateTypesCommand } from './commands/generate-types.command';

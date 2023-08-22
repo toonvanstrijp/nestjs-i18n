@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 export * from './i18n.module';
 export {
   I18N_OPTIONS,

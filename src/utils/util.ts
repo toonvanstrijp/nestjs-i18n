@@ -17,7 +17,6 @@ export function shouldResolve(e: I18nOptionResolver) {
 }
 
 function validationErrorToI18n(e: ValidationError): I18nValidationError {
-  console.log('target: ', JSON.stringify(e.target));
   return {
     property: e.property,
     value: e.value,
@@ -76,7 +75,6 @@ export function formatI18nErrors<K = Record<string, unknown>>(
           meta.target === error.target.constructor &&
           meta.propertyName === error.property,
       );
-    console.log('limits: ', limits);
     const constraints = Object.assign({}, limits?.constraints);
     error.children = formatI18nErrors(error.children ?? [], i18n, options);
     error.constraints = Object.keys(error.constraints).reduce((result, key) => {

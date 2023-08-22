@@ -75,7 +75,7 @@ export function formatI18nErrors<K = Record<string, unknown>>(
           meta.target === error.target.constructor &&
           meta.propertyName === error.property,
       );
-    const constraints = Object.assign({}, limits.constraints);
+    const constraints = Object.assign({}, limits?.constraints);
     error.children = formatI18nErrors(error.children ?? [], i18n, options);
     error.constraints = Object.keys(error.constraints).reduce((result, key) => {
       const [translationKey, argsString] = error.constraints[key].split('|');

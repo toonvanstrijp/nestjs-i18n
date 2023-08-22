@@ -72,9 +72,7 @@ describe('i18n module e2e graphql', () => {
 
     app = module.createNestApplication();
 
-    app.useGlobalPipes(
-      new I18nValidationPipe(),
-    );
+    app.useGlobalPipes(new I18nValidationPipe());
 
     await app.listen(3000);
 
@@ -448,7 +446,9 @@ describe('i18n module e2e graphql', () => {
                 errors: [
                   {
                     property: 'age',
+                    value: 2,
                     children: [],
+                    target: { name: 'Haya', age: 2 },
                     constraints: {
                       min: 'age with value: "2" needs to be at least 10, ow and COOL',
                     },

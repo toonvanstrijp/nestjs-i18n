@@ -119,21 +119,27 @@ The async way `nestjs-i18n` is to use I18nModule.forRootAsync
 
 ```typescript title="src/app.module.ts"
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as path from 'path';
-import { I18nModule } from 'nestjs-i18n';
+import { I18nModule, AcceptLanguageResolver, QueryResolver, HeaderResolver } from 'nestjs-i18n';
 
 @Module({
   imports: [
     I18nModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
-        fallbackLanguage: "en",
+        fallbackLanguage: configService.getOrThrow('FALLBACK_LANGUAGE'),
         loaderOptions: {
-          path: join(__dirname, "/i18n/"),
+          path: join(__dirname, '/i18n/'),
           watch: true,
         },
-      })
-      inject: [ConfigService]
-    })
+      }),
+      resolvers: [
+        { use: QueryResolver, options: ['lang'] },
+        AcceptLanguageResolver,
+        new HeaderResolver(['x-lang']),
+      ],
+      inject: [ConfigService],
+    }),
   ],
   controllers: [],
 })
@@ -275,6 +281,39 @@ export class AppService {
     return this.i18n.t('test.HELLO',{ lang:   I18nContext.current().lang });
   }
 }
+```
+
+## Translate options
+
+```typescript
+
+export type TranslateOptions = {
+
+  /**
+   * Language to translate to
+   */
+
+  lang?: string;
+
+  /**
+   *  Arguments to pass to the translation
+   */
+
+  args?: ({ [k: string]: any } | string)[] | { [k: string]: any };
+
+  /**
+   * Default value to return when no translation is found
+   */
+
+  defaultValue?: string;
+
+  /**
+   *  Debug mode
+   */
+
+  debug?: boolean;
+};
+
 ```
 
 ## Example

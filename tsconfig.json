@@ -5,7 +5,8 @@
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2017",
+    "skipLibCheck": true,
+    "target": "es2021",
     "sourceMap": true,
     "baseUrl": "./",
     "incremental": true

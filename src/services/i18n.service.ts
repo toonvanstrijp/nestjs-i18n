@@ -1,21 +1,25 @@
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { validate } from 'class-validator';
 import {
-  I18N_OPTIONS,
-  I18N_TRANSLATIONS,
+  BehaviorSubject,
+  Observable,
+  Subject,
+  lastValueFrom,
+  take,
+  takeUntil,
+} from 'rxjs';
+import { I18nOptions, I18nTranslation, I18nValidationError } from '..';
+import {
   I18N_LANGUAGES,
   I18N_LANGUAGES_SUBJECT,
+  I18N_OPTIONS,
+  I18N_TRANSLATIONS,
   I18N_TRANSLATIONS_SUBJECT,
 } from '../i18n.constants';
-import { I18nOptions, I18nValidationError } from '..';
-import { I18nTranslation } from '../interfaces/i18n-translation.interface';
-import { Observable, BehaviorSubject, lastValueFrom, Subject } from 'rxjs';
 import { I18nLoader } from '../loaders/i18n.loader';
-import { take, takeUntil } from 'rxjs/operators';
-import { I18nPluralObject } from 'src/interfaces/i18n-plural.interface';
-import { validate } from 'class-validator';
-import { formatI18nErrors } from '../utils/util';
 import { IfAnyOrNever, Path, PathValue } from '../types';
-import { I18nTranslator } from '../interfaces/i18n-translator.interface';
+import { formatI18nErrors } from '../utils';
+import { I18nTranslator, I18nPluralObject } from '../interfaces';
 
 const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
 
@@ -28,7 +32,8 @@ export type TranslateOptions = {
 
 @Injectable()
 export class I18nService<K = Record<string, unknown>>
-  implements I18nTranslator<K>, OnModuleDestroy {
+  implements I18nTranslator<K>, OnModuleDestroy
+{
   private supportedLanguages: string[];
   private translations: I18nTranslation;
   private pluralRules = new Map<string, Intl.PluralRules>();
@@ -106,8 +111,9 @@ export class I18nService<K = Record<string, unknown>>
     ) {
       if (lang !== this.i18nOptions.fallbackLanguage || !!defaultValue) {
         if (this.i18nOptions.logging) {
-          const message = `Translation "${key as string
-            }" in "${lang}" does not exist.`;
+          const message = `Translation "${
+            key as string
+          }" in "${lang}" does not exist.`;
           this.logger.error(message);
         }
 
@@ -126,16 +132,16 @@ export class I18nService<K = Record<string, unknown>>
   }
 
   private getFallbackLanguage(lang: string) {
-    let regionSepIndex =-1
+    let regionSepIndex = -1;
 
-    if(lang.includes("-")){
+    if (lang.includes('-')) {
       regionSepIndex = lang.lastIndexOf('-');
     }
 
-    if (lang.includes("_")) {
+    if (lang.includes('_')) {
       regionSepIndex = lang.lastIndexOf('_');
     }
-    
+
     return regionSepIndex !== -1
       ? lang.slice(0, regionSepIndex)
       : this.i18nOptions.fallbackLanguage;
@@ -270,14 +276,14 @@ export class I18nService<K = Record<string, unknown>>
         for (const nestedTranslation of nestedTranslations) {
           const result = rootTranslations
             ? (this.translateObject(
-              nestedTranslation.key,
-              rootTranslations,
-              lang,
-              {
-                ...options,
-                args: { parent: options.args, ...nestedTranslation.args },
-              },
-            ) as string) ?? ''
+                nestedTranslation.key,
+                rootTranslations,
+                lang,
+                {
+                  ...options,
+                  args: { parent: options.args, ...nestedTranslation.args },
+                },
+              ) as string) ?? ''
             : '';
           translation =
             translation.substring(0, nestedTranslation.index - offset) +

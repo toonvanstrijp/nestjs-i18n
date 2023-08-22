@@ -13,29 +13,16 @@ export * from './i18n.context';
 export * from './services/i18n.service';
 
 // interfaces
-export * from './interfaces/i18n-options.interface';
-export * from './interfaces/i18n-language-resolver.interface';
-export * from './interfaces/i18n-translation.interface';
-export * from './interfaces/i18n-validation-error.interface';
+export * from './interfaces';
 
 // decorators
-export * from './decorators/i18n-lang.decorator';
-export * from './decorators/i18n-languages.decorator';
-export * from './decorators/i18n-resolver-options.decorator';
-export * from './decorators/i18n.decorator';
+export * from './decorators';
 
 // build in resolvers
-export * from './resolvers/header.resolver';
-export * from './resolvers/accept-language.resolver';
-export * from './resolvers/query.resolver';
-export * from './resolvers/cookie.resolver';
-export * from './resolvers/graphql-websocket.resolver';
-export * from './resolvers/grpc-metadata.resolver';
+export * from './resolvers';
 
 // build in loaders
-export * from './loaders/i18n.loader';
-export * from './loaders/i18n.json.loader';
-export * from './loaders/i18n.yaml.loader';
+export * from './loaders';
 
 // interceptor
 export * from './interceptors/i18n-language.interceptor';

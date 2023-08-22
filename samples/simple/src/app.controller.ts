@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get } from '@nestjs/common';
 import { I18n, I18nContext } from 'nestjs-i18n';
+import { AppService } from './app.service';
 
 @Controller()
 export class AppController {

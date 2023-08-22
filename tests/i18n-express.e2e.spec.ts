@@ -6,10 +6,13 @@ import {
   AcceptLanguageResolver,
   I18nModule,
   QueryResolver,
+  I18nValidationPipe,
+  I18nValidationExceptionFilter,
 } from '../src';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
+import { CatController } from './app/cats/cat.controller';
 
 describe('i18n module e2e express', () => {
   let app: INestApplication;
@@ -37,10 +40,12 @@ describe('i18n module e2e express', () => {
           },
         }),
       ],
-      controllers: [HelloController],
+      controllers: [HelloController, CatController],
     }).compile();
 
     app = module.createNestApplication();
+    app.useGlobalPipes(new I18nValidationPipe());
+    app.useGlobalFilters(new I18nValidationExceptionFilter());
     await app.init();
   });
 
@@ -610,6 +615,28 @@ describe('i18n module e2e express', () => {
       .set('x-custom-lang', 'nl')
       .expect(500)
       .expect({ lang: 'nl' });
+  });
+
+  it('/POST cats with age 2 should error', async () => {
+    await request(app.getHttpServer())
+      .post('/cats')
+      .send({ age: 2, name: 'Felix' })
+      .expect(400)
+      .expect({
+        statusCode: 400,
+        message: 'Bad Request',
+        errors: [
+          {
+            property: 'age',
+            value: 2,
+            target: { age: 2, name: 'Felix' },
+            children: [],
+            constraints: {
+              min: 'age with value: "2" needs to be at least 10, ow and COOL',
+            },
+          },
+        ],
+      });
   });
 
   afterAll(async () => {

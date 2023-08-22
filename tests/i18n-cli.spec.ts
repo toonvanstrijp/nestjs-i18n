@@ -207,7 +207,7 @@ describe('generate types with watch', () => {
 
     fs.rmSync(path.join(newI18nPath, 'en', 'test.json'));
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     const newFileContent = fs.readFileSync(typesOutputPath).toString();
     expect(newFileContent).not.toContain(`"ENGLISH_ONLY_KEY": string;`);
@@ -240,7 +240,7 @@ describe('generate types with watch', () => {
 
     fs.writeFileSync(updateFilePath, JSON.stringify(parsedToUpdate, null, 2));
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     const newFileContent = fs.readFileSync(typesOutputPath).toString();
     expect(newFileContent).not.toContain(`"ENGLISH_ONLY_KEY": string;`);
@@ -313,7 +313,7 @@ describe('generate types with watch', () => {
       }),
     );
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     const newFileContent = fs.readFileSync(typesOutputPath).toString();
     expect(newFileContent).not.toContain(`"ENGLISH_ONLY_KEY": string;`);

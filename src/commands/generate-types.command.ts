@@ -7,7 +7,7 @@ import { mergeDeep, mergeTranslations } from '../utils/merge';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import chokidar from 'chokidar';
+import chokidar, { FSWatcher } from 'chokidar';
 import { I18nLoader } from '../loaders/i18n.loader';
 import { annotateSourceCode, createTypesFile } from '../utils/typescript';
 
@@ -20,6 +20,7 @@ export interface GenerateTypesArguments {
 }
 
 export class GenerateTypesCommand implements yargs.CommandModule {
+  fsWatcher: chokidar.FSWatcher | undefined;
   command = 'generate-types';
   describe = 'Generate types for translations. Supports json and yaml files.';
 
@@ -109,9 +110,21 @@ export class GenerateTypesCommand implements yargs.CommandModule {
           `Listening for changes in ${args.translationsPath.join(', ')}...`,
         ),
       );
-      await listenForChanges(loadersWithPaths, translationsWithPaths, args);
+      if (this.fsWatcher === undefined) {
+        this.fsWatcher = await listenForChanges(
+          loadersWithPaths,
+          translationsWithPaths,
+          args,
+        );
+      }
     } else {
       process.exit(0);
+    }
+  }
+
+  async stopWatcher() {
+    if (this.fsWatcher) {
+      await this.fsWatcher.close();
     }
   }
 }
@@ -144,7 +157,7 @@ function listenForChanges(
   }[],
   translationsWithPaths: { path: string; translations: I18nTranslation }[],
   args: GenerateTypesArguments,
-) {
+): Promise<FSWatcher> {
   const allPaths = loadersWithPaths.map(({ path }) => path);
 
   const loadersByPath = loadersWithPaths.reduce((acc, { path, loader }) => {
@@ -153,12 +166,12 @@ function listenForChanges(
   }, {} as { [key: string]: I18nLoader<unknown> });
 
   return new Promise((resolve, reject) => {
-    chokidar
+    const fsWatcher = chokidar
       .watch(allPaths, {
         ignoreInitial: true,
       })
       .on('ready', () => {
-        resolve('ready');
+        resolve(fsWatcher);
       })
       .on('error', (error) => {
         console.log(chalk.red(`Error while watching files: ${error.message}`));

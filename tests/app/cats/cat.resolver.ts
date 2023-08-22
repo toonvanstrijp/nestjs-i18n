@@ -40,7 +40,7 @@ export class CatResolver {
   }
 
   @Mutation('createCat')
-  async create(@Args('createCatInput') args: any): Promise<any> {
+  async create(@Args('createCatInput') args: CreateCatInput): Promise<any> {
     await this.pubSub.publish('catAdded', { catAdded: args.name });
     return args;
   }

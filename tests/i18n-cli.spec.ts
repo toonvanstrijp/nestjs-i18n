@@ -6,6 +6,8 @@ import os from 'os';
 import path from 'path';
 import yargs from 'yargs';
 import fs from 'fs';
+import {VersionCommand} from "../src/commands/version.command";
+import exp = require("constants");
 
 describe('generate types test', () => {
   const generateTypesCommand = new GenerateTypesCommand();
@@ -112,6 +114,20 @@ describe('generate types test', () => {
     await generateTypesCommand.handler(args);
 
     expect(mockExit).toHaveBeenCalledWith(1);
+  });
+
+  it('failed to parse data', async () => {
+    const args = {
+      typesOutputPath: typesOutputPath,
+      watch: false,
+      debounce: 200,
+      loaderType: ['json'],
+      translationsPath: [
+        path.join(__dirname, './i18n-third'),
+      ],
+    } as yargs.Arguments<GenerateTypesArguments>;
+
+    await generateTypesCommand.handler(args);
   });
 });
 
@@ -241,6 +257,28 @@ describe('generate types with watch', () => {
     expect(fileContent).toContain('"email": string;');
   });
 
+  it('update file and insert invalid json', async () => {
+    const args = {
+      typesOutputPath: typesOutputPath,
+      watch: true,
+      debounce: 200,
+      loaderType: ['json'],
+      translationsPath: [newI18nPath],
+    } as yargs.Arguments<GenerateTypesArguments>;
+
+    await generateTypesCommand.handler(args);
+
+    const outputFileContent = fs.readFileSync(typesOutputPath).toString();
+
+    const updateFilePath = path.join(newI18nPath, 'en', 'test.json');
+    fs.writeFileSync(updateFilePath, 'invalid json');
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const newFileContent = fs.readFileSync(typesOutputPath).toString();
+    expect(outputFileContent).toBe(newFileContent);
+  });
+
   it('multiple sources one update, one remove, one new file in various folder, adding a new language with new files', async () => {
     const args = {
       typesOutputPath: typesOutputPath,
@@ -318,4 +356,33 @@ describe('generate types with watch', () => {
     expect(newFileContent).not.toContain('"new_file":');
     expect(newFileContent).toContain('"email": string;');
   });
+
+
+  it('failed to parse data', async () => {
+    const args = {
+      typesOutputPath: typesOutputPath,
+      watch: true,
+      debounce: 200,
+      loaderType: ['json'],
+      translationsPath: [
+        path.join(__dirname, './i18n-third'),
+      ],
+    } as yargs.Arguments<GenerateTypesArguments>;
+
+    // shouldn't fail in watch mode
+    await generateTypesCommand.handler(args);
+
+  });
+
+});
+
+
+describe('version command test', () => {
+  const versionCommand = new VersionCommand();
+
+
+  it('should not fail', async () => {
+    await versionCommand.handler();
+  });
+
 });

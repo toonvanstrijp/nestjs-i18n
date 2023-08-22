@@ -149,13 +149,13 @@ describe('i18n module e2e graphql', () => {
         operationName: null,
         variables: {},
         query:
-          'mutation {  createCat(createCatInput: {name: "Haya", age: 2})  { name, age }  }',
+          'mutation {  createCat(createCatInput: {name: "Haya", age: 10})  { name, age }  }',
       })
       .expect(200, {
         data: {
           createCat: {
             name: 'Haya',
-            age: 2,
+            age: 10,
           },
         },
       });
@@ -449,7 +449,9 @@ describe('i18n module e2e graphql', () => {
                 errors: [
                   {
                     property: 'age',
+                    value: 2,
                     children: [],
+                    target: { name: 'Haya', age: 2 },
                     constraints: {
                       min: 'age with value: "2" needs to be at least 10, ow and COOL',
                     },

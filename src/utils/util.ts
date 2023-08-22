@@ -3,7 +3,11 @@ import {
   I18nValidationError,
   I18nValidationException,
 } from '../interfaces';
-import { ValidationArguments, ValidationError } from 'class-validator';
+import {
+  getMetadataStorage,
+  ValidationArguments,
+  ValidationError,
+} from 'class-validator';
 import { I18nService, TranslateOptions } from '../services/i18n.service';
 import { HttpStatus, MiddlewareConsumer } from '@nestjs/common';
 import { NestMiddlewareConsumer, Path } from '../types';
@@ -15,6 +19,9 @@ export function shouldResolve(e: I18nOptionResolver) {
 function validationErrorToI18n(e: ValidationError): I18nValidationError {
   return {
     property: e.property,
+    value: e.value,
+    target: e.target,
+    contexts: e.contexts,
     children: e?.children?.map(validationErrorToI18n),
     constraints: !!e.constraints
       ? Object.keys(e.constraints).reduce((result, key) => {
@@ -65,13 +72,33 @@ export function formatI18nErrors<K = Record<string, unknown>>(
   options?: TranslateOptions,
 ): I18nValidationError[] {
   return errors.map((error) => {
+    const limits = getMetadataStorage()
+      .getTargetValidationMetadatas(
+        error.target.constructor,
+        error.target.constructor.name,
+        true,
+        false,
+      )
+      .find(
+        (meta) =>
+          meta.target === error.target.constructor &&
+          meta.propertyName === error.property,
+      );
+    const constraints = Object.assign({}, limits?.constraints);
     error.children = formatI18nErrors(error.children ?? [], i18n, options);
     error.constraints = Object.keys(error.constraints).reduce((result, key) => {
       const [translationKey, argsString] = error.constraints[key].split('|');
       const args = !!argsString ? JSON.parse(argsString) : {};
       result[key] = i18n.translate(translationKey as Path<K>, {
         ...options,
-        args: { property: error.property, ...args },
+        args: {
+          property: error.property,
+          value: error.value,
+          target: error.target,
+          contexts: error.contexts,
+          constraints: constraints,
+          ...args,
+        },
       });
       return result;
     }, {});

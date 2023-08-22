@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { CatResolver } from './cat.resolver';
 import { CatService } from './cat.service';
 import { PubSub } from 'graphql-subscriptions';
+import { CatController } from './cat.controller';
 
 @Module({
   providers: [
@@ -12,5 +13,6 @@ import { PubSub } from 'graphql-subscriptions';
       useValue: new PubSub(),
     },
   ],
+  controllers: [CatController],
 })
 export class CatModule {}

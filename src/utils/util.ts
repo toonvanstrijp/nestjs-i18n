@@ -33,12 +33,10 @@ function validationErrorToI18n(e: ValidationError): I18nValidationError {
 }
 
 export function i18nValidationErrorFactory(
-  status: HttpStatus = HttpStatus.BAD_REQUEST,
 ): (errors: ValidationError[]) => I18nValidationException {
   return (errors: ValidationError[]): I18nValidationException => {
     return new I18nValidationException(
-      errors.map((e) => validationErrorToI18n(e)),
-      status,
+      errors.map((e) => validationErrorToI18n(e))
     );
   };
 }

@@ -55,6 +55,7 @@ const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
   formatter: format,
   logging: true,
+  throwOnMissingKey: false,
   loader: I18nJsonLoader,
 };
 

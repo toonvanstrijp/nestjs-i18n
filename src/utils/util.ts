@@ -9,7 +9,7 @@ import {
   ValidationError,
 } from 'class-validator';
 import { I18nService, TranslateOptions } from '../services/i18n.service';
-import { HttpStatus, MiddlewareConsumer } from '@nestjs/common';
+import { MiddlewareConsumer } from '@nestjs/common';
 import { NestMiddlewareConsumer, Path } from '../types';
 
 export function shouldResolve(e: I18nOptionResolver) {
@@ -32,11 +32,12 @@ function validationErrorToI18n(e: ValidationError): I18nValidationError {
   };
 }
 
-export function i18nValidationErrorFactory(
-): (errors: ValidationError[]) => I18nValidationException {
+export function i18nValidationErrorFactory(): (
+  errors: ValidationError[],
+) => I18nValidationException {
   return (errors: ValidationError[]): I18nValidationException => {
     return new I18nValidationException(
-      errors.map((e) => validationErrorToI18n(e))
+      errors.map((e) => validationErrorToI18n(e)),
     );
   };
 }

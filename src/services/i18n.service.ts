@@ -115,6 +115,9 @@ export class I18nService<K = Record<string, unknown>>
             key as string
           }" in "${lang}" does not exist.`;
           this.logger.error(message);
+          if (this.i18nOptions.throwOnMissingKey) {
+            throw new Error(message);
+          }
         }
 
         const nextFallbackLanguage = this.getFallbackLanguage(lang);

@@ -1,3 +1,4 @@
+import { I18nError } from '../i18n.error';
 import {
   I18nAbstractLoader,
   I18nAbstractLoaderOptions,
@@ -15,7 +16,9 @@ export class I18nJsonLoader extends I18nAbstractLoader {
       return JSON.parse(data);
     } catch (e) {
       if (e instanceof SyntaxError) {
-        throw new Error('Invalid JSON file. Please check your JSON syntax.');
+        throw new I18nError(
+          'Invalid JSON file. Please check your JSON syntax.',
+        );
       }
       throw e;
     }

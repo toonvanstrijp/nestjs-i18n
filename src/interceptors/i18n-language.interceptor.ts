@@ -15,10 +15,9 @@ import {
 } from '../index';
 import { I18nService } from '../services/i18n.service';
 import { ModuleRef } from '@nestjs/core';
-import { shouldResolve } from '../utils/util';
+import { shouldResolve, getContextObject } from '../utils';
 import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
 import { Observable } from 'rxjs';
-import { getContextObject } from '../utils/context';
 
 @Injectable()
 export class I18nLanguageInterceptor implements NestInterceptor {

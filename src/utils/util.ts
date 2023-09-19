@@ -32,14 +32,14 @@ function validationErrorToI18n(e: ValidationError): I18nValidationError {
   };
 }
 
-export function i18nValidationErrorFactory(): (
+export function i18nValidationErrorFactory(
   errors: ValidationError[],
-) => I18nValidationException {
-  return (errors: ValidationError[]): I18nValidationException => {
-    return new I18nValidationException(
-      errors.map((e) => validationErrorToI18n(e)),
-    );
-  };
+): I18nValidationException {
+  return new I18nValidationException(
+    errors.map((e) => {
+      return validationErrorToI18n(e);
+    }),
+  );
 }
 
 export function i18nValidationMessage<K = Record<string, unknown>>(

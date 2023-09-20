@@ -16,7 +16,10 @@ export class I18nContext<K = Record<string, unknown>>
     return this;
   }
 
-  constructor(readonly lang: string, readonly service: I18nService<K>) {}
+  constructor(
+    readonly lang: string,
+    readonly service: I18nService<K>,
+  ) {}
 
   public translate<P extends Path<K> = any, R = PathValue<K, P>>(
     key: P,

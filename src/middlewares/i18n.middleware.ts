@@ -92,7 +92,11 @@ export class I18nMiddleware implements NestMiddleware {
 class MiddlewareHttpContext
   implements ExecutionContext, ArgumentsHost, HttpArgumentsHost
 {
-  constructor(private req: any, private res: any, private next: any) {}
+  constructor(
+    private req: any,
+    private res: any,
+    private next: any,
+  ) {}
 
   getClass<T = any>(): Type<T> {
     throw ExecutionContextMethodNotImplemented;

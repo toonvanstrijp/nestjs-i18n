@@ -1,11 +1,20 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
-
 /** @type {import('@docusaurus/types').Config} */
 const config = {
+  plugins: [
+    [
+      'docusaurus-plugin-typedoc',
+
+      // Plugin / TypeDoc options
+      {
+        entryPoints: ['./src/index.ts'],
+        tsconfig: './tsconfig.build.json',
+      },
+    ],
+  ],
   title: 'nestjs-i18n',
   tagline: 'The i18n module for Nest.',
   url: 'https://nestjs-i18n.com',
@@ -55,6 +64,10 @@ const config = {
           },
         ],
       },
+      prism: {
+        darkTheme: require('prism-react-renderer/themes/dracula'),
+        theme: require('prism-react-renderer/themes/github'),
+      },
       footer: {
         style: 'dark',
         logo: {
@@ -74,10 +87,6 @@ const config = {
             ],
           },
         ],
-      },
-      prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
       },
       algolia: {
         appId: 'OY3TO41FL5',

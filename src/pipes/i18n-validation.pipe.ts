@@ -15,7 +15,7 @@ export class I18nValidationPipe extends ValidationPipe {
   constructor(options?: I18nValidationPipeOptions) {
     super({
       ...options,
-      exceptionFactory: i18nValidationErrorFactory(),
+      exceptionFactory: i18nValidationErrorFactory,
     });
   }
 

@@ -1,8 +1,6 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
-
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -55,6 +53,10 @@ const config = {
           },
         ],
       },
+      prism: {
+        darkTheme: require('prism-react-renderer/themes/dracula'),
+        theme: require('prism-react-renderer/themes/github'),
+      },
       footer: {
         style: 'dark',
         logo: {
@@ -74,10 +76,6 @@ const config = {
             ],
           },
         ],
-      },
-      prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
       },
       algolia: {
         appId: 'OY3TO41FL5',

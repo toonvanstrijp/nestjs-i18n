@@ -4,6 +4,17 @@
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
+  plugins: [
+    [
+      'docusaurus-plugin-typedoc',
+
+      // Plugin / TypeDoc options
+      {
+        entryPoints: ['./src/index.ts'],
+        tsconfig: './tsconfig.build.json',
+      },
+    ],
+  ],
   title: 'nestjs-i18n',
   tagline: 'The i18n module for Nest.',
   url: 'https://nestjs-i18n.com',

@@ -6,8 +6,7 @@ import os from 'os';
 import path from 'path';
 import yargs from 'yargs';
 import fs from 'fs';
-import {VersionCommand} from "../src/commands/version.command";
-import exp = require("constants");
+import { VersionCommand } from '../src/commands/version.command';
 
 describe('generate types test', () => {
   const generateTypesCommand = new GenerateTypesCommand();
@@ -122,9 +121,7 @@ describe('generate types test', () => {
       watch: false,
       debounce: 200,
       loaderType: ['json'],
-      translationsPath: [
-        path.join(__dirname, './i18n-third'),
-      ],
+      translationsPath: [path.join(__dirname, './i18n-third')],
     } as yargs.Arguments<GenerateTypesArguments>;
 
     await generateTypesCommand.handler(args);
@@ -357,32 +354,120 @@ describe('generate types with watch', () => {
     expect(newFileContent).toContain('"email": string;');
   });
 
-
   it('failed to parse data', async () => {
     const args = {
       typesOutputPath: typesOutputPath,
       watch: true,
       debounce: 200,
       loaderType: ['json'],
-      translationsPath: [
-        path.join(__dirname, './i18n-third'),
-      ],
+      translationsPath: [path.join(__dirname, './i18n-third')],
     } as yargs.Arguments<GenerateTypesArguments>;
 
     // shouldn't fail in watch mode
     await generateTypesCommand.handler(args);
-
   });
-
 });
-
 
 describe('version command test', () => {
   const versionCommand = new VersionCommand();
 
-
   it('should not fail', async () => {
     await versionCommand.handler();
   });
+});
 
+describe('config file', () => {
+  const generateTypesCommand = new GenerateTypesCommand();
+  let typesOutputPath: string;
+  let mockExit;
+
+  beforeEach(() => {
+    mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {
+      return undefined as never;
+    });
+
+    const randomNumber = Math.floor(Math.random() * 1000000000);
+    typesOutputPath = path.join(
+      os.tmpdir(),
+      `/generated/i18n-${randomNumber}.generated.ts`,
+    );
+  });
+
+  afterEach(() => {
+    try {
+      fs.unlinkSync(typesOutputPath);
+    } catch (e) {}
+
+    jest.clearAllMocks();
+  });
+
+  it('should use options file', async () => {
+    await generateTypesCommand.handler({
+      typesOutputPath: typesOutputPath,
+      watch: false,
+      debounce: 200,
+      translationsPath: [],
+      loaderType: [],
+      optionsFile: path.join(__dirname, './app/config/i18n-options.ts'),
+    } as yargs.Arguments<GenerateTypesArguments>);
+
+    const newFileContent = fs.readFileSync(typesOutputPath).toString();
+
+    expect(newFileContent).toContain(`"validation": {
+        "email": string;
+        "password": string;
+        "NOT_EMPTY": string;
+        "INVALID_EMAIL": string;
+        "INVALID_BOOLEAN": string;
+        "MIN": string;
+        "MAX": string;
+    };`);
+  });
+
+  it('should use nearest package.json file', async () => {
+    try {
+      fs.unlinkSync(`/tmp/i18n-generated.ts`);
+    } catch (e) {}
+
+    const mockCwd = jest.spyOn(process, 'cwd').mockImplementation(() => {
+      return __dirname;
+    });
+
+    const packageJsonPath = path.join(__dirname, `./package.json`);
+    const outputPath = `/tmp/i18n-${Math.floor(Math.random() * 1000000000)}-generated.ts`;
+
+    fs.writeFileSync(
+      packageJsonPath,
+      JSON.stringify({
+        i18n: {
+          typesOutputPath: outputPath,
+          optionsFile: './app/config/i18n-options.ts',
+        },
+      }),
+    );
+
+    await generateTypesCommand.handler({
+      typesOutputPath: '',
+      watch: false,
+      debounce: 200,
+      translationsPath: [],
+      loaderType: [],
+    } as yargs.Arguments<GenerateTypesArguments>);
+
+    const newFileContent = fs.readFileSync(outputPath).toString();
+
+    expect(newFileContent).toContain(`"validation": {
+        "email": string;
+        "password": string;
+        "NOT_EMPTY": string;
+        "INVALID_EMAIL": string;
+        "INVALID_BOOLEAN": string;
+        "MIN": string;
+        "MAX": string;
+    };`);
+
+    try {
+      fs.unlinkSync(packageJsonPath);
+    } catch (e) {}
+  });
 });

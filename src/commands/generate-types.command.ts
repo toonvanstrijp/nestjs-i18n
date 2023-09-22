@@ -1,21 +1,22 @@
 import yargs from 'yargs';
-import { I18nJsonLoader } from '../loaders/i18n.json.loader';
-import { I18nYamlLoader } from '../loaders/i18n.yaml.loader';
+import { I18nJsonLoader, I18nYamlLoader, I18nLoader } from '../loaders';
 import chalk from 'chalk';
-import { I18nTranslation } from '../interfaces/i18n-translation.interface';
-import { mergeDeep, mergeTranslations } from '../utils/merge';
+import { I18nTranslation } from '../interfaces';
+import { mergeDeep, mergeTranslations } from '../utils';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import chokidar, { FSWatcher } from 'chokidar';
-import { I18nLoader } from '../loaders/i18n.loader';
-import { annotateSourceCode, createTypesFile } from '../utils/typescript';
+import { annotateSourceCode, createTypesFile } from '../utils';
+import { importOrRequireFile } from '../utils/import';
+import { pathExists, realpath } from 'fs-extra';
 
 export interface GenerateTypesArguments {
   typesOutputPath: string;
   watch: boolean;
   debounce: number;
   loaderType: string[];
+  optionsFile?: string;
   translationsPath: string[];
 }
 
@@ -33,6 +34,12 @@ export class GenerateTypesCommand implements yargs.CommandModule {
         default: 200,
         demandOption: false,
       })
+      .option('optionsFile', {
+        alias: '-opt',
+        type: 'string',
+        describe: 'Options file path',
+        demandOption: false,
+      })
       .option('watch', {
         alias: 'w',
         type: 'boolean',
@@ -45,7 +52,7 @@ export class GenerateTypesCommand implements yargs.CommandModule {
         type: 'string',
         describe: 'Path to output types file',
         default: 'src/generated/i18n.generated.ts',
-        demandOption: true,
+        demandOption: false,
       })
       .option('loaderType', {
         alias: 't',
@@ -53,24 +60,54 @@ export class GenerateTypesCommand implements yargs.CommandModule {
         array: true,
         options: ['json', 'yaml'],
         describe: 'Loader type',
-        demandOption: true,
+        demandOption: false,
+        default: [],
       })
       .option('translationsPath', {
         alias: 'p',
         type: 'string',
         describe: 'Path to translations',
         array: true,
-        demandOption: true,
+        default: [],
+        demandOption: false,
       });
   }
 
   async handler(args: yargs.Arguments<GenerateTypesArguments>): Promise<void> {
+    const { packageConfig = {}, packageJsonFilePath } =
+      (await getPackageConfig()) || {};
+
+    packageConfig.i18n = packageConfig.i18n || {};
+
+    if (!args.typesOutputPath) {
+      args.typesOutputPath = packageConfig.i18n.typesOutputPath;
+    }
+
+    if (!args.optionsFile && packageConfig.i18n.optionsFile) {
+      const packageJsonFolder = path.dirname(packageJsonFilePath);
+      args.optionsFile = path.join(
+        packageJsonFolder,
+        packageConfig.i18n.optionsFile,
+      );
+    }
+
+    if (!args.typesOutputPath) {
+      console.log(
+        chalk.red(
+          `Error: typesOutputPath is not defined. Please provide a path to output types file, in params or in package.json`,
+        ),
+      );
+      process.exit(1);
+    }
+
     args.translationsPath = sanitizePaths(args.translationsPath);
 
     validateInputParams(args);
     validatePathsNotEmbeddedInEachOther(args.translationsPath);
 
-    const loadersWithPaths = args.loaderType.map((loaderType, index) => {
+    const optionsFromFile = await validateAndGetOptionsFile(args.optionsFile);
+
+    const loaders = args.loaderType.map((loaderType, index) => {
       const path = args.translationsPath[index];
       validatePath(path, loaderType, index);
       return {
@@ -79,7 +116,16 @@ export class GenerateTypesCommand implements yargs.CommandModule {
       };
     });
 
-    const translationsWithPaths = await loadTranslations(loadersWithPaths);
+    (optionsFromFile?.loaders || []).forEach((loader) => {
+      const p = loader?.options?.path;
+
+      loaders.push({
+        path: p ? p : sanitizePath(p),
+        loader: loader,
+      });
+    });
+
+    const translationsWithPaths = await loadTranslations(loaders);
 
     let hasError = false;
 
@@ -112,7 +158,7 @@ export class GenerateTypesCommand implements yargs.CommandModule {
       );
       if (this.fsWatcher === undefined) {
         this.fsWatcher = await listenForChanges(
-          loadersWithPaths,
+          loaders,
           translationsWithPaths,
           args,
         );
@@ -192,12 +238,16 @@ function listenForChanges(
   });
 }
 
+function sanitizePath(path: string) {
+  // adding trailing slash
+  const newPath = path.endsWith('/') ? path : `${path}/`;
+  // removing starting slash
+  return newPath.startsWith('./') ? newPath.slice(2) : newPath;
+}
+
 function sanitizePaths(paths: string[]) {
   return paths.map((path) => {
-    // adding trailing slash
-    const newPath = path.endsWith('/') ? path : `${path}/`;
-    // removing starting slash
-    return newPath.startsWith('./') ? newPath.slice(2) : newPath;
+    return sanitizePath(path);
   });
 }
 
@@ -343,12 +393,63 @@ async function loadTranslations(
   });
 }
 
+async function validateAndGetOptionsFile(optionsFile?: string) {
+  if (optionsFile) {
+    let optionsFileExport;
+    try {
+      [optionsFileExport] = await importOrRequireFile(optionsFile);
+    } catch (err) {
+      throw new Error(`Unable to open file: "${optionsFile}". ${err.message}`);
+    }
+
+    if (!optionsFileExport || typeof optionsFileExport !== 'object') {
+      throw new Error(
+        `Given options file must contain export of a I18nOptions instance`,
+      );
+    }
+
+    const optionsExported = [];
+
+    for (const key in optionsFileExport) {
+      const options = optionsFileExport[key];
+
+      if (options.loaders) {
+        optionsExported.push(options);
+      }
+    }
+
+    if (optionsExported.length === 0) {
+      throw new Error(
+        `Given options file must contain export of a I18nOptions`,
+      );
+    }
+    if (optionsExported.length > 1) {
+      throw new Error(
+        `Given options file must contain only one export of I18nOptions`,
+      );
+    }
+    return optionsExported[0];
+  }
+}
+
 function validateInputParams(args: GenerateTypesArguments) {
   if (args.loaderType.length !== args.translationsPath.length) {
     console.log(
       chalk.red(
         `Error: translationsPath and loaderType must have the same number of elements.
            You provided ${args.loaderType.length} loader types and ${args.translationsPath.length} paths`,
+      ),
+    );
+    process.exit(1);
+  }
+
+  if (
+    (args.loaderType.length === 0 || args.loaderType.length === 0) &&
+    !args.optionsFile
+  ) {
+    console.log(
+      chalk.red(
+        `Error: you must provide at least one loader type or options file`,
       ),
     );
     process.exit(1);
@@ -365,6 +466,36 @@ function validatePath(path: string, loaderType: string, index: number) {
     );
     process.exit(1);
   }
+}
+
+type Dictionary<T = any> = { [k: string]: T };
+
+async function getPackageConfig(basePath = process.cwd()): Promise<{
+  packageJsonFilePath: string;
+  packageConfig: Dictionary;
+}> {
+  const packageJsonFilePath = `${basePath}/package.json`;
+  if (await pathExists(packageJsonFilePath)) {
+    /* istanbul ignore next */
+    try {
+      const packageConfig = await require(packageJsonFilePath);
+      return {
+        packageJsonFilePath,
+        packageConfig,
+      };
+    } catch {
+      return undefined;
+    }
+  }
+
+  const parentFolder = await realpath(`${basePath}/..`);
+
+  // we reached the root folder
+  if (basePath === parentFolder) {
+    return undefined;
+  }
+
+  return this.getPackageConfig(parentFolder);
 }
 
 function getLoaderByType(loaderType: string, path: string) {

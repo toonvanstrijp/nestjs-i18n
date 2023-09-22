@@ -8,8 +8,8 @@ import path from 'path';
 import process from 'process';
 import chokidar, { FSWatcher } from 'chokidar';
 import { annotateSourceCode, createTypesFile } from '../utils';
-import { importOrRequireFile } from '../utils/import';
 import { pathExists, realpath } from 'fs-extra';
+import { dynamicImport } from '../utils/import';
 
 export interface GenerateTypesArguments {
   typesOutputPath: string;
@@ -35,7 +35,7 @@ export class GenerateTypesCommand implements yargs.CommandModule {
         demandOption: false,
       })
       .option('optionsFile', {
-        alias: '-opt',
+        alias: 'opt',
         type: 'string',
         describe: 'Options file path',
         demandOption: false,
@@ -81,6 +81,10 @@ export class GenerateTypesCommand implements yargs.CommandModule {
 
     if (!args.typesOutputPath) {
       args.typesOutputPath = packageConfig.i18n.typesOutputPath;
+    }
+
+    if (args.optionsFile) {
+      args.optionsFile = path.resolve(process.cwd(), args.optionsFile);
     }
 
     if (!args.optionsFile && packageConfig.i18n.optionsFile) {
@@ -397,7 +401,7 @@ async function validateAndGetOptionsFile(optionsFile?: string) {
   if (optionsFile) {
     let optionsFileExport;
     try {
-      [optionsFileExport] = await importOrRequireFile(optionsFile);
+      optionsFileExport = await dynamicImport(optionsFile);
     } catch (err) {
       throw new Error(`Unable to open file: "${optionsFile}". ${err.message}`);
     }

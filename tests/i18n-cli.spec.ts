@@ -446,6 +446,12 @@ describe('config file', () => {
       }),
     );
 
+    while (true) {
+      const buffer = fs.readFileSync(packageJsonPath);
+      if(buffer.length > 0) break;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
     await generateTypesCommand.handler({
       typesOutputPath: '',
       watch: false,

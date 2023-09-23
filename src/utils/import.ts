@@ -1,22 +1,80 @@
-import { pathToFileURL } from 'url';
-import { platform } from 'os';
+import fs from "fs"
+import path from "path"
+import {pathToFileURL} from "url"
 
-async function dynamicImportProvider(filePath: string) {
-  return await Function('return filePath => import(filePath)')()(filePath);
+export async function importOrRequireFile(
+    filePath: string,
+): Promise<any> {
+    const tryToImport = async (): Promise<any> => {
+        // `Function` is required to make sure the `import` statement wil stay `import` after
+        // transpilation and won't be converted to `require`
+        await Function("return filePath => import(filePath)")()(
+            filePath.startsWith("file://")
+                ? filePath
+                : pathToFileURL(filePath).toString(),
+        )
+    }
+    const tryToRequire = async (): Promise<any> => {
+        return require(filePath);
+    }
+
+    const extension = filePath.substring(filePath.lastIndexOf(".") + ".".length)
+
+    if (extension === "mjs" || extension === "mts") return tryToImport()
+    else if (extension === "cjs" || extension === "cts") return tryToRequire()
+    else if (extension === "js" || extension === "ts") {
+        const packageJson = await getNearestPackageJson(filePath)
+
+        if (packageJson != null) {
+            const isModule = (packageJson as any)?.type === "module"
+
+            if (isModule) return tryToImport()
+            else return tryToRequire()
+        } else return tryToRequire()
+    }
+
+    return tryToRequire()
 }
 
-export async function dynamicImport<T = any>(id: string): Promise<T> {
-  if (id.endsWith('.json')) {
-    return require(id);
-  }
+function getNearestPackageJson(filePath: string): Promise<object | null> {
+    return new Promise((accept) => {
+        let currentPath = filePath
 
-  if (platform() === 'win32') {
-    try {
-      id = pathToFileURL(id).toString();
-    } catch {
-      // ignore
-    }
-  }
+        function searchPackageJson() {
+            const nextPath = path.dirname(currentPath)
 
-  return dynamicImportProvider(id);
+            if (currentPath === nextPath)
+                // the top of the file tree is reached
+                accept(null)
+            else {
+                currentPath = nextPath
+                const potentialPackageJson = path.join(
+                    currentPath,
+                    "package.json",
+                )
+
+                fs.stat(potentialPackageJson, (err, stats) => {
+                    if (err != null) searchPackageJson()
+                    else if (stats.isFile()) {
+                        fs.readFile(
+                            potentialPackageJson,
+                            "utf8",
+                            (err, data) => {
+                                if (err != null) accept(null)
+                                else {
+                                    try {
+                                        accept(JSON.parse(data))
+                                    } catch (err) {
+                                        accept(null)
+                                    }
+                                }
+                            },
+                        )
+                    } else searchPackageJson()
+                })
+            }
+        }
+
+        searchPackageJson()
+    })
 }

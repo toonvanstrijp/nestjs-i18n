@@ -9,7 +9,7 @@ import process from 'process';
 import chokidar, { FSWatcher } from 'chokidar';
 import { annotateSourceCode, createTypesFile } from '../utils';
 import { pathExists, realpath } from 'fs-extra';
-import { dynamicImport } from '../utils/import';
+import {importOrRequireFile} from "../utils/import";
 
 export interface GenerateTypesArguments {
   typesOutputPath: string;
@@ -79,7 +79,7 @@ export class GenerateTypesCommand implements yargs.CommandModule {
 
     packageConfig.i18n = packageConfig.i18n || {};
 
-    if (!args.typesOutputPath) {
+    if (!args.typesOutputPath && packageConfig.i18n.typesOutputPath) {
       args.typesOutputPath = packageConfig.i18n.typesOutputPath;
     }
 
@@ -401,7 +401,7 @@ async function validateAndGetOptionsFile(optionsFile?: string) {
   if (optionsFile) {
     let optionsFileExport;
     try {
-      optionsFileExport = await dynamicImport(optionsFile);
+      optionsFileExport = await importOrRequireFile(optionsFile);
     } catch (err) {
       throw new Error(`Unable to open file: "${optionsFile}". ${err.message}`);
     }

@@ -13,6 +13,7 @@ import { IfAnyOrNever, Path, PathValue } from '../types';
 import { formatI18nErrors } from '../utils';
 import { I18nTranslator, I18nPluralObject } from '../interfaces';
 import { processLanguages, processTranslations } from '../utils/loaders-utils';
+import { I18nError } from '../i18n.error';
 
 const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
 
@@ -87,6 +88,9 @@ export class I18nService<K = Record<string, unknown>>
             key as string
           }" in "${lang}" does not exist.`;
           this.logger.error(message);
+          if (this.i18nOptions.throwOnMissingKey) {
+            throw new I18nError(message);
+          }
         }
 
         const nextFallbackLanguage = this.getFallbackLanguage(lang);

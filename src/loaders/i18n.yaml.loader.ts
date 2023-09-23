@@ -1,3 +1,4 @@
+import { I18nError } from '../i18n.error';
 import {
   I18nAbstractFileLoader,
   I18nAbstractFileLoaderOptions,
@@ -16,8 +17,8 @@ export class I18nYamlLoader extends I18nAbstractFileLoader {
       return yaml.load(data, { json: true });
     } catch (e) {
       if (e instanceof yaml.YAMLException) {
-        throw new Error(
-          `Invalid YAML file - ${sourceFileName}. Please check your YAML syntax.`,
+        throw new I18nError(
+          'Invalid YAML file. Please check your YAML syntax.',
         );
       }
 

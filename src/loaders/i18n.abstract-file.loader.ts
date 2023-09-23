@@ -3,6 +3,7 @@ import path from 'path';
 import { readFile } from 'fs/promises';
 import { exists, getDirectories, getFiles } from '../utils/file';
 import { I18nTranslation } from '../interfaces/i18n-translation.interface';
+import { I18nError } from '../i18n.error';
 
 export interface I18nAbstractFileLoaderOptions {
   path: string;
@@ -34,11 +35,11 @@ export abstract class I18nAbstractFileLoader extends I18nLoader<I18nAbstractFile
     const translations: I18nTranslation = {};
 
     if (!(await exists(i18nPath))) {
-      throw new Error(`i18n path (${i18nPath}) cannot be found`);
+      throw new I18nError(`i18n path (${i18nPath}) cannot be found`);
     }
 
     if (!this.options.filePattern.match(/\*\.[A-z]+/)) {
-      throw new Error(
+      throw new I18nError(
         `filePattern should be formatted like: *.json, *.txt, *.custom etc`,
       );
     }

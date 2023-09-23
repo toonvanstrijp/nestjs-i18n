@@ -40,6 +40,7 @@ const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
   formatter: format,
   logging: true,
+  throwOnMissingKey: false,
 };
 
 @Global()

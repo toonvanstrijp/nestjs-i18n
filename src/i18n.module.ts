@@ -47,8 +47,6 @@ import { I18nJsonLoader } from './loaders';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as chalk from 'chalk';
-
 export const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
@@ -131,9 +129,8 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
               fs.writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
               logger.log(
                 `Types generated in: ${this.i18nOptions.typesOutputPath}.
-                ${chalk.yellow(
-                  `Please also add it to your eslintignore file to avoid linting errors`,
-                )}`,
+                Please also add it to your eslintignore file to avoid linting errors
+                `,
               );
             } else {
               logger.log('No changes detected');

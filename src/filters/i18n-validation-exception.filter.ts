@@ -32,22 +32,22 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       lang: i18n.lang,
     });
 
+    const normalizedErrors = this.normalizeValidationErrors(errors);
+
     switch (host.getType() as string) {
       case 'http':
         const response = host.switchToHttp().getResponse();
+        const responseBody = this.buildResponseBody(
+          host,
+          exception,
+          normalizedErrors,
+        );
         response
           .status(this.options.errorHttpStatusCode || exception.getStatus())
-          .send({
-            statusCode:
-              this.options.errorHttpStatusCode || exception.getStatus(),
-            message: exception.getResponse(),
-            errors: this.normalizeValidationErrors(errors),
-          });
+          .send(responseBody);
         break;
       case 'graphql':
-        exception.errors = this.normalizeValidationErrors(
-          errors,
-        ) as I18nValidationError[];
+        exception.errors = normalizedErrors as I18nValidationError[];
         return exception;
     }
   }
@@ -86,5 +86,23 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       .map((item) => Object.values(item.constraints))
       .flatten()
       .toArray();
+  }
+  protected buildResponseBody(
+    host: ArgumentsHost,
+    exc: I18nValidationException,
+    errors: string[] | I18nValidationError[] | object,
+  ) {
+    if ('responseBodyFormatter' in this.options) {
+      return this.options.responseBodyFormatter(host, exc, errors);
+    } else {
+      return {
+        statusCode:
+          this.options.errorHttpStatusCode === undefined
+            ? exc.getStatus()
+            : this.options.errorHttpStatusCode,
+        message: exc.getResponse(),
+        errors,
+      };
+    }
   }
 }

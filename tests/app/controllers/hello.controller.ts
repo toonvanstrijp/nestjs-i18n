@@ -18,10 +18,10 @@ import {
 } from '../../../src';
 import { I18nTranslations } from '../../generated/i18n.generated';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { exampleErrorFormatter } from '../examples/example.functions';
 import { TestException, TestExceptionFilter } from '../filter/test.filter';
 import { TestGuard } from '../guards/test.guard';
 import { Hero, HeroById } from '../interfaces/hero.interface';
+import {exampleErrorFormatter, exampleResponseBodyFormatter} from '../examples/example.functions';
 
 @Controller('hello')
 @UseFilters(new TestExceptionFilter())
@@ -184,6 +184,17 @@ export class HelloController {
     }),
   )
   validationCustomFormatter(@Body() createUserDto: CreateUserDto): any {
+    return 'This action adds a new user';
+  }
+
+  @Post('/validation-custom-response-body-formatter')
+  @UseFilters(
+      new I18nValidationExceptionFilter({
+        responseBodyFormatter: exampleResponseBodyFormatter,
+        errorFormatter: exampleErrorFormatter,
+      }),
+  )
+  validationResponseBodyFormatter(@Body() createUserDto: CreateUserDto): any {
     return 'This action adds a new user';
   }
 

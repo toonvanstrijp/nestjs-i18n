@@ -9,7 +9,8 @@
     "target": "es2021",
     "sourceMap": true,
     "baseUrl": "./",
-    "incremental": true
+    "incremental": true,
+    "newLine":"lf"
   },
   "include": ["**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]

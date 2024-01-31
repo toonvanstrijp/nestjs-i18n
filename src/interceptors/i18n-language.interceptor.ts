@@ -71,11 +71,13 @@ export class I18nLanguageInterceptor implements NestInterceptor {
       ctx.i18nContext = new I18nContext(ctx.i18nLang, this.i18nService);
 
       if (!this.i18nOptions.skipAsyncHook) {
-        return I18nContext.createAsync(ctx.i18nContext, async (error) => {
-          if (error) {
-            throw error;
-          }
-          return next.handle();
+        return new Observable((observer) => {
+          I18nContext.createAsync(ctx.i18nContext, async (error) => {
+            if (error) {
+              throw error;
+            }
+            return next.handle().subscribe(observer);
+          });
         });
       }
     }

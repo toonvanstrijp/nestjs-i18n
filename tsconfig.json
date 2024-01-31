@@ -12,7 +12,8 @@
     "esModuleInterop": true,
     "baseUrl": "./",
     "moduleResolution": "node",
-    "incremental": true
+    "incremental": true,
+    "newLine":"lf"
   },
   "include": ["**/*"],
   "exclude": ["node_modules", "**/*.spec.ts", "**/dist"]

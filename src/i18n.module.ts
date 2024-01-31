@@ -32,6 +32,8 @@ import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
 import format from 'string-format';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
+import * as fs from 'fs';
+import * as path from 'path';
 import { processLanguages, processTranslations } from './utils/loaders-utils';
 
 export const logger = new Logger('I18nService');

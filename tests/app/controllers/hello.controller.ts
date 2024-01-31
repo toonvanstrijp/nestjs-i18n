@@ -7,6 +7,7 @@ import {
   Render,
   UseFilters,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { GrpcMethod, Payload } from '@nestjs/microservices';
 import {
@@ -25,6 +26,7 @@ import {
 import { TestException, TestExceptionFilter } from '../filter/test.filter';
 import { TestGuard } from '../guards/test.guard';
 import { Hero, HeroById } from '../interfaces/hero.interface';
+import { TestInterceptor } from '../interceptors/test.interceptor';
 
 @Controller('hello')
 @UseFilters(new TestExceptionFilter())
@@ -87,6 +89,12 @@ export class HelloController {
 
   @Get('/request-scope')
   helloRequestScope(): any {
+    return I18nContext.current<I18nTranslations>().translate('test.HELLO');
+  }
+
+  @Get('/request-scope/additional-interceptor')
+  @UseInterceptors(TestInterceptor)
+  helloRequestScopeAdditionalInterceptor(): any {
     return I18nContext.current<I18nTranslations>().translate('test.HELLO');
   }
 

@@ -60,10 +60,7 @@ export class I18nService<K = Record<string, unknown>>
 
     const previousFallbackLang = lang;
 
-    lang =
-      lang === undefined || lang === null
-        ? this.i18nOptions.fallbackLanguage
-        : lang;
+    lang = lang ?? this.i18nOptions.fallbackLanguage;
 
     lang = this.resolveLanguage(lang);
 
@@ -71,26 +68,19 @@ export class I18nService<K = Record<string, unknown>>
 
     const translation = this.translateObject(
       key as string,
-      (translationsByLanguage ? translationsByLanguage : key) as string,
+      (translationsByLanguage ?? key) as string,
       lang,
       options,
-      translationsByLanguage ? translationsByLanguage : undefined,
+      translationsByLanguage,
     );
 
-    if (
-      translationsByLanguage === undefined ||
-      translationsByLanguage === null ||
-      !translation
-    ) {
+    if (translationsByLanguage == null || !translation) {
+      const translationKeyMissing = `Translation "${
+        key as string
+      }" in "${lang}" does not exist.`;
       if (lang !== this.i18nOptions.fallbackLanguage || !!defaultValue) {
-        if (this.i18nOptions.logging) {
-          const message = `Translation "${
-            key as string
-          }" in "${lang}" does not exist.`;
-          this.logger.error(message);
-          if (this.i18nOptions.throwOnMissingKey) {
-            throw new I18nError(message);
-          }
+        if (this.i18nOptions.logging && this.i18nOptions.throwOnMissingKey) {
+          throw new I18nError(translationKeyMissing);
         }
 
         const nextFallbackLanguage = this.getFallbackLanguage(lang);
@@ -102,6 +92,8 @@ export class I18nService<K = Record<string, unknown>>
           });
         }
       }
+
+      this.logger.error(translationKeyMissing);
     }
 
     return (translation ?? key) as unknown as IfAnyOrNever<R, string, R>;

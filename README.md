@@ -42,7 +42,7 @@ To get started follow the [**quickstart**](https://nestjs-i18n.com/quick-start),
 
 - from V9.0.0 on we renamed the `parser` property to `loader`. The `translate` function no longer returns a promise 🎉. A lot of new features and new docs, see [nestjs-i18n.com](https://nestjs-i18n.com/).
 
-- from V8.0.0 on we changed the internal `18n-middleware` for an `interceptor` this way we can provide the `ExecutionContext` so that `nestjs-i18n` works on different protocols as well, such as gRPC and WebSockets. This contains one breaking change. It only applies to your code if you've made a custom `resolver`. To resolve this breaking change take a look at this [example](https://nestjs-i18n.com/concepts/resolver). Instead of providing the `req` in the `resolve` method, change this to take the `ExecutionContext` as argument.
+- from V8.0.0 on we changed the internal `I18n-middleware` for an `interceptor` this way we can provide the `ExecutionContext` so that `nestjs-i18n` works on different protocols as well, such as gRPC and WebSockets. This contains one breaking change. It only applies to your code if you've made a custom `resolver`. To resolve this breaking change take a look at this [example](https://nestjs-i18n.com/concepts/resolver). Instead of providing the `req` in the `resolve` method, change this to take the `ExecutionContext` as argument.
 
 - from V6.0.0 on we implemented the `I18nParser`, by using this we can easily support different formats other than JSON. To migrate to this change look at the [quickstart](https://nestjs-i18n.com/quick-start). There are some changes in the declaration of the `I18nModule`. Note: the `translate` function returns a `Promise<string>`. So you need to call it using `await i18n.translate('HELLO')`;
 

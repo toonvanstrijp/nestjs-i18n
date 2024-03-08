@@ -129,7 +129,7 @@ import { I18nModule, AcceptLanguageResolver, QueryResolver, HeaderResolver } fro
       useFactory: (configService: ConfigService) => ({
         fallbackLanguage: configService.getOrThrow('FALLBACK_LANGUAGE'),
         loaderOptions: {
-          path: join(__dirname, '/i18n/'),
+          path: path.join(__dirname, '/i18n/'),
           watch: true,
         },
       }),
@@ -275,7 +275,7 @@ import {
       useFactory: (configService: ConfigService) => ({
         fallbackLanguage: "en",
         loaderOptions: {
-          path: join(__dirname, "/i18n/"),
+          path: path.join(__dirname, "/i18n/"),
           watch: true,
         },
       }),

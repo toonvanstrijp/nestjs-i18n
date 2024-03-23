@@ -1,8 +1,9 @@
-import * as path from 'path';
+import path from 'path';
 import {
+  AcceptLanguageResolver,
   CookieResolver,
   HeaderResolver,
-  AcceptLanguageResolver,
+  I18nJsonLoader,
   I18nModule,
   QueryResolver,
   I18nValidationExceptionFilter,
@@ -14,8 +15,8 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
 import { CatController } from './app/cats/cat.controller';
+import request from 'supertest';
 
 describe('i18n module e2e fastify', () => {
   let app: NestFastifyApplication;
@@ -38,9 +39,14 @@ describe('i18n module e2e fastify', () => {
             new CookieResolver(),
             AcceptLanguageResolver,
           ],
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n-second/'),
+            }),
+          ],
         }),
       ],
       controllers: [HelloController, CatController],

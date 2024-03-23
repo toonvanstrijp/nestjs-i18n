@@ -1,10 +1,10 @@
 import {
+  CallHandler,
+  ExecutionContext,
   Inject,
   Injectable,
-  Type,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
+  Type,
 } from '@nestjs/common';
 import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
 import {

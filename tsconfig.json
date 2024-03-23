@@ -6,12 +6,15 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
+    "importHelpers": false,
     "target": "es2021",
     "sourceMap": true,
+    "esModuleInterop": true,
     "baseUrl": "./",
+    "moduleResolution": "node",
     "incremental": true,
     "newLine":"lf"
   },
   "include": ["**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "exclude": ["node_modules", "**/*.spec.ts", "**/dist"]
 }

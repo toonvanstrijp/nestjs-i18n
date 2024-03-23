@@ -1,16 +1,17 @@
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
+import path from 'path';
 import {
+  AcceptLanguageResolver,
   CookieResolver,
   HeaderResolver,
-  AcceptLanguageResolver,
+  I18nJsonLoader,
   I18nModule,
   QueryResolver,
   I18nValidationPipe,
   I18nValidationExceptionFilter,
 } from '../src';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
 import { CatController } from './app/cats/cat.controller';
 
@@ -35,9 +36,11 @@ describe('i18n module e2e express', () => {
             new CookieResolver(),
             AcceptLanguageResolver,
           ],
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
       ],
       controllers: [HelloController, CatController],

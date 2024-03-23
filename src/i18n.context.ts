@@ -12,11 +12,34 @@ export class I18nContext<K = Record<string, unknown>>
   private static counter = 1;
   readonly id = I18nContext.counter++;
 
+  constructor(readonly lang: string, readonly service: I18nService<K>) {}
+
   get i18n(): I18nContext<K> | undefined {
     return this;
   }
 
-  constructor(readonly lang: string, readonly service: I18nService<K>) {}
+  static create(ctx: I18nContext, next: (...args: any[]) => void): void {
+    this.storage.run(ctx, next);
+  }
+
+  static async createAsync<T>(
+    ctx: I18nContext,
+    next: (...args: any[]) => Promise<T>,
+  ): Promise<T> {
+    return this.storage.run(ctx, next);
+  }
+
+  static current<K = Record<string, unknown>>(
+    context?: ArgumentsHost,
+  ): I18nContext<K> | undefined {
+    const i18n = this.storage.getStore() as I18nContext<K> | undefined;
+
+    if (!i18n && !!context) {
+      return getContextObject(context)?.i18nContext;
+    }
+
+    return i18n;
+  }
 
   public translate<P extends Path<K> = any, R = PathValue<K, P>>(
     key: P,
@@ -45,28 +68,5 @@ export class I18nContext<K = Record<string, unknown>>
       ...options,
     };
     return this.service.validate(value, options);
-  }
-
-  static create(ctx: I18nContext, next: (...args: any[]) => void): void {
-    this.storage.run(ctx, next);
-  }
-
-  static async createAsync<T>(
-    ctx: I18nContext,
-    next: (...args: any[]) => Promise<T>,
-  ): Promise<T> {
-    return this.storage.run(ctx, next);
-  }
-
-  static current<K = Record<string, unknown>>(
-    context?: ArgumentsHost,
-  ): I18nContext<K> | undefined {
-    const i18n = this.storage.getStore() as I18nContext<K> | undefined;
-
-    if (!i18n && !!context) {
-      return getContextObject(context)?.i18nContext;
-    }
-
-    return i18n;
   }
 }

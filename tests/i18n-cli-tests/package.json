@@ -1,0 +1,6 @@
+{
+  "i18n": {
+    "typesOutputPath": "/tmp/i18n-918372399-generated.ts",
+    "optionsFile": "../app/config/i18n-options.ts"
+  }
+}

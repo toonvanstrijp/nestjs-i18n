@@ -1,12 +1,13 @@
 import { ModuleRef } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
+import path from 'path';
 import {
-  I18nModule,
-  I18nService,
-  I18nLanguageInterceptor,
   I18N_OPTIONS,
   I18N_RESOLVERS,
+  I18nJsonLoader,
+  I18nLanguageInterceptor,
+  I18nModule,
+  I18nService,
 } from '../src';
 
 describe('i18n interceptor', () => {
@@ -18,9 +19,11 @@ describe('i18n interceptor', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
       ],
     }).compile();

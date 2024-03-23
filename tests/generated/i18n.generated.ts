@@ -50,6 +50,13 @@ export type I18nTranslations = {
         "INVALID_BOOLEAN": string;
         "MIN": string;
         "MAX": string;
+        "NEW_VALUE": string;
+    };
+    "new_file": {
+        "NEW_VALUE": string;
+        "NEW_VALUE_OBJECT": {
+            "NEW_VALUE_OBJECT_KEY": string;
+        };
     };
 };
 /* prettier-ignore */

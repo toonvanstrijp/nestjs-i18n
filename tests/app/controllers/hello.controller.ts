@@ -19,10 +19,13 @@ import {
 } from '../../../src';
 import { I18nTranslations } from '../../generated/i18n.generated';
 import { CreateUserDto } from '../dto/create-user.dto';
+import {
+  exampleErrorFormatter,
+  exampleResponseBodyFormatter,
+} from '../examples/example.functions';
 import { TestException, TestExceptionFilter } from '../filter/test.filter';
 import { TestGuard } from '../guards/test.guard';
 import { Hero, HeroById } from '../interfaces/hero.interface';
-import { exampleErrorFormatter, exampleResponseBodyFormatter } from '../examples/example.functions';
 import { TestInterceptor } from '../interceptors/test.interceptor';
 
 @Controller('hello')

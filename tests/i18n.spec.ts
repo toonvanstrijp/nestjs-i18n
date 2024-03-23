@@ -1,32 +1,41 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import * as path from 'path';
-import * as fs from 'fs';
+import { Test } from '@nestjs/testing';
+import path from 'path';
+import fs from 'fs';
 import {
+  i18nValidationMessage,
+  I18N_LOADERS,
+  I18nJsonLoader,
+  I18nLoader,
   I18nModule,
   I18nService,
-  I18nLoader,
-  i18nValidationMessage,
 } from '../src';
 import { I18nTranslations } from './generated/i18n.generated';
+import { I18nAbstractFileLoaderOptions } from '../src/loaders/i18n.abstract-file.loader';
 
 describe('i18n module', () => {
   let i18nService: I18nService<I18nTranslations>;
-  let i18nLoader: I18nLoader;
+  let i18nLoader: I18nLoader<I18nAbstractFileLoaderOptions>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n-second/'),
+            }),
+          ],
         }),
       ],
     }).compile();
 
     i18nService = module.get(I18nService);
-    i18nLoader = module.get(I18nLoader);
+    const loaders = module.get(I18N_LOADERS);
+    i18nLoader = loaders[0];
   });
 
   it('i18n service should be defined', async () => {
@@ -120,10 +129,9 @@ describe('i18n module', () => {
       'fr',
       'nl',
       'pt-BR',
-      'ru',
-      'uk',
       'zh-CN',
       'zh-TW',
+      'uk',
     ]);
   });
 
@@ -135,10 +143,9 @@ describe('i18n module', () => {
       'fr',
       'nl',
       'pt-BR',
-      'ru',
-      'uk',
       'zh-CN',
       'zh-TW',
+      'uk',
     ]);
   });
 
@@ -176,49 +183,6 @@ describe('i18n module', () => {
     );
   });
 
-  describe('i18n should refresh manually', () => {
-    const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
-    const newLanguagePath = path.join(__dirname, '/i18n/es/');
-
-    afterAll(async () => {
-      fs.unlinkSync(newTranslationPath);
-      fs.rmdirSync(newLanguagePath);
-    });
-
-    it('i18n should refresh translations and languages', async () => {
-      const loadSpy = jest.spyOn(i18nLoader, 'load');
-      const languagesSpy = jest.spyOn(i18nLoader, 'languages');
-      await i18nService.refresh();
-      expect(loadSpy).toHaveBeenCalled();
-      expect(languagesSpy).toHaveBeenCalled();
-    });
-
-    it('i18n should load new translations', async () => {
-      fs.writeFileSync(
-        newTranslationPath,
-        JSON.stringify({ WORLD: 'wereld' }),
-        'utf8',
-      );
-      await i18nService.refresh();
-      const translation = i18nService.translate<any>('test2.WORLD', {
-        lang: 'nl',
-      });
-      expect(translation).toEqual('wereld');
-    });
-
-    it('i18n should load new languages', async () => {
-      try {
-        fs.mkdirSync(newLanguagePath);
-      } catch (e) {
-        // ignore
-      }
-      await i18nService.refresh();
-      const languages = i18nService.getSupportedLanguages();
-      expect(languages).toContain('es');
-      const translations = i18nService.getTranslations();
-      expect(Object.keys(translations)).toContain('es');
-    });
-  });
 });
 
 describe('i18n module without trailing slash in path', () => {
@@ -229,9 +193,11 @@ describe('i18n module without trailing slash in path', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
       ],
     }).compile();
@@ -263,10 +229,12 @@ describe('i18n module loads custom files', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-            filePattern: '*.custom',
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+              filePattern: '*.custom',
+            }),
+          ],
         }),
       ],
     }).compile();
@@ -299,10 +267,12 @@ describe('i18n module loads custom files with wrong file pattern', () => {
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-            filePattern: 'custom',
-          },
+          loaders: [
+            new I18nJsonLoader({
+              filePattern: 'custom',
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
       ],
     }).compile();
@@ -326,78 +296,6 @@ describe('i18n module loads custom files with wrong file pattern', () => {
   });
 });
 
-describe('i18n module with loader watch', () => {
-  let i18nService: I18nService<I18nTranslations>;
-  let i18nLoader: I18nLoader;
-
-  const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
-  const newLanguagePath = path.join(__dirname, '/i18n/de/');
-  let i18nModule: TestingModule;
-  beforeAll(async () => {
-    i18nModule = await Test.createTestingModule({
-      imports: [
-        I18nModule.forRoot({
-          fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-            watch: true,
-          },
-        }),
-      ],
-    }).compile();
-
-    i18nService = i18nModule.get(I18nService);
-    i18nLoader = i18nModule.get(I18nLoader);
-  });
-
-  afterAll(async () => {
-    await i18nModule.close();
-    try {
-      fs.unlinkSync(newTranslationPath);
-    } catch (e) {
-      // ignore
-    }
-    try {
-      fs.rmdirSync(newLanguagePath);
-    } catch (e) {
-      // ignore
-    }
-  });
-
-  it('i18n should load before init finished', async () => {
-    const translation = i18nService.translate('test.HELLO', {
-      lang: 'nl',
-    });
-    expect(translation).toEqual('Hallo');
-  });
-
-  it('i18n should load new translations', async () => {
-    fs.writeFileSync(
-      newTranslationPath,
-      JSON.stringify({ WORLD: 'wereld' }),
-      'utf8',
-    );
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const translation = i18nService.translate<any>('test2.WORLD', {
-      lang: 'nl',
-    });
-    expect(translation).toEqual('wereld');
-  });
-
-  it('i18n should load new languages', async () => {
-    try {
-      fs.mkdirSync(newLanguagePath);
-    } catch (e) {
-      // ignore
-    }
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const languages = i18nService.getSupportedLanguages();
-    expect(languages).toContain('de');
-    const translations = i18nService.getTranslations();
-    expect(Object.keys(translations)).toContain('de');
-  });
-});
-
 describe('i18n module with fallbacks', () => {
   let i18nService: I18nService<I18nTranslations>;
 
@@ -411,12 +309,18 @@ describe('i18n module with fallbacks', () => {
             'en-*': 'en',
             'fr-*': 'fr',
             'en_*': 'en',
+            ua: 'ua',
             'fr_*': 'fr',
             pt: 'pt-BR',
           },
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n-second/'),
+            }),
+          ],
           typesOutputPath: path.join(__dirname, '/generated/i18n.generated.ts'),
         }),
       ],
@@ -502,34 +406,6 @@ describe('i18n module with fallbacks', () => {
         args: { count: 5 },
       }),
     ).toBe('Every 5 days');
-
-    expect(
-      await i18nService.translate('test.day_interval', {
-        lang: 'ru',
-        args: { count: 1 },
-      }),
-    ).toBe('1 день');
-
-    expect(
-      await i18nService.translate('test.day_interval', {
-        lang: 'ru',
-        args: { count: 3 },
-      }),
-    ).toBe('3 дня');
-
-    expect(
-      await i18nService.translate('test.day_interval', {
-        lang: 'ru',
-        args: { count: 7 },
-      }),
-    ).toBe('7 дней');
-
-    expect(
-      await i18nService.translate('test.day_interval', {
-        lang: 'ru',
-        args: { count: 25 },
-      }),
-    ).toBe('25 дней');
 
     expect(
       await i18nService.translate('test.day_interval', {

@@ -1,5 +1,5 @@
-import * as cookie from 'cookie';
-import { Injectable, ExecutionContext } from '@nestjs/common';
+import cookie from 'cookie';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { I18nResolver } from '..';
 import { I18nResolverOptions } from '../decorators';
 

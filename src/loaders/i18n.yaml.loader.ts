@@ -1,19 +1,18 @@
 import { I18nError } from '../i18n.error';
 import {
-  I18nAbstractLoader,
-  I18nAbstractLoaderOptions,
-} from './i18n.abstract.loader';
-import * as yaml from 'js-yaml';
+  I18nAbstractFileLoader,
+  I18nAbstractFileLoaderOptions,
+} from './i18n.abstract-file.loader';
+import yaml from 'js-yaml';
 
-export class I18nYamlLoader extends I18nAbstractLoader {
-  getDefaultOptions(): Partial<I18nAbstractLoaderOptions> {
+export class I18nYamlLoader extends I18nAbstractFileLoader {
+  getDefaultOptions(): Partial<I18nAbstractFileLoaderOptions> {
     return {
       filePattern: '*.yml',
-      watch: false,
     };
   }
 
-  formatData(data: any) {
+  formatData(data: any, sourceFileName: string) {
     try {
       return yaml.load(data, { json: true });
     } catch (e) {

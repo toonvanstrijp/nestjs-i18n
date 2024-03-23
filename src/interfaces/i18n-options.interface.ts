@@ -44,8 +44,7 @@ export interface I18nOptions {
   fallbackLanguage: string;
   fallbacks?: { [key: string]: string };
   resolvers?: I18nOptionResolver[];
-  loader?: Type<I18nLoader>;
-  loaderOptions: any;
+  loaders: I18nLoader<unknown>[];
   formatter?: Formatter;
   logging?: boolean;
   viewEngine?: 'hbs' | 'pug' | 'ejs';
@@ -70,7 +69,7 @@ export interface I18nAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
     ...args: any[]
   ) => Promise<I18nOptionsWithoutResolvers> | I18nOptionsWithoutResolvers;
   resolvers?: I18nOptionResolver[];
-  loader?: Type<I18nLoader>;
+  loaders?: I18nLoader<unknown>[];
   inject?: any[];
   logging?: boolean;
 }

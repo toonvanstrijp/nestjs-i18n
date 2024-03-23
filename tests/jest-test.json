@@ -1,15 +1,29 @@
 {
-  "moduleFileExtensions": ["js", "json", "ts", "d.ts"],
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts",
+    "d.ts"
+  ],
   "rootDir": "../",
   "testEnvironment": "node",
   "testRegex": ".spec.ts$",
   "transform": {
-    "^.+\\.(t|j)s$": ["ts-jest", {
-      "diagnostics": true
-    }]
+    "^.+\\.(t|j)s$": [
+      "ts-jest",
+      {
+        "diagnostics": true
+      }
+    ]
   },
-  "collectCoverageFrom": ["src/**/*.ts", "!**/node_modules/**", "!src/utils/merge.ts"],
+  "collectCoverageFrom": [
+    "src/**/*.ts",
+    "!**/node_modules/**",
+    "!src/utils/merge.ts"
+  ],
   "moduleNameMapper": {
-    "fastify/lib/Reply": "fastify/lib/reply"
+    "fastify/lib/Reply": "fastify/lib/reply",
+    "#ansi-styles": "chalk/source/vendor/ansi-styles/index.js",
+    "#supports-color": "chalk/source/vendor/supports-color/index.js"
   }
 }

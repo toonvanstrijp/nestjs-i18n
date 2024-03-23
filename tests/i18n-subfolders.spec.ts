@@ -1,26 +1,35 @@
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
-import { I18nLoader, I18nModule, I18nService } from '../src';
+import path from 'path';
+import {
+  I18N_LOADERS,
+  I18nJsonLoader,
+  I18nLoader,
+  I18nModule,
+  I18nService,
+} from '../src';
+import { I18nAbstractFileLoader } from '../src/loaders/i18n.abstract-file.loader';
 
 describe('i18n module including subfolders', () => {
   let i18nService: I18nService;
-  let i18nLoader: I18nLoader;
+  let i18nLoader: I18nLoader<I18nAbstractFileLoader>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-            includeSubfolders: true,
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+              includeSubfolders: true,
+            }),
+          ],
         }),
       ],
     }).compile();
 
     i18nService = module.get(I18nService);
-    i18nLoader = module.get(I18nLoader);
+    i18nLoader = module.get(I18N_LOADERS)[0];
   });
 
   it('i18n service should be defined', async () => {

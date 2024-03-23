@@ -1,25 +1,18 @@
-import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
-import { validate } from 'class-validator';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
-  BehaviorSubject,
-  Observable,
-  Subject,
-  lastValueFrom,
-  take,
-  takeUntil,
-} from 'rxjs';
-import { I18nOptions, I18nTranslation, I18nValidationError } from '..';
-import {
-  I18N_LANGUAGES,
-  I18N_LANGUAGES_SUBJECT,
   I18N_OPTIONS,
   I18N_TRANSLATIONS,
-  I18N_TRANSLATIONS_SUBJECT,
+  I18N_LANGUAGES,
+  I18N_LOADERS,
 } from '../i18n.constants';
+import { I18nOptions, I18nValidationError } from '..';
+import { I18nTranslation } from '../interfaces/i18n-translation.interface';
 import { I18nLoader } from '../loaders/i18n.loader';
+import { validate } from 'class-validator';
 import { IfAnyOrNever, Path, PathValue } from '../types';
 import { formatI18nErrors } from '../utils';
 import { I18nTranslator, I18nPluralObject } from '../interfaces';
+import { processLanguages, processTranslations } from '../utils/loaders-utils';
 import { I18nError } from '../i18n.error';
 
 const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
@@ -33,42 +26,21 @@ export type TranslateOptions = {
 
 @Injectable()
 export class I18nService<K = Record<string, unknown>>
-  implements I18nTranslator<K>, OnModuleDestroy
+  implements I18nTranslator<K>
 {
-  private supportedLanguages: string[];
-  private translations: I18nTranslation;
   private pluralRules = new Map<string, Intl.PluralRules>();
-
-  private unsubscribe = new Subject<void>();
 
   constructor(
     @Inject(I18N_OPTIONS)
     protected readonly i18nOptions: I18nOptions,
     @Inject(I18N_TRANSLATIONS)
-    translations: Observable<I18nTranslation>,
+    protected translations: I18nTranslation,
     @Inject(I18N_LANGUAGES)
-    supportedLanguages: Observable<string[]>,
+    protected supportedLanguages: string[],
     private readonly logger: Logger,
-    private readonly loader: I18nLoader,
-    @Inject(I18N_LANGUAGES_SUBJECT)
-    private readonly languagesSubject: BehaviorSubject<string[]>,
-    @Inject(I18N_TRANSLATIONS_SUBJECT)
-    private readonly translationsSubject: BehaviorSubject<I18nTranslation>,
-  ) {
-    supportedLanguages
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((languages) => {
-        this.supportedLanguages = languages;
-      });
-    translations.pipe(takeUntil(this.unsubscribe)).subscribe((t) => {
-      this.translations = t;
-    });
-  }
-
-  public onModuleDestroy(): void {
-    this.unsubscribe.next(null);
-    this.unsubscribe.complete();
-  }
+    @Inject(I18N_LOADERS)
+    private readonly loaders: I18nLoader<unknown>[],
+  ) {}
 
   public translate<P extends Path<K> = any, R = PathValue<K, P>>(
     key: P,
@@ -127,22 +99,6 @@ export class I18nService<K = Record<string, unknown>>
     return (translation ?? key) as unknown as IfAnyOrNever<R, string, R>;
   }
 
-  private getFallbackLanguage(lang: string) {
-    let regionSepIndex = -1;
-
-    if (lang.includes('-')) {
-      regionSepIndex = lang.lastIndexOf('-');
-    }
-
-    if (lang.includes('_')) {
-      regionSepIndex = lang.lastIndexOf('_');
-    }
-
-    return regionSepIndex !== -1
-      ? lang.slice(0, regionSepIndex)
-      : this.i18nOptions.fallbackLanguage;
-  }
-
   public t<P extends Path<K> = any, R = PathValue<K, P>>(
     key: P,
     options?: TranslateOptions,
@@ -158,29 +114,12 @@ export class I18nService<K = Record<string, unknown>>
     return this.translations;
   }
 
-  public async refresh(
-    translations?: I18nTranslation | Observable<I18nTranslation>,
-    languages?: string[] | Observable<string[]>,
-  ) {
-    if (!translations) {
-      translations = await this.loader.load();
+  public async refresh() {
+    if (Object.keys(this.translations).length === 0) {
+      this.translations = await processTranslations(this.loaders);
     }
-    if (translations instanceof Observable) {
-      this.translationsSubject.next(
-        await lastValueFrom(translations.pipe(take(1))),
-      );
-    } else {
-      this.translationsSubject.next(translations);
-    }
-
-    if (!languages) {
-      languages = await this.loader.languages();
-    }
-
-    if (languages instanceof Observable) {
-      this.languagesSubject.next(await lastValueFrom(languages.pipe(take(1))));
-    } else {
-      this.languagesSubject.next(languages);
+    if (this.supportedLanguages.length === 0) {
+      this.supportedLanguages = await processLanguages(this.loaders);
     }
   }
 
@@ -196,6 +135,46 @@ export class I18nService<K = Record<string, unknown>>
     const lang = options.lookupProperty(options.data.root, 'i18nLang');
     return this.t<P>(key, { lang, args });
   };
+
+  public resolveLanguage(lang: string) {
+    if (this.i18nOptions.fallbacks && !this.supportedLanguages.includes(lang)) {
+      const sanitizedLang = lang.includes('-')
+        ? lang.substring(0, lang.indexOf('-')).concat('-*')
+        : lang;
+
+      for (const key in this.i18nOptions.fallbacks) {
+        if (key === lang || key === sanitizedLang) {
+          lang = this.i18nOptions.fallbacks[key];
+          break;
+        }
+      }
+    }
+    return lang;
+  }
+
+  public async validate(
+    value: any,
+    options?: TranslateOptions,
+  ): Promise<I18nValidationError[]> {
+    const errors = await validate(value, this.i18nOptions.validatorOptions);
+    return formatI18nErrors(errors, this, options);
+  }
+
+  private getFallbackLanguage(lang: string) {
+    let regionSepIndex = -1;
+
+    if (lang.includes('-')) {
+      regionSepIndex = lang.lastIndexOf('-');
+    }
+
+    if (lang.includes('_')) {
+      regionSepIndex = lang.lastIndexOf('_');
+    }
+
+    return regionSepIndex !== -1
+      ? lang.slice(0, regionSepIndex)
+      : this.i18nOptions.fallbackLanguage;
+  }
 
   private translateObject(
     key: string,
@@ -295,22 +274,6 @@ export class I18nService<K = Record<string, unknown>>
     return translation;
   }
 
-  public resolveLanguage(lang: string) {
-    if (this.i18nOptions.fallbacks && !this.supportedLanguages.includes(lang)) {
-      const sanitizedLang = lang.includes('-')
-        ? lang.substring(0, lang.indexOf('-')).concat('-*')
-        : lang;
-
-      for (const key in this.i18nOptions.fallbacks) {
-        if (key === lang || key === sanitizedLang) {
-          lang = this.i18nOptions.fallbacks[key];
-          break;
-        }
-      }
-    }
-    return lang;
-  }
-
   private getPluralObject(translation: any): I18nPluralObject | undefined {
     for (const k of pluralKeys) {
       if (translation[k]) {
@@ -351,13 +314,5 @@ export class I18nService<K = Record<string, unknown>>
     }
 
     return list.length > 0 ? list : undefined;
-  }
-
-  public async validate(
-    value: any,
-    options?: TranslateOptions,
-  ): Promise<I18nValidationError[]> {
-    const errors = await validate(value, this.i18nOptions.validatorOptions);
-    return formatI18nErrors(errors, this, options);
   }
 }

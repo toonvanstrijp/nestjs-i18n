@@ -75,13 +75,21 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     await this.i18n.refresh();
 
     // Register handlebars helper
-    if (this.i18nOptions.viewEngine == 'hbs') {
+    if (
+      this.i18nOptions.viewEngine == 'hbs' ||
+      this.i18nOptions.viewEngine == 'handlebars'
+    ) {
       try {
-        const hbs = await import('hbs');
+        // Import handlebars or hbs
+        const hbs =
+          this.i18nOptions.viewEngine === 'hbs'
+            ? await import('hbs')
+            : await import('handlebars');
+
         hbs.registerHelper('t', this.i18n.hbsHelper);
         logger.log('Handlebars helper registered');
       } catch (e) {
-        logger.error('hbs module failed to load', e);
+        logger.error(this.i18nOptions.viewEngine + ' module failed to load', e);
       }
     }
 

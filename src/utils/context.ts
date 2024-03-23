@@ -18,5 +18,6 @@ export function getContextObject(
       return context.getArgs()[1];
     default:
       logger.warn(`context type: ${contextType} not supported`);
+      return context;
   }
 }

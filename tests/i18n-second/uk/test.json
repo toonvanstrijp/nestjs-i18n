@@ -4,5 +4,6 @@
     "few": "{count} дні",
     "many": "{count} днів",
     "other": "{count} дня"
-  }
+  },
+  "HELLO": "Привіт"
 }

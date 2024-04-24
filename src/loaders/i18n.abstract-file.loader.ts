@@ -1,81 +1,33 @@
 import { I18nLoader } from './i18n.loader';
-import { I18N_LOADER_OPTIONS } from '../i18n.constants';
-import { Inject, OnModuleDestroy } from '@nestjs/common';
-import * as path from 'path';
+import path from 'path';
 import { readFile } from 'fs/promises';
-import { exists, getDirectories, getFiles } from '../utils';
-import { I18nTranslation } from '../interfaces';
-import {
-  Observable,
-  Subject,
-  merge as ObservableMerge,
-  of as ObservableOf,
-  switchMap,
-} from 'rxjs';
-import * as chokidar from 'chokidar';
+import { exists, getDirectories, getFiles } from '../utils/file';
+import { I18nTranslation } from '../interfaces/i18n-translation.interface';
 import { I18nError } from '../i18n.error';
 
-export interface I18nAbstractLoaderOptions {
+export interface I18nAbstractFileLoaderOptions {
   path: string;
   includeSubfolders?: boolean;
   filePattern?: string;
-  watch?: boolean;
 }
 
-// const defaultOptions: Partial<I18nAbstractLoaderOptions> = {
-//   filePattern: '*.json',
-//   watch: false,
-// };
-
-export abstract class I18nAbstractLoader
-  extends I18nLoader
-  implements OnModuleDestroy
-{
-  private watcher?: chokidar.FSWatcher;
-
-  private events: Subject<string> = new Subject();
-
-  constructor(
-    @Inject(I18N_LOADER_OPTIONS)
-    private options: I18nAbstractLoaderOptions,
-  ) {
-    super();
+export abstract class I18nAbstractFileLoader extends I18nLoader<I18nAbstractFileLoaderOptions> {
+  constructor(options: I18nAbstractFileLoaderOptions) {
+    super(options);
     this.options = this.sanitizeOptions(options);
-
-    if (this.options.watch) {
-      this.watcher = chokidar
-        .watch(this.options.path, { ignoreInitial: true })
-        .on('all', (event) => {
-          this.events.next(event);
-        });
-    }
   }
 
-  async onModuleDestroy() {
-    if (this.watcher) {
-      await this.watcher.close();
-    }
-  }
-
-  async languages(): Promise<string[] | Observable<string[]>> {
-    if (this.options.watch) {
-      return ObservableMerge(
-        ObservableOf(await this.parseLanguages()),
-        this.events.pipe(switchMap(() => this.parseLanguages())),
-      );
-    }
+  async languages(): Promise<string[]> {
     return this.parseLanguages();
   }
 
-  async load(): Promise<I18nTranslation | Observable<I18nTranslation>> {
-    if (this.options.watch) {
-      return ObservableMerge(
-        ObservableOf(await this.parseTranslations()),
-        this.events.pipe(switchMap(() => this.parseTranslations())),
-      );
-    }
+  async load(): Promise<I18nTranslation> {
     return this.parseTranslations();
   }
+
+  abstract formatData(data: any, sourceFileName?: string);
+
+  abstract getDefaultOptions(): Partial<I18nAbstractFileLoaderOptions>;
 
   protected async parseTranslations(): Promise<I18nTranslation> {
     const i18nPath = path.normalize(this.options.path + path.sep);
@@ -120,8 +72,8 @@ export abstract class I18nAbstractLoader
         global = true;
       }
 
-      // const data = JSON.parse(await readFile(file, 'utf8'));
-      const data = this.formatData(await readFile(file, 'utf8'));
+      const source = await readFile(file, 'utf8');
+      const data = this.formatData(source, file);
 
       const prefix = [...pathParts.slice(1), path.basename(file).split('.')[0]];
 
@@ -174,7 +126,7 @@ export abstract class I18nAbstractLoader
     );
   }
 
-  protected sanitizeOptions(options: I18nAbstractLoaderOptions) {
+  protected sanitizeOptions(options: I18nAbstractFileLoaderOptions) {
     options = { ...this.getDefaultOptions(), ...options };
 
     options.path = path.normalize(options.path + path.sep);
@@ -184,7 +136,4 @@ export abstract class I18nAbstractLoader
 
     return options;
   }
-
-  abstract formatData(data: any);
-  abstract getDefaultOptions(): Partial<I18nAbstractLoaderOptions>;
 }

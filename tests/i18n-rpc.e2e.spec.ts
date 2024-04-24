@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
-import { GrpcMetadataResolver, I18nModule } from '../src';
+import path, { join } from 'path';
+import { GrpcMetadataResolver, I18nJsonLoader, I18nModule } from '../src';
 import { HelloController } from './app/controllers/hello.controller';
 import {
   ClientGrpc,
@@ -8,7 +8,6 @@ import {
   MicroserviceOptions,
   Transport,
 } from '@nestjs/microservices';
-import { join } from 'path';
 import { INestApplication } from '@nestjs/common';
 import { HeroService } from './app/interfaces/hero.interface';
 import { Metadata } from '@grpc/grpc-js';
@@ -31,9 +30,11 @@ describe('i18n module e2e rpc', () => {
             pt: 'pt-BR',
           },
           resolvers: [new GrpcMetadataResolver(['lang'])],
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
         ClientsModule.register([
           {

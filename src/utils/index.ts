@@ -3,3 +3,4 @@ export * from './file';
 export * from './format';
 export * from './merge';
 export * from './util';
+export * from './typescript';

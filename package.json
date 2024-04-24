@@ -1,6 +1,6 @@
 {
   "name": "nestjs-i18n",
-  "version": "10.4.5",
+  "version": "11.0.0",
   "homepage": "https://nestjs-i18n.com",
   "description": "The i18n module for Nest.",
   "author": "Toon van Strijp",
@@ -19,9 +19,13 @@
     "internationalize",
     "locale"
   ],
+
   "repository": {
     "type": "git",
     "url": "https://github.com/ToonvanStrijp/nestjs-i18n"
+  },
+  "bin": {
+    "nestjs-i18n": "./dist/cli.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -30,6 +34,7 @@
   ],
   "scripts": {
     "prepare": "npm run build",
+    "postbuild": "chmod +x ./dist/cli.js",
     "build": "npm run build:lib",
     "build:lib": "npx rimraf dist && tsc -p tsconfig.build.json",
     "prerelease": "npm run build && bumpp",
@@ -108,11 +113,15 @@
   },
   "dependencies": {
     "accept-language-parser": "^1.5.0",
+    "chalk": "^4.1.2",
     "chokidar": "^3.5.3",
     "cookie": "^0.5.0",
+    "fs-extra": "^11.1.1",
     "iterare": "^1.2.1",
     "js-yaml": "^4.1.0",
-    "string-format": "^2.0.0"
+    "mergician": "^1.1.0",
+    "string-format": "^2.0.0",
+    "yargs": "^17.7.2"
   },
   "peerDependencies": {
     "@nestjs/common": "*",

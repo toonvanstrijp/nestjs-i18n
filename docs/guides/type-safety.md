@@ -52,6 +52,9 @@ export class AppController {
 }
 ```
 
+:::tip
+You can import the `I18nPath` type so you require a valid i18n path in your code. This is useful when handeling exceptions with translations.
+
 ```typescript title="src/app.service.ts"
 import { Injectable } from '@nestjs/common';
 import { I18nContext, I18nService } from 'nestjs-i18n';
@@ -67,28 +70,6 @@ export class AppService {
     return this.i18n.translate("test.HELLO", {
       lang: I18nContext.current()?.lang,
     });
-  }
-}
-```
-
-
-:::tip
-You can import the `I18nPath` type so you require a valid i18n path in your code. This is useful when handeling exceptions with translations.
-
-```typescript title="src/app.controller.ts"
-import { I18nPath } from './generated/i18n.generated.ts';
-
-export class ApiException extends Error {
-  get translation(): I18nPath {
-    return this.message as I18nPath;
-  }
-
-  get args(): any {
-    return this._args;
-  }
-
-  constructor(key: I18nPath, private readonly _args?: any) {
-    super(key);
   }
 }
 ```

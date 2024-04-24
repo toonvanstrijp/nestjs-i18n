@@ -25,6 +25,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       detailedErrors: true,
     },
   ) {}
+
   catch(exception: I18nValidationException, host: ArgumentsHost) {
     const i18n = I18nContext.current();
 
@@ -37,11 +38,13 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     switch (host.getType() as string) {
       case 'http':
         const response = host.switchToHttp().getResponse();
+
         const responseBody = this.buildResponseBody(
           host,
           exception,
           normalizedErrors,
         );
+
         response
           .status(this.options.errorHttpStatusCode || exception.getStatus())
           .send(responseBody);
@@ -52,10 +55,23 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     }
   }
 
-  private isWithErrorFormatter(
-    options: I18nValidationExceptionFilterOptions,
-  ): options is I18nValidationExceptionFilterErrorFormatterOption {
-    return 'errorFormatter' in options;
+  protected buildResponseBody(
+    host: ArgumentsHost,
+    exc: I18nValidationException,
+    errors: string[] | I18nValidationError[] | object,
+  ) {
+    if ('responseBodyFormatter' in this.options) {
+      return this.options.responseBodyFormatter(host, exc, errors);
+    } else {
+      return {
+        statusCode:
+          this.options.errorHttpStatusCode === undefined
+            ? exc.getStatus()
+            : this.options.errorHttpStatusCode,
+        message: exc.getResponse(),
+        errors,
+      };
+    }
   }
 
   protected normalizeValidationErrors(
@@ -87,22 +103,10 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       .flatten()
       .toArray();
   }
-  protected buildResponseBody(
-    host: ArgumentsHost,
-    exc: I18nValidationException,
-    errors: string[] | I18nValidationError[] | object,
-  ) {
-    if ('responseBodyFormatter' in this.options) {
-      return this.options.responseBodyFormatter(host, exc, errors);
-    } else {
-      return {
-        statusCode:
-          this.options.errorHttpStatusCode === undefined
-            ? exc.getStatus()
-            : this.options.errorHttpStatusCode,
-        message: exc.getResponse(),
-        errors,
-      };
-    }
+
+  private isWithErrorFormatter(
+    options: I18nValidationExceptionFilterOptions,
+  ): options is I18nValidationExceptionFilterErrorFormatterOption {
+    return 'errorFormatter' in options;
   }
 }

@@ -1,22 +1,23 @@
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
+import path from 'path';
 import {
-  CookieResolver,
-  HeaderResolver,
-  I18nModule,
-  GraphQLWebsocketResolver,
   AcceptLanguageResolver,
+  CookieResolver,
+  GraphQLWebsocketResolver,
+  HeaderResolver,
+  I18nJsonLoader,
+  I18nModule,
   I18nValidationPipe,
 } from '../src';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CatModule } from './app/cats/cat.module';
 import { createClient } from 'graphql-ws';
 import ApolloClient from 'apollo-client';
-import * as WebSocket from 'ws';
+import WebSocket from 'ws';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import gql from 'graphql-tag';
@@ -48,9 +49,11 @@ describe('i18n module e2e graphql', () => {
             new AcceptLanguageResolver(),
             new CookieResolver(),
           ],
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
           driver: ApolloDriver,

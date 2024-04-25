@@ -1,6 +1,6 @@
 {
   "name": "nestjs-i18n",
-  "version": "11.0.0",
+  "version": "11.0.0-beta",
   "homepage": "https://nestjs-i18n.com",
   "description": "The i18n module for Nest.",
   "author": "Toon van Strijp",
@@ -19,7 +19,6 @@
     "internationalize",
     "locale"
   ],
-
   "repository": {
     "type": "git",
     "url": "https://github.com/ToonvanStrijp/nestjs-i18n"

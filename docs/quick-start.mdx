@@ -104,10 +104,11 @@ import { I18nModule } from 'nestjs-i18n';
   imports: [
     I18nModule.forRoot({
       fallbackLanguage: 'en',
-      loaderOptions: {
-        path: path.join(__dirname, '/i18n/'),
-        watch: true,
-      },
+      loaders: [
+      new I18nJsonLoader({
+      path: path.join(__dirname, '/i18n/'),
+      }),
+      ],
     }),
   ],
   controllers: [],
@@ -121,17 +122,18 @@ The async way `nestjs-i18n` is to use I18nModule.forRootAsync
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as path from 'path';
-import { I18nModule, AcceptLanguageResolver, QueryResolver, HeaderResolver } from 'nestjs-i18n';
+import { I18nModule, AcceptLanguageResolver, QueryResolver, HeaderResolver, I18nJsonLoader } from 'nestjs-i18n';
 
 @Module({
   imports: [
     I18nModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         fallbackLanguage: configService.getOrThrow('FALLBACK_LANGUAGE'),
-        loaderOptions: {
+        loaders: [
+          new I18nJsonLoader({
           path: path.join(__dirname, '/i18n/'),
-          watch: true,
-        },
+          }),
+          ],
       }),
       resolvers: [
         { use: QueryResolver, options: ['lang'] },
@@ -233,16 +235,18 @@ import {
   I18nJsonLoader,
   I18nModule,
   QueryResolver,
+  I18nJsonLoader
 } from 'nestjs-i18n';
 
 @Module({
   imports: [
     I18nModule.forRoot({
       fallbackLanguage: 'en',
-      loaderOptions: {
-        path: path.join(__dirname, '/i18n/'),
-        watch: true,
-      },
+      loaders: [
+      new I18nJsonLoader({
+      path: path.join(__dirname, '/i18n/'),
+      }),
+      ],
       resolvers: [
         { use: QueryResolver, options: ['lang'] },
         AcceptLanguageResolver,
@@ -274,10 +278,11 @@ import {
     I18nModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         fallbackLanguage: "en",
-        loaderOptions: {
-          path: path.join(__dirname, "/i18n/"),
-          watch: true,
-        },
+        loaders: [
+          new I18nJsonLoader({
+          path: path.join(__dirname, '/i18n/'),
+          }),
+          ],
       }),
       resolvers: [
         new QueryResolver(["lang", "l"]),

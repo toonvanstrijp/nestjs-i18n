@@ -1,17 +1,16 @@
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
+import path, { join } from 'path';
 import {
+  AcceptLanguageResolver,
   CookieResolver,
   HeaderResolver,
-  AcceptLanguageResolver,
+  I18nJsonLoader,
   I18nModule,
   QueryResolver,
-  I18nJsonLoader,
 } from '../src';
-import * as request from 'supertest';
+import request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
 import { Global, Module } from '@nestjs/common';
 
 @Global()
@@ -54,9 +53,11 @@ describe('i18n module e2e hbs', () => {
             new CookieResolver(),
             AcceptLanguageResolver,
           ],
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
           viewEngine: 'hbs',
         }),
       ],

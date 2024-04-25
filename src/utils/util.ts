@@ -56,6 +56,15 @@ export function i18nValidationMessage<K = Record<string, unknown>>(
   };
 }
 
+/**
+ * utility function just for type safety
+ * */
+export function i18nValidationMessageString<K = Record<string, unknown>>(
+  key: Path<K>,
+): string {
+  return key;
+}
+
 export function formatI18nErrors<K = Record<string, unknown>>(
   errors: I18nValidationError[],
   i18n: I18nService<K>,

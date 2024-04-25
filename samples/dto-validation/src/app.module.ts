@@ -3,9 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import {
   AcceptLanguageResolver,
+  HeaderResolver,
   I18nModule,
   QueryResolver,
-  HeaderResolver,
+  I18nJsonLoader
 } from 'nestjs-i18n';
 import { join } from 'path';
 
@@ -13,10 +14,11 @@ import { join } from 'path';
   imports: [
     I18nModule.forRoot({
       fallbackLanguage: 'en',
-      loaderOptions: {
+      loaders: [
+        new I18nJsonLoader({
         path: join(__dirname, '/i18n/'),
-        watch: true,
-      },
+        }),
+        ],
       resolvers: [
         { use: QueryResolver, options: ['lang'] },
         AcceptLanguageResolver,

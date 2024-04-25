@@ -49,10 +49,11 @@ import { I18nJsonLoader, I18nModule } from 'nestjs-i18n';
     I18nModule.forRoot({
       fallbackLanguage: 'en',
       formatter: (template: string, ...args: any[]) => template,
-      loaderOptions: {
+      loaders: [
+        new I18nJsonLoader({
         path: path.join(__dirname, '/i18n/'),
-        watch: true,
-      }
+        }),
+          ],
     }),
   ],
   controllers: [],

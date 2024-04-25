@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Fallback languages
 
-To configure one or more fallback languages use the `fallbackLanguage` and `fallbacks` options. 
+To configure one or more fallback languages use the `fallbackLanguage` and `fallbacks` options.
 
 The `fallbackLanguage` languages is used when no language is resolved.
 
@@ -17,9 +17,11 @@ I18nModule.forRoot({
     'fr-*': 'fr',
     pt: 'pt-BR',
   },
-  loaderOptions: {
+  loaders: [
+    new I18nJsonLoader({
     path: path.join(__dirname, '/i18n/'),
-  },
+    }),
+          ],
 });
 ```
 

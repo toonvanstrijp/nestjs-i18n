@@ -3,7 +3,11 @@
   "PRODUCT": {
     "NEW": "Nouveau Produit: {name}"
   },
-  "ARRAY": ["UN", "DEUX", "TROIS"],
+  "ARRAY": [
+    "UN",
+    "DEUX",
+    "TROIS"
+  ],
   "cat": "Chat",
   "cat_name": "Chat: {name}",
   "set-up-password": {

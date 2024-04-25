@@ -13,16 +13,17 @@ To use generated types specify the `typesOutputPath` option to let `nestjs-i18n`
 ```typescript title="src/app.module.ts"
 import { Module } from '@nestjs/common';
 import * as path from 'path';
-import { I18nModule } from 'nestjs-i18n';
+import { I18nModule , I18nJsonLoader} from 'nestjs-i18n';
 
 @Module({
   imports: [
     I18nModule.forRoot({
       fallbackLanguage: 'en',
-      loaderOptions: {
-        path: path.join(__dirname, '/i18n/'),
-        watch: true,
-      },
+      loaders: [
+      new I18nJsonLoader({
+      path: path.join(__dirname, '/i18n/'),
+      }),
+      ],
       typesOutputPath: path.join(__dirname, '../src/generated/i18n.generated.ts'),
     }),
   ],
@@ -75,20 +76,21 @@ export class AppService {
 :::tip
 You can import the `I18nPath` type so you require a valid i18n path in your code. This is useful when handeling exceptions with translations.
 
-```typescript title="src/app.controller.ts"
-import { I18nPath } from './generated/i18n.generated.ts';
+```typescript title="src/app.service.ts"
+import { Injectable } from '@nestjs/common';
+import { I18nContext, I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from './generated/i18n.generated.ts';
 
-export class ApiException extends Error {
-  get translation(): I18nPath {
-    return this.message as I18nPath;
-  }
+@Injectable()
+export class AppService {
+ constructor(
+  private readonly i18n: I18nService<I18nTranslations>
+){}
 
-  get args(): any {
-    return this._args;
-  }
-
-  constructor(key: I18nPath, private readonly _args?: any) {
-    super(key);
+  getHello() {
+    return this.i18n.translate("test.HELLO", {
+      lang: I18nContext.current()?.lang,
+    });
   }
 }
 ```

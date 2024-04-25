@@ -3,7 +3,11 @@
   "PRODUCT": {
     "NEW": "Novo Produto: {name}"
   },
-  "ARRAY": ["UM", "DOIS", "TRÊS"],
+  "ARRAY": [
+    "UM",
+    "DOIS",
+    "TRÊS"
+  ],
   "cat": "Gato",
   "cat_name": "Gato: {name}",
   "set-up-password": {

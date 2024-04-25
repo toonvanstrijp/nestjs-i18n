@@ -20,9 +20,11 @@ The `resolvers` option is used to configure resolvers. The resolvers takes in ar
 ```typescript title="src/app.module.ts"
        I18nModule.forRoot({
           fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
           resolvers: [
             new QueryResolver(['lang', 'l']),
             new HeaderResolver(['x-custom-lang']),

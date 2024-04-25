@@ -1,5 +1,5 @@
 import { I18nResolver, I18nResolverOptions } from '../index';
-import { Injectable, ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Metadata } from '@grpc/grpc-js';
 
 @Injectable()

@@ -31,7 +31,7 @@
 
 ## Getting started
 
-To get started follow the [**quickstart**](https://nestjs-i18n.com/quick-start), or take a look at the [**docs**](https://nestjs-i18n.com/). 
+To get started follow the [**quickstart**](https://nestjs-i18n.com/quick-start), or take a look at the [**docs**](https://nestjs-i18n.com/).
 
 ## License
 

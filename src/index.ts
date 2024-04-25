@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 export * from './i18n.module';
 export {
   I18N_OPTIONS,
@@ -5,7 +6,7 @@ export {
   I18N_LANGUAGES,
   I18N_RESOLVER_OPTIONS,
   I18N_RESOLVERS,
-  I18N_LOADER_OPTIONS,
+  I18N_LOADERS,
 } from './i18n.constants';
 export * from './i18n.context';
 

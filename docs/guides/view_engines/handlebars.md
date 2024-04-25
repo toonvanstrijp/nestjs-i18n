@@ -9,9 +9,11 @@ To enable [**handlebars**](https://handlebarsjs.com) support make use of the `vi
 ```diff title="src/app.module.ts"
   I18nModule.forRoot({
     fallbackLanguage: 'en',
-    loaderOptions: {
+      loaders: [
+      new I18nJsonLoader({
       path: path.join(__dirname, '/i18n/'),
-    },
+      }),
+      ],
 +   viewEngine: 'hbs'
   })
 ```

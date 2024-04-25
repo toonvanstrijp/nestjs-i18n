@@ -4,15 +4,16 @@ sidebar_position: 1
 
 # Loaders
 
-The `loader` option is used to configure loaders, default being `I18nJsonLoader`. Currently `I18nJsonLoader` and `I18nYamlLoader` are supported out of the box.
+The `loader` option is used to configure loaders. Currently `I18nJsonLoader` and `I18nYamlLoader` are supported out of the box.
 
 ```typescript title="src/app.module.ts"
        I18nModule.forRoot({
           fallbackLanguage: 'en',
-          loaderOptions: {
-            path: path.join(__dirname, '/i18n/'),
-          },
-          loader: I18nYamlLoader,
+          loaders: [
+            new I18nJsonLoader({
+              path: path.join(__dirname, '/i18n/'),
+            }),
+          ],
         }),
 ```
 
@@ -32,10 +33,12 @@ You can use subfolders by setting the loader option `includeSubfolders: true` as
 
 ```ts
 I18nModule.forRoot({
-  loaderOptions: {
-    path: path.join(__dirname, '/i18n/'),
-    includeSubfolders: true,
-  },
+    loaders: [
+      new I18nJsonLoader({
+      path: path.join(__dirname, '/i18n/'),
+      includeSubfolders: true,
+      }),
+      ],
 }),
 ```
 

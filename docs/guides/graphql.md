@@ -41,10 +41,11 @@ After that use the following `GraphQLWebsocketResolver` resolver.
 ```diff title="src/app.module.ts"
   I18nModule.forRoot({
     fallbackLanguage: 'en',
-    loaderOptions: {
+    loaders: [
+      new I18nJsonLoader({
       path: path.join(__dirname, '/i18n/'),
-      watch: true,
-    },
+      }),
+          ],
     resolvers: [
 +     GraphQLWebsocketResolver,
       { use: QueryResolver, options: ['lang'] },

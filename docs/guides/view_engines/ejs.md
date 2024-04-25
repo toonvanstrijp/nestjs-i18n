@@ -9,9 +9,11 @@ To enable [**ejs**](https://github.com/mde/ejs) support make use of the `viewEng
 ```diff title="src/app.module.ts"
   I18nModule.forRoot({
     fallbackLanguage: 'en',
-    loaderOptions: {
+      loaders: [
+      new I18nJsonLoader({
       path: path.join(__dirname, '/i18n/'),
-    },
+      }),
+      ],
 +   viewEngine: 'ejs'
   })
 ```

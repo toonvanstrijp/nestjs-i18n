@@ -1,6 +1,6 @@
 # gRPC
 
-When using a [hybrid](https://docs.nestjs.com/faq/hybrid-application) nestjs app the interceptors won't run on your grpc service out of the box. To fix this use the `inheritAppConfig` option when connecting your microservice. 
+When using a [hybrid](https://docs.nestjs.com/faq/hybrid-application) nestjs app the interceptors won't run on your grpc service out of the box. To fix this use the `inheritAppConfig` option when connecting your microservice.
 
 ```diff title="src/main.ts"
   app.connectMicroservice<MicroserviceOptions>(
@@ -42,10 +42,11 @@ After that use the following `GrpcMetadataResolver` resolver.
 ```diff title="src/app.module.ts"
   I18nModule.forRoot({
     fallbackLanguage: 'en',
-    loaderOptions: {
+      loaders: [
+      new I18nJsonLoader({
       path: path.join(__dirname, '/i18n/'),
-      watch: true,
-    },
+      }),
+      ],
     resolvers: [
 +     GrpcMetadataResolver
     ],

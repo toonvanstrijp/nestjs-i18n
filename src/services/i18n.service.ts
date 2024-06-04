@@ -8,7 +8,12 @@ import {
   take,
   takeUntil,
 } from 'rxjs';
-import { I18nOptions, I18nTranslation, I18nValidationError } from '..';
+import {
+  I18nContext,
+  I18nOptions,
+  I18nTranslation,
+  I18nValidationError,
+} from '..';
 import {
   I18N_LANGUAGES,
   I18N_LANGUAGES_SUBJECT,
@@ -75,7 +80,7 @@ export class I18nService<K = Record<string, unknown>>
     options?: TranslateOptions,
   ): IfAnyOrNever<R, string, R> {
     options = {
-      lang: this.i18nOptions.fallbackLanguage,
+      lang: I18nContext.current()?.lang || this.i18nOptions.fallbackLanguage,
       ...options,
     };
 

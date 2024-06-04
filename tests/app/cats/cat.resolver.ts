@@ -39,6 +39,14 @@ export class CatResolver {
     return cat;
   }
 
+  @Query('catUsingService')
+  async getCatUsingService(@Args('id') id: number) {
+    const cat = await this.catService.findById(id);
+    // we manually overwrite this property to indicate a value that is translated!
+    cat.description = this.i18nService.translate('test.cat');
+    return cat;
+  }
+
   @Mutation('createCat')
   async create(@Args('createCatInput') args: CreateCatInput): Promise<any> {
     await this.pubSub.publish('catAdded', { catAdded: args.name });

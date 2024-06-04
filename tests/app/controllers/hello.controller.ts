@@ -35,6 +35,11 @@ export class HelloController {
     return this.i18n.translate('test.HELLO', { lang });
   }
 
+  @Get('/no-lang-for-service')
+  helloNoLangForService(): any {
+    return this.i18n.translate('test.HELLO');
+  }
+
   @Get('/typed')
   helloTyped(@I18nLang() lang: string): string {
     return this.i18n.translate('test.HELLO', { lang });
@@ -57,6 +62,11 @@ export class HelloController {
   @Get('/short')
   helloShort(@I18nLang() lang: string): any {
     return this.i18n.t('test.HELLO', { lang });
+  }
+
+  @Get('/short/no-lang-for-service')
+  helloShortNoLangForService(): any {
+    return this.i18n.t('test.HELLO');
   }
 
   @Get('/short/typed')

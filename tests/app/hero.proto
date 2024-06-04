@@ -4,6 +4,7 @@ package hero;
 
 service HeroesService {
   rpc FindOne (HeroById) returns (Hero) {}
+  rpc FindOneTranslatedWithService (HeroById) returns (Hero) {}
 }
 
 message HeroById {

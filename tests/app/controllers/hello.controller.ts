@@ -22,7 +22,10 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { TestException, TestExceptionFilter } from '../filter/test.filter';
 import { TestGuard } from '../guards/test.guard';
 import { Hero, HeroById } from '../interfaces/hero.interface';
-import { exampleErrorFormatter, exampleResponseBodyFormatter } from '../examples/example.functions';
+import {
+  exampleErrorFormatter,
+  exampleResponseBodyFormatter,
+} from '../examples/example.functions';
 import { TestInterceptor } from '../interceptors/test.interceptor';
 
 @Controller('hello')
@@ -231,6 +234,20 @@ export class HelloController {
       {
         id: 1,
         name: i18n.t('test.set-up-password.heading', {
+          args: { username: 'John' },
+        }),
+      },
+      { id: 2, name: 'Doe' },
+    ];
+    return items.find(({ id }) => id === data.id);
+  }
+
+  @GrpcMethod('HeroesService', 'FindOneTranslatedWithService')
+  findOneTranslatedWithService(@Payload() data: HeroById): Hero {
+    const items = [
+      {
+        id: 1,
+        name: this.i18n.t('test.set-up-password.heading', {
           args: { username: 'John' },
         }),
       },

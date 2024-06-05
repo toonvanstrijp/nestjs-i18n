@@ -464,6 +464,89 @@ describe('i18n module e2e graphql', () => {
       });
   });
 
+  it(`should query a particular cat (using injected I18nService) in fallback language`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{catUsingService(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          catUsingService: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Cat',
+          },
+        },
+      });
+  });
+
+  it(`should query a particular cat (using injected I18nService) in NL with x-custom-lang header`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('x-custom-lang', 'nl')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{catUsingService(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          catUsingService: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Kat',
+          },
+        },
+      });
+  });
+
+  it(`should query a particular cat (using injected I18nService) in NL with cookie`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('Cookie', ['lang=nl'])
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{catUsingService(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          catUsingService: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Kat',
+          },
+        },
+      });
+  });
+
+  it(`should query a particular cat (using injected I18nService) in NL with accept-language header`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('accept-language', 'nl')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{catUsingService(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          catUsingService: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Kat',
+          },
+        },
+      });
+  });
+
   afterAll(async () => {
     apollo.stop();
     await subscriptionClient.dispose();

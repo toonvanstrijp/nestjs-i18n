@@ -22,7 +22,10 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { TestException, TestExceptionFilter } from '../filter/test.filter';
 import { TestGuard } from '../guards/test.guard';
 import { Hero, HeroById } from '../interfaces/hero.interface';
-import { exampleErrorFormatter, exampleResponseBodyFormatter } from '../examples/example.functions';
+import {
+  exampleErrorFormatter,
+  exampleResponseBodyFormatter,
+} from '../examples/example.functions';
 import { TestInterceptor } from '../interceptors/test.interceptor';
 
 @Controller('hello')
@@ -33,6 +36,11 @@ export class HelloController {
   @Get()
   hello(@I18nLang() lang: string): any {
     return this.i18n.translate('test.HELLO', { lang });
+  }
+
+  @Get('/no-lang-for-service')
+  helloNoLangForService(): any {
+    return this.i18n.translate('test.HELLO');
   }
 
   @Get('/typed')
@@ -57,6 +65,11 @@ export class HelloController {
   @Get('/short')
   helloShort(@I18nLang() lang: string): any {
     return this.i18n.t('test.HELLO', { lang });
+  }
+
+  @Get('/short/no-lang-for-service')
+  helloShortNoLangForService(): any {
+    return this.i18n.t('test.HELLO');
   }
 
   @Get('/short/typed')
@@ -221,6 +234,20 @@ export class HelloController {
       {
         id: 1,
         name: i18n.t('test.set-up-password.heading', {
+          args: { username: 'John' },
+        }),
+      },
+      { id: 2, name: 'Doe' },
+    ];
+    return items.find(({ id }) => id === data.id);
+  }
+
+  @GrpcMethod('HeroesService', 'FindOneTranslatedWithService')
+  findOneTranslatedWithService(@Payload() data: HeroById): Hero {
+    const items = [
+      {
+        id: 1,
+        name: this.i18n.t('test.set-up-password.heading', {
           args: { username: 'John' },
         }),
       },

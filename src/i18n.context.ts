@@ -1,6 +1,6 @@
 import { ArgumentsHost } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
-import { I18nTranslator, I18nValidationError } from './interfaces';
+import { I18nOptions, I18nTranslator, I18nValidationError } from './interfaces';
 import { I18nService, TranslateOptions } from './services/i18n.service';
 import { Path, PathValue } from './types';
 import { getContextObject } from './utils';
@@ -16,7 +16,7 @@ export class I18nContext<K = Record<string, unknown>>
     return this;
   }
 
-  constructor(readonly lang: string, readonly service: I18nService<K>) {}
+  constructor(readonly lang: string, readonly service: I18nService<K>, readonly i18nOptions: I18nOptions,) {}
 
   public translate<P extends Path<K> = any, R = PathValue<K, P>>(
     key: P,
@@ -64,7 +64,7 @@ export class I18nContext<K = Record<string, unknown>>
     const i18n = this.storage.getStore() as I18nContext<K> | undefined;
 
     if (!i18n && !!context) {
-      return getContextObject(context)?.i18nContext;
+      return getContextObject(i18n.i18nOptions,context)?.i18nContext;
     }
 
     return i18n;

@@ -66,7 +66,7 @@ export class I18nMiddleware implements NestMiddleware {
       req.app.locals.i18nLang = req.i18nLang;
     }
 
-    req.i18nContext = new I18nContext(req.i18nLang, this.i18nService);
+    req.i18nContext = new I18nContext(req.i18nLang, this.i18nService, this.i18nOptions);
 
     if (this.i18nOptions.skipAsyncHook) {
       next();

@@ -102,7 +102,7 @@ For now type safety is optional and need to be enabled. We're planning to make a
 
 You can also use the generated types in your DTOs. This way you can reduce the chance of having a typo in your validation messages.
 
-```typescript title="src/craete-user.dto.ts"
+```typescript title="src/create-user.dto.ts"
 import { I18nTranslations } from './generated/i18n.generated.ts';
 import {
   IsEmail,

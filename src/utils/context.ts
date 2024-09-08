@@ -1,8 +1,10 @@
 import { ArgumentsHost, ExecutionContext, Logger } from '@nestjs/common';
+import { I18nOptions } from '..';
 
 const logger = new Logger('I18nService');
 
 export function getContextObject(
+  i18nOptions: I18nOptions,
   context?: ExecutionContext | ArgumentsHost,
 ): any {
   const contextType = context?.getType<string>() ?? 'undefined';
@@ -17,6 +19,8 @@ export function getContextObject(
     case 'rmq':
       return context.getArgs()[1];
     default:
-      logger.warn(`context type: ${contextType} not supported`);
+      if(i18nOptions.logging){
+        logger.warn(`context type: ${contextType} not supported`);
+      }
   }
 }

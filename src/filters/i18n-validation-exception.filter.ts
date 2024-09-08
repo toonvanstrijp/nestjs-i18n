@@ -90,18 +90,18 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
   protected buildResponseBody(
     host: ArgumentsHost,
     exc: I18nValidationException,
-    errors: string[] | I18nValidationError[] | object,
+    error: string[] | I18nValidationError[] | object,
   ) {
     if ('responseBodyFormatter' in this.options) {
-      return this.options.responseBodyFormatter(host, exc, errors);
+      return this.options.responseBodyFormatter(host, exc, error);
     } else {
       return {
         statusCode:
           this.options.errorHttpStatusCode === undefined
             ? exc.getStatus()
             : this.options.errorHttpStatusCode,
-        message: exc.getResponse(),
-        errors,
+        message: error,
+        error: exc.getResponse(),
       };
     }
   }

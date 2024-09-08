@@ -28,6 +28,9 @@ Here is an example of how this looks in your translation files
 ```
 
 ```typescript
+i18n.t('test.PAGE_HOME.TITLE', {args: {} })
+// => Home to this World
+
 i18n.t('test.PAGE_HOME.SUBTITLE', {args: { username: 'Toon' } })
 // => Hello Toon, this is the home page
 ```

@@ -42,7 +42,7 @@ export const convertObjectToTypeDefinition = async (
   return [];
 };
 
-const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed, });
+const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
 
 export const createTypesFile = async (object: any) => {
   const sourceFile = ts.createSourceFile(

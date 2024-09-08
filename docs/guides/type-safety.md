@@ -52,6 +52,26 @@ export class AppController {
 }
 ```
 
+```typescript title="src/app.service.ts"
+import { Injectable } from '@nestjs/common';
+import { I18nContext, I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from './generated/i18n.generated.ts';
+
+@Injectable()
+export class AppService {
+ constructor(
+  private readonly i18n: I18nService<I18nTranslations>
+){}
+
+  getHello() {
+    return this.i18n.translate("test.HELLO", {
+      lang: I18nContext.current()?.lang,
+    });
+  }
+}
+```
+
+
 :::tip
 You can import the `I18nPath` type so you require a valid i18n path in your code. This is useful when handeling exceptions with translations.
 
@@ -82,7 +102,7 @@ For now type safety is optional and need to be enabled. We're planning to make a
 
 You can also use the generated types in your DTOs. This way you can reduce the chance of having a typo in your validation messages.
 
-```typescript title="src/craete-user.dto.ts"
+```typescript title="src/create-user.dto.ts"
 import { I18nTranslations } from './generated/i18n.generated.ts';
 import {
   IsEmail,

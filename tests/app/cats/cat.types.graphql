@@ -9,6 +9,7 @@ type Query {
   cats: [Cat]
   cat(id: Int!): Cat
   catUsingContext(id: Int!): Cat
+  catUsingService(id: Int!): Cat
 }
 
 type Mutation {

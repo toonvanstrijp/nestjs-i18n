@@ -89,6 +89,20 @@ describe('i18n module e2e rpc', () => {
     });
   });
 
+  it(`should translate grpc call with service`, async () => {
+    const meta = new Metadata();
+    meta.set('lang', 'fr');
+
+    await new Promise<void>((resolve) => {
+      heroService
+        .findOneTranslatedWithService({ id: 1 }, meta)
+        .subscribe((hero) => {
+          expect(hero).toEqual({ id: 1, name: 'Bonjour, John' });
+          resolve();
+        });
+    });
+  });
+
   afterAll(async () => {
     await app.close();
   });

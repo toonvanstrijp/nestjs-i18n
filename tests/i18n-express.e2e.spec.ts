@@ -700,8 +700,7 @@ describe('i18n module e2e express', () => {
       .expect(400)
       .expect({
         statusCode: 400,
-        message: 'Bad Request',
-        errors: [
+        message: [
           {
             property: 'age',
             value: 2,
@@ -712,6 +711,7 @@ describe('i18n module e2e express', () => {
             },
           },
         ],
+        error: 'Bad Request',
       });
   });
 

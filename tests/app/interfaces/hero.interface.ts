@@ -12,4 +12,8 @@ export interface HeroById {
 
 export interface HeroService {
   findOne(data: HeroById, metadata: Metadata): Observable<Hero>;
+  findOneTranslatedWithService(
+    data: HeroById,
+    metadata: Metadata,
+  ): Observable<Hero>;
 }

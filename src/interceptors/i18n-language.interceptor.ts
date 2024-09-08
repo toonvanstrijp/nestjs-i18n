@@ -37,7 +37,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     const i18nContext = I18nContext.current();
     let language = null;
 
-    const ctx = getContextObject(context);
+    const ctx = getContextObject(this.i18nOptions,context);
 
     // Skip interceptor if language is already resolved (in case of http middleware) or when ctx is undefined (unsupported context)
     if (ctx === undefined || !!ctx.i18nLang) {
@@ -68,7 +68,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     }
 
     if (!i18nContext) {
-      ctx.i18nContext = new I18nContext(ctx.i18nLang, this.i18nService);
+      ctx.i18nContext = new I18nContext(ctx.i18nLang, this.i18nService, this.i18nOptions);
 
       if (!this.i18nOptions.skipAsyncHook) {
         return new Observable((observer) => {

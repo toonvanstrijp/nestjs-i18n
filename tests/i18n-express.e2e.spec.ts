@@ -617,6 +617,82 @@ describe('i18n module e2e express', () => {
       .expect({ lang: 'nl' });
   });
 
+  it(`/GET hello/no-lang-for-service should return fallback language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/no-lang-for-service')
+      .expect(200)
+      .expect('Hello');
+  });
+
+  it(`/GET hello/no-lang-for-service should return translation when providing query resolver`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/no-lang-for-service?lang=nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/no-lang-for-service should return translation when providing x-custom-lang`, () => {
+    return request(app.getHttpServer())
+    .get('/hello/no-lang-for-service')
+      .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/no-lang-for-service should return translation when providing accept-language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/no-lang-for-service')
+      .set('accept-language', 'nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/no-lang-for-service should return translation when providing cookie`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/no-lang-for-service')
+      .set('Cookie', ['lang=nl'])
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/short/no-lang-for-service should return fallback language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/short/no-lang-for-service')
+      .expect(200)
+      .expect('Hello');
+  });
+
+  it(`/GET hello/short/no-lang-for-service should return translation when providing query resolver`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/short/no-lang-for-service?lang=nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/short/no-lang-for-service should return translation when providing x-custom-lang`, () => {
+    return request(app.getHttpServer())
+    .get('/hello/short/no-lang-for-service')
+      .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/short/no-lang-for-service should return translation when providing accept-language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/short/no-lang-for-service')
+      .set('accept-language', 'nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/short/no-lang-for-service should return translation when providing cookie`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/short/no-lang-for-service')
+      .set('Cookie', ['lang=nl'])
+      .expect(200)
+      .expect('Hallo');
+  });
+
   it('/POST cats with age 2 should error', async () => {
     await request(app.getHttpServer())
       .post('/cats')
@@ -624,8 +700,7 @@ describe('i18n module e2e express', () => {
       .expect(400)
       .expect({
         statusCode: 400,
-        message: 'Bad Request',
-        errors: [
+        message: [
           {
             property: 'age',
             value: 2,
@@ -636,6 +711,7 @@ describe('i18n module e2e express', () => {
             },
           },
         ],
+        error: 'Bad Request',
       });
   });
 

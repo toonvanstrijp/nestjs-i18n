@@ -3,11 +3,7 @@ import {
   I18nValidationError,
   I18nValidationException,
 } from '../interfaces';
-import {
-  getMetadataStorage,
-  ValidationArguments,
-  ValidationError,
-} from 'class-validator';
+import { ValidationArguments, ValidationError } from 'class-validator';
 import { I18nService, TranslateOptions } from '../services/i18n.service';
 import { MiddlewareConsumer } from '@nestjs/common';
 import { NestMiddlewareConsumer, Path } from '../types';
@@ -62,23 +58,16 @@ export function formatI18nErrors<K = Record<string, unknown>>(
   options?: TranslateOptions,
 ): I18nValidationError[] {
   return errors.map((error) => {
-    const limits = getMetadataStorage()
-      .getTargetValidationMetadatas(
-        error.target.constructor,
-        error.target.constructor.name,
-        true,
-        false,
-      )
-      .find(
-        (meta) =>
-          meta.target === error.target.constructor &&
-          meta.propertyName === error.property,
-      );
-    const constraints = Object.assign({}, limits?.constraints);
     error.children = formatI18nErrors(error.children ?? [], i18n, options);
     error.constraints = Object.keys(error.constraints).reduce((result, key) => {
       const [translationKey, argsString] = error.constraints[key].split('|');
       const args = !!argsString ? JSON.parse(argsString) : {};
+      const constraints = args.constraints
+        ? args.constraints.reduce((acc: object, cur: any, index: number) => {
+            acc[index.toString()] = cur;
+            return acc;
+          }, {})
+        : error.constraints;
       result[key] = i18n.translate(translationKey as Path<K>, {
         ...options,
         args: {
@@ -86,8 +75,8 @@ export function formatI18nErrors<K = Record<string, unknown>>(
           value: error.value,
           target: error.target,
           contexts: error.contexts,
-          constraints: constraints,
           ...args,
+          constraints,
         },
       });
       return result;

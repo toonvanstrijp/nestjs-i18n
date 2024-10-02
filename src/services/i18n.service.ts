@@ -113,6 +113,8 @@ export class I18nService<K = Record<string, unknown>>
       }" in "${lang}" does not exist.`;
       if (lang !== this.i18nOptions.fallbackLanguage || !!defaultValue) {
         if (this.i18nOptions.logging && this.i18nOptions.throwOnMissingKey) {
+
+          this.logger.error(translationKeyMissing);
           throw new I18nError(translationKeyMissing);
         }
 
@@ -126,7 +128,6 @@ export class I18nService<K = Record<string, unknown>>
         }
       }
 
-      this.logger.error(translationKeyMissing);
     }
 
     return (translation ?? key) as unknown as IfAnyOrNever<R, string, R>;

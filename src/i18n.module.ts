@@ -129,7 +129,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
               fs.writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
               logger.log(
                 `Types generated in: ${this.i18nOptions.typesOutputPath}.
-                Please also add it to your eslintignore file to avoid linting errors
+                Please also add it to ignore files of your linter and formatter to avoid linting and formatting it
                 `,
               );
             } else {

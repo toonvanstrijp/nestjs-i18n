@@ -16,7 +16,11 @@ export class I18nContext<K = Record<string, unknown>>
     return this;
   }
 
-  constructor(readonly lang: string, readonly service: I18nService<K>, readonly i18nOptions: I18nOptions,) {}
+  constructor(
+    readonly lang: string,
+    readonly service: I18nService<K>,
+    readonly i18nOptions: I18nOptions,
+  ) {}
 
   public translate<P extends Path<K> = any, R = PathValue<K, P>>(
     key: P,
@@ -64,7 +68,7 @@ export class I18nContext<K = Record<string, unknown>>
     const i18n = this.storage.getStore() as I18nContext<K> | undefined;
 
     if (!i18n && !!context) {
-      return getContextObject(i18n.i18nOptions,context)?.i18nContext;
+      return getContextObject(i18n.i18nOptions, context)?.i18nContext;
     }
 
     return i18n;

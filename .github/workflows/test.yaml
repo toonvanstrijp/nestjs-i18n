@@ -15,12 +15,16 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: 18
           cache: npm
+      - name: install
+        run: npm install
+      - name: check format
+        run: npm run format:check
+      - name: lint
+        run: npm run lint
       - name: test
-        run: |
-          npm install
-          npm run test:cov
+        run: npm run test:cov
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:

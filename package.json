@@ -36,13 +36,14 @@
     "release": "npm publish --access public",
     "prerelease:next": "npm run build",
     "release:next": "npm publish --access public --tag next",
-    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "format": "prettier --write **/*.ts",
+    "format:check": "prettier --check **/*.ts",
     "test": "jest --config ./tests/jest-test.json",
     "test:cov": "jest --config ./tests/jest-test.json --coverage",
     "test:watch": "jest --config ./tests/jest-test.json --watch",
     "coveralls": "npm run test:cov && cat ./coverage/lcov.info | coveralls",
-    "lint": "eslint '{src,apps,libs,test}/**/*.ts'",
-    "lint:fix": "eslint '{src,apps,libs,test}/**/*.ts' --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "docusaurus": "docusaurus",
     "doc:start": "docusaurus start",
     "doc:build": "docusaurus build",
@@ -52,7 +53,8 @@
     "doc:serve": "docusaurus serve",
     "doc:write-translations": "docusaurus write-translations",
     "doc:write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "verify": "npm run format:check && npm run lint && npm run test:cov"
   },
   "devDependencies": {
     "@apollo/client": "^3.6.9",

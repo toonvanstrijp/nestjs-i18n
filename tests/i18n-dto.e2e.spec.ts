@@ -256,7 +256,6 @@ describe('i18n module e2e dto', () => {
       });
   });
 
-
   it(`should translate validation messages if a custom response body formatter specified`, async () => {
     await request(app.getHttpServer())
       .post('/hello/validation-custom-response-body-formatter')
@@ -344,7 +343,6 @@ describe('i18n module e2e dto', () => {
         });
       });
   });
-
 
   it(`should translate validation messages with detailed error`, async () => {
     await request(app.getHttpServer())

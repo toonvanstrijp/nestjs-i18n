@@ -19,7 +19,7 @@ export function getContextObject(
     case 'rmq':
       return context.getArgs()[1];
     default:
-      if(i18nOptions.logging){
+      if (i18nOptions.logging) {
         logger.warn(`context type: ${contextType} not supported`);
       }
   }

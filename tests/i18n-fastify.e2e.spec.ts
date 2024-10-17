@@ -637,7 +637,7 @@ describe('i18n module e2e fastify', () => {
 
   it(`/GET hello/no-lang-for-service should return translation when providing x-custom-lang`, () => {
     return request(app.getHttpServer())
-    .get('/hello/no-lang-for-service')
+      .get('/hello/no-lang-for-service')
       .set('x-custom-lang', 'nl')
       .expect(200)
       .expect('Hallo');
@@ -675,7 +675,7 @@ describe('i18n module e2e fastify', () => {
 
   it(`/GET hello/short/no-lang-for-service should return translation when providing x-custom-lang`, () => {
     return request(app.getHttpServer())
-    .get('/hello/short/no-lang-for-service')
+      .get('/hello/short/no-lang-for-service')
       .set('x-custom-lang', 'nl')
       .expect(200)
       .expect('Hallo');
@@ -696,7 +696,7 @@ describe('i18n module e2e fastify', () => {
       .expect(200)
       .expect('Hallo');
   });
-  
+
   it('/POST cats with age 2 should error', async () => {
     await request(app.getHttpServer())
       .post('/cats')

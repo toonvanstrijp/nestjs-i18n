@@ -633,7 +633,7 @@ describe('i18n module e2e express', () => {
 
   it(`/GET hello/no-lang-for-service should return translation when providing x-custom-lang`, () => {
     return request(app.getHttpServer())
-    .get('/hello/no-lang-for-service')
+      .get('/hello/no-lang-for-service')
       .set('x-custom-lang', 'nl')
       .expect(200)
       .expect('Hallo');
@@ -671,7 +671,7 @@ describe('i18n module e2e express', () => {
 
   it(`/GET hello/short/no-lang-for-service should return translation when providing x-custom-lang`, () => {
     return request(app.getHttpServer())
-    .get('/hello/short/no-lang-for-service')
+      .get('/hello/short/no-lang-for-service')
       .set('x-custom-lang', 'nl')
       .expect(200)
       .expect('Hallo');

@@ -4,13 +4,17 @@ sidebar_position: 1
 
 # Global validation
 
-To use `nestjs-i18n` in your DTO validation you first need to follow the [**nestjs instructions**](https://docs.nestjs.com/techniques/validation). After that you need to use the `I18nValidationPipe`.
+To use `nestjs-i18n` in your DTO validation you first need to follow the [**nestjs instructions**](https://docs.nestjs.com/techniques/validation). After that you need to use the `I18nValidationPipe` instead of `ValidationPipe`.
 
 ```typescript title="src/main.ts"
-import { i18nValidationErrorFactory } from 'nestjs-i18n';
+import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 
-app.useGlobalPipes(
-  new I18nValidationPipe(),
+app.useGlobalPipes(new I18nValidationPipe());
+
+app.useGlobalFilters(
+  new I18nValidationExceptionFilter({
+    detailedErrors: false,
+  }),
 );
 ```
 
@@ -32,7 +36,7 @@ import { Type } from 'class-transformer';
 import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class ExtraUserDto {
-  @IsBoolean({ message: 'validation.INVALID_BOOLEAN' })
+  @IsBoolean({ message: i18nValidationMessage('validation.INVALID_BOOLEAN') })
   subscribeToEmail: string;
 
   @Min(5, {

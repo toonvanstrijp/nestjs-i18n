@@ -8,6 +8,8 @@ import {
   i18nValidationMessage,
 } from '../src';
 import { I18nTranslations } from './generated/i18n.generated';
+import { plainToInstance } from 'class-transformer';
+import { PostsDto } from './app/dto/create-posts.dto';
 
 describe('i18n module', () => {
   let i18nService: I18nService<I18nTranslations>;
@@ -565,5 +567,41 @@ describe('i18n module with fallbacks', () => {
         args: { count: 1.5 },
       }),
     ).toBe('1.5 дня');
+  });
+
+  it('i18nService should correctly return validation errors from @ValidateNested()', async () => {
+    const dto = plainToInstance(PostsDto, {
+      posts: [{ title: 1, body: 'test body' }],
+    });
+
+    const validationResult = await i18nService.validate(dto);
+
+    expect(validationResult).toEqual([
+      {
+        constraints: {},
+        property: 'posts',
+        target: { posts: [{ body: 'test body', title: 1 }] },
+        value: [{ body: 'test body', title: 1 }],
+        children: [
+          {
+            children: [
+              {
+                children: [],
+                constraints: {
+                  isString: 'The value of title cannot be 1',
+                },
+                property: 'title',
+                target: { body: 'test body', title: 1 },
+                value: 1,
+              },
+            ],
+            constraints: {},
+            property: '0',
+            target: [{ body: 'test body', title: 1 }],
+            value: { body: 'test body', title: 1 },
+          },
+        ],
+      },
+    ]);
   });
 });

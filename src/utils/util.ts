@@ -59,28 +59,31 @@ export function formatI18nErrors<K = Record<string, unknown>>(
 ): I18nValidationError[] {
   return errors.map((error) => {
     error.children = formatI18nErrors(error.children ?? [], i18n, options);
-    error.constraints = Object.keys(error.constraints).reduce((result, key) => {
-      const [translationKey, argsString] = error.constraints[key].split('|');
-      const args = !!argsString ? JSON.parse(argsString) : {};
-      const constraints = args.constraints
-        ? args.constraints.reduce((acc: object, cur: any, index: number) => {
-            acc[index.toString()] = cur;
-            return acc;
-          }, {})
-        : error.constraints;
-      result[key] = i18n.translate(translationKey as Path<K>, {
-        ...options,
-        args: {
-          property: error.property,
-          value: error.value,
-          target: error.target,
-          contexts: error.contexts,
-          ...args,
-          constraints,
-        },
-      });
-      return result;
-    }, {});
+    error.constraints = Object.keys(error.constraints ?? {}).reduce(
+      (result, key) => {
+        const [translationKey, argsString] = error.constraints[key].split('|');
+        const args = !!argsString ? JSON.parse(argsString) : {};
+        const constraints = args.constraints
+          ? args.constraints.reduce((acc: object, cur: any, index: number) => {
+              acc[index.toString()] = cur;
+              return acc;
+            }, {})
+          : error.constraints;
+        result[key] = i18n.translate(translationKey as Path<K>, {
+          ...options,
+          args: {
+            property: error.property,
+            value: error.value,
+            target: error.target,
+            contexts: error.contexts,
+            ...args,
+            constraints,
+          },
+        });
+        return result;
+      },
+      {},
+    );
     return error;
   });
 }

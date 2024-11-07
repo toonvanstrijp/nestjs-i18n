@@ -5,5 +5,6 @@
     "INVALID_EMAIL": "email is invalid",
     "INVALID_BOOLEAN": "{property} is not a boolean",
     "MIN": "{property} with value: \"{value}\" needs to be at least {constraints.0}, ow and {message}",
-    "MAX": "{property} with value: \"{value}\" needs to be less than {constraints.0}, ow and {message}"
+    "MAX": "{property} with value: \"{value}\" needs to be less than {constraints.0}, ow and {message}",
+    "nested": "The value of {property} cannot be {value}"
 }

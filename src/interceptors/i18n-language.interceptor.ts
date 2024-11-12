@@ -68,11 +68,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     }
 
     if (!i18nContext) {
-      ctx.i18nContext = new I18nContext(
-        ctx.i18nLang,
-        this.i18nService,
-        this.i18nOptions,
-      );
+      ctx.i18nContext = new I18nContext(ctx.i18nLang, this.i18nService);
 
       if (!this.i18nOptions.skipAsyncHook) {
         return new Observable((observer) => {

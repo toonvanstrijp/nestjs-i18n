@@ -11,12 +11,11 @@ type IsAny<T> = unknown extends T
     : true
   : false;
 
-type IsArray<T> = T extends any[] ? true : false
+type IsArray<T> = T extends any[] ? true : false;
 
-type ExcludeArrayKeys<T> =
-  IsArray<T> extends true
-    ? Exclude<keyof T, keyof any[]>
-    : keyof T
+type ExcludeArrayKeys<T> = IsArray<T> extends true
+  ? Exclude<keyof T, keyof any[]>
+  : keyof T;
 
 type PathImpl<T, Key extends keyof T> = Key extends string
   ? IsAny<T[Key]> extends true

@@ -20,6 +20,20 @@ To enable [**handlebars**](https://handlebarsjs.com) support make use of the `vi
 
 Handlebars is imported dynamically, so make sure to install it (`npm i hbs`). Otherwise `nestjs-i18n` can't register the helper function.
 
+## Fastify
+
+To use handlebars with fastify, `handlebars` is used instead of `hbs`. Make sure to install it (`npm i handlebars`).
+
+```diff title="src/app.module.ts"
+  I18nModule.forRoot({
+    fallbackLanguage: 'en',
+    loaderOptions: {
+      path: path.join(__dirname, '/i18n/'),
+    },
++   viewEngine: 'handlebars'
+  })
+```
+
 :::
 
 ## Example usage

@@ -66,7 +66,7 @@ export const createTypesFile = async (object: any) => {
     ts.factory.createImportDeclaration(
       undefined,
       ts.factory.createImportClause(
-        false,
+        true,
         undefined,
         ts.factory.createNamedImports([
           ts.factory.createImportSpecifier(

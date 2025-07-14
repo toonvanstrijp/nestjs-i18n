@@ -13,18 +13,17 @@ type IsAny<T> = unknown extends T
 
 type IsArray<T> = T extends any[] ? true : false;
 
-type ExcludeArrayKeys<T> = IsArray<T> extends true
-  ? Exclude<keyof T, keyof any[]>
-  : keyof T;
+type ExcludeArrayKeys<T> =
+  IsArray<T> extends true ? Exclude<keyof T, keyof any[]> : keyof T;
 
 type PathImpl<T, Key extends keyof T> = Key extends string
   ? IsAny<T[Key]> extends true
     ? never
     : T[Key] extends Record<string, any>
-    ?
-        | `${Key}.${PathImpl<T[Key], ExcludeArrayKeys<T[Key]>> & string}`
-        | `${Key}.${ExcludeArrayKeys<T[Key]> & string}`
-    : never
+      ?
+          | `${Key}.${PathImpl<T[Key], ExcludeArrayKeys<T[Key]>> & string}`
+          | `${Key}.${ExcludeArrayKeys<T[Key]> & string}`
+      : never
   : never;
 
 type PathImpl2<T> = PathImpl<T, keyof T> | keyof T;
@@ -47,11 +46,11 @@ export type PathValue<
       : never
     : never
   : P extends keyof T
-  ? T[P]
-  : never;
+    ? T[P]
+    : never;
 
 export type IfAnyOrNever<T, Y, N> = 0 extends 1 & T
   ? Y
   : [T] extends [never]
-  ? Y
-  : N;
+    ? Y
+    : N;

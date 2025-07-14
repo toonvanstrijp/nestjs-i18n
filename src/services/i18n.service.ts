@@ -275,7 +275,7 @@ export class I18nService<K = Record<string, unknown>>
         let offset = 0;
         for (const nestedTranslation of nestedTranslations) {
           const result = rootTranslations
-            ? (this.translateObject(
+            ? ((this.translateObject(
                 nestedTranslation.key,
                 rootTranslations,
                 lang,
@@ -283,7 +283,7 @@ export class I18nService<K = Record<string, unknown>>
                   ...options,
                   args: { parent: options.args, ...nestedTranslation.args },
                 },
-              ) as string) ?? ''
+              ) as string) ?? '')
             : '';
           translation =
             translation.substring(0, nestedTranslation.index - offset) +

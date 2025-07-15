@@ -152,7 +152,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     consumer
       .apply(I18nMiddleware)
       .forRoutes(
-        isNestMiddleware(consumer) && usingFastify(consumer) ? '(.*)' : '*',
+        isNestMiddleware(consumer) && usingFastify(consumer) ? '(.*path)' : '*path',
       );
   }
 

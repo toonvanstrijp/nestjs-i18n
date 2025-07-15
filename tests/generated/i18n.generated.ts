@@ -2,7 +2,7 @@
 
 /* eslint-disable */
 /* prettier-ignore */
-import { Path } from "nestjs-i18n";
+import type { Path } from "nestjs-i18n";
 /* prettier-ignore */
 export type I18nTranslations = {
     "test": {

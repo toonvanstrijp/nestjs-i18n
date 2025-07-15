@@ -183,8 +183,16 @@ describe('i18n module', () => {
     const newLanguagePath = path.join(__dirname, '/i18n/es/');
 
     afterAll(async () => {
-      fs.unlinkSync(newTranslationPath);
-      fs.rmdirSync(newLanguagePath);
+      try {
+        fs.unlinkSync(newTranslationPath);
+      } catch (e) {
+        // ignore
+      }
+      try {
+        fs.rmdirSync(newLanguagePath);
+      } catch (e) {
+        // ignore
+      }
     });
 
     it('i18n should refresh translations and languages', async () => {

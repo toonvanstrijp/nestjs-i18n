@@ -1,9 +1,15 @@
-import { readdir, lstat, stat } from 'fs/promises';
+import { readdir, lstat, access } from 'fs/promises';
 import type { Dirent } from 'fs';
 import * as path from 'path';
 
 export const exists = async (path: string): Promise<boolean> => {
-  return !!(await stat(path));
+  try {
+    await access(path);
+
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 export function mapAsync<T, U>(

@@ -1,5 +1,20 @@
 import * as ts from 'typescript';
 
+const convertArrayItemToType = async (item: any): Promise<ts.TypeNode> => {
+  if (Array.isArray(item)) {
+    const nestedArrayItemTypes = await Promise.all(
+      item.map((nestedItem) => convertArrayItemToType(nestedItem)),
+    );
+    return ts.factory.createTupleTypeNode(nestedArrayItemTypes);
+  }
+  if (typeof item === 'object') {
+    return ts.factory.createTypeLiteralNode(
+      await convertObjectToTypeDefinition(item),
+    );
+  }
+  return ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword);
+};
+
 export const convertObjectToTypeDefinition = async (
   object: any,
 ): Promise<ts.TypeElement[]> => {
@@ -7,7 +22,9 @@ export const convertObjectToTypeDefinition = async (
     case 'object':
       return Promise.all(
         Object.keys(object).map(async (key) => {
-          if (typeof object[key] === 'string') {
+          const value = object[key];
+
+          if (typeof value === 'string') {
             return ts.factory.createPropertySignature(
               undefined,
               ts.factory.createStringLiteral(key),
@@ -15,16 +32,15 @@ export const convertObjectToTypeDefinition = async (
               ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
             );
           }
-          if (Array.isArray(object[key])) {
+          if (Array.isArray(value)) {
+            const arrayItemTypes = await Promise.all(
+              value.map((item) => convertArrayItemToType(item)),
+            );
             return ts.factory.createPropertySignature(
               undefined,
               ts.factory.createStringLiteral(key),
               undefined,
-              ts.factory.createTupleTypeNode(
-                Array(object[key].length).fill(
-                  ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
-                ),
-              ),
+              ts.factory.createTupleTypeNode(arrayItemTypes),
             );
           }
           return ts.factory.createPropertySignature(
@@ -32,7 +48,7 @@ export const convertObjectToTypeDefinition = async (
             ts.factory.createStringLiteral(key),
             undefined,
             ts.factory.createTypeLiteralNode(
-              await convertObjectToTypeDefinition(object[key]),
+              await convertObjectToTypeDefinition(value),
             ),
           );
         }),

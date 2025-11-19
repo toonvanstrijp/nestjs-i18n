@@ -17,6 +17,20 @@ export type I18nTranslations = {
             string,
             string
         ];
+        "OBJECTS_ARRAY": [
+            {
+                "instructions": string;
+            },
+            {
+                "nestedArrayInstructions": [
+                    [
+                        {
+                            "instructions": string;
+                        }
+                    ]
+                ];
+            }
+        ];
         "cat": string;
         "ONLY_EN_KEY": string;
         "cat_name": string;

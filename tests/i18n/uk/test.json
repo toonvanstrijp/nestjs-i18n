@@ -1,4 +1,12 @@
 {
+  "OBJECTS_ARRAY": [
+    { "instructions": "Будь ласка, перейдіть за посиланням" },
+    {
+      "nestedArrayInstructions": [
+        [{ "instructions": "Будь ласка, спробуйте ще раз" }]
+      ]
+    }
+  ],
   "day_interval": {
     "one": "{count} день",
     "few": "{count} дні",

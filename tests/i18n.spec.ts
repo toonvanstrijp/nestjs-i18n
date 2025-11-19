@@ -76,6 +76,36 @@ describe('i18n module', () => {
     expect(i18nService.translate('test.ARRAY.2', { lang: 'nl' })).toBe('DRIE');
   });
 
+  it('i18n service should return objects array translation', () => {
+    expect(
+      i18nService.translate('test.OBJECTS_ARRAY.0.instructions', {
+        lang: 'en',
+      }),
+    ).toBe('Please follow the link');
+    expect(
+      i18nService.translate(
+        'test.OBJECTS_ARRAY.1.nestedArrayInstructions.0.0.instructions',
+        {
+          lang: 'en',
+        },
+      ),
+    ).toBe('Please try again');
+
+    expect(
+      i18nService.translate('test.OBJECTS_ARRAY.0.instructions', {
+        lang: 'uk',
+      }),
+    ).toBe('Будь ласка, перейдіть за посиланням');
+    expect(
+      i18nService.translate(
+        'test.OBJECTS_ARRAY.1.nestedArrayInstructions.0.0.instructions',
+        {
+          lang: 'uk',
+        },
+      ),
+    ).toBe('Будь ласка, спробуйте ще раз');
+  });
+
   it('i18n service should return fallback translation', () => {
     expect(i18nService.translate('test.ENGLISH', { lang: 'nl' })).toBe(
       'English',

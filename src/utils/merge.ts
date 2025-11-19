@@ -1,4 +1,4 @@
-import { I18nTranslation } from '../interfaces/i18n-translation.interface';
+import { I18nTranslation } from '../interfaces';
 
 function isObject(item: any) {
   return item && typeof item === 'object' && !Array.isArray(item);

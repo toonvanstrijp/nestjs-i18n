@@ -4,7 +4,7 @@ import {
   ValidationPipeOptions,
 } from '@nestjs/common';
 import { I18nContext } from '../i18n.context';
-import { i18nValidationErrorFactory } from '../utils/util';
+import { i18nValidationErrorFactory } from '../utils';
 
 export type I18nValidationPipeOptions = Omit<
   ValidationPipeOptions,

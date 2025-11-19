@@ -15,10 +15,9 @@ import {
 } from '../index';
 import { I18nService } from '../services/i18n.service';
 import { ModuleRef } from '@nestjs/core';
-import { shouldResolve } from '../utils/util';
+import { shouldResolve, getContextObject } from '../utils';
 import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
 import { Observable } from 'rxjs';
-import { getContextObject } from '../utils/context';
 
 @Injectable()
 export class I18nLanguageInterceptor implements NestInterceptor {
@@ -38,7 +37,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     const i18nContext = I18nContext.current();
     let language = null;
 
-    const ctx = getContextObject(context);
+    const ctx = getContextObject(this.i18nOptions, context);
 
     // Skip interceptor if language is already resolved (in case of http middleware) or when ctx is undefined (unsupported context)
     if (ctx === undefined || !!ctx.i18nLang) {
@@ -72,11 +71,13 @@ export class I18nLanguageInterceptor implements NestInterceptor {
       ctx.i18nContext = new I18nContext(ctx.i18nLang, this.i18nService);
 
       if (!this.i18nOptions.skipAsyncHook) {
-        return I18nContext.createAsync(ctx.i18nContext, async (error) => {
-          if (error) {
-            throw error;
-          }
-          return next.handle();
+        return new Observable((observer) => {
+          I18nContext.createAsync(ctx.i18nContext, async (error) => {
+            if (error) {
+              throw error;
+            }
+            return next.handle().subscribe(observer);
+          });
         });
       }
     }

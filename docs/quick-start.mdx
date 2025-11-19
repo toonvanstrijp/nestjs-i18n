@@ -119,25 +119,80 @@ The async way `nestjs-i18n` is to use I18nModule.forRootAsync
 
 ```typescript title="src/app.module.ts"
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as path from 'path';
-import { I18nModule } from 'nestjs-i18n';
+import { I18nModule, AcceptLanguageResolver, QueryResolver, HeaderResolver } from 'nestjs-i18n';
 
 @Module({
   imports: [
     I18nModule.forRootAsync({
+      imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        fallbackLanguage: "en",
+        fallbackLanguage: configService.getOrThrow('FALLBACK_LANGUAGE'),
         loaderOptions: {
-          path: join(__dirname, "/i18n/"),
+          path: path.join(__dirname, '/i18n/'),
           watch: true,
         },
-      })
-      inject: [ConfigService]
-    })
+      }),
+      resolvers: [
+        { use: QueryResolver, options: ['lang'] },
+        AcceptLanguageResolver,
+        new HeaderResolver(['x-lang']),
+      ],
+      inject: [ConfigService],
+    }),
   ],
   controllers: [],
 })
 export class AppModule {}
+```
+
+
+## I18nOptions
+
+```typescript
+
+export interface I18nOptions {
+  // The default language to use as a fallback if a translation is not available in the requested language.
+  fallbackLanguage: string;
+
+  // An optional dictionary of fallback languages for specific keys or phrases.
+  fallbacks?: { [key: string]: string };
+
+  // An array of resolvers used to resolve the requested translation.
+  resolvers?: I18nOptionResolver[];
+
+  // The loader type to use for loading translation data.
+  loader?: Type<I18nLoader>;
+
+  // Configuration options for the loader.
+  loaderOptions: any;
+
+  // A formatter for formatting translations (e.g., for date or number formatting).
+  formatter?: Formatter;
+
+  // Whether or not to enable logging for i18n operations.
+  logging?: boolean;
+
+  // The view engine to use for rendering templates (if applicable).
+  viewEngine?: 'hbs' | 'pug' | 'ejs';
+
+  // Whether to disable any middleware related to i18n.
+  disableMiddleware?: boolean;
+
+  // Whether to skip asynchronous hooks related to i18n.
+  skipAsyncHook?: boolean;
+
+  // Configuration options for the i18n validator.
+  validatorOptions?: I18nValidatorOptions;
+
+  // Whether to throw an error when a translation key is missing.
+  throwOnMissingKey?: boolean;
+
+  // The output path for generated types (if any).
+  typesOutputPath?: string;
+}
+
 ```
 
 
@@ -221,7 +276,7 @@ import {
       useFactory: (configService: ConfigService) => ({
         fallbackLanguage: "en",
         loaderOptions: {
-          path: join(__dirname, "/i18n/"),
+          path: path.join(__dirname, "/i18n/"),
           watch: true,
         },
       }),
@@ -272,9 +327,47 @@ import { I18nContext, I18nService } from 'nestjs-i18n';
 export class AppService {
   constructor(private readonly i18n: I18nService) {}
   getHello(): string {
-    return this.i18n.t('test.HELLO',{ lang:   I18nContext.current().lang });
+    return this.i18n.t('test.HELLO');
+  }
+
+  getHelloInSpecificLanguage(): string {
+    return this.i18n.t('test.HELLO',{ lang: "en" });
   }
 }
+```
+
+
+## Translate options
+
+```typescript
+
+export type TranslateOptions = {
+
+  /**
+   * Language to translate to
+   */
+
+  lang?: string;
+
+  /**
+   *  Arguments to pass to the translation
+   */
+
+  args?: ({ [k: string]: any } | string)[] | { [k: string]: any };
+
+  /**
+   * Default value to return when no translation is found
+   */
+
+  defaultValue?: string;
+
+  /**
+   *  Debug mode
+   */
+
+  debug?: boolean;
+};
+
 ```
 
 ## Example

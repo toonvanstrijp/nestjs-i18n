@@ -7,6 +7,7 @@ import {
   Render,
   UseFilters,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { GrpcMethod, Payload } from '@nestjs/microservices';
 import {
@@ -18,10 +19,14 @@ import {
 } from '../../../src';
 import { I18nTranslations } from '../../generated/i18n.generated';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { exampleErrorFormatter } from '../examples/example.functions';
 import { TestException, TestExceptionFilter } from '../filter/test.filter';
 import { TestGuard } from '../guards/test.guard';
 import { Hero, HeroById } from '../interfaces/hero.interface';
+import {
+  exampleErrorFormatter,
+  exampleResponseBodyFormatter,
+} from '../examples/example.functions';
+import { TestInterceptor } from '../interceptors/test.interceptor';
 
 @Controller('hello')
 @UseFilters(new TestExceptionFilter())
@@ -31,6 +36,11 @@ export class HelloController {
   @Get()
   hello(@I18nLang() lang: string): any {
     return this.i18n.translate('test.HELLO', { lang });
+  }
+
+  @Get('/no-lang-for-service')
+  helloNoLangForService(): any {
+    return this.i18n.translate('test.HELLO');
   }
 
   @Get('/typed')
@@ -55,6 +65,11 @@ export class HelloController {
   @Get('/short')
   helloShort(@I18nLang() lang: string): any {
     return this.i18n.t('test.HELLO', { lang });
+  }
+
+  @Get('/short/no-lang-for-service')
+  helloShortNoLangForService(): any {
+    return this.i18n.t('test.HELLO');
   }
 
   @Get('/short/typed')
@@ -84,6 +99,12 @@ export class HelloController {
 
   @Get('/request-scope')
   helloRequestScope(): any {
+    return I18nContext.current<I18nTranslations>().translate('test.HELLO');
+  }
+
+  @Get('/request-scope/additional-interceptor')
+  @UseInterceptors(TestInterceptor)
+  helloRequestScopeAdditionalInterceptor(): any {
     return I18nContext.current<I18nTranslations>().translate('test.HELLO');
   }
 
@@ -187,6 +208,17 @@ export class HelloController {
     return 'This action adds a new user';
   }
 
+  @Post('/validation-custom-response-body-formatter')
+  @UseFilters(
+    new I18nValidationExceptionFilter({
+      responseBodyFormatter: exampleResponseBodyFormatter,
+      errorFormatter: exampleErrorFormatter,
+    }),
+  )
+  validationResponseBodyFormatter(@Body() createUserDto: CreateUserDto): any {
+    return 'This action adds a new user';
+  }
+
   @Post('/custom-validation')
   customValidation(@I18n() i18n: I18nContext<I18nTranslations>): any {
     let createUserDto = new CreateUserDto();
@@ -202,6 +234,20 @@ export class HelloController {
       {
         id: 1,
         name: i18n.t('test.set-up-password.heading', {
+          args: { username: 'John' },
+        }),
+      },
+      { id: 2, name: 'Doe' },
+    ];
+    return items.find(({ id }) => id === data.id);
+  }
+
+  @GrpcMethod('HeroesService', 'FindOneTranslatedWithService')
+  findOneTranslatedWithService(@Payload() data: HeroById): Hero {
+    const items = [
+      {
+        id: 1,
+        name: this.i18n.t('test.set-up-password.heading', {
           args: { username: 'John' },
         }),
       },

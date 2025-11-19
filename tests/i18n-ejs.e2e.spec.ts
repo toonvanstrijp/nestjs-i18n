@@ -23,7 +23,7 @@ import { Global, Module } from '@nestjs/common';
   ],
   exports: ['OPTIONS'],
 })
-export class OptionsModule { }
+export class OptionsModule {}
 
 describe('i18n module e2e ejs', () => {
   let app: NestExpressApplication;

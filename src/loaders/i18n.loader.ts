@@ -1,4 +1,4 @@
-import { I18nTranslation } from '../interfaces/i18n-translation.interface';
+import { I18nTranslation } from '../interfaces';
 import { Observable } from 'rxjs';
 
 export abstract class I18nLoader {

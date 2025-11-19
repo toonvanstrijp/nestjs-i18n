@@ -1,9 +1,9 @@
-import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
-import { ValidationArguments, ValidationError } from 'class-validator';
 import {
+  I18nOptionResolver,
   I18nValidationError,
   I18nValidationException,
-} from '../interfaces/i18n-validation-error.interface';
+} from '../interfaces';
+import { ValidationArguments, ValidationError } from 'class-validator';
 import { I18nService, TranslateOptions } from '../services/i18n.service';
 import { MiddlewareConsumer } from '@nestjs/common';
 import { NestMiddlewareConsumer, Path } from '../types';
@@ -15,6 +15,9 @@ export function shouldResolve(e: I18nOptionResolver) {
 function validationErrorToI18n(e: ValidationError): I18nValidationError {
   return {
     property: e.property,
+    value: e.value,
+    target: e.target,
+    contexts: e.contexts,
     children: e?.children?.map(validationErrorToI18n),
     constraints: !!e.constraints
       ? Object.keys(e.constraints).reduce((result, key) => {
@@ -56,15 +59,31 @@ export function formatI18nErrors<K = Record<string, unknown>>(
 ): I18nValidationError[] {
   return errors.map((error) => {
     error.children = formatI18nErrors(error.children ?? [], i18n, options);
-    error.constraints = Object.keys(error.constraints).reduce((result, key) => {
-      const [translationKey, argsString] = error.constraints[key].split('|');
-      const args = !!argsString ? JSON.parse(argsString) : {};
-      result[key] = i18n.translate(translationKey as Path<K>, {
-        ...options,
-        args: { property: error.property, ...args },
-      });
-      return result;
-    }, {});
+    error.constraints = Object.keys(error.constraints ?? {}).reduce(
+      (result, key) => {
+        const [translationKey, argsString] = error.constraints[key].split('|');
+        const args = !!argsString ? JSON.parse(argsString) : {};
+        const constraints = args.constraints
+          ? args.constraints.reduce((acc: object, cur: any, index: number) => {
+              acc[index.toString()] = cur;
+              return acc;
+            }, {})
+          : error.constraints;
+        result[key] = i18n.translate(translationKey as Path<K>, {
+          ...options,
+          args: {
+            property: error.property,
+            value: error.value,
+            target: error.target,
+            contexts: error.contexts,
+            ...args,
+            constraints,
+          },
+        });
+        return result;
+      },
+      {},
+    );
     return error;
   });
 }

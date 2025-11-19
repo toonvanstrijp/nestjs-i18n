@@ -8,14 +8,11 @@ import iterate from 'iterare';
 import { I18nContext } from '../i18n.context';
 import {
   I18nValidationError,
-  I18nValidationException,
-} from '../interfaces/i18n-validation-error.interface';
-import {
   I18nValidationExceptionFilterDetailedErrorsOption,
   I18nValidationExceptionFilterErrorFormatterOption,
-} from '../interfaces/i18n-validation-exception-filter.interface';
-import { mapChildrenToValidationErrors } from '../utils/format';
-import { formatI18nErrors } from '../utils/util';
+  I18nValidationException,
+} from '../interfaces';
+import { mapChildrenToValidationErrors, formatI18nErrors } from '../utils';
 
 type I18nValidationExceptionFilterOptions =
   | I18nValidationExceptionFilterDetailedErrorsOption
@@ -35,22 +32,22 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       lang: i18n.lang,
     });
 
+    const normalizedErrors = this.normalizeValidationErrors(errors);
+
     switch (host.getType() as string) {
       case 'http':
         const response = host.switchToHttp().getResponse();
+        const responseBody = this.buildResponseBody(
+          host,
+          exception,
+          normalizedErrors,
+        );
         response
           .status(this.options.errorHttpStatusCode || exception.getStatus())
-          .send({
-            statusCode:
-              this.options.errorHttpStatusCode || exception.getStatus(),
-            message: exception.getResponse(),
-            errors: this.normalizeValidationErrors(errors),
-          });
+          .send(responseBody);
         break;
       case 'graphql':
-        exception.errors = this.normalizeValidationErrors(
-          errors,
-        ) as I18nValidationError[];
+        exception.errors = normalizedErrors as I18nValidationError[];
         return exception;
     }
   }
@@ -89,5 +86,23 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       .map((item) => Object.values(item.constraints))
       .flatten()
       .toArray();
+  }
+  protected buildResponseBody(
+    host: ArgumentsHost,
+    exc: I18nValidationException,
+    error: string[] | I18nValidationError[] | object,
+  ) {
+    if ('responseBodyFormatter' in this.options) {
+      return this.options.responseBodyFormatter(host, exc, error);
+    } else {
+      return {
+        statusCode:
+          this.options.errorHttpStatusCode === undefined
+            ? exc.getStatus()
+            : this.options.errorHttpStatusCode,
+        message: error,
+        error: exc.getResponse(),
+      };
+    }
   }
 }

@@ -5,6 +5,12 @@
   },
   "ENGLISH": "English",
   "ARRAY": ["ONE", "TWO", "THREE"],
+  "OBJECTS_ARRAY": [
+    { "instructions": "Please follow the link" },
+    {
+      "nestedArrayInstructions": [[{ "instructions": "Please try again" }]]
+    }
+  ],
   "cat": "Cat",
   "ONLY_EN_KEY": "this key only exists in en lang",
   "cat_name": "Cat: {name}",

@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common';
-import { I18N_RESOLVER_OPTIONS } from '..';
+import { I18N_RESOLVER_OPTIONS } from '../i18n.constants';
 
 export function getI18nResolverOptionsToken(target: () => void) {
   return `${target.name}${I18N_RESOLVER_OPTIONS}`;

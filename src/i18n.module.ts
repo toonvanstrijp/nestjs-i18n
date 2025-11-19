@@ -32,28 +32,28 @@ import {
 } from '@nestjs/common';
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
-import { getI18nResolverOptionsToken } from './decorators/i18n-resolver-options.decorator';
+import { getI18nResolverOptionsToken } from './decorators';
 import {
   isNestMiddleware,
   shouldResolve,
   usingFastify,
-} from './utils/util';
+  mergeDeep,
+} from './utils';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
 import { Observable, BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import * as format from 'string-format';
-import { I18nJsonLoader } from './loaders/i18n.json.loader';
+import { I18nJsonLoader } from './loaders';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
-import { mergeDeep } from './utils/merge';
 import * as fs from 'fs';
 import * as path from 'path';
-
 export const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
   formatter: format,
   logging: true,
+  throwOnMissingKey: false,
   loader: I18nJsonLoader,
 };
 
@@ -75,13 +75,21 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     await this.i18n.refresh();
 
     // Register handlebars helper
-    if (this.i18nOptions.viewEngine == 'hbs') {
+    if (
+      this.i18nOptions.viewEngine == 'hbs' ||
+      this.i18nOptions.viewEngine == 'handlebars'
+    ) {
       try {
-        const hbs = await import('hbs');
+        // Import handlebars or hbs
+        const hbs =
+          this.i18nOptions.viewEngine === 'hbs'
+            ? await import('hbs')
+            : await import('handlebars');
+
         hbs.registerHelper('t', this.i18n.hbsHelper);
         logger.log('Handlebars helper registered');
       } catch (e) {
-        logger.error('hbs module failed to load', e);
+        logger.error(this.i18nOptions.viewEngine + ' module failed to load', e);
       }
     }
 
@@ -92,46 +100,50 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       };
     }
 
-    
-
     if (!!this.i18nOptions.typesOutputPath) {
-     try {
-      const ts = await import('./utils/typescript');
-      
-      this.translations.pipe(takeUntil(this.unsubscribe)).subscribe(async (t) => {
-        logger.log('Checking translation changes');
-        const object = Object.keys(t).reduce(
-          (result, key) => mergeDeep(result, t[key]),
-          {},
-        );
+      try {
+        const ts = await import('./utils/typescript');
 
-        const rawContent = await ts.createTypesFile(object);
+        this.translations
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(async (t) => {
+            logger.log('Checking translation changes');
+            const object = Object.keys(t).reduce(
+              (result, key) => mergeDeep(result, t[key]),
+              {},
+            );
 
-        if (!rawContent) {
-          return;
-        }
+            const rawContent = await ts.createTypesFile(object);
 
-        const outputFile = ts.annotateSourceCode(rawContent);
+            if (!rawContent) {
+              return;
+            }
 
-        fs.mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
-          recursive: true,
-        });
-        let currentFileContent = null;
-        try {
-          currentFileContent = fs.readFileSync(
-            this.i18nOptions.typesOutputPath,
-            'utf8',
-          );
-        } catch (err) {
-          logger.error(err);
-        }
-        if (currentFileContent != outputFile) {
-          fs.writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
-          logger.log(`Types generated in: ${this.i18nOptions.typesOutputPath}`);
-        } else {
-          logger.log('No changes detected');
-        }
-      });
+            const outputFile = ts.annotateSourceCode(rawContent);
+
+            fs.mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
+              recursive: true,
+            });
+            let currentFileContent = null;
+            try {
+              currentFileContent = fs.readFileSync(
+                this.i18nOptions.typesOutputPath,
+                'utf8',
+              );
+            } catch (err) {
+              logger.error(err);
+            }
+            if (currentFileContent != outputFile) {
+              fs.writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
+              logger.log(
+                `Types generated in: ${this.i18nOptions.typesOutputPath}.
+                Please also add it to ignore files of your linter and formatter to avoid linting and formatting it
+                `,
+              );
+            } else {
+              logger.log('No changes detected');
+            }
+          });
       } catch (_) {
         // NOOP: typescript package not found
       }

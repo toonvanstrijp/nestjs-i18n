@@ -7,7 +7,7 @@ import {
   ValueProvider,
 } from '@nestjs/common/interfaces';
 import { I18nResolver } from './i18n-language-resolver.interface';
-import { I18nLoader } from '../loaders/i18n.loader';
+import { I18nLoader } from '../loaders';
 import { ValidatorOptions } from 'class-validator';
 
 export interface OptionsProvider {
@@ -48,10 +48,11 @@ export interface I18nOptions {
   loaderOptions: any;
   formatter?: Formatter;
   logging?: boolean;
-  viewEngine?: 'hbs' | 'pug' | 'ejs';
+  viewEngine?: 'hbs' | 'handlebars' | 'pug' | 'ejs';
   disableMiddleware?: boolean;
   skipAsyncHook?: boolean;
   validatorOptions?: I18nValidatorOptions;
+  throwOnMissingKey?: boolean;
   typesOutputPath?: string;
 }
 

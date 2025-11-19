@@ -18,7 +18,7 @@ To enable [**ejs**](https://github.com/mde/ejs) support make use of the `viewEng
 
 ## Example usage
 
-Let's try to do some translations with pug templates.
+Let's try to do some translations with ejs templates.
 
 ```json title="src/i18n/en/test.json"
 {
@@ -39,7 +39,7 @@ export class TestController {
 
 ```
 
-```hbs title="src/view/page.hbs"
+```ejs title="src/view/page.ejs"
 <h1><%= t('test.HELLO', i18nLang, { username }) -%></h1>
 ```
 

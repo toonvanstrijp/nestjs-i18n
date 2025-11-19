@@ -1,7 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AcceptLanguageResolver, I18nModule, QueryResolver , HeaderResolver} from 'nestjs-i18n';
+import {
+  AcceptLanguageResolver,
+  I18nModule,
+  QueryResolver,
+  HeaderResolver,
+} from 'nestjs-i18n';
 import { join } from 'path';
 
 @Module({
@@ -15,10 +20,9 @@ import { join } from 'path';
       resolvers: [
         { use: QueryResolver, options: ['lang'] },
         AcceptLanguageResolver,
-        new HeaderResolver(['x-lang'])
+        new HeaderResolver(['x-lang']),
       ],
     }),
-
   ],
   controllers: [AppController],
   providers: [AppService],

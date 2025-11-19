@@ -3,16 +3,17 @@ import { I18N_LOADER_OPTIONS } from '../i18n.constants';
 import { Inject, OnModuleDestroy } from '@nestjs/common';
 import * as path from 'path';
 import { readFile } from 'fs/promises';
-import { exists, getDirectories, getFiles } from '../utils/file';
-import { I18nTranslation } from '../interfaces/i18n-translation.interface';
+import { exists, getDirectories, getFiles } from '../utils';
+import { I18nTranslation } from '../interfaces';
 import {
   Observable,
   Subject,
   merge as ObservableMerge,
   of as ObservableOf,
+  switchMap,
 } from 'rxjs';
 import * as chokidar from 'chokidar';
-import { switchMap } from 'rxjs/operators';
+import { I18nError } from '../i18n.error';
 
 export interface I18nAbstractLoaderOptions {
   path: string;
@@ -82,11 +83,11 @@ export abstract class I18nAbstractLoader
     const translations: I18nTranslation = {};
 
     if (!(await exists(i18nPath))) {
-      throw new Error(`i18n path (${i18nPath}) cannot be found`);
+      throw new I18nError(`i18n path (${i18nPath}) cannot be found`);
     }
 
     if (!this.options.filePattern.match(/\*\.[A-z]+/)) {
-      throw new Error(
+      throw new I18nError(
         `filePattern should be formatted like: *.json, *.txt, *.custom etc`,
       );
     }

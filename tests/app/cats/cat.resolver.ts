@@ -11,6 +11,9 @@ import { I18nContext } from '../../../src/i18n.context';
 import { Inject, UseFilters } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
 import { CreateCatInput } from './cat.input';
+import { validate } from 'class-validator';
+import { plainToClass } from 'class-transformer';
+import { formatI18nErrors } from '../../../src/utils';
 
 @Resolver('Cat')
 export class CatResolver {
@@ -39,8 +42,16 @@ export class CatResolver {
     return cat;
   }
 
+  @Query('catUsingService')
+  async getCatUsingService(@Args('id') id: number) {
+    const cat = await this.catService.findById(id);
+    // we manually overwrite this property to indicate a value that is translated!
+    cat.description = this.i18nService.translate('test.cat');
+    return cat;
+  }
+
   @Mutation('createCat')
-  async create(@Args('createCatInput') args: any): Promise<any> {
+  async create(@Args('createCatInput') args: CreateCatInput): Promise<any> {
     await this.pubSub.publish('catAdded', { catAdded: args.name });
     return args;
   }
@@ -56,13 +67,29 @@ export class CatResolver {
       });
     },
   })
+
   catAdded() {
-    return this.pubSub.asyncIterator('catAdded');
+    return this.pubSub.asyncIterableIterator('catAdded');
   }
 
   @Mutation('validation')
-  @UseFilters(new I18nValidationExceptionFilter())
-  validation(@Args('createCatInput') data: CreateCatInput) {
-    return;
+  async validation(@Args('createCatInput') data: CreateCatInput) {
+    // Manually validate the input and throw I18nValidationException
+    const inputObject = plainToClass(CreateCatInput, data);
+    const errors = await validate(inputObject);
+    
+    if (errors.length > 0) {
+      const i18n = I18nContext.current();
+      const formattedErrors = formatI18nErrors(errors, i18n.service, {
+        lang: i18n.lang,
+      });
+      
+      const exception = new I18nValidationException(formattedErrors);
+      // Set the errors property for GraphQL
+      exception.errors = formattedErrors;
+      throw exception;
+    }
+    
+    return data;
   }
 }

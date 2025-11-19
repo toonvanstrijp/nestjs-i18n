@@ -121,8 +121,16 @@ describe('i18n yaml module', () => {
     const newLanguagePath = path.join(__dirname, '/i18n/de/');
 
     afterAll(async () => {
-      fs.unlinkSync(newTranslationPath);
-      fs.rmdirSync(newLanguagePath);
+      try {
+        fs.unlinkSync(newTranslationPath);
+      } catch (e) {
+        // ignore
+      }
+      try {
+        fs.rmdirSync(newLanguagePath);
+      } catch (e) {
+        // ignore
+      }
     });
 
     it('i18n should refresh translations and languages', async () => {

@@ -5,6 +5,8 @@ import {
   AcceptLanguageResolver,
   I18nModule,
   QueryResolver,
+  I18nValidationExceptionFilter,
+  I18nValidationPipe,
 } from '../src';
 import { HelloController } from './app/controllers/hello.controller';
 import {
@@ -13,6 +15,7 @@ import {
 } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
+import { CatController } from './app/cats/cat.controller';
 
 describe('i18n module e2e fastify', () => {
   let app: NestFastifyApplication;
@@ -40,11 +43,12 @@ describe('i18n module e2e fastify', () => {
           },
         }),
       ],
-      controllers: [HelloController],
+      controllers: [HelloController, CatController],
     }).compile();
 
     app = module.createNestApplication<NestFastifyApplication>(adapter);
-
+    app.useGlobalPipes(new I18nValidationPipe());
+    app.useGlobalFilters(new I18nValidationExceptionFilter());
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
   });
@@ -615,6 +619,104 @@ describe('i18n module e2e fastify', () => {
       .set('x-custom-lang', 'nl')
       .expect(500)
       .expect({ lang: 'nl' });
+  });
+
+  it(`/GET hello/no-lang-for-service should return fallback language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/no-lang-for-service')
+      .expect(200)
+      .expect('Hello');
+  });
+
+  it(`/GET hello/no-lang-for-service should return translation when providing query resolver`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/no-lang-for-service?lang=nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/no-lang-for-service should return translation when providing x-custom-lang`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/no-lang-for-service')
+      .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/no-lang-for-service should return translation when providing accept-language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/no-lang-for-service')
+      .set('accept-language', 'nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/no-lang-for-service should return translation when providing cookie`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/no-lang-for-service')
+      .set('Cookie', ['lang=nl'])
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/short/no-lang-for-service should return fallback language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/short/no-lang-for-service')
+      .expect(200)
+      .expect('Hello');
+  });
+
+  it(`/GET hello/short/no-lang-for-service should return translation when providing query resolver`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/short/no-lang-for-service?lang=nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/short/no-lang-for-service should return translation when providing x-custom-lang`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/short/no-lang-for-service')
+      .set('x-custom-lang', 'nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/short/no-lang-for-service should return translation when providing accept-language`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/short/no-lang-for-service')
+      .set('accept-language', 'nl')
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it(`/GET hello/short/no-lang-for-service should return translation when providing cookie`, () => {
+    return request(app.getHttpServer())
+      .get('/hello/short/no-lang-for-service')
+      .set('Cookie', ['lang=nl'])
+      .expect(200)
+      .expect('Hallo');
+  });
+
+  it('/POST cats with age 2 should error', async () => {
+    await request(app.getHttpServer())
+      .post('/cats')
+      .send({ age: 2, name: 'Felix' })
+      .expect(400)
+      .expect({
+        statusCode: 400,
+        message: [
+          {
+            property: 'age',
+            value: 2,
+            target: { age: 2, name: 'Felix' },
+            children: [],
+            constraints: {
+              min: 'age with value: "2" needs to be at least 10, ow and COOL',
+            },
+          },
+        ],
+        error: 'Bad Request',
+      });
   });
 
   afterAll(async () => {

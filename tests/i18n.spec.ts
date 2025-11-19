@@ -8,6 +8,8 @@ import {
   i18nValidationMessage,
 } from '../src';
 import { I18nTranslations } from './generated/i18n.generated';
+import { plainToInstance } from 'class-transformer';
+import { PostsDto } from './app/dto/create-posts.dto';
 
 describe('i18n module', () => {
   let i18nService: I18nService<I18nTranslations>;
@@ -72,6 +74,36 @@ describe('i18n module', () => {
     expect(i18nService.translate('test.ARRAY.0', { lang: 'nl' })).toBe('EEN');
     expect(i18nService.translate('test.ARRAY.1', { lang: 'nl' })).toBe('TWEE');
     expect(i18nService.translate('test.ARRAY.2', { lang: 'nl' })).toBe('DRIE');
+  });
+
+  it('i18n service should return objects array translation', () => {
+    expect(
+      i18nService.translate('test.OBJECTS_ARRAY.0.instructions', {
+        lang: 'en',
+      }),
+    ).toBe('Please follow the link');
+    expect(
+      i18nService.translate(
+        'test.OBJECTS_ARRAY.1.nestedArrayInstructions.0.0.instructions',
+        {
+          lang: 'en',
+        },
+      ),
+    ).toBe('Please try again');
+
+    expect(
+      i18nService.translate('test.OBJECTS_ARRAY.0.instructions', {
+        lang: 'uk',
+      }),
+    ).toBe('Будь ласка, перейдіть за посиланням');
+    expect(
+      i18nService.translate(
+        'test.OBJECTS_ARRAY.1.nestedArrayInstructions.0.0.instructions',
+        {
+          lang: 'uk',
+        },
+      ),
+    ).toBe('Будь ласка, спробуйте ще раз');
   });
 
   it('i18n service should return fallback translation', () => {
@@ -181,8 +213,16 @@ describe('i18n module', () => {
     const newLanguagePath = path.join(__dirname, '/i18n/es/');
 
     afterAll(async () => {
-      fs.unlinkSync(newTranslationPath);
-      fs.rmdirSync(newLanguagePath);
+      try {
+        fs.unlinkSync(newTranslationPath);
+      } catch (e) {
+        // ignore
+      }
+      try {
+        fs.rmdirSync(newLanguagePath);
+      } catch (e) {
+        // ignore
+      }
     });
 
     it('i18n should refresh translations and languages', async () => {
@@ -565,5 +605,41 @@ describe('i18n module with fallbacks', () => {
         args: { count: 1.5 },
       }),
     ).toBe('1.5 дня');
+  });
+
+  it('i18nService should correctly return validation errors from @ValidateNested()', async () => {
+    const dto = plainToInstance(PostsDto, {
+      posts: [{ title: 1, body: 'test body' }],
+    });
+
+    const validationResult = await i18nService.validate(dto);
+
+    expect(validationResult).toEqual([
+      {
+        constraints: {},
+        property: 'posts',
+        target: { posts: [{ body: 'test body', title: 1 }] },
+        value: [{ body: 'test body', title: 1 }],
+        children: [
+          {
+            children: [
+              {
+                children: [],
+                constraints: {
+                  isString: 'The value of title cannot be 1',
+                },
+                property: 'title',
+                target: { body: 'test body', title: 1 },
+                value: 1,
+              },
+            ],
+            constraints: {},
+            property: '0',
+            target: [{ body: 'test body', title: 1 }],
+            value: { body: 'test body', title: 1 },
+          },
+        ],
+      },
+    ]);
   });
 });

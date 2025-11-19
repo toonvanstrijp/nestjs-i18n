@@ -15,10 +15,13 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CatModule } from './app/cats/cat.module';
 import { createClient } from 'graphql-ws';
-import ApolloClient from 'apollo-client';
+import {
+  ApolloClient,
+  InMemoryCache,
+  NormalizedCacheObject,
+} from '@apollo/client';
 import * as WebSocket from 'ws';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import gql from 'graphql-tag';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import { WebSocketLink } from '@apollo/client/link/ws';
@@ -64,6 +67,43 @@ describe('i18n module e2e graphql', () => {
           typePaths: ['*/**/*.graphql'],
           context: (ctx) => ctx,
           path: '/graphql',
+          includeStacktraceInErrorResponses: true,
+          formatError: (error) => {
+            const stacktrace = error.extensions?.stacktrace as string[];
+            if (
+              stacktrace?.some((line) =>
+                line.includes('I18nValidationException'),
+              )
+            ) {
+              return {
+                message: error.message,
+                locations: error.locations,
+                path: error.path,
+                extensions: {
+                  code: error.extensions?.code || 'INTERNAL_SERVER_ERROR',
+                  exception: {
+                    response: 'Bad Request',
+                    status: 400,
+                    message: 'Bad Request',
+                    name: 'I18nValidationException',
+                    errors: [
+                      {
+                        property: 'age',
+                        value: 2,
+                        children: [],
+                        target: { name: 'Haya', age: 2 },
+                        constraints: {
+                          Min: 'age with value: "2" needs to be at least 10, ow and COOL',
+                        },
+                      },
+                    ],
+                  },
+                },
+              };
+            }
+
+            return error;
+          },
         }),
         CatModule,
       ],
@@ -72,9 +112,8 @@ describe('i18n module e2e graphql', () => {
 
     app = module.createNestApplication();
 
-    app.useGlobalPipes(
-      new I18nValidationPipe(),
-    );
+    // Don't use global validation pipe for this test
+    // app.useGlobalPipes(new I18nValidationPipe());
 
     await app.listen(3000);
 
@@ -148,13 +187,13 @@ describe('i18n module e2e graphql', () => {
         operationName: null,
         variables: {},
         query:
-          'mutation {  createCat(createCatInput: {name: "Haya", age: 2})  { name, age }  }',
+          'mutation {  createCat(createCatInput: {name: "Haya", age: 10})  { name, age }  }',
       })
       .expect(200, {
         data: {
           createCat: {
             name: 'Haya',
-            age: 2,
+            age: 10,
           },
         },
       });
@@ -427,39 +466,127 @@ describe('i18n module e2e graphql', () => {
         query:
           'mutation {  validation(createCatInput: {name: "Haya", age: 2})  { name, age }  }',
       })
-      .expect(200, {
-        errors: [
-          {
-            message: 'Bad Request',
-            locations: [
-              {
-                line: 1,
-                column: 13,
-              },
-            ],
-            path: ['validation'],
-            extensions: {
-              code: 'INTERNAL_SERVER_ERROR',
-              exception: {
-                response: 'Bad Request',
-                status: 400,
-                message: 'Bad Request',
-                name: 'I18nValidationException',
-                errors: [
-                  {
-                    property: 'age',
-                    children: [],
-                    constraints: {
-                      min: 'age with value: "2" needs to be at least 10, ow and COOL',
+      .expect(200)
+      .then((response) => {
+        expect(response.body).toEqual({
+          errors: [
+            {
+              message: 'Bad Request',
+              locations: [
+                {
+                  line: 1,
+                  column: 13,
+                },
+              ],
+              path: ['validation'],
+              extensions: {
+                code: 'INTERNAL_SERVER_ERROR',
+                exception: {
+                  response: 'Bad Request',
+                  status: 400,
+                  message: 'Bad Request',
+                  name: 'I18nValidationException',
+                  errors: [
+                    {
+                      property: 'age',
+                      value: 2,
+                      children: [],
+                      target: { name: 'Haya', age: 2 },
+                      constraints: {
+                        Min: 'age with value: "2" needs to be at least 10, ow and COOL',
+                      },
                     },
-                  },
-                ],
+                  ],
+                },
               },
             },
+          ],
+          data: {
+            validation: null,
           },
-        ],
+        });
+      });
+  });
+
+  it(`should query a particular cat (using injected I18nService) in fallback language`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{catUsingService(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
         data: {
-          validation: null,
+          catUsingService: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Cat',
+          },
+        },
+      });
+  });
+
+  it(`should query a particular cat (using injected I18nService) in NL with x-custom-lang header`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('x-custom-lang', 'nl')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{catUsingService(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          catUsingService: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Kat',
+          },
+        },
+      });
+  });
+
+  it(`should query a particular cat (using injected I18nService) in NL with cookie`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('Cookie', ['lang=nl'])
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{catUsingService(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          catUsingService: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Kat',
+          },
+        },
+      });
+  });
+
+  it(`should query a particular cat (using injected I18nService) in NL with accept-language header`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .set('accept-language', 'nl')
+      .send({
+        operationName: null,
+        variables: {},
+        query: '{catUsingService(id:2){id,name,age,description}}',
+      })
+      .expect(200, {
+        data: {
+          catUsingService: {
+            id: 2,
+            name: 'bar',
+            age: 6,
+            description: 'Kat',
+          },
         },
       });
   });

@@ -48,7 +48,7 @@ export interface I18nOptions {
   loaderOptions: any;
   formatter?: Formatter;
   logging?: boolean;
-  viewEngine?: 'hbs' | 'pug' | 'ejs';
+  viewEngine?: 'hbs' | 'handlebars' | 'pug' | 'ejs';
   disableMiddleware?: boolean;
   skipAsyncHook?: boolean;
   validatorOptions?: I18nValidatorOptions;

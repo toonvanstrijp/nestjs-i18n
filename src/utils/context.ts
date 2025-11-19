@@ -22,5 +22,6 @@ export function getContextObject(
       if (i18nOptions?.logging) {
         logger.warn(`context type: ${contextType} not supported`);
       }
+      return context;
   }
 }

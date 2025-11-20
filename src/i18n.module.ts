@@ -3,7 +3,6 @@ import {
   Global,
   Inject,
   Logger,
-  MiddlewareConsumer,
   Module,
   OnModuleDestroy,
   Provider,
@@ -31,7 +30,7 @@ import {
   NestModule,
 } from '@nestjs/common';
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
-import { APP_INTERCEPTOR, HttpAdapterHost, ModuleRef } from '@nestjs/core';
+import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators';
 import {
   isNestMiddleware,

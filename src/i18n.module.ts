@@ -158,11 +158,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
   configure(consumer: NestMiddlewareConsumer) {
     if (this.i18nOptions.disableMiddleware) return;
 
-    consumer
-      .apply(I18nMiddleware)
-      .forRoutes(
-        isNestMiddleware(consumer) && usingFastify(consumer) ? '(.*path)' : '*path',
-      );
+    consumer.apply(I18nMiddleware).forRoutes('*path');
 
     if (usingFastify(consumer)) {
       consumer.httpAdapter

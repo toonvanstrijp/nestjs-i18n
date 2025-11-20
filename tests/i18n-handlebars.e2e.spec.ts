@@ -10,7 +10,10 @@ import {
 } from '../src';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
-import { NestFastifyApplication } from '@nestjs/platform-fastify';
+import {
+  NestFastifyApplication,
+  FastifyAdapter,
+} from '@nestjs/platform-fastify';
 import { join } from 'path';
 import { Global, Module } from '@nestjs/common';
 
@@ -63,16 +66,20 @@ describe('i18n module e2e handlebars', () => {
       controllers: [HelloController],
     }).compile();
 
-    app = module.createNestApplication<NestFastifyApplication>();
+    app = module.createNestApplication<NestFastifyApplication>(
+      new FastifyAdapter(),
+    );
 
     app.setViewEngine({
       engine: {
         handlebars: require('handlebars'),
       },
       templates: join(__dirname, 'app', 'views/hbs'),
+      viewExt: 'hbs',
     });
 
     await app.init();
+    await app.getHttpAdapter().getInstance().ready();
   });
 
   it(`should render translated page`, async () => {

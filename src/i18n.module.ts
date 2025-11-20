@@ -31,7 +31,7 @@ import {
   NestModule,
 } from '@nestjs/common';
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
-import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
+import { APP_INTERCEPTOR, HttpAdapterHost, ModuleRef } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators';
 import {
   isNestMiddleware,
@@ -47,6 +47,7 @@ import { I18nJsonLoader } from './loaders';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
 import * as fs from 'fs';
 import * as path from 'path';
+import { NestMiddlewareConsumer } from './types';
 export const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
@@ -68,6 +69,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     private translations: Observable<I18nTranslation>,
     @Inject(I18N_OPTIONS) private readonly i18nOptions: I18nOptions,
     private adapter: HttpAdapterHost,
+    private readonly middleware: I18nMiddleware,
   ) {}
 
   async onModuleInit() {
@@ -154,7 +156,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     this.unsubscribe.complete();
   }
 
-  configure(consumer: MiddlewareConsumer) {
+  configure(consumer: NestMiddlewareConsumer) {
     if (this.i18nOptions.disableMiddleware) return;
 
     consumer
@@ -162,6 +164,19 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       .forRoutes(
         isNestMiddleware(consumer) && usingFastify(consumer) ? '(.*)' : '*',
       );
+
+    if (usingFastify(consumer)) {
+      consumer.httpAdapter
+        .getInstance()
+        .addHook('preHandler', async (request: any, reply: any) => {
+          if (request.raw.i18nLang) {
+            reply.locals = {
+              ...(reply.locals || {}),
+              i18nLang: request.raw.i18nLang,
+            };
+          }
+        });
+    }
   }
 
   static forRoot(options: I18nOptions): DynamicModule {
@@ -247,6 +262,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
           useClass: I18nLanguageInterceptor,
         },
         I18nService,
+        I18nMiddleware,
         i18nOptions,
         translationsProvider,
         languagesProvider,
@@ -257,7 +273,13 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
       ],
-      exports: [I18N_OPTIONS, I18N_RESOLVERS, I18nService, languagesProvider],
+      exports: [
+        I18N_OPTIONS,
+        I18N_RESOLVERS,
+        I18nService,
+        I18nMiddleware,
+        languagesProvider,
+      ],
     };
   }
 
@@ -306,6 +328,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         asyncLanguagesProvider,
         asyncLoaderOptionsProvider,
         I18nService,
+        I18nMiddleware,
         resolversProvider,
         i18nLoaderProvider,
         i18nLanguagesSubjectProvider,
@@ -316,6 +339,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         I18N_OPTIONS,
         I18N_RESOLVERS,
         I18nService,
+        I18nMiddleware,
         asyncLanguagesProvider,
       ],
     };

@@ -26,7 +26,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     },
   ) {}
   catch(exception: I18nValidationException, host: ArgumentsHost) {
-    const i18n = I18nContext.current();
+    const i18n = I18nContext.current(host);
 
     const errors = formatI18nErrors(exception.errors ?? [], i18n.service, {
       lang: i18n.lang,

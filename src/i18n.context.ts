@@ -2,10 +2,10 @@ import { ArgumentsHost } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
 import { I18nTranslator, I18nValidationError } from './interfaces';
 import { I18nService, TranslateOptions } from './services/i18n.service';
-import { Path, PathValue } from './types';
+import { I18nTypeOptions, Path, PathValue } from './types';
 import { getContextObject } from './utils';
 
-export class I18nContext<K = Record<string, unknown>>
+export class I18nContext<K = I18nTypeOptions['resources']>
   implements I18nTranslator<K>
 {
   private static storage = new AsyncLocalStorage<I18nContext>();
@@ -61,7 +61,7 @@ export class I18nContext<K = Record<string, unknown>>
     return this.storage.run(ctx, next);
   }
 
-  static current<K = Record<string, unknown>>(
+  static current<K = I18nTypeOptions['resources']>(
     context?: ArgumentsHost,
   ): I18nContext<K> | undefined {
     const i18n = this.storage.getStore() as I18nContext<K> | undefined;

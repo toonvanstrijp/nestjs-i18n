@@ -44,4 +44,4 @@ export {
 } from './utils';
 
 // types
-export { Path, PathValue } from './types';
+export { Path, PathValue, I18nCustomTypeOptions, I18nTypeOptions } from './types';

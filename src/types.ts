@@ -1,6 +1,35 @@
 import { MiddlewareConsumer } from '@nestjs/common';
 import { AbstractHttpAdapter } from '@nestjs/core';
 
+/**
+ * This interface can be augmented by users to add types to `nestjs-i18n` default I18nTypeOptions.
+ *
+ * Usage:
+ * ```ts
+ * // nestjs-i18n.d.ts
+ * import 'nestjs-i18n';
+ * declare module 'nestjs-i18n' {
+ *   interface I18nCustomTypeOptions {
+ *     resources: {
+ *       custom: {
+ *         foo: 'foo';
+ *       };
+ *     };
+ *   }
+ * }
+ * ```
+ */
+export interface I18nCustomTypeOptions {}
+
+type $MergeBy<T, K> = Omit<T, keyof K> & K;
+
+export type I18nTypeOptions = $MergeBy<
+  {
+    resources: Record<string, unknown>;
+  },
+  I18nCustomTypeOptions
+>;
+
 export interface NestMiddlewareConsumer extends MiddlewareConsumer {
   httpAdapter: AbstractHttpAdapter;
 }

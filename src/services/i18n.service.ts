@@ -28,7 +28,7 @@ import { I18nTranslator, I18nPluralObject } from '../interfaces';
 import { I18nError } from '../i18n.error';
 
 const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
-const translationTransformPipes = {
+const translationTransformPipes: Record<string, (value: string) => string> = {
   uppercase: (value: string) => value.toUpperCase(),
   lowercase: (value: string) => value.toLowerCase(),
   capitalize: (value: string) =>

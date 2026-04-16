@@ -45,3 +45,6 @@ export {
 
 // types
 export { Path, PathValue } from './types';
+
+// generators
+export { generateI18nTypes } from './types-generator';

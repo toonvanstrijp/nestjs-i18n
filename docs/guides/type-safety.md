@@ -33,6 +33,32 @@ export class AppModule {}
 
 > The `typesOutputPath` should also be added to `eslintignore` to prevent linting errors.
 
+## Generate Types In CI Without Bootstrapping Nest
+
+You can generate types with a standalone script, which is useful for CI or repositories that do not commit generated files.
+
+```bash
+npx nestjs-i18n-types --path ./src/i18n --out ./src/generated/i18n.generated.ts
+```
+
+You can also call the API directly:
+
+```typescript
+import { generateI18nTypes } from 'nestjs-i18n';
+
+await generateI18nTypes({
+  path: './src/i18n',
+  outputPath: './src/generated/i18n.generated.ts',
+  format: 'json',
+});
+```
+
+CLI options:
+
+- `--format <json|yaml>`
+- `--pattern <glob>`
+- `--include-subfolders`
+
 # Usage
 
 To use the types within your code import the `I18nTranslations` type from the generated file. Pass this type into the generic type properties of the `I18nContext` or `I18nService`.

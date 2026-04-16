@@ -25,6 +25,9 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "nestjs-i18n-types": "./dist/cli/generate-types.js"
+  },
   "files": [
     "dist"
   ],
@@ -54,6 +57,7 @@
     "doc:write-translations": "docusaurus write-translations",
     "doc:write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
+    "generate:types": "nestjs-i18n-types",
     "verify": "npm run format:check && npm run lint && npm run test:cov"
   },
   "devDependencies": {

@@ -12,17 +12,15 @@ export function shouldResolve(e: I18nOptionResolver) {
   return typeof e === 'function' || e['use'];
 }
 
-
 export function httpStatusToMessage(status: HttpStatus): string {
   const key = HttpStatus[status];
 
   return key
     .toLowerCase()
     .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
-
 
 function validationErrorToI18n(e: ValidationError): I18nValidationError {
   return {

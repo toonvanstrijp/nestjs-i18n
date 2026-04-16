@@ -408,6 +408,7 @@ describe('i18n module with loader watch', () => {
   let i18nLoader: I18nLoader;
 
   const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
+  const invalidTranslationPath = path.join(__dirname, '/i18n/nl/invalid.json');
   const newLanguagePath = path.join(__dirname, '/i18n/de/');
   let i18nModule: TestingModule;
   beforeAll(async () => {
@@ -431,6 +432,11 @@ describe('i18n module with loader watch', () => {
     await i18nModule.close();
     try {
       fs.unlinkSync(newTranslationPath);
+    } catch (e) {
+      // ignore
+    }
+    try {
+      fs.unlinkSync(invalidTranslationPath);
     } catch (e) {
       // ignore
     }
@@ -472,6 +478,24 @@ describe('i18n module with loader watch', () => {
     expect(languages).toContain('de');
     const translations = i18nService.getTranslations();
     expect(Object.keys(translations)).toContain('de');
+  });
+
+  it('i18n should ignore invalid json changes and recover on next valid change', async () => {
+    fs.writeFileSync(invalidTranslationPath, '{"BROKEN":', 'utf8');
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toEqual('Hallo');
+
+    fs.writeFileSync(
+      invalidTranslationPath,
+      JSON.stringify({ RECOVERED: 'werkt' }),
+      'utf8',
+    );
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    expect(i18nService.translate('invalid.RECOVERED', { lang: 'nl' })).toEqual(
+      'werkt',
+    );
   });
 });
 

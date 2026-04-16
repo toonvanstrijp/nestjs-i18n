@@ -484,7 +484,9 @@ describe('i18n module with loader watch', () => {
     fs.writeFileSync(invalidTranslationPath, '{"BROKEN":', 'utf8');
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toEqual('Hallo');
+    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toEqual(
+      'Hallo',
+    );
 
     fs.writeFileSync(
       invalidTranslationPath,

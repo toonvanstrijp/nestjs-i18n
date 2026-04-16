@@ -71,7 +71,7 @@ export class I18nService<K = Record<string, unknown>>
   }
 
   public onModuleDestroy(): void {
-    this.unsubscribe.next(null);
+    this.unsubscribe.next();
     this.unsubscribe.complete();
   }
 

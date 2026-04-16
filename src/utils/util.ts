@@ -5,12 +5,24 @@ import {
 } from '../interfaces';
 import { ValidationArguments, ValidationError } from 'class-validator';
 import { I18nService, TranslateOptions } from '../services/i18n.service';
-import { MiddlewareConsumer } from '@nestjs/common';
+import { HttpStatus, MiddlewareConsumer } from '@nestjs/common';
 import { NestMiddlewareConsumer, Path } from '../types';
 
 export function shouldResolve(e: I18nOptionResolver) {
   return typeof e === 'function' || e['use'];
 }
+
+
+export function httpStatusToMessage(status: HttpStatus): string {
+  const key = HttpStatus[status];
+
+  return key
+    .toLowerCase()
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 
 function validationErrorToI18n(e: ValidationError): I18nValidationError {
   return {

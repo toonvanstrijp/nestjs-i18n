@@ -28,6 +28,14 @@ import { I18nTranslator, I18nPluralObject } from '../interfaces';
 import { I18nError } from '../i18n.error';
 
 const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
+const translationTransformPipes: Record<string, (value: string) => string> = {
+  uppercase: (value: string) => value.toUpperCase(),
+  lowercase: (value: string) => value.toLowerCase(),
+  capitalize: (value: string) =>
+    value.length > 0
+      ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+      : value,
+};
 
 export type TranslateOptions = {
   lang?: string;
@@ -43,6 +51,7 @@ export class I18nService<K = Record<string, unknown>>
   private supportedLanguages: string[];
   private translations: I18nTranslation;
   private pluralRules = new Map<string, Intl.PluralRules>();
+  private transformPlaceholderCounter = 0;
 
   private unsubscribe = new Subject<void>();
 
@@ -266,10 +275,11 @@ export class I18nService<K = Record<string, unknown>>
 
         return result;
       }
-      translation = this.i18nOptions.formatter(
+      const { template, formatterArgs } = this.applyTranslationTransformPipes(
         translation,
-        ...(args instanceof Array ? args || [] : [args]),
+        args,
       );
+      translation = this.i18nOptions.formatter(template, ...formatterArgs);
       const nestedTranslations = this.getNestedTranslations(translation);
       if (nestedTranslations && nestedTranslations.length > 0) {
         let offset = 0;
@@ -297,6 +307,115 @@ export class I18nService<K = Record<string, unknown>>
     }
 
     return translation;
+  }
+
+  private applyTranslationTransformPipes(
+    template: string,
+    args?: ({ [k: string]: any } | string)[] | { [k: string]: any },
+  ): {
+    template: string;
+    formatterArgs: (string | Record<string, string>)[];
+  } {
+    const transformedValues: Record<string, string> = {};
+    const withPipesApplied = template.replace(
+      /\{\{\s*([^{}]+?)\s*\}\}/g,
+      (match, rawExpression: string) => {
+        const parts = rawExpression
+          .split('|')
+          .map((part) => part.trim())
+          .filter((part) => part.length > 0);
+
+        if (parts.length < 2) {
+          return match;
+        }
+
+        const [argPath, ...transforms] = parts;
+        const rawValue = this.getArgValueByPath(args, argPath);
+        let transformedValue = rawValue == null ? '' : String(rawValue);
+
+        for (const transformName of transforms) {
+          const transformFn =
+            translationTransformPipes[transformName.toLowerCase()];
+          if (!transformFn) {
+            continue;
+          }
+          transformedValue = transformFn(transformedValue);
+        }
+
+        const placeholderKey = `__i18n_transform_${this
+          .transformPlaceholderCounter++}`;
+        transformedValues[placeholderKey] = transformedValue;
+
+        return `{${placeholderKey}}`;
+      },
+    );
+
+    const formatterArgs = this.createFormatterArgs(args, transformedValues);
+    return {
+      template: withPipesApplied,
+      formatterArgs,
+    };
+  }
+
+  private createFormatterArgs(
+    args?: ({ [k: string]: any } | string)[] | { [k: string]: any },
+    transformedValues: Record<string, string> = {},
+  ): (string | Record<string, string>)[] {
+    if (!args || !Object.keys(transformedValues).length) {
+      return args instanceof Array ? args || [] : ([args] as any);
+    }
+
+    if (!(args instanceof Array)) {
+      return [{ ...args, ...transformedValues } as Record<string, string>];
+    }
+
+    const formatterArgs = [...args];
+    const objectArgIndex = formatterArgs.findIndex(
+      (entry) => typeof entry === 'object' && entry !== null,
+    );
+
+    if (objectArgIndex === -1) {
+      formatterArgs.push(transformedValues);
+      return formatterArgs as (string | Record<string, string>)[];
+    }
+
+    formatterArgs[objectArgIndex] = {
+      ...(formatterArgs[objectArgIndex] as Record<string, string>),
+      ...transformedValues,
+    };
+
+    return formatterArgs as (string | Record<string, string>)[];
+  }
+
+  private getArgValueByPath(
+    args: ({ [k: string]: any } | string)[] | { [k: string]: any } | undefined,
+    path: string,
+  ): unknown {
+    if (!args || !path) {
+      return undefined;
+    }
+
+    const sources = args instanceof Array ? args : [args];
+    for (const source of sources) {
+      if (typeof source !== 'object' || source === null) {
+        continue;
+      }
+
+      const value = path
+        .split('.')
+        .reduce((acc: unknown, key: string): unknown => {
+          if (acc == null || typeof acc !== 'object') {
+            return undefined;
+          }
+          return (acc as Record<string, unknown>)[key];
+        }, source as unknown);
+
+      if (value !== undefined) {
+        return value;
+      }
+    }
+
+    return undefined;
   }
 
   public resolveLanguage(lang: string) {

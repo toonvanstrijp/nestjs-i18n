@@ -202,6 +202,42 @@ describe('i18n module', () => {
     );
   });
 
+  it('i18n service should support uppercase transform pipes in templates', () => {
+    expect(
+      i18nService.translate<any>('test.PIPE_UPPERCASE', {
+        lang: 'en',
+        args: { name: 'john doe' },
+      }),
+    ).toBe('Hello, JOHN DOE!');
+  });
+
+  it('i18n service should support chained transform pipes in templates', () => {
+    expect(
+      i18nService.translate<any>('test.PIPE_CHAIN', {
+        lang: 'en',
+        args: { name: 'john doe' },
+      }),
+    ).toBe('Hello, John doe!');
+  });
+
+  it('i18n service should ignore unknown transform pipes', () => {
+    expect(
+      i18nService.translate<any>('test.PIPE_UNKNOWN', {
+        lang: 'en',
+        args: { name: 'john doe' },
+      }),
+    ).toBe('Hello, john doe!');
+  });
+
+  it('i18n service should handle normal and transformed placeholders together', () => {
+    expect(
+      i18nService.translate<any>('test.PIPE_MIXED', {
+        lang: 'en',
+        args: { title: 'Mr.', name: 'john doe' },
+      }),
+    ).toBe('Hello, Mr. JOHN DOE!');
+  });
+
   it('i18n service should NOT return translation from subfolders by default', () => {
     expect(i18nService.translate<any>('subfolder.sub-test.HELLO')).toBe(
       'subfolder.sub-test.HELLO',

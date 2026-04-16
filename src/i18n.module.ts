@@ -71,34 +71,39 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     await this.i18n.refresh();
 
     // Register handlebars helper
-    if (
-      this.i18nOptions.viewEngine == 'hbs' ||
-      this.i18nOptions.viewEngine == 'handlebars'
-    ) {
-      try {
-        // Import handlebars or hbs
-        const hbs =
-          this.i18nOptions.viewEngine === 'hbs'
-            ? await import('hbs')
-            : await import('handlebars');
 
-        hbs.registerHelper('t', this.i18n.hbsHelper);
-        logger.log('Handlebars helper registered');
-      } catch (e) {
-        logger.error(this.i18nOptions.viewEngine + ' module failed to load', e);
+    if (this.i18nOptions.viewEngine) {
+      if (['hbs', 'handlebars'].includes(this.i18nOptions.viewEngine)) {
+        try {
+          // Import handlebars or hbs
+          const hbs =
+            this.i18nOptions.viewEngine === 'hbs'
+              ? await import('hbs')
+              : await import('handlebars');
+
+          hbs.registerHelper('t', this.i18n.hbsHelper);
+          logger.log('Handlebars helper registered');
+        } catch (e) {
+          logger.error(
+            this.i18nOptions.viewEngine + ' module failed to load',
+            e,
+          );
+        }
+      }
+
+      if (['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
+        const app = this.adapter.httpAdapter.getInstance();
+        app.locals['t'] = (key: string, lang: any, args: any) => {
+          return this.i18n.t(key, { lang, args });
+        };
       }
     }
 
-    if (['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
-      const app = this.adapter.httpAdapter.getInstance();
-      app.locals['t'] = (key: string, lang: any, args: any) => {
-        return this.i18n.t(key, { lang, args });
-      };
-    }
-
-    if (!!this.i18nOptions.typesOutputPath) {
+    if (this.i18nOptions.typesOutputPath) {
       try {
         const ts = await import('./utils/typescript');
+
+        const typesOutputPath = this.i18nOptions.typesOutputPath;
 
         this.translations
           .pipe(takeUntil(this.unsubscribe))
@@ -117,20 +122,17 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
             const outputFile = ts.annotateSourceCode(rawContent);
 
-            fs.mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
+            fs.mkdirSync(path.dirname(typesOutputPath), {
               recursive: true,
             });
             let currentFileContent = null;
             try {
-              currentFileContent = fs.readFileSync(
-                this.i18nOptions.typesOutputPath,
-                'utf8',
-              );
+              currentFileContent = fs.readFileSync(typesOutputPath, 'utf8');
             } catch (err) {
               logger.error(err);
             }
             if (currentFileContent != outputFile) {
-              fs.writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
+              fs.writeFileSync(typesOutputPath, outputFile);
               logger.log(
                 `Types generated in: ${this.i18nOptions.typesOutputPath}.
                 Please also add it to ignore files of your linter and formatter to avoid linting and formatting it
@@ -141,7 +143,9 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
             }
           });
       } catch (_) {
-        // NOOP: typescript package not found
+        logger.error(
+          'typescript package not found, types generation failed. Please install typescript as a dev dependency to enable this feature.',
+        );
       }
     }
   }
@@ -161,7 +165,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         .addHook('preHandler', async (request: any, reply: any) => {
           if (request.raw.i18nLang) {
             reply.locals = {
-              ...(reply.locals || {}),
+              ...reply.locals,
               i18nLang: request.raw.i18nLang,
             };
           }
@@ -431,7 +435,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     return (resolvers || [])
       .filter(shouldResolve)
       .reduce<Provider[]>((providers, r) => {
-        if (r['use']) {
+        if ('use' in r) {
           const { use: resolver, options, ...rest } = r as any;
           const optionsToken = getI18nResolverOptionsToken(
             resolver as unknown as () => void,

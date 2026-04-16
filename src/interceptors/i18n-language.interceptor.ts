@@ -87,7 +87,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
 
   private async getResolver(r: I18nOptionResolver): Promise<I18nResolver> {
     if (shouldResolve(r)) {
-      if (r['use']) {
+      if ('use' in r) {
         const resolver = r as ResolverWithOptions;
         return this.moduleRef.get(resolver.use);
       } else {

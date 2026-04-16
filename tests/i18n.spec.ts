@@ -7,6 +7,7 @@ import {
   I18nLoader,
   i18nValidationMessage,
 } from '../src';
+import { I18nError } from '../src/i18n.error';
 import { I18nTranslations } from './generated/i18n.generated';
 import { plainToInstance } from 'class-transformer';
 import { PostsDto } from './app/dto/create-posts.dto';
@@ -677,5 +678,21 @@ describe('i18n module with fallbacks', () => {
         ],
       },
     ]);
+  });
+
+  it('i18nService.validate should throw clear error if class-validator is unavailable', async () => {
+    const spy = jest
+      .spyOn(i18nService as any, 'getClassValidatorValidate')
+      .mockRejectedValueOnce(
+        new I18nError(
+          'class-validator is required when using i18n validation features. Install it with: npm install class-validator',
+        ),
+      );
+
+    await expect(i18nService.validate({})).rejects.toThrow(
+      'class-validator is required when using i18n validation features. Install it with: npm install class-validator',
+    );
+
+    spy.mockRestore();
   });
 });

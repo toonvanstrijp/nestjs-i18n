@@ -120,6 +120,11 @@
     "class-validator": "*",
     "rxjs": "*"
   },
+  "peerDependenciesMeta": {
+    "class-validator": {
+      "optional": true
+    }
+  },
   "browserslist": {
     "production": [
       ">0.5%",

@@ -30,13 +30,13 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     const i18n = I18nContext.current(host);
 
     if (i18n == undefined) {
-    if (!i18n) {
-      logger.error(
-        'I18n context not found! Is this function triggered by a processor or cronjob? Please use the I18nService',
-      );
+      if (!i18n) {
+        logger.error(
+          'I18n context not found! Is this function triggered by a processor or cronjob? Please use the I18nService',
+        );
+      }
+      throw new I18nError('I18n context undefined');
     }
-    throw new I18nError('I18n context undefined');
-  }
 
     const errors = formatI18nErrors(exception.errors ?? [], i18n.service, {
       lang: i18n.lang,

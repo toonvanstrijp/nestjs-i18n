@@ -35,6 +35,37 @@ i18n.t('test.HELLO', {args: [{ username: 'Toon' }, {opinion: 'Terrible :\')'}]})
 // => Hello Toon, This library is Terrible :')
 ```
 
+## Text transform pipes
+
+You can apply text transforms directly in translation files using pipe syntax.
+
+Supported transforms:
+
+- `uppercase`
+- `lowercase`
+- `capitalize`
+
+```json title="src/i18n/en/test.json"
+{
+  "PIPE_UPPERCASE": "Hello, {{name | uppercase}}!",
+  "PIPE_CHAIN": "Hello, {{name | uppercase | capitalize}}!",
+  "PIPE_UNKNOWN": "Hello, {{name | unknownPipe}}!"
+}
+```
+
+```typescript
+i18n.t('test.PIPE_UPPERCASE', { args: { name: 'john doe' } })
+// => Hello, JOHN DOE!
+
+i18n.t('test.PIPE_CHAIN', { args: { name: 'john doe' } })
+// => Hello, John doe!
+
+i18n.t('test.PIPE_UNKNOWN', { args: { name: 'john doe' } })
+// => Hello, john doe!
+```
+
+Unknown transforms are ignored, so the value is left unchanged.
+
 ## Custom formatter
 
 To use a custom formatter define the `formatter` option. This option takes a function with a `template` and `...args`.

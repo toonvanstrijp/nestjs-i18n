@@ -73,7 +73,8 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
   ): string[] | I18nValidationError[] | object {
     if (
       this.isWithErrorFormatter(this.options) &&
-      !('detailedErrors' in this.options)
+      !('detailedErrors' in this.options) &&
+      this.options.errorFormatter
     )
       return this.options.errorFormatter(validationErrors);
 
@@ -102,17 +103,19 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     exc: I18nValidationException,
     error: string[] | I18nValidationError[] | object,
   ) {
-    if ('responseBodyFormatter' in this.options) {
+    if (
+      'responseBodyFormatter' in this.options &&
+      this.options.responseBodyFormatter
+    ) {
       return this.options.responseBodyFormatter(host, exc, error);
-    } else {
-      return {
-        statusCode:
-          this.options.errorHttpStatusCode === undefined
-            ? exc.getStatus()
-            : this.options.errorHttpStatusCode,
-        message: error,
-        error: exc.getResponse(),
-      };
     }
+    return {
+      statusCode:
+        this.options.errorHttpStatusCode === undefined
+          ? exc.getStatus()
+          : this.options.errorHttpStatusCode,
+      message: error,
+      error: exc.getResponse(),
+    };
   }
 }

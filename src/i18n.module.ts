@@ -431,7 +431,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     return (resolvers || [])
       .filter(shouldResolve)
       .reduce<Provider[]>((providers, r) => {
-        if (r['use']) {
+        if ('use' in r) {
           const { use: resolver, options, ...rest } = r as any;
           const optionsToken = getI18nResolverOptionsToken(
             resolver as unknown as () => void,

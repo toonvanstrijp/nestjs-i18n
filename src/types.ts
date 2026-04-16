@@ -17,15 +17,16 @@ type PathKeyOf<T> = T extends any[]
   ? Exclude<StringKeyOf<T>, keyof any[]>
   : StringKeyOf<T>;
 
-type PathInternal<T> = T extends Record<string, any>
-  ? {
-      [K in PathKeyOf<T>]: IsAny<T[K]> extends true
-        ? never
-        : T[K] extends Record<string, any>
-          ? K | `${K}.${PathInternal<T[K]>}`
-          : K;
-    }[PathKeyOf<T>]
-  : never;
+type PathInternal<T> =
+  T extends Record<string, any>
+    ? {
+        [K in PathKeyOf<T>]: IsAny<T[K]> extends true
+          ? never
+          : T[K] extends Record<string, any>
+            ? K | `${K}.${PathInternal<T[K]>}`
+            : K;
+      }[PathKeyOf<T>]
+    : never;
 
 export type Path<T> = PathInternal<T>;
 

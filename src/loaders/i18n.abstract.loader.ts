@@ -86,24 +86,16 @@ export abstract class I18nAbstractLoader
       throw new I18nError(`i18n path (${i18nPath}) cannot be found`);
     }
 
-    if (!this.options.filePattern.match(/\*\.[A-z]+/)) {
-      throw new I18nError(
-        `filePattern should be formatted like: *.json, *.txt, *.custom etc`,
-      );
-    }
-
     const languages = await this.parseLanguages();
 
-    const pattern = new RegExp(
-      '.' + this.options.filePattern.replace('.', '.'),
-    );
+    const pattern = this.parseFilePattern(this.options.filePattern!);
 
     const files = await [
       ...languages.map((l) => path.join(i18nPath, l)),
       i18nPath,
     ].reduce(async (f: Promise<string[]>, p: string) => {
       (await f).push(
-        ...(await getFiles(p, pattern, this.options.includeSubfolders)),
+        ...(await getFiles(p, pattern, !!this.options.includeSubfolders)),
       );
       return f;
     }, Promise.resolve([]));
@@ -178,6 +170,8 @@ export abstract class I18nAbstractLoader
     options = { ...this.getDefaultOptions(), ...options };
 
     options.path = path.normalize(options.path + path.sep);
+    options.filePattern = options.filePattern ?? '*.json';
+
     if (!options.filePattern.startsWith('*.')) {
       options.filePattern = '*.' + options.filePattern;
     }
@@ -185,6 +179,41 @@ export abstract class I18nAbstractLoader
     return options;
   }
 
-  abstract formatData(data: any);
+  private parseFilePattern(filePattern: string): RegExp {
+    const singleExtensionPattern = /^\*\.([A-Za-z0-9_-]+)$/;
+    const groupedExtensionPattern = /^\*\.\{([^}]+)\}$/;
+
+    const singleExtensionMatch = filePattern.match(singleExtensionPattern);
+
+    if (singleExtensionMatch) {
+      return new RegExp(`^.*\\.${singleExtensionMatch[1]}$`);
+    }
+
+    const groupedExtensionMatch = filePattern.match(groupedExtensionPattern);
+
+    if (!groupedExtensionMatch) {
+      throw new I18nError(
+        `filePattern should be formatted like: *.json, *.txt or *.{yaml,yml}`,
+      );
+    }
+
+    const extensions = groupedExtensionMatch[1]
+      .split(/[,|]/)
+      .map((extension) => extension.trim())
+      .filter((extension) => extension.length > 0);
+
+    if (
+      extensions.length === 0 ||
+      extensions.some((extension) => !extension.match(/^[A-Za-z0-9_-]+$/))
+    ) {
+      throw new I18nError(
+        `filePattern should be formatted like: *.json, *.txt or *.{yaml,yml}`,
+      );
+    }
+
+    return new RegExp(`^.*\\.(${extensions.join('|')})$`);
+  }
+
+  abstract formatData(data: any): any;
   abstract getDefaultOptions(): Partial<I18nAbstractLoaderOptions>;
 }

@@ -1,5 +1,4 @@
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
-import { validate } from 'class-validator';
 import {
   BehaviorSubject,
   Observable,
@@ -36,6 +35,11 @@ const translationTransformPipes: Record<string, (value: string) => string> = {
       ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
       : value,
 };
+
+type ClassValidatorValidate = (
+  value: any,
+  options?: Record<string, any>,
+) => Promise<any[]>;
 
 export type TranslateOptions = {
   lang?: string;
@@ -480,7 +484,22 @@ export class I18nService<K = Record<string, unknown>>
     value: any,
     options?: TranslateOptions,
   ): Promise<I18nValidationError[]> {
+    const validate = await this.getClassValidatorValidate();
     const errors = await validate(value, this.i18nOptions.validatorOptions);
     return formatI18nErrors(errors, this, options);
+  }
+
+  private async getClassValidatorValidate(): Promise<ClassValidatorValidate> {
+    try {
+      const module = await import('class-validator');
+      if (typeof module.validate !== 'function') {
+        throw new Error('Missing validate export');
+      }
+      return module.validate as ClassValidatorValidate;
+    } catch (_) {
+      throw new I18nError(
+        'class-validator is required when using i18n validation features. Install it with: npm install class-validator',
+      );
+    }
   }
 }

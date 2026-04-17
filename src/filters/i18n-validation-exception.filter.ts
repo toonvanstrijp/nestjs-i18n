@@ -116,7 +116,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       .map((error) => mapChildrenToValidationErrors(error))
       .flatten()
       .filter((item) => !!item.constraints)
-        .map((item) => Object.values(item.constraints ?? {}))
+      .map((item) => Object.values(item.constraints ?? {}))
       .flatten()
       .toArray();
   }

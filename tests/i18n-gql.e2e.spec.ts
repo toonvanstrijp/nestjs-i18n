@@ -480,7 +480,7 @@ describe('i18n module e2e graphql', () => {
               ],
               path: ['validation'],
               extensions: {
-                code: 'INTERNAL_SERVER_ERROR',
+                code: 'BAD_USER_INPUT',
                 exception: {
                   response: 'Bad Request',
                   status: 400,

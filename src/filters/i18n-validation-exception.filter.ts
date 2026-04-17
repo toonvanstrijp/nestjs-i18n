@@ -27,7 +27,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     },
   ) {}
   catch(exception: I18nValidationException, host: ArgumentsHost) {
-    const i18n = I18nContext.current(host);
+    const i18n = I18nContext.current(host) ?? I18nContext.current();
 
     if (i18n == undefined) {
       if (!i18n) {
@@ -57,8 +57,31 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
           .send(responseBody);
         break;
       case 'graphql':
-        exception.errors = normalizedErrors as I18nValidationError[];
-        return exception;
+        return this.createGraphQLError(exception, normalizedErrors);
+    }
+  }
+
+  private createGraphQLError(
+    exception: I18nValidationException,
+    errors: string[] | I18nValidationError[] | object,
+  ) {
+    const status = this.options.errorHttpStatusCode || exception.getStatus();
+
+    try {
+      // Load lazily so non-GraphQL consumers don't need the graphql package.
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { GraphQLError } = require('graphql');
+
+      return new GraphQLError(exception.message, {
+        extensions: {
+          code: 'BAD_USER_INPUT',
+          status,
+          errors,
+        },
+      });
+    } catch {
+      exception.errors = errors as I18nValidationError[];
+      return exception;
     }
   }
 
@@ -94,7 +117,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       .map((error) => mapChildrenToValidationErrors(error))
       .flatten()
       .filter((item) => !!item.constraints)
-      .map((item) => Object.values(item.constraints))
+      .map((item) => Object.values(item.constraints ?? {}))
       .flatten()
       .toArray();
   }

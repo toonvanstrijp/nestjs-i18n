@@ -495,9 +495,9 @@ describe('i18n module with loader watch', () => {
     );
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    expect(i18nService.translate('invalid.RECOVERED', { lang: 'nl' })).toEqual(
-      'werkt',
-    );
+    expect(
+      i18nService.translate<any>('invalid.RECOVERED', { lang: 'nl' }),
+    ).toEqual('werkt');
   });
 });
 

@@ -7,6 +7,7 @@ import {
   I18nLoader,
   i18nValidationMessage,
 } from '../src';
+import { I18nError } from '../src/i18n.error';
 import { I18nTranslations } from './generated/i18n.generated';
 import { plainToInstance } from 'class-transformer';
 import { PostsDto } from './app/dto/create-posts.dto';
@@ -407,6 +408,7 @@ describe('i18n module with loader watch', () => {
   let i18nLoader: I18nLoader;
 
   const newTranslationPath = path.join(__dirname, '/i18n/nl/test2.json');
+  const invalidTranslationPath = path.join(__dirname, '/i18n/nl/invalid.json');
   const newLanguagePath = path.join(__dirname, '/i18n/de/');
   let i18nModule: TestingModule;
   beforeAll(async () => {
@@ -430,6 +432,11 @@ describe('i18n module with loader watch', () => {
     await i18nModule.close();
     try {
       fs.unlinkSync(newTranslationPath);
+    } catch (e) {
+      // ignore
+    }
+    try {
+      fs.unlinkSync(invalidTranslationPath);
     } catch (e) {
       // ignore
     }
@@ -471,6 +478,26 @@ describe('i18n module with loader watch', () => {
     expect(languages).toContain('de');
     const translations = i18nService.getTranslations();
     expect(Object.keys(translations)).toContain('de');
+  });
+
+  it('i18n should ignore invalid json changes and recover on next valid change', async () => {
+    fs.writeFileSync(invalidTranslationPath, '{"BROKEN":', 'utf8');
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toEqual(
+      'Hallo',
+    );
+
+    fs.writeFileSync(
+      invalidTranslationPath,
+      JSON.stringify({ RECOVERED: 'werkt' }),
+      'utf8',
+    );
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    expect(
+      i18nService.translate<any>('invalid.RECOVERED', { lang: 'nl' }),
+    ).toEqual('werkt');
   });
 });
 
@@ -677,5 +704,21 @@ describe('i18n module with fallbacks', () => {
         ],
       },
     ]);
+  });
+
+  it('i18nService.validate should throw clear error if class-validator is unavailable', async () => {
+    const spy = jest
+      .spyOn(i18nService as any, 'getClassValidatorValidate')
+      .mockRejectedValueOnce(
+        new I18nError(
+          'class-validator is required when using i18n validation features. Install it with: npm install class-validator',
+        ),
+      );
+
+    await expect(i18nService.validate({})).rejects.toThrow(
+      'class-validator is required when using i18n validation features. Install it with: npm install class-validator',
+    );
+
+    spy.mockRestore();
   });
 });

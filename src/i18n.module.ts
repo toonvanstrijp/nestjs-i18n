@@ -93,6 +93,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
       if (['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
         const app = this.adapter.httpAdapter.getInstance();
+        app.locals ??= {};
         app.locals['t'] = (key: string, lang: any, args: any) => {
           return this.i18n.t(key, { lang, args });
         };
@@ -157,18 +158,28 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
   configure(consumer: NestMiddlewareConsumer) {
     if (this.i18nOptions.disableMiddleware) return;
 
-    consumer.apply(I18nMiddleware).forRoutes('*path');
+    const middlewareRoute = usingFastify(consumer) ? '*' : '*path';
+    consumer.apply(I18nMiddleware).forRoutes(middlewareRoute);
 
     if (usingFastify(consumer)) {
       consumer.httpAdapter
         .getInstance()
         .addHook('preHandler', async (request: any, reply: any) => {
+          const locals: Record<string, unknown> = {
+            ...reply.locals,
+          };
+
           if (request.raw.i18nLang) {
-            reply.locals = {
-              ...reply.locals,
-              i18nLang: request.raw.i18nLang,
+            locals.i18nLang = request.raw.i18nLang;
+          }
+
+          if (['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
+            locals.t = (key: string, lang: any, args: any) => {
+              return this.i18n.t(key, { lang, args });
             };
           }
+
+          reply.locals = locals;
         });
     }
   }
@@ -428,8 +439,8 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
   private static createResolverProviders(resolvers?: I18nOptionResolver[]) {
     if (!resolvers || resolvers.length === 0) {
-      logger.error(
-        `No resolvers provided! nestjs-i18n won't work properly, please follow the quick-start guide: https://nestjs-i18n.com/quick-start`,
+      logger.log(
+        `No resolvers provided. Set the language manually per request or configure resolvers: https://nestjs-i18n.com/quick-start`,
       );
     }
     return (resolvers || [])

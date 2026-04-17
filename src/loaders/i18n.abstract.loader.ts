@@ -1,13 +1,16 @@
 import { I18nLoader } from './i18n.loader';
 import { I18N_LOADER_OPTIONS } from '../i18n.constants';
-import { Inject, OnModuleDestroy } from '@nestjs/common';
+import { Inject, Logger, OnModuleDestroy } from '@nestjs/common';
 import * as path from 'path';
 import { readFile } from 'fs/promises';
 import { exists, getDirectories, getFiles } from '../utils';
 import { I18nTranslation } from '../interfaces';
 import {
+  EMPTY,
   Observable,
   Subject,
+  catchError,
+  from,
   merge as ObservableMerge,
   of as ObservableOf,
   switchMap,
@@ -31,6 +34,8 @@ export abstract class I18nAbstractLoader
   extends I18nLoader
   implements OnModuleDestroy
 {
+  private readonly logger = new Logger(I18nAbstractLoader.name);
+
   private watcher?: chokidar.FSWatcher;
 
   private events: Subject<string> = new Subject();
@@ -61,7 +66,19 @@ export abstract class I18nAbstractLoader
     if (this.options.watch) {
       return ObservableMerge(
         ObservableOf(await this.parseLanguages()),
-        this.events.pipe(switchMap(() => this.parseLanguages())),
+        this.events.pipe(
+          switchMap(() =>
+            from(this.parseLanguages()).pipe(
+              catchError((error) => {
+                this.logger.error(
+                  'Error while parsing i18n languages. Ignoring this change.',
+                  error,
+                );
+                return EMPTY;
+              }),
+            ),
+          ),
+        ),
       );
     }
     return this.parseLanguages();
@@ -71,7 +88,19 @@ export abstract class I18nAbstractLoader
     if (this.options.watch) {
       return ObservableMerge(
         ObservableOf(await this.parseTranslations()),
-        this.events.pipe(switchMap(() => this.parseTranslations())),
+        this.events.pipe(
+          switchMap(() =>
+            from(this.parseTranslations()).pipe(
+              catchError((error) => {
+                this.logger.error(
+                  'Error while parsing i18n translations. Ignoring this change.',
+                  error,
+                );
+                return EMPTY;
+              }),
+            ),
+          ),
+        ),
       );
     }
     return this.parseTranslations();
@@ -86,24 +115,16 @@ export abstract class I18nAbstractLoader
       throw new I18nError(`i18n path (${i18nPath}) cannot be found`);
     }
 
-    if (!this.options.filePattern.match(/\*\.[A-z]+/)) {
-      throw new I18nError(
-        `filePattern should be formatted like: *.json, *.txt, *.custom etc`,
-      );
-    }
-
     const languages = await this.parseLanguages();
 
-    const pattern = new RegExp(
-      '.' + this.options.filePattern.replace('.', '.'),
-    );
+    const pattern = this.parseFilePattern(this.options.filePattern!);
 
     const files = await [
       ...languages.map((l) => path.join(i18nPath, l)),
       i18nPath,
     ].reduce(async (f: Promise<string[]>, p: string) => {
       (await f).push(
-        ...(await getFiles(p, pattern, this.options.includeSubfolders)),
+        ...(await getFiles(p, pattern, !!this.options.includeSubfolders)),
       );
       return f;
     }, Promise.resolve([]));
@@ -120,8 +141,15 @@ export abstract class I18nAbstractLoader
         global = true;
       }
 
-      // const data = JSON.parse(await readFile(file, 'utf8'));
-      const data = this.formatData(await readFile(file, 'utf8'));
+      let data: any;
+      try {
+        data = this.formatData(await readFile(file, 'utf8'));
+      } catch (e) {
+        const error = e as Error;
+        throw new I18nError(
+          `Error parsing translation file "${file}": ${error.message}`,
+        );
+      }
 
       const prefix = [...pathParts.slice(1), path.basename(file).split('.')[0]];
 
@@ -178,6 +206,8 @@ export abstract class I18nAbstractLoader
     options = { ...this.getDefaultOptions(), ...options };
 
     options.path = path.normalize(options.path + path.sep);
+    options.filePattern = options.filePattern ?? '*.json';
+
     if (!options.filePattern.startsWith('*.')) {
       options.filePattern = '*.' + options.filePattern;
     }
@@ -185,6 +215,41 @@ export abstract class I18nAbstractLoader
     return options;
   }
 
-  abstract formatData(data: any);
+  private parseFilePattern(filePattern: string): RegExp {
+    const singleExtensionPattern = /^\*\.([A-Za-z0-9_-]+)$/;
+    const groupedExtensionPattern = /^\*\.\{([^}]+)\}$/;
+
+    const singleExtensionMatch = filePattern.match(singleExtensionPattern);
+
+    if (singleExtensionMatch) {
+      return new RegExp(`^.*\\.${singleExtensionMatch[1]}$`);
+    }
+
+    const groupedExtensionMatch = filePattern.match(groupedExtensionPattern);
+
+    if (!groupedExtensionMatch) {
+      throw new I18nError(
+        `filePattern should be formatted like: *.json, *.txt or *.{yaml,yml}`,
+      );
+    }
+
+    const extensions = groupedExtensionMatch[1]
+      .split(/[,|]/)
+      .map((extension) => extension.trim())
+      .filter((extension) => extension.length > 0);
+
+    if (
+      extensions.length === 0 ||
+      extensions.some((extension) => !extension.match(/^[A-Za-z0-9_-]+$/))
+    ) {
+      throw new I18nError(
+        `filePattern should be formatted like: *.json, *.txt or *.{yaml,yml}`,
+      );
+    }
+
+    return new RegExp(`^.*\\.(${extensions.join('|')})$`);
+  }
+
+  abstract formatData(data: any): any;
   abstract getDefaultOptions(): Partial<I18nAbstractLoaderOptions>;
 }

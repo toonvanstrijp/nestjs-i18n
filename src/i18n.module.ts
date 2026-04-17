@@ -93,6 +93,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
       if (['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
         const app = this.adapter.httpAdapter.getInstance();
+        app.locals ??= {};
         app.locals['t'] = (key: string, lang: any, args: any) => {
           return this.i18n.t(key, { lang, args });
         };
@@ -164,12 +165,21 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       consumer.httpAdapter
         .getInstance()
         .addHook('preHandler', async (request: any, reply: any) => {
+          const locals: Record<string, unknown> = {
+            ...reply.locals,
+          };
+
           if (request.raw.i18nLang) {
-            reply.locals = {
-              ...reply.locals,
-              i18nLang: request.raw.i18nLang,
+            locals.i18nLang = request.raw.i18nLang;
+          }
+
+          if (['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
+            locals.t = (key: string, lang: any, args: any) => {
+              return this.i18n.t(key, { lang, args });
             };
           }
+
+          reply.locals = locals;
         });
     }
   }

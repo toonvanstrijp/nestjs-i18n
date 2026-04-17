@@ -69,6 +69,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
 
     try {
       // Load lazily so non-GraphQL consumers don't need the graphql package.
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { GraphQLError } = require('graphql');
 
       return new GraphQLError(exception.message, {

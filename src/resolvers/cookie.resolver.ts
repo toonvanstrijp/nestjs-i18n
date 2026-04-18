@@ -13,7 +13,7 @@ export class CookieResolver implements I18nResolver {
     private readonly cookieNames: string[] = ['lang'],
   ) {}
 
-  resolve(context: ExecutionContext): Promise<string | string[] | undefined> {
+  resolve(context: ExecutionContext): string | string[] | undefined {
     let req: any;
 
     switch (context.getType() as string) {

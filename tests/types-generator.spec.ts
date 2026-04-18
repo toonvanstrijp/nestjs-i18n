@@ -67,7 +67,7 @@ describe('types generator', () => {
     } finally {
       try {
         fs.unlinkSync(yamlOutputPath);
-      } catch{
+      } catch {
         // ignore
       }
     }

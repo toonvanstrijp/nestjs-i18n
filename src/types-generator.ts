@@ -1,6 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { I18nAbstractLoaderOptions, I18nJsonLoader, I18nYamlLoader } from './loaders';
+import {
+  I18nAbstractLoaderOptions,
+  I18nJsonLoader,
+  I18nYamlLoader,
+} from './loaders';
 import { I18nTranslation } from './interfaces';
 import { mergeDeep } from './utils';
 import { I18nError } from './i18n.error';
@@ -54,7 +58,7 @@ export async function generateI18nTypes(
     let currentFileContent: string | null = null;
     try {
       currentFileContent = fs.readFileSync(options.outputPath, 'utf8');
-    } catch  {
+    } catch {
       currentFileContent = null;
     }
 

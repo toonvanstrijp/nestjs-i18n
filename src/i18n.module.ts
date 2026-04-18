@@ -144,7 +144,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
               logger.log('No changes detected');
             }
           });
-      } catch  {
+      } catch {
         logger.error(
           'typescript package not found, types generation failed. Please install typescript as a dev dependency to enable this feature.',
         );

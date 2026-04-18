@@ -26,9 +26,10 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "nestjs-i18n-types": "./dist/cli/generate-types.js"
+    "nestjs-i18n": "./bin/nests-i18n.mjs"
   },
   "files": [
+    "bin",
     "dist"
   ],
   "scripts": {
@@ -57,7 +58,7 @@
     "doc:write-translations": "docusaurus write-translations",
     "doc:write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
-    "generate:types": "nestjs-i18n-types",
+    "generate:types": "node ./bin/nests-i18n.mjs types",
     "verify": "npm run format:check && npm run lint && npm run test:cov"
   },
   "devDependencies": {
@@ -116,7 +117,8 @@
     "cookie": "^0.7.0",
     "iterare": "^1.2.1",
     "js-yaml": "^4.1.0",
-    "string-format": "^2.0.0"
+    "string-format": "^2.0.0",
+    "commander": "^14.0.3"
   },
   "peerDependencies": {
     "@nestjs/common": "*",

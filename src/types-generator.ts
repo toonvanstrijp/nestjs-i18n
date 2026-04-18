@@ -1,20 +1,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { I18nJsonLoader, I18nYamlLoader } from './loaders';
+import { I18nAbstractLoaderOptions, I18nJsonLoader, I18nYamlLoader } from './loaders';
 import { I18nTranslation } from './interfaces';
 import { mergeDeep } from './utils';
 import { I18nError } from './i18n.error';
 
 type LoaderFormat = 'json' | 'yaml';
 
-type LoaderOptions = {
-  path: string;
-  includeSubfolders?: boolean;
-  filePattern?: string;
-  watch?: boolean;
-};
-
-export interface GenerateI18nTypesOptions extends LoaderOptions {
+export interface GenerateI18nTypesOptions extends I18nAbstractLoaderOptions {
   outputPath: string;
   format?: LoaderFormat;
 }

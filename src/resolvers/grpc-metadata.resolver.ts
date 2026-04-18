@@ -12,7 +12,7 @@ export class GrpcMetadataResolver implements I18nResolver {
   async resolve(
     context: ExecutionContext,
   ): Promise<string | string[] | undefined> {
-    let lang: string;
+    let lang  = undefined;
 
     switch (context.getType() as string) {
       case 'rpc':

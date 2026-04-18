@@ -23,6 +23,7 @@ describe('types generator', () => {
       path: join(__dirname, 'i18n'),
       outputPath,
       format: 'json',
+      watch: false,
     });
 
     expect(result.outputPath).toBe(outputPath);
@@ -38,6 +39,7 @@ describe('types generator', () => {
       path: join(__dirname, 'i18n'),
       outputPath,
       format: 'json',
+      watch: false,
     });
 
     expect(result.written).toBe(false);
@@ -55,6 +57,7 @@ describe('types generator', () => {
         path: join(__dirname, 'i18n'),
         outputPath: yamlOutputPath,
         format: 'yaml',
+        watch: false,
       });
 
       expect(result.written).toBe(true);

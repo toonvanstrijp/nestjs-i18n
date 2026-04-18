@@ -19,7 +19,7 @@ export class GrpcMetadataResolver implements I18nResolver {
         const metadata = context.switchToRpc().getContext() as Metadata;
         for (const key of this.keys) {
           const [value] = metadata.get(key);
-          if (!!value) {
+          if (value) {
             lang = value as string;
             break;
           }

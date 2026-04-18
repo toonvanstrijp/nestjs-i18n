@@ -61,7 +61,7 @@ export async function generateI18nTypes(
     let currentFileContent: string | null = null;
     try {
       currentFileContent = fs.readFileSync(options.outputPath, 'utf8');
-    } catch (_) {
+    } catch  {
       currentFileContent = null;
     }
 

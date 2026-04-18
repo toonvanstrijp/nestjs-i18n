@@ -18,6 +18,8 @@ import {
 import * as chokidar from 'chokidar';
 import { I18nError } from '../i18n.error';
 
+
+// merge options
 export interface I18nAbstractLoaderOptions {
   path: string;
   includeSubfolders?: boolean;
@@ -124,7 +126,7 @@ export abstract class I18nAbstractLoader
       i18nPath,
     ].reduce(async (f: Promise<string[]>, p: string) => {
       (await f).push(
-        ...(await getFiles(p, pattern, !!this.options.includeSubfolders)),
+        ...(await getFiles(p, pattern, this.options.includeSubfolders)),
       );
       return f;
     }, Promise.resolve([]));

@@ -29,7 +29,7 @@ function validationErrorToI18n(e: ValidationError): I18nValidationError {
     target: e.target,
     contexts: e.contexts,
     children: e?.children?.map(validationErrorToI18n),
-    constraints: !!e.constraints
+    constraints: e.constraints
       ? Object.keys(e.constraints).reduce((result, key) => {
           result[key] = e.constraints[key];
           return result;
@@ -72,7 +72,7 @@ export function formatI18nErrors<K = Record<string, unknown>>(
     error.constraints = Object.keys(error.constraints ?? {}).reduce(
       (result, key) => {
         const [translationKey, argsString] = error.constraints[key].split('|');
-        const args = !!argsString ? JSON.parse(argsString) : {};
+        const args = argsString ? JSON.parse(argsString) : {};
         const constraints = args.constraints
           ? args.constraints.reduce((acc: object, cur: any, index: number) => {
               acc[index.toString()] = cur;

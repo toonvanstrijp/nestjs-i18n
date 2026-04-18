@@ -13,7 +13,7 @@ describe('types generator', () => {
   afterAll(() => {
     try {
       fs.unlinkSync(outputPath);
-    } catch (_) {
+    } catch {
       // ignore
     }
   });
@@ -64,7 +64,7 @@ describe('types generator', () => {
     } finally {
       try {
         fs.unlinkSync(yamlOutputPath);
-      } catch (_) {
+      } catch{
         // ignore
       }
     }

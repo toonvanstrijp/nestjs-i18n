@@ -124,7 +124,7 @@ export class I18nService<K = Record<string, unknown>>
       const translationKeyMissing = `Translation "${
         key as string
       }" in "${lang}" does not exist.`;
-      if (lang !== this.i18nOptions.fallbackLanguage || !!defaultValue) {
+      if (lang !== this.i18nOptions.fallbackLanguage || defaultValue) {
         if (this.i18nOptions.logging && this.i18nOptions.throwOnMissingKey) {
           this.logger.error(translationKeyMissing);
           throw new I18nError(translationKeyMissing);
@@ -496,7 +496,7 @@ export class I18nService<K = Record<string, unknown>>
         throw new Error('Missing validate export');
       }
       return module.validate as ClassValidatorValidate;
-    } catch (_) {
+    } catch {
       throw new I18nError(
         'class-validator is required when using i18n validation features. Install it with: npm install class-validator',
       );

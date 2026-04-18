@@ -37,11 +37,7 @@ export { I18nMiddleware } from './middlewares/i18n.middleware';
 export * from './pipes/i18n-validation.pipe';
 
 // utils
-export {
-  i18nValidationErrorFactory,
-  i18nValidationMessage,
-  getContextObject,
-} from './utils';
+export { i18nValidationErrorFactory, i18nValidationMessage, getContextObject } from './utils';
 
 // types
 export { Path, PathValue } from './types';

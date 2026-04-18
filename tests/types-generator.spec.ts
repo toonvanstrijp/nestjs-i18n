@@ -4,11 +4,7 @@ import * as fs from 'node:fs';
 import { generateI18nTypes } from '../src/types-generator';
 
 describe('types generator', () => {
-  const outputPath = join(
-    __dirname,
-    'generated',
-    'types-generator.generated.ts',
-  );
+  const outputPath = join(__dirname, 'generated', 'types-generator.generated.ts');
 
   afterAll(() => {
     try {
@@ -46,11 +42,7 @@ describe('types generator', () => {
   });
 
   it('should generate types from yaml translations', async () => {
-    const yamlOutputPath = join(
-      __dirname,
-      'generated',
-      'types-generator-yaml.generated.ts',
-    );
+    const yamlOutputPath = join(__dirname, 'generated', 'types-generator-yaml.generated.ts');
 
     try {
       const result = await generateI18nTypes({

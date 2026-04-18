@@ -71,42 +71,21 @@ describe('i18n module e2e ejs', () => {
   });
 
   it(`should render translated page`, async () => {
-    await request(app.getHttpServer())
-      .get('/hello/index')
-      .expect(200)
-      .expect('Every day');
+    await request(app.getHttpServer()).get('/hello/index').expect(200).expect('Every day');
 
-    await request(app.getHttpServer())
-      .get('/hello/index?l=nl')
-      .expect(200)
-      .expect('Iedere dag');
+    await request(app.getHttpServer()).get('/hello/index?l=nl').expect(200).expect('Iedere dag');
 
-    await request(app.getHttpServer())
-      .get('/hello/index2')
-      .expect(200)
-      .expect('Hello');
+    await request(app.getHttpServer()).get('/hello/index2').expect(200).expect('Hello');
 
-    return request(app.getHttpServer())
-      .get('/hello/index2?l=nl')
-      .expect(200)
-      .expect('Hallo');
+    return request(app.getHttpServer()).get('/hello/index2?l=nl').expect(200).expect('Hallo');
   });
 
   it(`should render page showing invalid key`, async () => {
-    await request(app.getHttpServer())
-      .get('/hello/index3')
-      .expect(200)
-      .expect('test.HI');
+    await request(app.getHttpServer()).get('/hello/index3').expect(200).expect('test.HI');
 
-    await request(app.getHttpServer())
-      .get('/hello/index3?l=pt')
-      .expect(200)
-      .expect('test.HI');
+    await request(app.getHttpServer()).get('/hello/index3?l=pt').expect(200).expect('test.HI');
 
-    return request(app.getHttpServer())
-      .get('/hello/index3?l=pt-br')
-      .expect(200)
-      .expect('test.HI');
+    return request(app.getHttpServer()).get('/hello/index3?l=pt-br').expect(200).expect('test.HI');
   });
 
   afterAll(async () => {

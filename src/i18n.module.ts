@@ -24,12 +24,7 @@ import {
   I18nOptionsFactory,
   I18nOptionResolver,
 } from './interfaces/i18n-options.interface';
-import {
-  ValueProvider,
-  ClassProvider,
-  OnModuleInit,
-  NestModule,
-} from '@nestjs/common';
+import { ValueProvider, ClassProvider, OnModuleInit, NestModule } from '@nestjs/common';
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators';
@@ -85,10 +80,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
           hbs.registerHelper('t', this.i18n.hbsHelper);
           logger.log('Handlebars helper registered');
         } catch (e) {
-          logger.error(
-            this.i18nOptions.viewEngine + ' module failed to load',
-            e,
-          );
+          logger.error(this.i18nOptions.viewEngine + ' module failed to load', e);
         }
       }
 
@@ -107,43 +99,38 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
         const typesOutputPath = this.i18nOptions.typesOutputPath;
 
-        this.translations
-          .pipe(takeUntil(this.unsubscribe))
-          .subscribe(async (t) => {
-            logger.log('Checking translation changes');
-            const object = Object.keys(t).reduce(
-              (result, key) => mergeDeep(result, t[key]),
-              {},
-            );
+        this.translations.pipe(takeUntil(this.unsubscribe)).subscribe(async (t) => {
+          logger.log('Checking translation changes');
+          const object = Object.keys(t).reduce((result, key) => mergeDeep(result, t[key]), {});
 
-            const rawContent = await ts.createTypesFile(object);
+          const rawContent = await ts.createTypesFile(object);
 
-            if (!rawContent) {
-              return;
-            }
+          if (!rawContent) {
+            return;
+          }
 
-            const outputFile = ts.annotateSourceCode(rawContent);
+          const outputFile = ts.annotateSourceCode(rawContent);
 
-            fs.mkdirSync(path.dirname(typesOutputPath), {
-              recursive: true,
-            });
-            let currentFileContent = null;
-            try {
-              currentFileContent = fs.readFileSync(typesOutputPath, 'utf8');
-            } catch (err) {
-              logger.error(err);
-            }
-            if (currentFileContent != outputFile) {
-              fs.writeFileSync(typesOutputPath, outputFile);
-              logger.log(
-                `Types generated in: ${this.i18nOptions.typesOutputPath}.
+          fs.mkdirSync(path.dirname(typesOutputPath), {
+            recursive: true,
+          });
+          let currentFileContent = null;
+          try {
+            currentFileContent = fs.readFileSync(typesOutputPath, 'utf8');
+          } catch (err) {
+            logger.error(err);
+          }
+          if (currentFileContent != outputFile) {
+            fs.writeFileSync(typesOutputPath, outputFile);
+            logger.log(
+              `Types generated in: ${this.i18nOptions.typesOutputPath}.
                 Please also add it to ignore files of your linter and formatter to avoid linting and formatting it
                 `,
-              );
-            } else {
-              logger.log('No changes detected');
-            }
-          });
+            );
+          } else {
+            logger.log('No changes detected');
+          }
+        });
       } catch {
         logger.error(
           'typescript package not found, types generation failed. Please install typescript as a dev dependency to enable this feature.',
@@ -163,28 +150,23 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     consumer.apply(I18nMiddleware).forRoutes(middlewareRoute);
 
     if (usingFastify(consumer)) {
-      consumer.httpAdapter
-        .getInstance()
-        .addHook('preHandler', async (request: any, reply: any) => {
-          const locals: Record<string, unknown> = {
-            ...reply.locals,
+      consumer.httpAdapter.getInstance().addHook('preHandler', async (request: any, reply: any) => {
+        const locals: Record<string, unknown> = {
+          ...reply.locals,
+        };
+
+        if (request.raw.i18nLang) {
+          locals.i18nLang = request.raw.i18nLang;
+        }
+
+        if (this.i18nOptions.viewEngine && ['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
+          locals.t = (key: string, lang: any, args: any) => {
+            return this.i18n.t(key, { lang, args });
           };
+        }
 
-          if (request.raw.i18nLang) {
-            locals.i18nLang = request.raw.i18nLang;
-          }
-
-          if (
-            this.i18nOptions.viewEngine &&
-            ['pug', 'ejs'].includes(this.i18nOptions.viewEngine)
-          ) {
-            locals.t = (key: string, lang: any, args: any) => {
-              return this.i18n.t(key, { lang, args });
-            };
-          }
-
-          reply.locals = locals;
-        });
+        reply.locals = locals;
+      });
     }
   }
 
@@ -221,9 +203,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
     const translationsProvider = {
       provide: I18N_TRANSLATIONS,
-      useFactory: async (
-        loader: I18nLoader,
-      ): Promise<Observable<I18nTranslation>> => {
+      useFactory: async (loader: I18nLoader): Promise<Observable<I18nTranslation>> => {
         try {
           const translation = await loader.load();
           if (translation instanceof Observable) {
@@ -282,13 +262,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
       ],
-      exports: [
-        I18N_OPTIONS,
-        I18N_RESOLVERS,
-        I18nService,
-        I18nMiddleware,
-        languagesProvider,
-      ],
+      exports: [I18N_OPTIONS, I18N_RESOLVERS, I18nService, I18nMiddleware, languagesProvider],
     };
   }
 
@@ -344,26 +318,16 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
       ],
-      exports: [
-        I18N_OPTIONS,
-        I18N_RESOLVERS,
-        I18nService,
-        I18nMiddleware,
-        asyncLanguagesProvider,
-      ],
+      exports: [I18N_OPTIONS, I18N_RESOLVERS, I18nService, I18nMiddleware, asyncLanguagesProvider],
     };
   }
 
-  private static createAsyncOptionsProvider(
-    options: I18nAsyncOptions,
-  ): Provider {
+  private static createAsyncOptionsProvider(options: I18nAsyncOptions): Provider {
     if (options.useFactory) {
       return {
         provide: I18N_OPTIONS,
         useFactory: async (...args) => {
-          return this.sanitizeI18nOptions(
-            (await options.useFactory!(...args)) as any,
-          );
+          return this.sanitizeI18nOptions((await options.useFactory!(...args)) as any);
         },
         inject: options.inject || [],
       };
@@ -371,9 +335,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     return {
       provide: I18N_OPTIONS,
       useFactory: async (optionsFactory: I18nOptionsFactory) =>
-        this.sanitizeI18nOptions(
-          (await optionsFactory.createI18nOptions()) as any,
-        ),
+        this.sanitizeI18nOptions((await optionsFactory.createI18nOptions()) as any),
       inject: [options.useClass ?? options.useExisting!],
     };
   }
@@ -434,9 +396,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     };
   }
 
-  private static sanitizeI18nOptions<T = I18nOptions | I18nAsyncOptions>(
-    options: T,
-  ) {
+  private static sanitizeI18nOptions<T = I18nOptions | I18nAsyncOptions>(options: T) {
     options = { ...defaultOptions, ...options };
     return options;
   }
@@ -447,41 +407,35 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         `No resolvers provided. Set the language manually per request or configure resolvers: https://nestjs-i18n.com/quick-start`,
       );
     }
-    return (resolvers || [])
-      .filter(shouldResolve)
-      .reduce<Provider[]>((providers, r) => {
-        if ('use' in r) {
-          const { use: resolver, options, ...rest } = r as any;
-          const optionsToken = getI18nResolverOptionsToken(
-            resolver as unknown as () => void,
-          );
-          providers.push({
-            provide: resolver,
-            useClass: resolver,
-          });
-          if (options) {
-            (rest as any).useValue = options;
-          }
-          providers.push({
-            provide: optionsToken,
-            ...(rest as any),
-          });
-        } else {
-          const optionsToken = getI18nResolverOptionsToken(
-            r as unknown as () => void,
-          );
-          providers.push({
-            provide: r,
-            useClass: r,
-            inject: [optionsToken],
-          } as any);
-          providers.push({
-            provide: optionsToken,
-            useFactory: () => undefined,
-          });
+    return (resolvers || []).filter(shouldResolve).reduce<Provider[]>((providers, r) => {
+      if ('use' in r) {
+        const { use: resolver, options, ...rest } = r as any;
+        const optionsToken = getI18nResolverOptionsToken(resolver as unknown as () => void);
+        providers.push({
+          provide: resolver,
+          useClass: resolver,
+        });
+        if (options) {
+          (rest as any).useValue = options;
         }
+        providers.push({
+          provide: optionsToken,
+          ...(rest as any),
+        });
+      } else {
+        const optionsToken = getI18nResolverOptionsToken(r as unknown as () => void);
+        providers.push({
+          provide: r,
+          useClass: r,
+          inject: [optionsToken],
+        } as any);
+        providers.push({
+          provide: optionsToken,
+          useFactory: () => undefined,
+        });
+      }
 
-        return providers;
-      }, []);
+      return providers;
+    }, []);
   }
 }

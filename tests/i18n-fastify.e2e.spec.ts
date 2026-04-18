@@ -9,10 +9,7 @@ import {
   I18nValidationPipe,
 } from '../src';
 import { HelloController } from './app/controllers/hello.controller';
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { CatController } from './app/cats/cat.controller';
@@ -54,17 +51,11 @@ describe('i18n module e2e fastify', () => {
   });
 
   it(`/GET hello should return translation`, () => {
-    return request(app.getHttpServer())
-      .get('/hello')
-      .expect(200)
-      .expect('Hello');
+    return request(app.getHttpServer()).get('/hello').expect(200).expect('Hello');
   });
 
   it(`/GET short should return translation`, () => {
-    return request(app.getHttpServer())
-      .get('/hello/short')
-      .expect(200)
-      .expect('Hello');
+    return request(app.getHttpServer()).get('/hello/short').expect(200).expect('Hello');
   });
 
   it(`/GET hello/short should return english translation when sending "en" in x-custom-lang`, () => {
@@ -128,12 +119,7 @@ describe('i18n module e2e fastify', () => {
       .get('/hello?lang=nl')
       .expect(200)
       .expect('Hallo')
-      .then(() =>
-        request(app.getHttpServer())
-          .get('/hello?l=nl')
-          .expect(200)
-          .expect('Hallo'),
-      );
+      .then(() => request(app.getHttpServer()).get('/hello?l=nl').expect(200).expect('Hallo'));
   });
 
   it(`/GET hello should return translation when providing x-custom-lang`, () => {
@@ -177,17 +163,11 @@ describe('i18n module e2e fastify', () => {
   });
 
   it(`/GET hello/context should return translation`, () => {
-    return request(app.getHttpServer())
-      .get('/hello/context')
-      .expect(200)
-      .expect('Hello');
+    return request(app.getHttpServer()).get('/hello/context').expect(200).expect('Hello');
   });
 
   it(`/GET hello/short/context should return translation`, () => {
-    return request(app.getHttpServer())
-      .get('/hello/short/context')
-      .expect(200)
-      .expect('Hello');
+    return request(app.getHttpServer()).get('/hello/short/context').expect(200).expect('Hello');
   });
 
   it(`/GET hello/short/context should return english translation when sending "en" in x-custom-lang`, () => {
@@ -252,10 +232,7 @@ describe('i18n module e2e fastify', () => {
       .expect(200)
       .expect('Hallo')
       .then(() =>
-        request(app.getHttpServer())
-          .get('/hello/context?l=nl')
-          .expect(200)
-          .expect('Hallo'),
+        request(app.getHttpServer()).get('/hello/context?l=nl').expect(200).expect('Hallo'),
       );
   });
 
@@ -340,10 +317,7 @@ describe('i18n module e2e fastify', () => {
   });
 
   it(`/GET hello/request-scope should return translation`, () => {
-    return request(app.getHttpServer())
-      .get('/hello/request-scope')
-      .expect(200)
-      .expect('Hello');
+    return request(app.getHttpServer()).get('/hello/request-scope').expect(200).expect('Hello');
   });
 
   it(`/GET hello/short/request-scope should return translation`, () => {
@@ -415,10 +389,7 @@ describe('i18n module e2e fastify', () => {
       .expect(200)
       .expect('Hallo')
       .then(() =>
-        request(app.getHttpServer())
-          .get('/hello/request-scope?l=nl')
-          .expect(200)
-          .expect('Hallo'),
+        request(app.getHttpServer()).get('/hello/request-scope?l=nl').expect(200).expect('Hallo'),
       );
   });
 
@@ -511,14 +482,11 @@ describe('i18n module e2e fastify', () => {
   });
 
   it('/GET hello/object should return translated object', () => {
-    return request(app.getHttpServer())
-      .get('/hello/object')
-      .expect(200)
-      .expect({
-        heading: 'Hello, KirillCherkalov',
-        title: 'Forgot password',
-        followLink: 'Please follow the link to set up your password',
-      });
+    return request(app.getHttpServer()).get('/hello/object').expect(200).expect({
+      heading: 'Hello, KirillCherkalov',
+      title: 'Forgot password',
+      followLink: 'Please follow the link to set up your password',
+    });
   });
 
   it('/GET hello/array should return translated array', () => {
@@ -599,9 +567,7 @@ describe('i18n module e2e fastify', () => {
     await request(app.getHttpServer())
       .get('/hello/guard')
       .expect(200)
-      .expect((res) =>
-        expect(res.headers['x-test']).toBe('Current language: en'),
-      );
+      .expect((res) => expect(res.headers['x-test']).toBe('Current language: en'));
     await request(app.getHttpServer())
       .get('/hello/guard')
       .set('x-custom-lang', 'nl')
@@ -610,10 +576,7 @@ describe('i18n module e2e fastify', () => {
   });
 
   it('/GET hello/exception should return correct lang', async () => {
-    await request(app.getHttpServer())
-      .get('/hello/exception')
-      .expect(500)
-      .expect({ lang: 'en' });
+    await request(app.getHttpServer()).get('/hello/exception').expect(500).expect({ lang: 'en' });
     await request(app.getHttpServer())
       .get('/hello/exception')
       .set('x-custom-lang', 'nl')

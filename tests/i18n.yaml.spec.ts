@@ -34,9 +34,7 @@ describe('i18n yaml module', () => {
   });
 
   it('i18n service should load yaml files by default', () => {
-    expect(i18nService.translate('yamlonly.HELLO', { lang: 'en' })).toBe(
-      'Hello from yaml',
-    );
+    expect(i18nService.translate('yamlonly.HELLO', { lang: 'en' })).toBe('Hello from yaml');
   });
 
   /*

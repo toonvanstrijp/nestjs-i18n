@@ -8,10 +8,10 @@
     "skipLibCheck": true,
     "target": "es2021",
     "sourceMap": true,
-    "baseUrl": "./",
+    "rootDir": "./src", // no longer inferred from source files (see §1.5)
     "incremental": true,
     "newLine":"lf"
   },
-  "include": ["**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

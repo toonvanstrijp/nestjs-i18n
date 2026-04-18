@@ -4,7 +4,11 @@ import * as fs from 'node:fs';
 import { generateI18nTypes } from '../src/types-generator';
 
 describe('types generator', () => {
-  const outputPath = join(__dirname, 'generated', 'types-generator.generated.ts');
+  const outputPath = join(
+    __dirname,
+    'generated',
+    'types-generator.generated.ts',
+  );
 
   afterAll(() => {
     try {

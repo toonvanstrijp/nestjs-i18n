@@ -52,8 +52,8 @@ export type TranslateOptions = {
 export class I18nService<K = Record<string, unknown>>
   implements I18nTranslator<K>, OnModuleDestroy
 {
-  private supportedLanguages: string[];
-  private translations: I18nTranslation;
+  private supportedLanguages!: string[];
+  private translations!: I18nTranslation;
   private pluralRules = new Map<string, Intl.PluralRules>();
   private transformPlaceholderCounter = 0;
 
@@ -225,14 +225,16 @@ export class I18nService<K = Record<string, unknown>>
     const [firstKey] = keys;
 
     const args = options?.args;
+    const translationObject =
+      typeof translations === 'string' ? undefined : translations;
 
-    if (keys.length > 1 && !translations[key]) {
+    if (keys.length > 1 && translationObject && !translationObject[key]) {
       const newKey = keys.slice(1, keys.length).join('.');
 
-      if (translations && translations[firstKey]) {
+      if (translationObject[firstKey]) {
         return this.translateObject(
           newKey,
-          translations[firstKey],
+          translationObject[firstKey] as I18nTranslation | string,
           lang,
           options,
           rootTranslations,
@@ -240,18 +242,22 @@ export class I18nService<K = Record<string, unknown>>
       }
     }
 
-    let translation = translations[key] ?? options?.defaultValue;
+    let translation =
+      (translationObject ? translationObject[key] : translations) ??
+      options?.defaultValue;
 
-    if (translation && (args || (args instanceof Array && args.length > 0))) {
+    if (translation && args !== undefined) {
       const pluralObject = this.getPluralObject(translation);
-      if (pluralObject && args && args['count'] !== undefined) {
-        const count = Number(args['count']);
+      const countValue =
+        !Array.isArray(args) && args ? args['count'] : undefined;
+      if (pluralObject && countValue !== undefined) {
+        const count = Number(countValue);
 
-        if (!this.pluralRules.has(lang)) {
-          this.pluralRules.set(lang, new Intl.PluralRules(lang));
+        let pluralRules = this.pluralRules.get(lang);
+        if (!pluralRules) {
+          pluralRules = new Intl.PluralRules(lang);
+          this.pluralRules.set(lang, pluralRules);
         }
-
-        const pluralRules = this.pluralRules.get(lang);
         const pluralCategory = pluralRules.select(count);
 
         if (count === 0 && pluralObject['zero']) {
@@ -279,11 +285,18 @@ export class I18nService<K = Record<string, unknown>>
 
         return result;
       }
+      if (typeof translation !== 'string') {
+        return translation;
+      }
       const { template, formatterArgs } = this.applyTranslationTransformPipes(
         translation,
         args,
       );
-      translation = this.i18nOptions.formatter(template, ...formatterArgs);
+      if (this.i18nOptions.formatter) {
+        translation = this.i18nOptions.formatter(template, ...formatterArgs);
+      } else {
+        translation = template;
+      }
       const nestedTranslations = this.getNestedTranslations(translation);
       if (nestedTranslations && nestedTranslations.length > 0) {
         let offset = 0;
@@ -295,7 +308,7 @@ export class I18nService<K = Record<string, unknown>>
                 lang,
                 {
                   ...options,
-                  args: { parent: options.args, ...nestedTranslation.args },
+                  args: { parent: options?.args, ...nestedTranslation.args },
                 },
               ) as string) ?? '')
             : '';
@@ -451,30 +464,31 @@ export class I18nService<K = Record<string, unknown>>
   private getNestedTranslations(
     translation: string,
   ): { index: number; length: number; key: string; args: any }[] | undefined {
-    const list = [];
+    const list: { index: number; length: number; key: string; args: any }[] =
+      [];
     const regex = /\$t\((.*?)(,(.*?))?\)/g;
-    let result: RegExpExecArray;
-    while ((result = regex.exec(translation))) {
-      let key = undefined;
+    let result: RegExpExecArray | null;
+    while ((result = regex.exec(translation)) !== null) {
+      const key = result[1]?.trim();
+      if (!key) {
+        continue;
+      }
+
       let args = {};
-      let index = undefined;
-      let length = undefined;
-      if (result && result.length > 0) {
-        key = result[1].trim();
-        index = result.index;
-        length = result[0].length;
-        if (result.length >= 3 && result[3]) {
-          try {
-            args = JSON.parse(result[3]);
-          } catch (e) {
-            this.logger.error(`Error while parsing JSON`, e);
-          }
+      if (result.length >= 3 && result[3]) {
+        try {
+          args = JSON.parse(result[3]);
+        } catch (e) {
+          this.logger.error(`Error while parsing JSON`, e);
         }
       }
-      if (key) {
-        list.push({ index, length, key, args });
-      }
-      result = undefined;
+
+      list.push({
+        index: result.index,
+        length: result[0].length,
+        key,
+        args,
+      });
     }
 
     return list.length > 0 ? list : undefined;

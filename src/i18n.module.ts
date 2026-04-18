@@ -19,6 +19,7 @@ import {
 import { I18nService } from './services/i18n.service';
 import {
   I18nAsyncOptions,
+  Formatter,
   I18nOptions,
   I18nOptionsFactory,
   I18nOptionResolver,
@@ -46,7 +47,7 @@ export const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
-  formatter: format,
+  formatter: format as unknown as Formatter,
   logging: true,
   throwOnMissingKey: false,
   loader: I18nJsonLoader,
@@ -173,7 +174,10 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
             locals.i18nLang = request.raw.i18nLang;
           }
 
-          if (['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
+          if (
+            this.i18nOptions.viewEngine &&
+            ['pug', 'ejs'].includes(this.i18nOptions.viewEngine)
+          ) {
             locals.t = (key: string, lang: any, args: any) => {
               return this.i18n.t(key, { lang, args });
             };
@@ -197,7 +201,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
     const i18nLoaderProvider: ClassProvider = {
       provide: I18nLoader,
-      useClass: options.loader,
+      useClass: options.loader!,
     };
 
     const i18nLoaderOptionsProvider: ValueProvider = {
@@ -306,7 +310,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
     const i18nLoaderProvider: ClassProvider<I18nLoader> = {
       provide: I18nLoader,
-      useClass: options.loader,
+      useClass: options.loader!,
     };
 
     const i18nLanguagesSubjectProvider: ValueProvider = {
@@ -358,7 +362,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         provide: I18N_OPTIONS,
         useFactory: async (...args) => {
           return this.sanitizeI18nOptions(
-            (await options.useFactory(...args)) as any,
+            (await options.useFactory!(...args)) as any,
           );
         },
         inject: options.inject || [],
@@ -370,7 +374,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         this.sanitizeI18nOptions(
           (await optionsFactory.createI18nOptions()) as any,
         ),
-      inject: [options.useClass || options.useExisting],
+      inject: [options.useClass ?? options.useExisting!],
     };
   }
 

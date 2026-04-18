@@ -197,6 +197,7 @@ async function handleGenerateTypes(options: any) {
   } else {
     process.stdout.write(`No changes detected in: ${result.outputPath}\n`);
   }
+  process.exit(0);
 }
 
 main().catch((error) => {

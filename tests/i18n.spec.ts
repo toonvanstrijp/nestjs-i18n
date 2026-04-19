@@ -1,12 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as path from 'path';
 import * as fs from 'fs';
-import {
-  I18nModule,
-  I18nService,
-  I18nLoader,
-  i18nValidationMessage,
-} from '../src';
+import { I18nModule, I18nService, I18nLoader, i18nValidationMessage } from '../src';
 import { I18nError } from '../src/i18n.error';
 import { I18nTranslations } from './generated/i18n.generated';
 import { plainToInstance } from 'class-transformer';
@@ -84,12 +79,9 @@ describe('i18n module', () => {
       }),
     ).toBe('Please follow the link');
     expect(
-      i18nService.translate(
-        'test.OBJECTS_ARRAY.1.nestedArrayInstructions.0.0.instructions',
-        {
-          lang: 'en',
-        },
-      ),
+      i18nService.translate('test.OBJECTS_ARRAY.1.nestedArrayInstructions.0.0.instructions', {
+        lang: 'en',
+      }),
     ).toBe('Please try again');
 
     expect(
@@ -98,37 +90,26 @@ describe('i18n module', () => {
       }),
     ).toBe('Будь ласка, перейдіть за посиланням');
     expect(
-      i18nService.translate(
-        'test.OBJECTS_ARRAY.1.nestedArrayInstructions.0.0.instructions',
-        {
-          lang: 'uk',
-        },
-      ),
+      i18nService.translate('test.OBJECTS_ARRAY.1.nestedArrayInstructions.0.0.instructions', {
+        lang: 'uk',
+      }),
     ).toBe('Будь ласка, спробуйте ще раз');
   });
 
   it('i18n service should return fallback translation', () => {
-    expect(i18nService.translate('test.ENGLISH', { lang: 'nl' })).toBe(
-      'English',
-    );
+    expect(i18nService.translate('test.ENGLISH', { lang: 'nl' })).toBe('English');
   });
 
   it('i18n service should return fallback translation if language not registered', () => {
-    expect(i18nService.translate('test.ENGLISH', { lang: 'es' })).toBe(
-      'English',
-    );
+    expect(i18nService.translate('test.ENGLISH', { lang: 'es' })).toBe('English');
   });
 
   it('i18n service should fallback to base lang if language is not registered', () => {
-    expect(i18nService.translate('test.ENGLISH', { lang: 'de-AT' })).toBe(
-      'Englisch',
-    );
+    expect(i18nService.translate('test.ENGLISH', { lang: 'de-AT' })).toBe('Englisch');
   });
 
   it('i18n service should fallback to base lang if translation does not exist', () => {
-    expect(i18nService.translate('test.ENGLISH', { lang: 'de-DE' })).toBe(
-      'Englisch',
-    );
+    expect(i18nService.translate('test.ENGLISH', { lang: 'de-DE' })).toBe('Englisch');
   });
 
   it('i18n service should fallback to base sub region if translation does not exist', () => {
@@ -140,9 +121,7 @@ describe('i18n module', () => {
   });
 
   it('i18n service should not load the custom file', () => {
-    expect(i18nService.translate<any>('test.custom', { lang: 'en' })).toBe(
-      'test.custom',
-    );
+    expect(i18nService.translate<any>('test.custom', { lang: 'en' })).toBe('test.custom');
   });
 
   it('i18n service should return supported languages', () => {
@@ -176,17 +155,14 @@ describe('i18n module', () => {
   });
 
   it('i18n service should return key if lang is debug', () => {
-    expect(i18nService.translate('test.HELLO', { lang: 'debug' })).toBe(
-      'test.HELLO',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'debug' })).toBe('test.HELLO');
   });
 
   it('i18n service should use defaultValue if translation is missing', () => {
     expect(
       i18nService.translate<any>('test.missing', {
         lang: 'bla',
-        defaultValue:
-          'the translation is missing, nested: $t(test.HELLO), arg: {hello}',
+        defaultValue: 'the translation is missing, nested: $t(test.HELLO), arg: {hello}',
         args: { hello: 'world' },
       }),
     ).toBe('the translation is missing, nested: Hello, arg: world');
@@ -194,13 +170,10 @@ describe('i18n module', () => {
 
   it('i18n service should use defaultValue if translation is missing for nested keys', () => {
     const result = i18nService.translate<any>('test.missing.nested.keys', {
-      defaultValue:
-        'the translation is missing, nested: $t(test.HELLO), arg: {hello}',
+      defaultValue: 'the translation is missing, nested: $t(test.HELLO), arg: {hello}',
       args: { hello: 'world' },
     });
-    expect(result).toBe(
-      'the translation is missing, nested: Hello, arg: world',
-    );
+    expect(result).toBe('the translation is missing, nested: Hello, arg: world');
   });
 
   it('i18n service should support uppercase transform pipes in templates', () => {
@@ -240,9 +213,7 @@ describe('i18n module', () => {
   });
 
   it('i18n service should NOT return translation from subfolders by default', () => {
-    expect(i18nService.translate<any>('subfolder.sub-test.HELLO')).toBe(
-      'subfolder.sub-test.HELLO',
-    );
+    expect(i18nService.translate<any>('subfolder.sub-test.HELLO')).toBe('subfolder.sub-test.HELLO');
   });
 
   describe('i18n should refresh manually', () => {
@@ -271,11 +242,7 @@ describe('i18n module', () => {
     });
 
     it('i18n should load new translations', async () => {
-      fs.writeFileSync(
-        newTranslationPath,
-        JSON.stringify({ WORLD: 'wereld' }),
-        'utf8',
-      );
+      fs.writeFileSync(newTranslationPath, JSON.stringify({ WORLD: 'wereld' }), 'utf8');
       await i18nService.refresh();
       const translation = i18nService.translate<any>('test2.WORLD', {
         lang: 'nl',
@@ -326,9 +293,7 @@ describe('i18n module without trailing slash in path', () => {
   });
 
   it('i18n service should return key if translation is not found', () => {
-    expect(i18nService.translate<any>('NOT_EXISTING_KEY', { lang: 'en' })).toBe(
-      'NOT_EXISTING_KEY',
-    );
+    expect(i18nService.translate<any>('NOT_EXISTING_KEY', { lang: 'en' })).toBe('NOT_EXISTING_KEY');
   });
 });
 
@@ -356,15 +321,11 @@ describe('i18n module loads custom files', () => {
   });
 
   it('i18n service should return correct translation', () => {
-    expect(i18nService.translate<any>('test.custom', { lang: 'en' })).toBe(
-      'my custom text',
-    );
+    expect(i18nService.translate<any>('test.custom', { lang: 'en' })).toBe('my custom text');
   });
 
   it('i18n service should not load the custom file', () => {
-    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
-      'test.HELLO',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe('test.HELLO');
   });
 });
 
@@ -391,15 +352,11 @@ describe('i18n module loads custom files with wrong file pattern', () => {
   });
 
   it('i18n service should return correct translation', () => {
-    expect(i18nService.translate<any>('test.custom', { lang: 'en' })).toBe(
-      'my custom text',
-    );
+    expect(i18nService.translate<any>('test.custom', { lang: 'en' })).toBe('my custom text');
   });
 
   it('i18n service should not load the custom file', () => {
-    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe(
-      'test.HELLO',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe('test.HELLO');
   });
 });
 
@@ -455,11 +412,7 @@ describe('i18n module with loader watch', () => {
   });
 
   it('i18n should load new translations', async () => {
-    fs.writeFileSync(
-      newTranslationPath,
-      JSON.stringify({ WORLD: 'wereld' }),
-      'utf8',
-    );
+    fs.writeFileSync(newTranslationPath, JSON.stringify({ WORLD: 'wereld' }), 'utf8');
     await new Promise((resolve) => setTimeout(resolve, 500));
     const translation = i18nService.translate<any>('test2.WORLD', {
       lang: 'nl',
@@ -484,20 +437,12 @@ describe('i18n module with loader watch', () => {
     fs.writeFileSync(invalidTranslationPath, '{"BROKEN":', 'utf8');
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toEqual(
-      'Hallo',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toEqual('Hallo');
 
-    fs.writeFileSync(
-      invalidTranslationPath,
-      JSON.stringify({ RECOVERED: 'werkt' }),
-      'utf8',
-    );
+    fs.writeFileSync(invalidTranslationPath, JSON.stringify({ RECOVERED: 'werkt' }), 'utf8');
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    expect(
-      i18nService.translate<any>('invalid.RECOVERED', { lang: 'nl' }),
-    ).toEqual('werkt');
+    expect(i18nService.translate<any>('invalid.RECOVERED', { lang: 'nl' })).toEqual('werkt');
   });
 });
 
@@ -538,12 +483,8 @@ describe('i18n module with fallbacks', () => {
   it('i18n service should return english translation', () => {
     expect(i18nService.translate('test.HELLO')).toBe('Hello');
     expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe('Hello');
-    expect(i18nService.translate('test.HELLO', { lang: 'en-US' })).toBe(
-      'Hello',
-    );
-    expect(i18nService.translate('test.HELLO', { lang: 'en_US' })).toBe(
-      'Hello',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'en-US' })).toBe('Hello');
+    expect(i18nService.translate('test.HELLO', { lang: 'en_US' })).toBe('Hello');
   });
 
   it('i18n service should return dutch translation', () => {
@@ -552,15 +493,9 @@ describe('i18n module with fallbacks', () => {
 
   it('i18n service should return french translation', () => {
     expect(i18nService.translate('test.HELLO', { lang: 'fr' })).toBe('Bonjour');
-    expect(i18nService.translate('test.HELLO', { lang: 'fr-BE' })).toBe(
-      'Bonjour',
-    );
-    expect(i18nService.translate('test.HELLO', { lang: 'fr_BE' })).toBe(
-      'Bonjour',
-    );
-    expect(i18nService.translate('test.HELLO', { lang: 'en-CA' })).toBe(
-      'Bonjour',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'fr-BE' })).toBe('Bonjour');
+    expect(i18nService.translate('test.HELLO', { lang: 'fr_BE' })).toBe('Bonjour');
+    expect(i18nService.translate('test.HELLO', { lang: 'en-CA' })).toBe('Bonjour');
   });
 
   it('i18n service should return portuguese-brazil translation', () => {

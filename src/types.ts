@@ -5,17 +5,11 @@ export interface NestMiddlewareConsumer extends MiddlewareConsumer {
   httpAdapter: AbstractHttpAdapter;
 }
 
-type IsAny<T> = unknown extends T
-  ? [keyof T] extends [never]
-    ? false
-    : true
-  : false;
+type IsAny<T> = unknown extends T ? ([keyof T] extends [never] ? false : true) : false;
 
 type StringKeyOf<T> = Extract<keyof T, string>;
 
-type PathKeyOf<T> = T extends any[]
-  ? Exclude<StringKeyOf<T>, keyof any[]>
-  : StringKeyOf<T>;
+type PathKeyOf<T> = T extends any[] ? Exclude<StringKeyOf<T>, keyof any[]> : StringKeyOf<T>;
 
 type PathInternal<T> =
   T extends Record<string, any>
@@ -30,10 +24,7 @@ type PathInternal<T> =
 
 export type Path<T> = PathInternal<T>;
 
-export type PathValue<
-  T,
-  P extends Path<T>,
-> = P extends `${infer Key}.${infer Rest}`
+export type PathValue<T, P extends Path<T>> = P extends `${infer Key}.${infer Rest}`
   ? Key extends keyof T
     ? Rest extends Path<T[Key]>
       ? PathValue<T[Key], Rest>
@@ -43,8 +34,4 @@ export type PathValue<
     ? T[P]
     : never;
 
-export type IfAnyOrNever<T, Y, N> = 0 extends 1 & T
-  ? Y
-  : [T] extends [never]
-    ? Y
-    : N;
+export type IfAnyOrNever<T, Y, N> = 0 extends 1 & T ? Y : [T] extends [never] ? Y : N;

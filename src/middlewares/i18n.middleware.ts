@@ -39,7 +39,7 @@ export class I18nMiddleware implements NestMiddleware {
     let language = null;
 
     // Skip middleware if language is already resolved
-    if (!!req.i18nLang) {
+    if (req.i18nLang) {
       return next();
     }
 

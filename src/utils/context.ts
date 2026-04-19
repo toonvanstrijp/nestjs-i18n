@@ -7,7 +7,14 @@ export function getContextObject(
   i18nOptions?: I18nOptions,
   context?: ExecutionContext | ArgumentsHost,
 ): any {
-  const contextType = context?.getType<string>() ?? 'undefined';
+  if (!context) {
+    if (i18nOptions?.logging) {
+      logger.warn('context type: undefined not supported');
+    }
+    return context;
+  }
+
+  const contextType = context.getType<string>();
 
   switch (contextType) {
     case 'http':

@@ -22,9 +22,11 @@ const prependConstraintsWithParentProp = (
   parentPath: string,
   error: ValidationError,
 ): ValidationError => {
-  const constraints = {};
-  for (const key in error.constraints) {
-    constraints[key] = `${parentPath}.${error.constraints[key]}`;
+  const constraints: Record<string, string> = {};
+  if (error.constraints) {
+    for (const key of Object.keys(error.constraints)) {
+      constraints[key] = `${parentPath}.${error.constraints[key]}`;
+    }
   }
   return {
     ...error,

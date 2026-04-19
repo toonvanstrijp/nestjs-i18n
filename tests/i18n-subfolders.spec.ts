@@ -28,14 +28,12 @@ describe('i18n module including subfolders', () => {
   });
 
   it('i18n service should return translation from subfolder for default language', () => {
-    expect(i18nService.translate('subfolder.sub-test.HELLO')).toBe(
-      'Hello Subfolder',
-    );
+    expect(i18nService.translate('subfolder.sub-test.HELLO')).toBe('Hello Subfolder');
   });
 
   it('i18n service should return translation from subfolder for French', () => {
-    expect(
-      i18nService.translate('subfolder.sub-test.HELLO', { lang: 'fr' }),
-    ).toBe('Bonjour sous-dossier');
+    expect(i18nService.translate('subfolder.sub-test.HELLO', { lang: 'fr' })).toBe(
+      'Bonjour sous-dossier',
+    );
   });
 });

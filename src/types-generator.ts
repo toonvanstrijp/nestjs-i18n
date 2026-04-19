@@ -1,20 +1,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { I18nJsonLoader, I18nYamlLoader } from './loaders';
+import { I18nAbstractLoaderOptions, I18nJsonLoader, I18nYamlLoader } from './loaders';
 import { I18nTranslation } from './interfaces';
 import { mergeDeep } from './utils';
 import { I18nError } from './i18n.error';
 
 type LoaderFormat = 'json' | 'yaml';
 
-type LoaderOptions = {
-  path: string;
-  includeSubfolders?: boolean;
-  filePattern?: string;
-  watch?: boolean;
-};
-
-export interface GenerateI18nTypesOptions extends LoaderOptions {
+export interface GenerateI18nTypesOptions extends I18nAbstractLoaderOptions {
   outputPath: string;
   format?: LoaderFormat;
 }
@@ -28,9 +21,7 @@ export async function generateI18nTypes(
   options: GenerateI18nTypesOptions,
 ): Promise<GenerateI18nTypesResult> {
   const loader =
-    options.format === 'yaml'
-      ? new I18nYamlLoader(options)
-      : new I18nJsonLoader(options);
+    options.format === 'yaml' ? new I18nYamlLoader(options) : new I18nJsonLoader(options);
 
   const loaded = await loader.load();
   const translations: I18nTranslation =
@@ -61,7 +52,7 @@ export async function generateI18nTypes(
     let currentFileContent: string | null = null;
     try {
       currentFileContent = fs.readFileSync(options.outputPath, 'utf8');
-    } catch (_) {
+    } catch {
       currentFileContent = null;
     }
 

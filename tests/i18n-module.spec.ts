@@ -11,9 +11,7 @@ describe('i18n module', () => {
 
     (I18nModule as any).createResolverProviders();
 
-    expect(logSpy).toHaveBeenCalledWith(
-      expect.stringContaining('No resolvers provided.'),
-    );
+    expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('No resolvers provided.'));
     expect(errorSpy).not.toHaveBeenCalled();
   });
 });

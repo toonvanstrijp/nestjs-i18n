@@ -11,6 +11,6 @@ export function I18nResolverOptions(): any {
     key: string | symbol,
     index?: number,
   ): unknown => {
-    return Inject(getI18nResolverOptionsToken(target))(target, key, index);
+    return Inject(getI18nResolverOptionsToken(target))(target, key, index!);
   };
 }

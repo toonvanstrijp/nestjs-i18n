@@ -9,10 +9,7 @@ import {
 } from '../src';
 import * as request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
-import {
-  NestFastifyApplication,
-  FastifyAdapter,
-} from '@nestjs/platform-fastify';
+import { NestFastifyApplication, FastifyAdapter } from '@nestjs/platform-fastify';
 import { join } from 'path';
 
 describe('i18n module e2e fastify ejs', () => {
@@ -45,9 +42,7 @@ describe('i18n module e2e fastify ejs', () => {
       controllers: [HelloController],
     }).compile();
 
-    app = module.createNestApplication<NestFastifyApplication>(
-      new FastifyAdapter(),
-    );
+    app = module.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
 
     app.setViewEngine({
       engine: {
@@ -62,25 +57,13 @@ describe('i18n module e2e fastify ejs', () => {
   });
 
   it('should render translated page', async () => {
-    await request(app.getHttpServer())
-      .get('/hello/index')
-      .expect(200)
-      .expect('Every day');
+    await request(app.getHttpServer()).get('/hello/index').expect(200).expect('Every day');
 
-    await request(app.getHttpServer())
-      .get('/hello/index?l=nl')
-      .expect(200)
-      .expect('Iedere dag');
+    await request(app.getHttpServer()).get('/hello/index?l=nl').expect(200).expect('Iedere dag');
 
-    await request(app.getHttpServer())
-      .get('/hello/index2')
-      .expect(200)
-      .expect('Hello');
+    await request(app.getHttpServer()).get('/hello/index2').expect(200).expect('Hello');
 
-    return request(app.getHttpServer())
-      .get('/hello/index2?l=nl')
-      .expect(200)
-      .expect('Hallo');
+    return request(app.getHttpServer()).get('/hello/index2?l=nl').expect(200).expect('Hallo');
   });
 
   afterAll(async () => {

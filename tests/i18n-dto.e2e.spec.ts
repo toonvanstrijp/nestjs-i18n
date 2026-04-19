@@ -112,12 +112,8 @@ describe('i18n module e2e dto', () => {
             email: ['email is invalid', 'email cannot be empty'],
             password: ['password cannot be empty'],
             subscribeToEmail: ['extra.subscribeToEmail is not a boolean'],
-            min: [
-              'extra.min with value: "1" needs to be at least 5, ow and COOL',
-            ],
-            max: [
-              'extra.max with value: "100" needs to be less than 10, ow and SUPER',
-            ],
+            min: ['extra.min with value: "1" needs to be at least 5, ow and COOL'],
+            max: ['extra.max with value: "100" needs to be less than 10, ow and SUPER'],
           },
           error: 'Bad Request',
         });
@@ -141,12 +137,8 @@ describe('i18n module e2e dto', () => {
             email: ['email is invalid', 'email cannot be empty'],
             password: ['password cannot be empty'],
             subscribeToEmail: ['extra.subscribeToEmail is not a boolean'],
-            min: [
-              'extra.min with value: "1" needs to be at least 5, ow and COOL',
-            ],
-            max: [
-              'extra.max with value: "100" needs to be less than 10, ow and SUPER',
-            ],
+            min: ['extra.min with value: "1" needs to be at least 5, ow and COOL'],
+            max: ['extra.max with value: "100" needs to be less than 10, ow and SUPER'],
           },
           error: 'Bad Request',
         });
@@ -168,12 +160,8 @@ describe('i18n module e2e dto', () => {
             email: ['email is ongeldig', 'e-mail adres mag niet leeg zijn'],
             password: ['wachtwoord mag niet leeg zijn'],
             subscribeToEmail: ['extra.subscribeToEmail is geen boolean'],
-            min: [
-              'extra.min met waarde: "1" moet hoger zijn dan 5, ow en COOL',
-            ],
-            max: [
-              'extra.max met waarde: "100" moet lager zijn dan 10, ow en SUPER',
-            ],
+            min: ['extra.min met waarde: "1" moet hoger zijn dan 5, ow en COOL'],
+            max: ['extra.max met waarde: "100" moet lager zijn dan 10, ow en SUPER'],
           },
           error: 'Bad Request',
         });
@@ -275,12 +263,8 @@ describe('i18n module e2e dto', () => {
             email: ['email is invalid', 'email cannot be empty'],
             password: ['password cannot be empty'],
             subscribeToEmail: ['extra.subscribeToEmail is not a boolean'],
-            min: [
-              'extra.min with value: "1" needs to be at least 5, ow and COOL',
-            ],
-            max: [
-              'extra.max with value: "100" needs to be less than 10, ow and SUPER',
-            ],
+            min: ['extra.min with value: "1" needs to be at least 5, ow and COOL'],
+            max: ['extra.max with value: "100" needs to be less than 10, ow and SUPER'],
           },
         });
       });
@@ -305,12 +289,8 @@ describe('i18n module e2e dto', () => {
             email: ['email is invalid', 'email cannot be empty'],
             password: ['password cannot be empty'],
             subscribeToEmail: ['extra.subscribeToEmail is not a boolean'],
-            min: [
-              'extra.min with value: "1" needs to be at least 5, ow and COOL',
-            ],
-            max: [
-              'extra.max with value: "100" needs to be less than 10, ow and SUPER',
-            ],
+            min: ['extra.min with value: "1" needs to be at least 5, ow and COOL'],
+            max: ['extra.max with value: "100" needs to be less than 10, ow and SUPER'],
           },
         });
       });
@@ -333,12 +313,8 @@ describe('i18n module e2e dto', () => {
             email: ['email is ongeldig', 'e-mail adres mag niet leeg zijn'],
             password: ['wachtwoord mag niet leeg zijn'],
             subscribeToEmail: ['extra.subscribeToEmail is geen boolean'],
-            min: [
-              'extra.min met waarde: "1" moet hoger zijn dan 5, ow en COOL',
-            ],
-            max: [
-              'extra.max met waarde: "100" moet lager zijn dan 10, ow en SUPER',
-            ],
+            min: ['extra.min met waarde: "1" moet hoger zijn dan 5, ow en COOL'],
+            max: ['extra.max met waarde: "100" moet lager zijn dan 10, ow en SUPER'],
           },
         });
       });

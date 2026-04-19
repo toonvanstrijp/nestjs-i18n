@@ -18,17 +18,14 @@ import {
 import * as chokidar from 'chokidar';
 import { I18nError } from '../i18n.error';
 
+
+// merge options
 export interface I18nAbstractLoaderOptions {
   path: string;
   includeSubfolders?: boolean;
   filePattern?: string;
-  watch?: boolean;
+  watch: boolean;
 }
-
-// const defaultOptions: Partial<I18nAbstractLoaderOptions> = {
-//   filePattern: '*.json',
-//   watch: false,
-// };
 
 export abstract class I18nAbstractLoader
   extends I18nLoader
@@ -124,7 +121,7 @@ export abstract class I18nAbstractLoader
       i18nPath,
     ].reduce(async (f: Promise<string[]>, p: string) => {
       (await f).push(
-        ...(await getFiles(p, pattern, !!this.options.includeSubfolders)),
+        ...(await getFiles(p, pattern, this.options.includeSubfolders ?? false)),
       );
       return f;
     }, Promise.resolve([]));
@@ -155,13 +152,17 @@ export abstract class I18nAbstractLoader
 
       for (const property of Object.keys(data)) {
         [...(global ? languages : [key])].forEach((lang) => {
-          translations[lang] = translations[lang] ? translations[lang] : {};
+          if (!translations[lang] || typeof translations[lang] === 'string') {
+            translations[lang] = {};
+          }
+
+          const langTranslations = translations[lang] as I18nTranslation;
 
           if (global) {
-            translations[lang][property] = data[property];
+            langTranslations[property] = data[property];
           } else {
             this.assignPrefixedTranslation(
-              translations[lang],
+              langTranslations,
               prefix,
               property,
               data[property],
@@ -175,18 +176,22 @@ export abstract class I18nAbstractLoader
   }
 
   protected assignPrefixedTranslation(
-    translations: I18nTranslation | string,
+    translations: I18nTranslation,
     prefix: string[],
     property: string,
-    value: string,
+    value: any,
   ) {
     if (prefix.length) {
-      translations[prefix[0]] = translations[prefix[0]]
-        ? translations[prefix[0]]
-        : {};
+      const [currentPrefix, ...nextPrefixes] = prefix;
+      const currentValue = translations[currentPrefix];
+
+      if (!currentValue || typeof currentValue === 'string') {
+        translations[currentPrefix] = {};
+      }
+
       this.assignPrefixedTranslation(
-        translations[prefix[0]],
-        prefix.slice(1),
+        translations[currentPrefix] as I18nTranslation,
+        nextPrefixes,
         property,
         value,
       );

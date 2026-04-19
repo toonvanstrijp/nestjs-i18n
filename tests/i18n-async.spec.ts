@@ -116,17 +116,11 @@ describe('i18n async module with fallbacks', () => {
   it('i18n service should return correct translation', () => {
     expect(i18nService.translate('test.HELLO')).toBe('Hello');
     expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe('Hello');
-    expect(i18nService.translate('test.HELLO', { lang: 'en-US' })).toBe(
-      'Hello',
-    );
-    expect(i18nService.translate('test.HELLO', { lang: 'en-CA' })).toBe(
-      'Bonjour',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'en-US' })).toBe('Hello');
+    expect(i18nService.translate('test.HELLO', { lang: 'en-CA' })).toBe('Bonjour');
     expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe('Hallo');
     expect(i18nService.translate('test.HELLO', { lang: 'fr' })).toBe('Bonjour');
-    expect(i18nService.translate('test.HELLO', { lang: 'fr-BE' })).toBe(
-      'Bonjour',
-    );
+    expect(i18nService.translate('test.HELLO', { lang: 'fr-BE' })).toBe('Bonjour');
     expect(i18nService.translate('test.HELLO', { lang: 'pt' })).toBe('Olá');
     expect(i18nService.translate('test.HELLO', { lang: 'pt-BR' })).toBe('Olá');
   });

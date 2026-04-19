@@ -4,16 +4,12 @@ import * as fs from 'node:fs';
 import { generateI18nTypes } from '../src/types-generator';
 
 describe('types generator', () => {
-  const outputPath = join(
-    __dirname,
-    'generated',
-    'types-generator.generated.ts',
-  );
+  const outputPath = join(__dirname, 'generated', 'types-generator.generated.ts');
 
   afterAll(() => {
     try {
       fs.unlinkSync(outputPath);
-    } catch (_) {
+    } catch {
       // ignore
     }
   });
@@ -23,6 +19,7 @@ describe('types generator', () => {
       path: join(__dirname, 'i18n'),
       outputPath,
       format: 'json',
+      watch: false,
     });
 
     expect(result.outputPath).toBe(outputPath);
@@ -38,23 +35,21 @@ describe('types generator', () => {
       path: join(__dirname, 'i18n'),
       outputPath,
       format: 'json',
+      watch: false,
     });
 
     expect(result.written).toBe(false);
   });
 
   it('should generate types from yaml translations', async () => {
-    const yamlOutputPath = join(
-      __dirname,
-      'generated',
-      'types-generator-yaml.generated.ts',
-    );
+    const yamlOutputPath = join(__dirname, 'generated', 'types-generator-yaml.generated.ts');
 
     try {
       const result = await generateI18nTypes({
         path: join(__dirname, 'i18n'),
         outputPath: yamlOutputPath,
         format: 'yaml',
+        watch: false,
       });
 
       expect(result.written).toBe(true);
@@ -64,7 +59,7 @@ describe('types generator', () => {
     } finally {
       try {
         fs.unlinkSync(yamlOutputPath);
-      } catch (_) {
+      } catch {
         // ignore
       }
     }

@@ -72,25 +72,13 @@ describe('i18n module e2e hbs', () => {
   });
 
   it(`should render translated page`, async () => {
-    await request(app.getHttpServer())
-      .get('/hello/index')
-      .expect(200)
-      .expect('Every day');
+    await request(app.getHttpServer()).get('/hello/index').expect(200).expect('Every day');
 
-    await request(app.getHttpServer())
-      .get('/hello/index?l=nl')
-      .expect(200)
-      .expect('Iedere dag');
+    await request(app.getHttpServer()).get('/hello/index?l=nl').expect(200).expect('Iedere dag');
 
-    await request(app.getHttpServer())
-      .get('/hello/index2')
-      .expect(200)
-      .expect('Hello');
+    await request(app.getHttpServer()).get('/hello/index2').expect(200).expect('Hello');
 
-    return request(app.getHttpServer())
-      .get('/hello/index2?l=nl')
-      .expect(200)
-      .expect('Hallo');
+    return request(app.getHttpServer()).get('/hello/index2?l=nl').expect(200).expect('Hallo');
   });
 
   afterAll(async () => {

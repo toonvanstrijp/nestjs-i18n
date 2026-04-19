@@ -21,7 +21,7 @@ import {
   I18N_TRANSLATIONS_SUBJECT,
 } from '../i18n.constants';
 import { I18nLoader } from '../loaders/i18n.loader';
-import { IfAnyOrNever, Path, PathValue } from '../types';
+import { I18nTypeOptions, IfAnyOrNever, Path, PathValue } from '../types';
 import { formatI18nErrors } from '../utils';
 import { I18nTranslator, I18nPluralObject } from '../interfaces';
 import { I18nError } from '../i18n.error';
@@ -49,7 +49,7 @@ export type TranslateOptions = {
 };
 
 @Injectable()
-export class I18nService<K = Record<string, unknown>>
+export class I18nService<K = I18nTypeOptions['resources']>
   implements I18nTranslator<K>, OnModuleDestroy
 {
   private supportedLanguages!: string[];

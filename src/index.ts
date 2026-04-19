@@ -40,6 +40,7 @@ export * from './pipes/i18n-validation.pipe';
 export { i18nValidationErrorFactory, i18nValidationMessage, getContextObject } from './utils';
 
 // types
+export { Path, PathValue, I18nCustomTypeOptions, I18nTypeOptions } from './types';
 export { Path, PathValue } from './types';
 
 // generators

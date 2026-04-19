@@ -38,6 +38,7 @@ import { I18nMiddleware } from './middlewares/i18n.middleware';
 import * as fs from 'fs';
 import * as path from 'path';
 import { NestMiddlewareConsumer } from './types';
+import { I18nMessageFormat } from './utils/i18n-messageformat';
 export const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
@@ -181,10 +182,16 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       useValue: options,
     };
 
-    const i18nLoaderProvider: ClassProvider = {
-      provide: I18nLoader,
-      useClass: options.loader!,
-    };
+const i18nLoaderProvider: ClassProvider = {
+  provide: I18nLoader,
+  useClass: options.loader!,
+};
+
+const i18nMessageFormatProvider: Provider = {
+  provide: I18nMessageFormat,
+  useFactory: (options: I18nOptions) => new I18nMessageFormat(options),
+  inject: [I18N_OPTIONS],
+};
 
     const i18nLoaderOptionsProvider: ValueProvider = {
       provide: I18N_LOADER_OPTIONS,
@@ -258,6 +265,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         resolversProvider,
         i18nLoaderProvider,
         i18nLoaderOptionsProvider,
+    i18nMessageFormatProvider,
         i18nLanguagesSubjectProvider,
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),

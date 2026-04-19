@@ -10,6 +10,7 @@ export function mergeDeep(target: I18nTranslation, ...sources: any) {
 
   if (isObject(target) && isObject(source)) {
     for (const key in source) {
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
       if (isObject(source[key])) {
         if (!target[key]) Object.assign(target, { [key]: {} });
         mergeDeep(target[key] as I18nTranslation, source[key]);

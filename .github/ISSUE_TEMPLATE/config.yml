@@ -5,3 +5,6 @@ contact_links:
   - name: ⁉️ Why and How to make a reproduction?
     url: https://antfu.me/posts/why-reproductions-are-required
     about: Reproduction is very important for maintainer to help on your issues!
+  - name: 🙋 Maintainer Search
+    url: https://github.com/toonvanstrijp/nestjs-i18n/issues/487
+    about: Interested in helping maintain this project? Check out Issue #487!

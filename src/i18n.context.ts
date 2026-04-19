@@ -3,7 +3,7 @@ import { AsyncLocalStorage } from 'async_hooks';
 import { I18nTranslator, I18nValidationError } from './interfaces';
 import { I18nService, TranslateOptions } from './services/i18n.service';
 import { Path, PathValue } from './types';
-import { getContextObject } from './utils';
+import { getContextObject, I18nMessageFormat } from './utils';
 
 export class I18nContext<K = Record<string, unknown>> implements I18nTranslator<K> {
   private static storage = new AsyncLocalStorage<I18nContext>();
@@ -17,6 +17,7 @@ export class I18nContext<K = Record<string, unknown>> implements I18nTranslator<
   constructor(
     readonly lang: string,
     readonly service: I18nService<K>,
+    readonly messageFormat: I18nMessageFormat,
   ) {}
 
   public translate<P extends Path<K> = any, R = PathValue<K, P>>(
@@ -27,7 +28,21 @@ export class I18nContext<K = Record<string, unknown>> implements I18nTranslator<
       lang: this.lang,
       ...options,
     };
-    return this.service.translate<P, R>(key, options);
+    const result = this.service.translate<P, R>(key, options);
+
+    if (options.useICU && typeof result === 'string') {
+      try {
+        const compiled = this.messageFormat.compile(result, options.lang);
+        const formatted = compiled(options.args);
+        if (formatted !== undefined) {
+          return formatted as R;
+        }
+      } catch {
+        // Fall back to original result
+      }
+    }
+
+    return result;
   }
 
   public t<P extends Path<K> = any, R = PathValue<K, P>>(key: P, options?: TranslateOptions) {

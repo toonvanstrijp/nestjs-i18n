@@ -54,6 +54,13 @@ export interface I18nOptions {
   validatorOptions?: I18nValidatorOptions;
   throwOnMissingKey?: boolean;
   typesOutputPath?: string;
+  useICU?: boolean;
+  icuOptions?: {
+    biDiSupport?: boolean;
+    formatters?: Record<string, Function>;
+    strictNumberSign?: boolean;
+  };
+  icuLocales?: string[];
 }
 
 export interface I18nOptionsFactory {

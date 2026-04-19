@@ -10,7 +10,7 @@ export class HeaderResolver implements I18nResolver {
     private keys: string[] = [],
   ) {}
 
-  resolve(context: ExecutionContext) {
+  resolve(context: ExecutionContext): Promise<string | string[] | undefined> {
     let req: any;
 
     switch (context.getType() as string) {
@@ -22,7 +22,7 @@ export class HeaderResolver implements I18nResolver {
         break;
     }
 
-    let lang: string;
+    let lang = undefined;
 
     if (req) {
       for (const key of this.keys) {

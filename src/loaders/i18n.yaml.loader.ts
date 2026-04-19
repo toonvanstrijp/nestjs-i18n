@@ -8,7 +8,7 @@ import * as yaml from 'js-yaml';
 export class I18nYamlLoader extends I18nAbstractLoader {
   getDefaultOptions(): Partial<I18nAbstractLoaderOptions> {
     return {
-      filePattern: '*.yml',
+      filePattern: '*.{yaml,yml}',
       watch: false,
     };
   }

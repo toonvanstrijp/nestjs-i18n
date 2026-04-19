@@ -1,5 +1,4 @@
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
-import { validate } from 'class-validator';
 import {
   BehaviorSubject,
   Observable,
@@ -28,6 +27,19 @@ import { I18nTranslator, I18nPluralObject } from '../interfaces';
 import { I18nError } from '../i18n.error';
 
 const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
+const translationTransformPipes: Record<string, (value: string) => string> = {
+  uppercase: (value: string) => value.toUpperCase(),
+  lowercase: (value: string) => value.toLowerCase(),
+  capitalize: (value: string) =>
+    value.length > 0
+      ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+      : value,
+};
+
+type ClassValidatorValidate = (
+  value: any,
+  options?: Record<string, any>,
+) => Promise<any[]>;
 
 export type TranslateOptions = {
   lang?: string;
@@ -40,9 +52,10 @@ export type TranslateOptions = {
 export class I18nService<K = I18nTypeOptions['resources']>
   implements I18nTranslator<K>, OnModuleDestroy
 {
-  private supportedLanguages: string[];
-  private translations: I18nTranslation;
+  private supportedLanguages!: string[];
+  private translations!: I18nTranslation;
   private pluralRules = new Map<string, Intl.PluralRules>();
+  private transformPlaceholderCounter = 0;
 
   private unsubscribe = new Subject<void>();
 
@@ -71,7 +84,7 @@ export class I18nService<K = I18nTypeOptions['resources']>
   }
 
   public onModuleDestroy(): void {
-    this.unsubscribe.next(null);
+    this.unsubscribe.next();
     this.unsubscribe.complete();
   }
 
@@ -111,7 +124,7 @@ export class I18nService<K = I18nTypeOptions['resources']>
       const translationKeyMissing = `Translation "${
         key as string
       }" in "${lang}" does not exist.`;
-      if (lang !== this.i18nOptions.fallbackLanguage || !!defaultValue) {
+      if (lang !== this.i18nOptions.fallbackLanguage || defaultValue) {
         if (this.i18nOptions.logging && this.i18nOptions.throwOnMissingKey) {
           this.logger.error(translationKeyMissing);
           throw new I18nError(translationKeyMissing);
@@ -212,14 +225,16 @@ export class I18nService<K = I18nTypeOptions['resources']>
     const [firstKey] = keys;
 
     const args = options?.args;
+    const translationObject =
+      typeof translations === 'string' ? undefined : translations;
 
-    if (keys.length > 1 && !translations[key]) {
+    if (keys.length > 1 && translationObject && !translationObject[key]) {
       const newKey = keys.slice(1, keys.length).join('.');
 
-      if (translations && translations[firstKey]) {
+      if (translationObject[firstKey]) {
         return this.translateObject(
           newKey,
-          translations[firstKey],
+          translationObject[firstKey] as I18nTranslation | string,
           lang,
           options,
           rootTranslations,
@@ -227,18 +242,22 @@ export class I18nService<K = I18nTypeOptions['resources']>
       }
     }
 
-    let translation = translations[key] ?? options?.defaultValue;
+    let translation =
+      (translationObject ? translationObject[key] : translations) ??
+      options?.defaultValue;
 
-    if (translation && (args || (args instanceof Array && args.length > 0))) {
+    if (translation && args !== undefined) {
       const pluralObject = this.getPluralObject(translation);
-      if (pluralObject && args && args['count'] !== undefined) {
-        const count = Number(args['count']);
+      const countValue =
+        !Array.isArray(args) && args ? args['count'] : undefined;
+      if (pluralObject && countValue !== undefined) {
+        const count = Number(countValue);
 
-        if (!this.pluralRules.has(lang)) {
-          this.pluralRules.set(lang, new Intl.PluralRules(lang));
+        let pluralRules = this.pluralRules.get(lang);
+        if (!pluralRules) {
+          pluralRules = new Intl.PluralRules(lang);
+          this.pluralRules.set(lang, pluralRules);
         }
-
-        const pluralRules = this.pluralRules.get(lang);
         const pluralCategory = pluralRules.select(count);
 
         if (count === 0 && pluralObject['zero']) {
@@ -266,10 +285,18 @@ export class I18nService<K = I18nTypeOptions['resources']>
 
         return result;
       }
-      translation = this.i18nOptions.formatter(
+      if (typeof translation !== 'string') {
+        return translation;
+      }
+      const { template, formatterArgs } = this.applyTranslationTransformPipes(
         translation,
-        ...(args instanceof Array ? args || [] : [args]),
+        args,
       );
+      if (this.i18nOptions.formatter) {
+        translation = this.i18nOptions.formatter(template, ...formatterArgs);
+      } else {
+        translation = template;
+      }
       const nestedTranslations = this.getNestedTranslations(translation);
       if (nestedTranslations && nestedTranslations.length > 0) {
         let offset = 0;
@@ -281,7 +308,7 @@ export class I18nService<K = I18nTypeOptions['resources']>
                 lang,
                 {
                   ...options,
-                  args: { parent: options.args, ...nestedTranslation.args },
+                  args: { parent: options?.args, ...nestedTranslation.args },
                 },
               ) as string) ?? '')
             : '';
@@ -297,6 +324,115 @@ export class I18nService<K = I18nTypeOptions['resources']>
     }
 
     return translation;
+  }
+
+  private applyTranslationTransformPipes(
+    template: string,
+    args?: ({ [k: string]: any } | string)[] | { [k: string]: any },
+  ): {
+    template: string;
+    formatterArgs: (string | Record<string, string>)[];
+  } {
+    const transformedValues: Record<string, string> = {};
+    const withPipesApplied = template.replace(
+      /\{\{\s*([^{}]+?)\s*\}\}/g,
+      (match, rawExpression: string) => {
+        const parts = rawExpression
+          .split('|')
+          .map((part) => part.trim())
+          .filter((part) => part.length > 0);
+
+        if (parts.length < 2) {
+          return match;
+        }
+
+        const [argPath, ...transforms] = parts;
+        const rawValue = this.getArgValueByPath(args, argPath);
+        let transformedValue = rawValue == null ? '' : String(rawValue);
+
+        for (const transformName of transforms) {
+          const transformFn =
+            translationTransformPipes[transformName.toLowerCase()];
+          if (!transformFn) {
+            continue;
+          }
+          transformedValue = transformFn(transformedValue);
+        }
+
+        const placeholderKey = `__i18n_transform_${this
+          .transformPlaceholderCounter++}`;
+        transformedValues[placeholderKey] = transformedValue;
+
+        return `{${placeholderKey}}`;
+      },
+    );
+
+    const formatterArgs = this.createFormatterArgs(args, transformedValues);
+    return {
+      template: withPipesApplied,
+      formatterArgs,
+    };
+  }
+
+  private createFormatterArgs(
+    args?: ({ [k: string]: any } | string)[] | { [k: string]: any },
+    transformedValues: Record<string, string> = {},
+  ): (string | Record<string, string>)[] {
+    if (!args || !Object.keys(transformedValues).length) {
+      return args instanceof Array ? args || [] : ([args] as any);
+    }
+
+    if (!(args instanceof Array)) {
+      return [{ ...args, ...transformedValues } as Record<string, string>];
+    }
+
+    const formatterArgs = [...args];
+    const objectArgIndex = formatterArgs.findIndex(
+      (entry) => typeof entry === 'object' && entry !== null,
+    );
+
+    if (objectArgIndex === -1) {
+      formatterArgs.push(transformedValues);
+      return formatterArgs as (string | Record<string, string>)[];
+    }
+
+    formatterArgs[objectArgIndex] = {
+      ...(formatterArgs[objectArgIndex] as Record<string, string>),
+      ...transformedValues,
+    };
+
+    return formatterArgs as (string | Record<string, string>)[];
+  }
+
+  private getArgValueByPath(
+    args: ({ [k: string]: any } | string)[] | { [k: string]: any } | undefined,
+    path: string,
+  ): unknown {
+    if (!args || !path) {
+      return undefined;
+    }
+
+    const sources = args instanceof Array ? args : [args];
+    for (const source of sources) {
+      if (typeof source !== 'object' || source === null) {
+        continue;
+      }
+
+      const value = path
+        .split('.')
+        .reduce((acc: unknown, key: string): unknown => {
+          if (acc == null || typeof acc !== 'object') {
+            return undefined;
+          }
+          return (acc as Record<string, unknown>)[key];
+        }, source as unknown);
+
+      if (value !== undefined) {
+        return value;
+      }
+    }
+
+    return undefined;
   }
 
   public resolveLanguage(lang: string) {
@@ -328,30 +464,31 @@ export class I18nService<K = I18nTypeOptions['resources']>
   private getNestedTranslations(
     translation: string,
   ): { index: number; length: number; key: string; args: any }[] | undefined {
-    const list = [];
+    const list: { index: number; length: number; key: string; args: any }[] =
+      [];
     const regex = /\$t\((.*?)(,(.*?))?\)/g;
-    let result: RegExpExecArray;
-    while ((result = regex.exec(translation))) {
-      let key = undefined;
+    let result: RegExpExecArray | null;
+    while ((result = regex.exec(translation)) !== null) {
+      const key = result[1]?.trim();
+      if (!key) {
+        continue;
+      }
+
       let args = {};
-      let index = undefined;
-      let length = undefined;
-      if (result && result.length > 0) {
-        key = result[1].trim();
-        index = result.index;
-        length = result[0].length;
-        if (result.length >= 3 && result[3]) {
-          try {
-            args = JSON.parse(result[3]);
-          } catch (e) {
-            this.logger.error(`Error while parsing JSON`, e);
-          }
+      if (result.length >= 3 && result[3]) {
+        try {
+          args = JSON.parse(result[3]);
+        } catch (e) {
+          this.logger.error(`Error while parsing JSON`, e);
         }
       }
-      if (key) {
-        list.push({ index, length, key, args });
-      }
-      result = undefined;
+
+      list.push({
+        index: result.index,
+        length: result[0].length,
+        key,
+        args,
+      });
     }
 
     return list.length > 0 ? list : undefined;
@@ -361,7 +498,22 @@ export class I18nService<K = I18nTypeOptions['resources']>
     value: any,
     options?: TranslateOptions,
   ): Promise<I18nValidationError[]> {
+    const validate = await this.getClassValidatorValidate();
     const errors = await validate(value, this.i18nOptions.validatorOptions);
     return formatI18nErrors(errors, this, options);
+  }
+
+  private async getClassValidatorValidate(): Promise<ClassValidatorValidate> {
+    try {
+      const module = await import('class-validator');
+      if (typeof module.validate !== 'function') {
+        throw new Error('Missing validate export');
+      }
+      return module.validate as ClassValidatorValidate;
+    } catch {
+      throw new I18nError(
+        'class-validator is required when using i18n validation features. Install it with: npm install class-validator',
+      );
+    }
   }
 }

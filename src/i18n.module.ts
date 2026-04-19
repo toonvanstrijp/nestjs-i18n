@@ -19,16 +19,12 @@ import {
 import { I18nService } from './services/i18n.service';
 import {
   I18nAsyncOptions,
+  Formatter,
   I18nOptions,
   I18nOptionsFactory,
   I18nOptionResolver,
 } from './interfaces/i18n-options.interface';
-import {
-  ValueProvider,
-  ClassProvider,
-  OnModuleInit,
-  NestModule,
-} from '@nestjs/common';
+import { ValueProvider, ClassProvider, OnModuleInit, NestModule } from '@nestjs/common';
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators';
@@ -46,7 +42,7 @@ export const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],
-  formatter: format,
+  formatter: format as unknown as Formatter,
   logging: true,
   throwOnMissingKey: false,
   loader: I18nJsonLoader,
@@ -71,77 +67,74 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     await this.i18n.refresh();
 
     // Register handlebars helper
-    if (
-      this.i18nOptions.viewEngine == 'hbs' ||
-      this.i18nOptions.viewEngine == 'handlebars'
-    ) {
-      try {
-        // Import handlebars or hbs
-        const hbs =
-          this.i18nOptions.viewEngine === 'hbs'
-            ? await import('hbs')
-            : await import('handlebars');
 
-        hbs.registerHelper('t', this.i18n.hbsHelper);
-        logger.log('Handlebars helper registered');
-      } catch (e) {
-        logger.error(this.i18nOptions.viewEngine + ' module failed to load', e);
+    if (this.i18nOptions.viewEngine) {
+      if (['hbs', 'handlebars'].includes(this.i18nOptions.viewEngine)) {
+        try {
+          // Import handlebars or hbs
+          const hbs =
+            this.i18nOptions.viewEngine === 'hbs'
+              ? await import('hbs')
+              : await import('handlebars');
+
+          hbs.registerHelper('t', this.i18n.hbsHelper);
+          logger.log('Handlebars helper registered');
+        } catch (e) {
+          logger.error(this.i18nOptions.viewEngine + ' module failed to load', e);
+        }
+      }
+
+      if (['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
+        const app = this.adapter.httpAdapter.getInstance();
+        app.locals ??= {};
+        app.locals['t'] = (key: string, lang: any, args: any) => {
+          return this.i18n.t(key, { lang, args });
+        };
       }
     }
 
-    if (['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
-      const app = this.adapter.httpAdapter.getInstance();
-      app.locals['t'] = (key: string, lang: any, args: any) => {
-        return this.i18n.t(key, { lang, args });
-      };
-    }
-
-    if (!!this.i18nOptions.typesOutputPath) {
+    if (this.i18nOptions.typesOutputPath) {
       try {
         const ts = await import('./utils/typescript');
 
-        this.translations
-          .pipe(takeUntil(this.unsubscribe))
-          .subscribe(async (t) => {
-            logger.log('Checking translation changes');
-            const object = Object.keys(t).reduce(
-              (result, key) => mergeDeep(result, t[key]),
-              {},
-            );
+        const typesOutputPath = this.i18nOptions.typesOutputPath;
 
-            const rawContent = await ts.createTypesFile(object);
+        this.translations.pipe(takeUntil(this.unsubscribe)).subscribe(async (t) => {
+          logger.log('Checking translation changes');
+          const object = Object.keys(t).reduce((result, key) => mergeDeep(result, t[key]), {});
 
-            if (!rawContent) {
-              return;
-            }
+          const rawContent = await ts.createTypesFile(object);
 
-            const outputFile = ts.annotateSourceCode(rawContent);
+          if (!rawContent) {
+            return;
+          }
 
-            fs.mkdirSync(path.dirname(this.i18nOptions.typesOutputPath), {
-              recursive: true,
-            });
-            let currentFileContent = null;
-            try {
-              currentFileContent = fs.readFileSync(
-                this.i18nOptions.typesOutputPath,
-                'utf8',
-              );
-            } catch (err) {
-              logger.error(err);
-            }
-            if (currentFileContent != outputFile) {
-              fs.writeFileSync(this.i18nOptions.typesOutputPath, outputFile);
-              logger.log(
-                `Types generated in: ${this.i18nOptions.typesOutputPath}.
+          const outputFile = ts.annotateSourceCode(rawContent);
+
+          fs.mkdirSync(path.dirname(typesOutputPath), {
+            recursive: true,
+          });
+          let currentFileContent = null;
+          try {
+            currentFileContent = fs.readFileSync(typesOutputPath, 'utf8');
+          } catch (err) {
+            logger.error(err);
+          }
+          if (currentFileContent != outputFile) {
+            fs.writeFileSync(typesOutputPath, outputFile);
+            logger.log(
+              `Types generated in: ${this.i18nOptions.typesOutputPath}.
                 Please also add it to ignore files of your linter and formatter to avoid linting and formatting it
                 `,
-              );
-            } else {
-              logger.log('No changes detected');
-            }
-          });
-      } catch (_) {
-        // NOOP: typescript package not found
+            );
+          } else {
+            logger.log('No changes detected');
+          }
+        });
+      } catch {
+        logger.error(
+          'typescript package not found, types generation failed. Please install typescript as a dev dependency to enable this feature.',
+        );
       }
     }
   }
@@ -153,19 +146,27 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
   configure(consumer: NestMiddlewareConsumer) {
     if (this.i18nOptions.disableMiddleware) return;
 
-    consumer.apply(I18nMiddleware).forRoutes('*path');
+    const middlewareRoute = usingFastify(consumer) ? '*' : '*path';
+    consumer.apply(I18nMiddleware).forRoutes(middlewareRoute);
 
     if (usingFastify(consumer)) {
-      consumer.httpAdapter
-        .getInstance()
-        .addHook('preHandler', async (request: any, reply: any) => {
-          if (request.raw.i18nLang) {
-            reply.locals = {
-              ...(reply.locals || {}),
-              i18nLang: request.raw.i18nLang,
-            };
-          }
-        });
+      consumer.httpAdapter.getInstance().addHook('preHandler', async (request: any, reply: any) => {
+        const locals: Record<string, unknown> = {
+          ...reply.locals,
+        };
+
+        if (request.raw.i18nLang) {
+          locals.i18nLang = request.raw.i18nLang;
+        }
+
+        if (this.i18nOptions.viewEngine && ['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
+          locals.t = (key: string, lang: any, args: any) => {
+            return this.i18n.t(key, { lang, args });
+          };
+        }
+
+        reply.locals = locals;
+      });
     }
   }
 
@@ -182,7 +183,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
     const i18nLoaderProvider: ClassProvider = {
       provide: I18nLoader,
-      useClass: options.loader,
+      useClass: options.loader!,
     };
 
     const i18nLoaderOptionsProvider: ValueProvider = {
@@ -202,9 +203,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
     const translationsProvider = {
       provide: I18N_TRANSLATIONS,
-      useFactory: async (
-        loader: I18nLoader,
-      ): Promise<Observable<I18nTranslation>> => {
+      useFactory: async (loader: I18nLoader): Promise<Observable<I18nTranslation>> => {
         try {
           const translation = await loader.load();
           if (translation instanceof Observable) {
@@ -263,13 +262,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
       ],
-      exports: [
-        I18N_OPTIONS,
-        I18N_RESOLVERS,
-        I18nService,
-        I18nMiddleware,
-        languagesProvider,
-      ],
+      exports: [I18N_OPTIONS, I18N_RESOLVERS, I18nService, I18nMiddleware, languagesProvider],
     };
   }
 
@@ -291,7 +284,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
     const i18nLoaderProvider: ClassProvider<I18nLoader> = {
       provide: I18nLoader,
-      useClass: options.loader,
+      useClass: options.loader!,
     };
 
     const i18nLanguagesSubjectProvider: ValueProvider = {
@@ -325,26 +318,16 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         i18nTranslationSubjectProvider,
         ...this.createResolverProviders(options.resolvers),
       ],
-      exports: [
-        I18N_OPTIONS,
-        I18N_RESOLVERS,
-        I18nService,
-        I18nMiddleware,
-        asyncLanguagesProvider,
-      ],
+      exports: [I18N_OPTIONS, I18N_RESOLVERS, I18nService, I18nMiddleware, asyncLanguagesProvider],
     };
   }
 
-  private static createAsyncOptionsProvider(
-    options: I18nAsyncOptions,
-  ): Provider {
+  private static createAsyncOptionsProvider(options: I18nAsyncOptions): Provider {
     if (options.useFactory) {
       return {
         provide: I18N_OPTIONS,
         useFactory: async (...args) => {
-          return this.sanitizeI18nOptions(
-            (await options.useFactory(...args)) as any,
-          );
+          return this.sanitizeI18nOptions((await options.useFactory!(...args)) as any);
         },
         inject: options.inject || [],
       };
@@ -352,10 +335,8 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     return {
       provide: I18N_OPTIONS,
       useFactory: async (optionsFactory: I18nOptionsFactory) =>
-        this.sanitizeI18nOptions(
-          (await optionsFactory.createI18nOptions()) as any,
-        ),
-      inject: [options.useClass || options.useExisting],
+        this.sanitizeI18nOptions((await optionsFactory.createI18nOptions()) as any),
+      inject: [options.useClass ?? options.useExisting!],
     };
   }
 
@@ -415,54 +396,46 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     };
   }
 
-  private static sanitizeI18nOptions<T = I18nOptions | I18nAsyncOptions>(
-    options: T,
-  ) {
+  private static sanitizeI18nOptions<T = I18nOptions | I18nAsyncOptions>(options: T) {
     options = { ...defaultOptions, ...options };
     return options;
   }
 
   private static createResolverProviders(resolvers?: I18nOptionResolver[]) {
     if (!resolvers || resolvers.length === 0) {
-      logger.error(
-        `No resolvers provided! nestjs-i18n won't work properly, please follow the quick-start guide: https://nestjs-i18n.com/quick-start`,
+      logger.log(
+        `No resolvers provided. Set the language manually per request or configure resolvers: https://nestjs-i18n.com/quick-start`,
       );
     }
-    return (resolvers || [])
-      .filter(shouldResolve)
-      .reduce<Provider[]>((providers, r) => {
-        if (r['use']) {
-          const { use: resolver, options, ...rest } = r as any;
-          const optionsToken = getI18nResolverOptionsToken(
-            resolver as unknown as () => void,
-          );
-          providers.push({
-            provide: resolver,
-            useClass: resolver,
-          });
-          if (options) {
-            (rest as any).useValue = options;
-          }
-          providers.push({
-            provide: optionsToken,
-            ...(rest as any),
-          });
-        } else {
-          const optionsToken = getI18nResolverOptionsToken(
-            r as unknown as () => void,
-          );
-          providers.push({
-            provide: r,
-            useClass: r,
-            inject: [optionsToken],
-          } as any);
-          providers.push({
-            provide: optionsToken,
-            useFactory: () => undefined,
-          });
+    return (resolvers || []).filter(shouldResolve).reduce<Provider[]>((providers, r) => {
+      if ('use' in r) {
+        const { use: resolver, options, ...rest } = r as any;
+        const optionsToken = getI18nResolverOptionsToken(resolver as unknown as () => void);
+        providers.push({
+          provide: resolver,
+          useClass: resolver,
+        });
+        if (options) {
+          (rest as any).useValue = options;
         }
+        providers.push({
+          provide: optionsToken,
+          ...(rest as any),
+        });
+      } else {
+        const optionsToken = getI18nResolverOptionsToken(r as unknown as () => void);
+        providers.push({
+          provide: r,
+          useClass: r,
+          inject: [optionsToken],
+        } as any);
+        providers.push({
+          provide: optionsToken,
+          useFactory: () => undefined,
+        });
+      }
 
-        return providers;
-      }, []);
+      return providers;
+    }, []);
   }
 }

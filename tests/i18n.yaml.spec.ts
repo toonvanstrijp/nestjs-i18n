@@ -33,6 +33,10 @@ describe('i18n yaml module', () => {
     expect(i18nService.translate('test.HELLO', { lang: 'nl' })).toBe('Hallo');
   });
 
+  it('i18n service should load yaml files by default', () => {
+    expect(i18nService.translate('yamlonly.HELLO', { lang: 'en' })).toBe('Hello from yaml');
+  });
+
   /*
   it('i18n service should fallback to the fallback language if none is provided', () => {
     expect(i18nService.translate('test.HELLO')).toBe('Hello');

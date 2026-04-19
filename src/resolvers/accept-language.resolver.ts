@@ -42,13 +42,14 @@ export class AcceptLanguageResolver implements I18nResolver {
     if (lang) {
       const supportedLangs = service.getSupportedLanguages();
       if (this.options.matchType === 'strict') {
-        return pick(supportedLangs, lang);
+        return pick(supportedLangs, lang) ?? undefined;
       } else if (this.options.matchType === 'loose') {
-        return pick(supportedLangs, lang, { loose: true });
+        return pick(supportedLangs, lang, { loose: true }) ?? undefined;
       }
       return (
         pick(supportedLangs, lang) ??
-        pick(supportedLangs, lang, { loose: true })
+        pick(supportedLangs, lang, { loose: true }) ??
+        undefined
       );
     }
     return lang;

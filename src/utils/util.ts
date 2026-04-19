@@ -9,7 +9,17 @@ import { MiddlewareConsumer } from '@nestjs/common';
 import { I18nTypeOptions, NestMiddlewareConsumer, Path } from '../types';
 
 export function shouldResolve(e: I18nOptionResolver) {
-  return typeof e === 'function' || e['use'];
+  return typeof e === 'function' || 'use' in e;
+}
+
+export function httpStatusToMessage(status: HttpStatus): string {
+  const key = HttpStatus[status];
+
+  return key
+    .toLowerCase()
+    .split('_')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 }
 
 function validationErrorToI18n(e: ValidationError): I18nValidationError {
@@ -19,11 +29,11 @@ function validationErrorToI18n(e: ValidationError): I18nValidationError {
     target: e.target,
     contexts: e.contexts,
     children: e?.children?.map(validationErrorToI18n),
-    constraints: !!e.constraints
+    constraints: e.constraints
       ? Object.keys(e.constraints).reduce((result, key) => {
-          result[key] = e.constraints[key];
+          result[key] = e.constraints![key];
           return result;
-        }, {})
+        }, {} as Record<string, string>)
       : {},
   };
 }
@@ -61,13 +71,13 @@ export function formatI18nErrors<K = I18nTypeOptions['resources']>(
     error.children = formatI18nErrors(error.children ?? [], i18n, options);
     error.constraints = Object.keys(error.constraints ?? {}).reduce(
       (result, key) => {
-        const [translationKey, argsString] = error.constraints[key].split('|');
-        const args = !!argsString ? JSON.parse(argsString) : {};
+        const [translationKey, argsString] = error.constraints![key].split('|');
+        const args = argsString ? JSON.parse(argsString) : {};
         const constraints = args.constraints
-          ? args.constraints.reduce((acc: object, cur: any, index: number) => {
+          ? args.constraints.reduce((acc: Record<string, string>, cur: any, index: number) => {
               acc[index.toString()] = cur;
               return acc;
-            }, {})
+            }, {} as Record<string, string>)
           : error.constraints;
         result[key] = i18n.translate(translationKey as Path<K>, {
           ...options,
@@ -82,7 +92,7 @@ export function formatI18nErrors<K = I18nTypeOptions['resources']>(
         });
         return result;
       },
-      {},
+      {} as Record<string, string>,
     );
     return error;
   });

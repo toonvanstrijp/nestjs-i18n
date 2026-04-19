@@ -39,7 +39,7 @@ export class I18nMiddleware implements NestMiddleware {
     let language = null;
 
     // Skip middleware if language is already resolved
-    if (!!req.i18nLang) {
+    if (req.i18nLang) {
       return next();
     }
 
@@ -77,7 +77,7 @@ export class I18nMiddleware implements NestMiddleware {
 
   private async getResolver(r: I18nOptionResolver): Promise<I18nResolver> {
     if (shouldResolve(r)) {
-      if (r['use']) {
+      if ('use' in r) {
         const resolver = r as ResolverWithOptions;
         return this.moduleRef.get(resolver.use);
       } else {

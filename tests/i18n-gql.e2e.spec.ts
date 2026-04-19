@@ -15,11 +15,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CatModule } from './app/cats/cat.module';
 import { createClient } from 'graphql-ws';
-import {
-  ApolloClient,
-  InMemoryCache,
-  NormalizedCacheObject,
-} from '@apollo/client';
+import { ApolloClient, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import * as WebSocket from 'ws';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import gql from 'graphql-tag';
@@ -57,6 +53,7 @@ describe('i18n module e2e graphql', () => {
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
           driver: ApolloDriver,
+          playground: false,
           subscriptions: {
             'graphql-ws': true,
             'subscriptions-transport-ws': {
@@ -70,11 +67,7 @@ describe('i18n module e2e graphql', () => {
           includeStacktraceInErrorResponses: true,
           formatError: (error) => {
             const stacktrace = error.extensions?.stacktrace as string[];
-            if (
-              stacktrace?.some((line) =>
-                line.includes('I18nValidationException'),
-              )
-            ) {
+            if (stacktrace?.some((line) => line.includes('I18nValidationException'))) {
               return {
                 message: error.message,
                 locations: error.locations,
@@ -186,8 +179,7 @@ describe('i18n module e2e graphql', () => {
       .send({
         operationName: null,
         variables: {},
-        query:
-          'mutation {  createCat(createCatInput: {name: "Haya", age: 10})  { name, age }  }',
+        query: 'mutation {  createCat(createCatInput: {name: "Haya", age: 10})  { name, age }  }',
       })
       .expect(200, {
         data: {
@@ -463,8 +455,7 @@ describe('i18n module e2e graphql', () => {
       .send({
         operationName: null,
         variables: {},
-        query:
-          'mutation {  validation(createCatInput: {name: "Haya", age: 2})  { name, age }  }',
+        query: 'mutation {  validation(createCatInput: {name: "Haya", age: 2})  { name, age }  }',
       })
       .expect(200)
       .then((response) => {
@@ -480,7 +471,7 @@ describe('i18n module e2e graphql', () => {
               ],
               path: ['validation'],
               extensions: {
-                code: 'INTERNAL_SERVER_ERROR',
+                code: 'BAD_USER_INPUT',
                 exception: {
                   response: 'Bad Request',
                   status: 400,

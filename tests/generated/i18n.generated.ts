@@ -40,6 +40,10 @@ export type I18nTranslations = {
             "followLink": string;
         };
         "dot.test": string;
+        "PIPE_UPPERCASE": string;
+        "PIPE_CHAIN": string;
+        "PIPE_UNKNOWN": string;
+        "PIPE_MIXED": string;
         "day_interval": {
             "one": string;
             "other": string;

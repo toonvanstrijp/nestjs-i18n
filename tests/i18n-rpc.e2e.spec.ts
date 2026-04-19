@@ -2,12 +2,7 @@ import { Test } from '@nestjs/testing';
 import * as path from 'path';
 import { GrpcMetadataResolver, I18nModule } from '../src';
 import { HelloController } from './app/controllers/hello.controller';
-import {
-  ClientGrpc,
-  ClientsModule,
-  MicroserviceOptions,
-  Transport,
-} from '@nestjs/microservices';
+import { ClientGrpc, ClientsModule, MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { INestApplication } from '@nestjs/common';
 import { HeroService } from './app/interfaces/hero.interface';
@@ -94,12 +89,10 @@ describe('i18n module e2e rpc', () => {
     meta.set('lang', 'fr');
 
     await new Promise<void>((resolve) => {
-      heroService
-        .findOneTranslatedWithService({ id: 1 }, meta)
-        .subscribe((hero) => {
-          expect(hero).toEqual({ id: 1, name: 'Bonjour, John' });
-          resolve();
-        });
+      heroService.findOneTranslatedWithService({ id: 1 }, meta).subscribe((hero) => {
+        expect(hero).toEqual({ id: 1, name: 'Bonjour, John' });
+        resolve();
+      });
     });
   });
 

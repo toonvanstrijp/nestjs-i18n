@@ -32,17 +32,11 @@ export class I18nContext<K = I18nTypeOptions['resources']>
     return this.service.translate<P, R>(key, options);
   }
 
-  public t<P extends Path<K> = any, R = PathValue<K, P>>(
-    key: P,
-    options?: TranslateOptions,
-  ) {
+  public t<P extends Path<K> = any, R = PathValue<K, P>>(key: P, options?: TranslateOptions) {
     return this.translate<P, R>(key, options);
   }
 
-  public validate(
-    value: any,
-    options?: TranslateOptions,
-  ): Promise<I18nValidationError[]> {
+  public validate(value: any, options?: TranslateOptions): Promise<I18nValidationError[]> {
     options = {
       lang: this.lang,
       ...options,
@@ -54,10 +48,7 @@ export class I18nContext<K = I18nTypeOptions['resources']>
     this.storage.run(ctx, next);
   }
 
-  static async createAsync<T>(
-    ctx: I18nContext,
-    next: (...args: any[]) => Promise<T>,
-  ): Promise<T> {
+  static async createAsync<T>(ctx: I18nContext, next: (...args: any[]) => Promise<T>): Promise<T> {
     return this.storage.run(ctx, next);
   }
 
@@ -66,7 +57,7 @@ export class I18nContext<K = I18nTypeOptions['resources']>
   ): I18nContext<K> | undefined {
     const i18n = this.storage.getStore() as I18nContext<K> | undefined;
 
-    if (!i18n && !!context) {
+    if (!i18n && context) {
       return getContextObject(undefined, context)?.i18nContext;
     }
 

@@ -73,23 +73,24 @@ export class CatResolver {
   }
 
   @Mutation('validation')
+  @UseFilters(new I18nValidationExceptionFilter())
   async validation(@Args('createCatInput') data: CreateCatInput) {
     // Manually validate the input and throw I18nValidationException
     const inputObject = plainToClass(CreateCatInput, data);
     const errors = await validate(inputObject);
-    
+
     if (errors.length > 0) {
       const i18n = I18nContext.current();
       const formattedErrors = formatI18nErrors(errors, i18n.service, {
         lang: i18n.lang,
       });
-      
+
       const exception = new I18nValidationException(formattedErrors);
       // Set the errors property for GraphQL
       exception.errors = formattedErrors;
       throw exception;
     }
-    
+
     return data;
   }
 }

@@ -12,6 +12,10 @@
   </p>
 </p>
 
+## ⚠️ Maintainers Wanted
+
+This project is actively seeking co-maintainers. The current maintainer has limited time to dedicate to issue triage, PR reviews, and ongoing feature development. If you're interested in helping maintain this popular NestJS i18n library, please open an issue or discussion to express your interest. Any help with triaging issues, reviewing pull requests, or contributing features would be greatly appreciated!
+
 ## Features
 
 **nestjs-i18n** comes with a bunch of tools to help add multiple language support to your project.

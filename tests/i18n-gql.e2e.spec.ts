@@ -53,6 +53,7 @@ describe('i18n module e2e graphql', () => {
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
           driver: ApolloDriver,
+          playground: false,
           subscriptions: {
             'graphql-ws': true,
             'subscriptions-transport-ws': {

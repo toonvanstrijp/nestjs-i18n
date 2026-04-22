@@ -1,21 +1,15 @@
 import {
   Inject,
   Injectable,
-  Type,
   NestInterceptor,
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common';
 import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
-import {
-  I18nContext,
-  I18nOptions,
-  I18nResolver,
-  ResolverWithOptions,
-} from '../index';
+import { I18nContext, I18nOptions } from '../index';
 import { I18nService } from '../services/i18n.service';
 import { ModuleRef } from '@nestjs/core';
-import { shouldResolve, getContextObject } from '../utils';
+import { resolveLanguage, getContextObject } from '../utils';
 import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
 import { Observable } from 'rxjs';
 
@@ -46,19 +40,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
 
     ctx.i18nService = this.i18nService;
 
-    for (const r of this.i18nResolvers) {
-      const resolver = await this.getResolver(r);
-
-      language = resolver.resolve(context);
-
-      if (language instanceof Promise) {
-        language = await (language as Promise<string>);
-      }
-
-      if (language !== undefined) {
-        break;
-      }
-    }
+    language = await resolveLanguage(this.i18nResolvers, context, this.moduleRef);
 
     ctx.i18nLang = language || this.i18nOptions.fallbackLanguage;
 
@@ -85,16 +67,4 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     return next.handle();
   }
 
-  private async getResolver(r: I18nOptionResolver): Promise<I18nResolver> {
-    if (shouldResolve(r)) {
-      if ('use' in r) {
-        const resolver = r as ResolverWithOptions;
-        return this.moduleRef.get(resolver.use);
-      } else {
-        return this.moduleRef.get(r as Type<I18nResolver>);
-      }
-    } else {
-      return r as I18nResolver;
-    }
-  }
 }

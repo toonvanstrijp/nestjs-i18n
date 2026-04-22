@@ -201,41 +201,17 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       useValue: i18nTranslationSubject,
     };
 
-    const translationsProvider = {
-      provide: I18N_TRANSLATIONS,
-      useFactory: async (loader: I18nLoader): Promise<Observable<I18nTranslation>> => {
-        try {
-          const translation = await loader.load();
-          if (translation instanceof Observable) {
-            translation.subscribe(i18nTranslationSubject);
-          } else {
-            i18nTranslationSubject.next(translation);
-          }
-        } catch (e) {
-          logger.error('parsing translation error', e);
-        }
-        return i18nTranslationSubject.asObservable();
-      },
-      inject: [I18nLoader],
-    };
+    const translationsProvider = this.createLoaderStreamProvider<I18nTranslation>(
+      I18N_TRANSLATIONS,
+      (loader) => loader.load(),
+      i18nTranslationSubject,
+    );
 
-    const languagesProvider = {
-      provide: I18N_LANGUAGES,
-      useFactory: async (loader: I18nLoader): Promise<Observable<string[]>> => {
-        try {
-          const languages = await loader.languages();
-          if (languages instanceof Observable) {
-            languages.subscribe(i18nLanguagesSubject);
-          } else {
-            i18nLanguagesSubject.next(languages);
-          }
-        } catch (e) {
-          logger.error('parsing translation error', e);
-        }
-        return i18nLanguagesSubject.asObservable();
-      },
-      inject: [I18nLoader],
-    };
+    const languagesProvider = this.createLoaderStreamProvider<string[]>(
+      I18N_LANGUAGES,
+      (loader) => loader.languages(),
+      i18nLanguagesSubject,
+    );
 
     const resolversProvider = {
       provide: I18N_RESOLVERS,
@@ -351,48 +327,53 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
   }
 
   private static createAsyncTranslationProvider(): Provider {
-    return {
-      provide: I18N_TRANSLATIONS,
-      useFactory: async (
-        loader: I18nLoader,
-        translationsSubject: BehaviorSubject<I18nTranslation>,
-      ): Promise<Observable<I18nTranslation>> => {
-        try {
-          const translation = await loader.load();
-          if (translation instanceof Observable) {
-            translation.subscribe(translationsSubject);
-          } else {
-            translationsSubject.next(translation);
-          }
-        } catch (e) {
-          logger.error('parsing translation error', e);
-        }
-        return translationsSubject.asObservable();
-      },
-      inject: [I18nLoader, I18N_TRANSLATIONS_SUBJECT],
-    };
+    return this.createLoaderStreamProvider<I18nTranslation>(
+      I18N_TRANSLATIONS,
+      (loader) => loader.load(),
+      undefined,
+      I18N_TRANSLATIONS_SUBJECT,
+    );
   }
 
   private static createAsyncLanguagesProvider(): Provider {
+    return this.createLoaderStreamProvider<string[]>(
+      I18N_LANGUAGES,
+      (loader) => loader.languages(),
+      undefined,
+      I18N_LANGUAGES_SUBJECT,
+    );
+  }
+
+  private static createLoaderStreamProvider<T>(
+    provide: string,
+    loaderCall: (loader: I18nLoader) => Promise<T | Observable<T>>,
+    subject?: BehaviorSubject<T>,
+    subjectToken?: string,
+  ): Provider {
     return {
-      provide: I18N_LANGUAGES,
+      provide,
       useFactory: async (
         loader: I18nLoader,
-        languagesSubject: BehaviorSubject<string[]>,
-      ): Promise<Observable<string[]>> => {
+        injectedSubject?: BehaviorSubject<T>,
+      ): Promise<Observable<T>> => {
+        const streamSubject = injectedSubject ?? subject;
+        if (!streamSubject) {
+          throw new Error('Missing BehaviorSubject provider for i18n stream');
+        }
+
         try {
-          const languages = await loader.languages();
-          if (languages instanceof Observable) {
-            languages.subscribe(languagesSubject);
+          const value = await loaderCall(loader);
+          if (value instanceof Observable) {
+            value.subscribe(streamSubject);
           } else {
-            languagesSubject.next(languages);
+            streamSubject.next(value);
           }
         } catch (e) {
           logger.error('parsing translation error', e);
         }
-        return languagesSubject.asObservable();
+        return streamSubject.asObservable();
       },
-      inject: [I18nLoader, I18N_LANGUAGES_SUBJECT],
+      inject: subjectToken ? [I18nLoader, subjectToken] : [I18nLoader],
     };
   }
 

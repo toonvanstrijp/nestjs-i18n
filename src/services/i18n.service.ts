@@ -201,17 +201,13 @@ export class I18nService<K = Record<string, unknown>>
     }
   }
 
-  public hbsHelper = <P extends Path<K> = any>(
-    key: P,
-    args: any,
-    options: any,
-  ) => {
+  public hbsHelper = (key: string, args: any, options: any): string => {
     if (!options) {
       options = args;
     }
 
     const lang = options.lookupProperty(options.data.root, 'i18nLang');
-    return this.t<P>(key, { lang, args });
+    return this.t(key as Path<K>, { lang, args }) as string;
   };
 
   private translateObject(

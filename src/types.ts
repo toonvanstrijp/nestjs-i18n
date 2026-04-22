@@ -11,13 +11,15 @@ type StringKeyOf<T> = Extract<keyof T, string>;
 
 type PathKeyOf<T> = T extends any[] ? Exclude<StringKeyOf<T>, keyof any[]> : StringKeyOf<T>;
 
-type PathInternal<T> =
+type PathInternal<T, Seen extends 1[] = []> =
   T extends Record<string, any>
     ? {
         [K in PathKeyOf<T>]: IsAny<T[K]> extends true
           ? never
           : T[K] extends Record<string, any>
-            ? K | `${K}.${PathInternal<T[K]>}`
+            ? Seen['length'] extends 8
+              ? K
+              : K | `${K}.${PathInternal<T[K], [...Seen, 1]>}`
             : K;
       }[PathKeyOf<T>]
     : never;

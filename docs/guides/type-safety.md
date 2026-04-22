@@ -38,7 +38,7 @@ export class AppModule {}
 You can generate types with a standalone script, which is useful for CI or repositories that do not commit generated files.
 
 ```bash
-npx nestjs-i18n-types --path ./src/i18n --out ./src/generated/i18n.generated.ts
+npx nestjs-i18n --path ./src/i18n --out ./src/generated/i18n.generated.ts
 ```
 
 You can also call the API directly:

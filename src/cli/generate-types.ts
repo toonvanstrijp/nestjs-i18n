@@ -58,7 +58,7 @@ function parseArgs(args: string[]): CliOptions {
 
 function printHelp() {
   process.stdout.write(
-    `Usage: nestjs-i18n-types --path <translationsPath> --out <outputFile> [options]\n\n`,
+    `Usage: nestjs-i18n --path <translationsPath> --out <outputFile> [options]\n\n`,
   );
   process.stdout.write(`Options:\n`);
   process.stdout.write(

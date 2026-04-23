@@ -14,6 +14,8 @@ export interface OptionsProvider {
   options: any;
 }
 
+export type I18nViewEngine = 'hbs' | 'handlebars' | 'pug' | 'ejs' | 'eta' | 'nunjucks';
+
 export type OptionProvider<T = any> =
   | Omit<ClassProvider<T>, 'provide'>
   | Omit<ValueProvider<T>, 'provide'>
@@ -44,11 +46,14 @@ export interface I18nOptions {
   fallbackLanguage: string;
   fallbacks?: { [key: string]: string };
   resolvers?: I18nOptionResolver[];
+  /** @deprecated Use `loaders` instead */
   loader?: Type<I18nLoader>;
-  loaderOptions: any;
+  /** @deprecated Use `loaders` instead */
+  loaderOptions?: any;
+  loaders?: I18nLoader[];
   formatter?: Formatter;
   logging?: boolean;
-  viewEngine?: 'hbs' | 'handlebars' | 'pug' | 'ejs' | 'eta' | 'nunjucks';
+  viewEngine?: I18nViewEngine;
   disableMiddleware?: boolean;
   skipAsyncHook?: boolean;
   validatorOptions?: I18nValidatorOptions;
@@ -70,7 +75,9 @@ export interface I18nAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
     ...args: any[]
   ) => Promise<I18nOptionsWithoutResolvers> | I18nOptionsWithoutResolvers;
   resolvers?: I18nOptionResolver[];
+  /** @deprecated Use `loaders` in the factory return value instead */
   loader?: Type<I18nLoader>;
+  loaders?: I18nLoader[];
   inject?: any[];
   logging?: boolean;
 }

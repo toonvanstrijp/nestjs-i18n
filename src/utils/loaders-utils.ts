@@ -26,7 +26,10 @@ export async function processTranslations(
 
   return combineLatest(observables).pipe(
     map((results) =>
-      results.reduce((acc, curr) => mergeDeep({ ...acc }, curr), {}),
+      results.reduce(
+        (acc, curr) => mergeDeep(acc, curr),
+        {} as I18nTranslation,
+      ),
     ),
   );
 }

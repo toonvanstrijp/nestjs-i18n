@@ -57,4 +57,17 @@ describe('i18n module', () => {
     expect(refresh).toHaveBeenCalled();
     expect(getInstance).not.toHaveBeenCalled();
   });
+
+  it('emits unsubscribe notifier on module destroy', () => {
+    const module = Object.create(I18nModule.prototype) as any;
+    module.unsubscribe = {
+      next: jest.fn(),
+      complete: jest.fn(),
+    };
+
+    module.onModuleDestroy();
+
+    expect(module.unsubscribe.next).toHaveBeenCalledTimes(1);
+    expect(module.unsubscribe.complete).toHaveBeenCalledTimes(1);
+  });
 });

@@ -8,7 +8,7 @@ import {
   WsArgumentsHost,
 } from '@nestjs/common/interfaces';
 import { ModuleRef } from '@nestjs/core';
-import { resolveLanguage } from '../utils';
+import { getLanguageFromResolverResult, resolveLanguage } from '../utils';
 import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
 import { I18nContext, I18nOptions } from '../index';
 import { I18nService } from '../services/i18n.service';
@@ -46,7 +46,8 @@ export class I18nMiddleware implements NestMiddleware {
       this.moduleRef,
     );
 
-    req.i18nLang = language || this.i18nOptions.fallbackLanguage;
+    req.i18nLang =
+      getLanguageFromResolverResult(language) || this.i18nOptions.fallbackLanguage;
 
     if (res?.locals) {
       res.locals.i18nLang = req.i18nLang;

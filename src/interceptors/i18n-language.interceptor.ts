@@ -9,9 +9,13 @@ import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
 import { I18nContext, I18nOptions } from '../index';
 import { I18nService } from '../services/i18n.service';
 import { ModuleRef } from '@nestjs/core';
-import { resolveLanguage, getContextObject } from '../utils';
+import {
+  resolveLanguage,
+  getContextObject,
+  getLanguageFromResolverResult,
+} from '../utils';
 import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 @Injectable()
 export class I18nLanguageInterceptor implements NestInterceptor {
@@ -42,7 +46,8 @@ export class I18nLanguageInterceptor implements NestInterceptor {
 
     language = await resolveLanguage(this.i18nResolvers, context, this.moduleRef);
 
-    ctx.i18nLang = language || this.i18nOptions.fallbackLanguage;
+    ctx.i18nLang =
+      getLanguageFromResolverResult(language) || this.i18nOptions.fallbackLanguage;
 
     const response =
       context.getType<string>() === 'http'
@@ -58,12 +63,17 @@ export class I18nLanguageInterceptor implements NestInterceptor {
 
       if (!this.i18nOptions.skipAsyncHook) {
         return new Observable((observer) => {
-          I18nContext.createAsync(ctx.i18nContext, async (error) => {
-            if (error) {
-              throw error;
-            }
-            return next.handle().subscribe(observer);
+          let subscription: Subscription | undefined;
+
+          I18nContext.createAsync(ctx.i18nContext, async () => {
+            subscription = next.handle().subscribe(observer);
+          }).catch((error) => {
+            observer.error(error);
           });
+
+          return () => {
+            subscription?.unsubscribe();
+          };
         });
       }
     }

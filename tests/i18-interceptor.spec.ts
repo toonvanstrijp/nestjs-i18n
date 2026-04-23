@@ -148,4 +148,33 @@ describe('i18n interceptor', () => {
     expect(client.i18nLang).toBe('nl');
     expect(langFromContext).toBe('nl');
   });
+
+  it('provides I18nContext.current() for rpc when transport context object is undefined', async () => {
+    const rpcContext = {
+      getType: () => 'rpc',
+      switchToRpc: () => ({
+        getContext: () => undefined,
+      }),
+    };
+
+    const next = {
+      handle: jest.fn(() => of(I18nContext.current()?.lang)),
+    };
+
+    const interceptor = new I18nLanguageInterceptor(
+      {
+        ...i18nOptions,
+        skipAsyncHook: false,
+      },
+      [] as any,
+      i18nService,
+      messageFormat,
+      moduleRef,
+    );
+
+    const result$ = await interceptor.intercept(rpcContext as any, next as any);
+    const langFromContext = await firstValueFrom(result$);
+
+    expect(langFromContext).toBe('en');
+  });
 });

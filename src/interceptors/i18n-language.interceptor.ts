@@ -38,36 +38,59 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     let language = null;
 
     const ctx = getContextObject(this.i18nOptions, context);
+    const contextType = context.getType<string>();
+    const supportedContextTypes = ['http', 'graphql', 'rpc', 'rmq', 'ws'];
 
-    // Skip interceptor if language is already resolved (in case of http middleware) or when ctx is undefined (unsupported context)
-    if (ctx === undefined || ctx.i18nLang) {
+    // Skip interceptor only for unsupported contexts.
+    // For rpc/ws we still need AsyncLocal i18n context even if the transport
+    // does not expose a mutable context object.
+    if (!supportedContextTypes.includes(contextType)) {
       return next.handle();
     }
 
-    ctx.i18nService = this.i18nService;
+    // Skip interceptor if language is already resolved (in case of http middleware)
+    if (ctx?.i18nLang) {
+      return next.handle();
+    }
+
+    if (ctx) {
+      ctx.i18nService = this.i18nService;
+    }
 
     language = await resolveLanguage(this.i18nResolvers, context, this.moduleRef);
 
-    ctx.i18nLang =
+    const resolvedLanguage =
       getLanguageFromResolverResult(language) || this.i18nOptions.fallbackLanguage;
+
+    if (ctx) {
+      ctx.i18nLang = resolvedLanguage;
+    }
 
     const response =
       context.getType<string>() === 'http'
         ? context.switchToHttp().getResponse()
         : ctx?.res;
 
-    if (response?.locals) {
+    if (response?.locals && ctx?.i18nLang) {
       response.locals.i18nLang = ctx.i18nLang;
     }
 
     if (!i18nContext) {
-      ctx.i18nContext = new I18nContext(ctx.i18nLang, this.i18nService, this.messageFormat);
+      const requestI18nContext = new I18nContext(
+        resolvedLanguage,
+        this.i18nService,
+        this.messageFormat,
+      );
+
+      if (ctx) {
+        ctx.i18nContext = requestI18nContext;
+      }
 
       if (!this.i18nOptions.skipAsyncHook) {
         return new Observable((observer) => {
           let subscription: Subscription | undefined;
 
-          I18nContext.createAsync(ctx.i18nContext, async () => {
+          I18nContext.createAsync(requestI18nContext, async () => {
             subscription = next.handle().subscribe(observer);
           }).catch((error) => {
             observer.error(error);

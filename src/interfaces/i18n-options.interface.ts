@@ -14,7 +14,7 @@ export interface OptionsProvider {
   options: any;
 }
 
-export type I18nViewEngine = 'hbs' | 'handlebars' | 'pug' | 'ejs';
+export type I18nViewEngine = 'hbs' | 'handlebars' | 'pug' | 'ejs' | 'eta' | 'nunjucks';
 
 export type OptionProvider<T = any> =
   | Omit<ClassProvider<T>, 'provide'>

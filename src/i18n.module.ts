@@ -91,7 +91,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         }
       }
 
-      if (['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
+      if (['pug', 'ejs', 'eta', 'nunjucks'].includes(this.i18nOptions.viewEngine)) {
         const app = this.adapter.httpAdapter.getInstance();
         app.locals ??= {};
         app.locals['t'] = (key: string, lang: any, args: any) => {
@@ -166,7 +166,10 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
           locals.i18nLang = request.raw.i18nLang;
         }
 
-        if (this.i18nOptions.viewEngine && ['pug', 'ejs'].includes(this.i18nOptions.viewEngine)) {
+        if (
+          this.i18nOptions.viewEngine &&
+          ['pug', 'ejs', 'eta', 'nunjucks'].includes(this.i18nOptions.viewEngine)
+        ) {
           locals.t = (key: string, lang: any, args: any) => {
             return this.i18n.t(key, { lang, args });
           };

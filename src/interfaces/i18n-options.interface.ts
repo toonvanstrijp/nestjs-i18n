@@ -14,6 +14,8 @@ export interface OptionsProvider {
   options: any;
 }
 
+export type I18nViewEngine = 'hbs' | 'handlebars' | 'pug' | 'ejs';
+
 export type OptionProvider<T = any> =
   | Omit<ClassProvider<T>, 'provide'>
   | Omit<ValueProvider<T>, 'provide'>
@@ -48,7 +50,7 @@ export interface I18nOptions {
   loaderOptions: any;
   formatter?: Formatter;
   logging?: boolean;
-  viewEngine?: 'hbs' | 'handlebars' | 'pug' | 'ejs';
+  viewEngine?: I18nViewEngine;
   disableMiddleware?: boolean;
   skipAsyncHook?: boolean;
   validatorOptions?: I18nValidatorOptions;

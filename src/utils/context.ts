@@ -19,6 +19,8 @@ export function getContextObject(
   switch (contextType) {
     case 'http':
       return context.switchToHttp().getRequest();
+    case 'ws':
+      return context.switchToWs().getClient();
     case 'graphql':
       return context.getArgs()[2];
     case 'rpc':

@@ -17,6 +17,11 @@ export class HeaderResolver implements I18nResolver {
       case 'http':
         req = context.switchToHttp().getRequest();
         break;
+      case 'ws': {
+        const client: any = context.switchToWs().getClient();
+        req = client?.handshake ?? client?.upgradeReq ?? client?.request ?? client;
+        break;
+      }
       case 'graphql':
         [, , { req }] = context.getArgs();
         break;

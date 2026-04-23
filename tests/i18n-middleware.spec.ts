@@ -2,12 +2,14 @@ import { ModuleRef } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
 import path from 'path';
 import { I18nMiddleware, I18nModule, I18N_OPTIONS, I18N_RESOLVERS, I18nService } from '../src';
+import { I18nMessageFormat } from '../src/utils';
 
 describe('i18n middleware', () => {
   let middleware: I18nMiddleware;
   let i18nService: I18nService;
   let moduleRef: ModuleRef;
   let i18nOptions: any;
+  let messageFormat: I18nMessageFormat;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -25,11 +27,13 @@ describe('i18n middleware', () => {
     i18nService = module.get(I18nService);
     moduleRef = module.get(ModuleRef);
     i18nOptions = module.get(I18N_OPTIONS);
+    messageFormat = module.get(I18nMessageFormat);
 
     middleware = new I18nMiddleware(
       i18nOptions,
       module.get(I18N_RESOLVERS),
       i18nService,
+      messageFormat,
       moduleRef,
     );
   });
@@ -59,6 +63,7 @@ describe('i18n middleware', () => {
         },
       ] as any,
       i18nService,
+      messageFormat,
       moduleRef,
     );
 

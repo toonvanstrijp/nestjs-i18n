@@ -562,6 +562,18 @@ describe('i18n module e2e express', () => {
       .expect('Wij gaan winkelen: Iedere 2 dagen');
   });
 
+  it('/GET hello/icu should format ICU select and plural message', async () => {
+    await request(app.getHttpServer())
+      .get('/hello/icu?gender=female&count=2')
+      .expect(200)
+      .expect('She sent 2 messages');
+
+    await request(app.getHttpServer())
+      .get('/hello/icu?gender=male&count=1')
+      .expect(200)
+      .expect('He sent 1 message');
+  });
+
   it('/GET hello/guard should return correct translation', async () => {
     await request(app.getHttpServer())
       .get('/hello/guard')

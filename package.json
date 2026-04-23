@@ -33,8 +33,7 @@
   ],
   "scripts": {
     "prepare": "npm run build",
-    "build": "npm run build:lib",
-    "build:lib": "npx rimraf dist && tsc -p tsconfig.build.json",
+    "build": "npx rimraf dist && tsc -p tsconfig.build.json",
     "prerelease": "npm run build && bumpp",
     "release": "npm publish --access public",
     "prerelease:next": "npm run build",
@@ -47,7 +46,6 @@
     "coveralls": "npm run test:cov && cat ./coverage/lcov.info | coveralls",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "docusaurus": "docusaurus",
     "doc:start": "docusaurus start",
     "doc:build": "docusaurus build",
     "doc:swizzle": "docusaurus swizzle",

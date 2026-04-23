@@ -73,8 +73,22 @@ export function formatI18nErrors<K = Record<string, unknown>>(
     error.children = formatI18nErrors(error.children ?? [], i18n, options);
     error.constraints = Object.keys(error.constraints ?? {}).reduce(
       (result, key) => {
-        const [translationKey, argsString] = error.constraints![key].split('|');
-        const args = argsString ? JSON.parse(argsString) : {};
+        const rawConstraint = error.constraints![key];
+        const separatorIndex = rawConstraint.indexOf('|');
+        const translationKey =
+          separatorIndex === -1
+            ? rawConstraint
+            : rawConstraint.slice(0, separatorIndex);
+        const argsString =
+          separatorIndex === -1 ? '' : rawConstraint.slice(separatorIndex + 1);
+        let args: Record<string, any> = {};
+        if (argsString) {
+          try {
+            args = JSON.parse(argsString);
+          } catch {
+            args = {};
+          }
+        }
         const constraints = args.constraints
           ? args.constraints.reduce((acc: Record<string, string>, cur: any, index: number) => {
               acc[index.toString()] = cur;

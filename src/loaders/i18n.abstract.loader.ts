@@ -35,7 +35,9 @@ export abstract class I18nAbstractLoader
 
   private watcher?: chokidar.FSWatcher;
 
-  private events: Subject<string> = new Subject();
+  private events: Subject<{ event: string; filePath: string }> = new Subject();
+
+  private languagesCache: string[] | null = null;
 
   constructor(
     @Inject(I18N_LOADER_OPTIONS)
@@ -47,8 +49,11 @@ export abstract class I18nAbstractLoader
     if (this.options.watch) {
       this.watcher = chokidar
         .watch(this.options.path, { ignoreInitial: true })
-        .on('all', (event) => {
-          this.events.next(event);
+        .on('all', (event, filePath) => {
+          this.events.next({
+            event,
+            filePath,
+          });
         });
     }
   }
@@ -86,8 +91,8 @@ export abstract class I18nAbstractLoader
       return ObservableMerge(
         ObservableOf(await this.parseTranslations()),
         this.events.pipe(
-          switchMap(() =>
-            from(this.parseTranslations()).pipe(
+          switchMap((eventInfo) =>
+            from(this.parseTranslations(eventInfo)).pipe(
               catchError((error) => {
                 this.logger.error(
                   'Error while parsing i18n translations. Ignoring this change.',
@@ -103,7 +108,9 @@ export abstract class I18nAbstractLoader
     return this.parseTranslations();
   }
 
-  protected async parseTranslations(): Promise<I18nTranslation> {
+  protected async parseTranslations(
+    eventInfo?: { event: string; filePath: string },
+  ): Promise<I18nTranslation> {
     const i18nPath = path.normalize(this.options.path + path.sep);
 
     const translations: I18nTranslation = {};
@@ -112,7 +119,11 @@ export abstract class I18nAbstractLoader
       throw new I18nError(`i18n path (${i18nPath}) cannot be found`);
     }
 
-    const languages = await this.parseLanguages();
+    const shouldRefreshLanguages =
+      !eventInfo || eventInfo.event === 'addDir' || eventInfo.event === 'unlinkDir';
+    const languages = shouldRefreshLanguages
+      ? await this.parseLanguages()
+      : await this.getCachedLanguages();
 
     const pattern = this.parseFilePattern(this.options.filePattern!);
 
@@ -202,9 +213,18 @@ export abstract class I18nAbstractLoader
 
   protected async parseLanguages(): Promise<string[]> {
     const i18nPath = path.normalize(this.options.path + path.sep);
-    return (await getDirectories(i18nPath)).map((dir) =>
+    this.languagesCache = (await getDirectories(i18nPath)).map((dir) =>
       path.relative(i18nPath, dir),
     );
+    return this.languagesCache;
+  }
+
+  private async getCachedLanguages(): Promise<string[]> {
+    if (this.languagesCache) {
+      return this.languagesCache;
+    }
+
+    return this.parseLanguages();
   }
 
   protected sanitizeOptions(options: I18nAbstractLoaderOptions) {

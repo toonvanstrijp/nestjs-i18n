@@ -11,13 +11,13 @@
     "baseUrl": "./",
     "incremental": true,
     "ignoreDeprecations": "6.0",
-    "newLine": "lf"
+    "newLine": "lf",
+    "types": ["jest", "node","express"]
   },
   "include": [
     "**/*"
   ],
   "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
+    "node_modules"
   ]
 }

@@ -26,6 +26,16 @@ export async function resolveLanguage(
   return null;
 }
 
+export function getLanguageFromResolverResult(
+  language: string | string[] | null,
+): string | undefined {
+  if (Array.isArray(language)) {
+    return language[0];
+  }
+
+  return language ?? undefined;
+}
+
 export async function getResolver(
   r: I18nOptionResolver,
   moduleRef: ModuleRef,

@@ -12,6 +12,8 @@ import {
 describe('i18n interceptor', () => {
   let i18nService: I18nService;
   let i18nInterceptor: I18nLanguageInterceptor;
+  let moduleRef: ModuleRef;
+  let i18nOptions: any;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -26,11 +28,13 @@ describe('i18n interceptor', () => {
     }).compile();
 
     i18nService = module.get(I18nService);
+    moduleRef = module.get(ModuleRef);
+    i18nOptions = module.get(I18N_OPTIONS);
     i18nInterceptor = new I18nLanguageInterceptor(
-      module.get(I18N_OPTIONS),
+      i18nOptions,
       module.get(I18N_RESOLVERS),
       i18nService,
-      module.get(ModuleRef),
+      moduleRef,
     );
   });
 
@@ -45,5 +49,54 @@ describe('i18n interceptor', () => {
     const next = { handle: () => Promise.resolve(true) };
     const result = await i18nInterceptor.intercept(ctx as any, next as any);
     expect(result).toBeTruthy();
+  });
+
+  it('stores the resolved language on response locals instead of app locals', async () => {
+    const response: any = { locals: {}, app: { locals: {} } };
+    const request = { app: response.app };
+    const ctx = {
+      getType: () => 'http',
+      switchToHttp: () => ({
+        getRequest: () => request,
+        getResponse: () => response,
+      }),
+    };
+    const next = { handle: () => ({ handle: () => true }) };
+
+    await i18nInterceptor.intercept(ctx as any, next as any);
+
+    expect(response.locals).toMatchObject({ i18nLang: 'en' });
+    expect(response.app.locals.i18nLang).toBeUndefined();
+  });
+
+  it('normalizes resolver array result to a single language string', async () => {
+    const response: any = { locals: {}, app: { locals: {} } };
+    const request = { app: response.app };
+    const ctx = {
+      getType: () => 'http',
+      switchToHttp: () => ({
+        getRequest: () => request,
+        getResponse: () => response,
+      }),
+    };
+    const next = { handle: jest.fn(() => ({ handle: () => true })) };
+
+    const interceptor = new I18nLanguageInterceptor(
+      {
+        ...i18nOptions,
+        skipAsyncHook: true,
+      },
+      [
+        {
+          resolve: () => ['nl', 'en'],
+        },
+      ] as any,
+      i18nService,
+      moduleRef,
+    );
+
+    await interceptor.intercept(ctx as any, next as any);
+
+    expect(response.locals.i18nLang).toBe('nl');
   });
 });

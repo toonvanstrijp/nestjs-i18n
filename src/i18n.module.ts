@@ -42,7 +42,7 @@ import { Observable, BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import * as format from 'string-format';
 import { I18nJsonLoader } from './loaders';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
-import * as fs from 'fs';
+import { mkdir, readFile, writeFile } from 'fs/promises';
 import * as path from 'path';
 import { NestMiddlewareConsumer } from './types';
 export const logger = new Logger('I18nService');
@@ -91,7 +91,10 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         }
       }
 
-      if (['pug', 'ejs', 'eta', 'nunjucks'].includes(this.i18nOptions.viewEngine)) {
+      if (
+        ['pug', 'ejs', 'eta', 'nunjucks'].includes(this.i18nOptions.viewEngine) &&
+        !this.adapter.httpAdapter.constructor.name.toLowerCase().startsWith('fastify')
+      ) {
         const app = this.adapter.httpAdapter.getInstance();
         app.locals ??= {};
         app.locals['t'] = (key: string, lang: any, args: any) => {
@@ -118,17 +121,17 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
           const outputFile = ts.annotateSourceCode(rawContent);
 
-          fs.mkdirSync(path.dirname(typesOutputPath), {
+          await mkdir(path.dirname(typesOutputPath), {
             recursive: true,
           });
           let currentFileContent = null;
           try {
-            currentFileContent = fs.readFileSync(typesOutputPath, 'utf8');
+            currentFileContent = await readFile(typesOutputPath, 'utf8');
           } catch (err) {
             logger.error(err);
           }
           if (currentFileContent != outputFile) {
-            fs.writeFileSync(typesOutputPath, outputFile);
+            await writeFile(typesOutputPath, outputFile);
             logger.log(
               `Types generated in: ${this.i18nOptions.typesOutputPath}.
                 Please also add it to ignore files of your linter and formatter to avoid linting and formatting it
@@ -147,6 +150,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
   }
 
   onModuleDestroy() {
+    this.unsubscribe.next();
     this.unsubscribe.complete();
   }
 

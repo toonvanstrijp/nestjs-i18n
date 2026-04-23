@@ -685,3 +685,41 @@ describe('i18n module e2e express', () => {
     await app.close();
   });
 });
+
+describe('i18n module e2e express default language regression #644', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      imports: [
+        I18nModule.forRoot({
+          fallbackLanguage: 'fr',
+          resolvers: [new HeaderResolver(['x-custom-lang'])],
+          loaderOptions: {
+            path: path.join(__dirname, '/i18n/'),
+          },
+        }),
+      ],
+      controllers: [HelloController],
+    }).compile();
+
+    app = module.createNestApplication();
+    await app.init();
+  });
+
+  it(`/GET hello should use fallbackLanguage when x-custom-lang is missing`, () => {
+    return request(app.getHttpServer()).get('/hello').expect(200).expect('Bonjour');
+  });
+
+  it(`/GET hello should use fallbackLanguage when x-custom-lang is unsupported`, () => {
+    return request(app.getHttpServer())
+      .get('/hello')
+      .set('x-custom-lang', 'es')
+      .expect(200)
+      .expect('Bonjour');
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+});

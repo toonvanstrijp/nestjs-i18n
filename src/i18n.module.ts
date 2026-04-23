@@ -177,7 +177,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
             return this.i18n.t(key, { lang, args });
           };
         }
-
       });
     }
   }

@@ -96,9 +96,7 @@ describe('loaders-utils', () => {
 
     it('should ignore duplicate translation emissions by reference', async () => {
       const sharedTranslations = { en: { greeting: 'Hello' } };
-      const translationSubject = new BehaviorSubject<I18nTranslation>(
-        sharedTranslations,
-      );
+      const translationSubject = new BehaviorSubject<I18nTranslation>(sharedTranslations);
 
       const loader1 = new MockI18nLoaderWithObservable(translationSubject, ['en']);
       const loader2 = new MockI18nLoaderWithObservable(
@@ -106,10 +104,7 @@ describe('loaders-utils', () => {
         ['en'],
       );
 
-      const result = (await processTranslations([
-        loader1,
-        loader2,
-      ])) as Observable<I18nTranslation>;
+      const result = (await processTranslations([loader1, loader2])) as Observable<I18nTranslation>;
 
       const received: I18nTranslation[] = [];
       const subscription = result.subscribe((translations) => {
@@ -227,19 +222,13 @@ describe('loaders-utils', () => {
     it('should ignore duplicate language emissions with same values', async () => {
       const languagesSubject = new BehaviorSubject<string[]>(['en', 'nl']);
 
-      const loader1 = new MockI18nLoaderWithObservable(
-        new BehaviorSubject({}),
-        languagesSubject,
-      );
+      const loader1 = new MockI18nLoaderWithObservable(new BehaviorSubject({}), languagesSubject);
       const loader2 = new MockI18nLoaderWithObservable(
         new BehaviorSubject({}),
         new BehaviorSubject(['fr']),
       );
 
-      const result = (await processLanguages([
-        loader1,
-        loader2,
-      ])) as Observable<string[]>;
+      const result = (await processLanguages([loader1, loader2])) as Observable<string[]>;
 
       const received: string[][] = [];
       const subscription = result.subscribe((languages) => {

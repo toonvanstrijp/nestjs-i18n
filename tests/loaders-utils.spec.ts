@@ -93,6 +93,74 @@ describe('loaders-utils', () => {
         });
       });
     });
+
+    it('should ignore duplicate translation emissions by reference', async () => {
+      const sharedTranslations = { en: { greeting: 'Hello' } };
+      const translationSubject = new BehaviorSubject<I18nTranslation>(sharedTranslations);
+
+      const loader1 = new MockI18nLoaderWithObservable(translationSubject, ['en']);
+      const loader2 = new MockI18nLoaderWithObservable(
+        new BehaviorSubject<I18nTranslation>({ en: { feature: 'Feature' } }),
+        ['en'],
+      );
+
+      const result = (await processTranslations([loader1, loader2])) as Observable<I18nTranslation>;
+
+      const received: I18nTranslation[] = [];
+      const subscription = result.subscribe((translations) => {
+        received.push(translations);
+      });
+
+      translationSubject.next(sharedTranslations);
+      translationSubject.next(sharedTranslations);
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(received).toHaveLength(1);
+      subscription.unsubscribe();
+    });
+
+    it('should preserve later loader precedence when a middle loader changes', async () => {
+      const loader1Translations = new BehaviorSubject<I18nTranslation>({
+        en: { greeting: 'Hello', base: 'Base' },
+      });
+      const loader2Translations = new BehaviorSubject<I18nTranslation>({
+        en: { shared: 'Middle', extra: 'Extra' },
+      });
+      const loader3Translations = new BehaviorSubject<I18nTranslation>({
+        en: { shared: 'Override', final: 'Final' },
+      });
+
+      const result = (await processTranslations([
+        new MockI18nLoaderWithObservable(loader1Translations, ['en']),
+        new MockI18nLoaderWithObservable(loader2Translations, ['en']),
+        new MockI18nLoaderWithObservable(loader3Translations, ['en']),
+      ])) as Observable<I18nTranslation>;
+
+      const received: I18nTranslation[] = [];
+      const subscription = result.subscribe((translations) => {
+        received.push(translations);
+      });
+
+      loader2Translations.next({
+        en: { replacement: 'Replacement' },
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(received).toHaveLength(2);
+      expect(received[1]).toEqual({
+        en: {
+          greeting: 'Hello',
+          base: 'Base',
+          replacement: 'Replacement',
+          shared: 'Override',
+          final: 'Final',
+        },
+      });
+
+      subscription.unsubscribe();
+    });
   });
 
   describe('processLanguages', () => {
@@ -149,6 +217,32 @@ describe('loaders-utils', () => {
           resolve(null);
         });
       });
+    });
+
+    it('should ignore duplicate language emissions with same values', async () => {
+      const languagesSubject = new BehaviorSubject<string[]>(['en', 'nl']);
+
+      const loader1 = new MockI18nLoaderWithObservable(new BehaviorSubject({}), languagesSubject);
+      const loader2 = new MockI18nLoaderWithObservable(
+        new BehaviorSubject({}),
+        new BehaviorSubject(['fr']),
+      );
+
+      const result = (await processLanguages([loader1, loader2])) as Observable<string[]>;
+
+      const received: string[][] = [];
+      const subscription = result.subscribe((languages) => {
+        received.push(languages);
+      });
+
+      languagesSubject.next(['en', 'nl']);
+      languagesSubject.next(['en', 'nl']);
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(received).toHaveLength(1);
+      expect(received[0]).toEqual(expect.arrayContaining(['en', 'nl', 'fr']));
+      subscription.unsubscribe();
     });
   });
 });

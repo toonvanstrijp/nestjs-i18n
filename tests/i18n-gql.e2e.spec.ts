@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
+import path from 'path';
 import {
   CookieResolver,
   HeaderResolver,
@@ -9,14 +9,14 @@ import {
   I18nValidationPipe,
 } from '../src';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CatModule } from './app/cats/cat.module';
 import { createClient } from 'graphql-ws';
 import { ApolloClient, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
-import * as WebSocket from 'ws';
+import WebSocket from 'ws';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import gql from 'graphql-tag';
 import { SubscriptionClient } from 'subscriptions-transport-ws';

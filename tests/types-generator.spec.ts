@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import * as fs from 'node:fs';
+import fs from 'node:fs';
 
 import { generateI18nTypes } from '../src/types-generator';
 

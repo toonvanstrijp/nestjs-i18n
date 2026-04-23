@@ -57,7 +57,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     }
   }
 
-  private createGraphQLError(
+  private async createGraphQLError(
     exception: I18nValidationException,
     errors: string[] | I18nValidationError[] | object,
   ) {
@@ -65,8 +65,8 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
 
     try {
       // Load lazily so non-GraphQL consumers don't need the graphql package.
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const { GraphQLError } = require('graphql');
+
+      const { GraphQLError } = await import('graphql');
 
       return new GraphQLError(exception.message, {
         extensions: {

@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
+import path from 'path';
 import {
   CookieResolver,
   HeaderResolver,
@@ -10,7 +10,7 @@ import {
   I18nValidationExceptionFilter,
 } from '../src';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
 import { CatController } from './app/cats/cat.controller';
 

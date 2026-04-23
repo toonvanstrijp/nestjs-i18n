@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import * as path from 'path';
-import * as fs from 'fs';
+import path from 'path';
+import fs from 'fs';
 import { I18nModule, I18nService, I18nLoader, I18nYamlLoader } from '../src';
 
 describe('i18n yaml module', () => {

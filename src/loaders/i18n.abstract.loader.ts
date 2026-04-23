@@ -1,7 +1,7 @@
 import { I18nLoader } from './i18n.loader';
 import { I18N_LOADER_OPTIONS } from '../i18n.constants';
 import { Inject, Logger, OnModuleDestroy } from '@nestjs/common';
-import * as path from 'path';
+import path from 'path';
 import { readFile } from 'fs/promises';
 import { exists, getDirectories, getFiles } from '../utils';
 import { I18nTranslation } from '../interfaces';
@@ -15,7 +15,7 @@ import {
   of as ObservableOf,
   switchMap,
 } from 'rxjs';
-import * as chokidar from 'chokidar';
+import chokidar from 'chokidar';
 import { I18nError } from '../i18n.error';
 
 

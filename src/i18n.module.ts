@@ -39,11 +39,11 @@ import {
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
 import { Observable, BehaviorSubject, Subject, takeUntil } from 'rxjs';
-import * as format from 'string-format';
+import format from 'string-format';
 import { I18nJsonLoader } from './loaders';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
 import { mkdir, readFile, writeFile } from 'fs/promises';
-import * as path from 'path';
+import path from 'path';
 import { NestMiddlewareConsumer } from './types';
 export const logger = new Logger('I18nService');
 
@@ -79,10 +79,11 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       if (['hbs', 'handlebars'].includes(this.i18nOptions.viewEngine)) {
         try {
           // Import handlebars or hbs
-          const hbs =
+          const hbsModule =
             this.i18nOptions.viewEngine === 'hbs'
               ? await import('hbs')
               : await import('handlebars');
+          const hbs = (hbsModule as any).default ?? hbsModule;
 
           hbs.registerHelper('t', this.i18n.hbsHelper);
           logger.log('Handlebars helper registered');

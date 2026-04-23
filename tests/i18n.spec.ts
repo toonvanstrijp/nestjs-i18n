@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import * as path from 'path';
-import * as fs from 'fs';
+import path from 'path';
+import fs from 'fs';
 import { I18nModule, I18nService, I18nLoader, i18nValidationMessage } from '../src';
 import { I18nError } from '../src/i18n.error';
 import { I18nTranslations } from './generated/i18n.generated';

@@ -97,7 +97,7 @@ When using a monorepo structure don't forget to set the `outDir`
 
 ```typescript title="src/app.module.ts"
 import { Module } from '@nestjs/common';
-import * as path from 'path';
+import path from 'path';
 import { I18nModule } from 'nestjs-i18n';
 
 @Module({
@@ -120,7 +120,7 @@ The async way `nestjs-i18n` is to use I18nModule.forRootAsync
 ```typescript title="src/app.module.ts"
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import * as path from 'path';
+import path from 'path';
 import { I18nModule, AcceptLanguageResolver, QueryResolver, HeaderResolver } from 'nestjs-i18n';
 
 @Module({
@@ -228,7 +228,7 @@ To add resolvers add them to the `resolvers` array in your `I18nModule` options.
 
 ```typescript title="src/app.module.ts"
 import { Module } from '@nestjs/common';
-import * as path from 'path';
+import path from 'path';
 import {
   AcceptLanguageResolver,
   I18nJsonLoader,
@@ -260,7 +260,7 @@ or in `forRootAsync`
 
 ```typescript title="src/app.module.ts"
 import { Module } from '@nestjs/common';
-import * as path from 'path';
+import path from 'path';
 import {
   AcceptLanguageResolver,
   QueryResolver,

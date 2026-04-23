@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
+import path from 'path';
 import {
   CookieResolver,
   HeaderResolver,
@@ -8,7 +8,7 @@ import {
   QueryResolver,
   I18nJsonLoader,
 } from '../src';
-import * as request from 'supertest';
+import request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
 import { NestFastifyApplication, FastifyAdapter } from '@nestjs/platform-fastify';
 import { join } from 'path';

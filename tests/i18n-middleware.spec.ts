@@ -1,6 +1,6 @@
 import { ModuleRef } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
+import path from 'path';
 import { I18nMiddleware, I18nModule, I18N_OPTIONS, I18N_RESOLVERS, I18nService } from '../src';
 
 describe('i18n middleware', () => {

@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
+import path from 'path';
 import { GrpcMetadataResolver, I18nModule } from '../src';
 import { HelloController } from './app/controllers/hello.controller';
 import { ClientGrpc, ClientsModule, MicroserviceOptions, Transport } from '@nestjs/microservices';

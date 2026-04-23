@@ -1,6 +1,6 @@
 import { ModuleRef } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
+import path from 'path';
 import {
   I18nModule,
   I18nService,

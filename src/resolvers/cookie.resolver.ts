@@ -1,4 +1,4 @@
-import * as cookie from 'cookie';
+import {parse} from 'cookie';
 import { Injectable, ExecutionContext } from '@nestjs/common';
 import { I18nResolver } from '..';
 import { I18nResolverOptions } from '../decorators';
@@ -28,7 +28,7 @@ export class CookieResolver implements I18nResolver {
 
     if (req) {
       if (!req.cookies && req.headers.cookie) {
-        req.cookies = cookie.parse(req.headers.cookie);
+        req.cookies = parse(req.headers.cookie);
       }
 
       if (req.cookies) {

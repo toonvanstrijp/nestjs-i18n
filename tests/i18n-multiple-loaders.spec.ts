@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import * as path from 'path';
+import path from 'path';
 import { I18nModule, I18nService, I18nJsonLoader } from '../src';
 
 describe('i18n multiple loaders', () => {

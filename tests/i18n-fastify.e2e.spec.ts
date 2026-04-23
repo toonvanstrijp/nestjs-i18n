@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 import {
   CookieResolver,
   HeaderResolver,
@@ -11,7 +11,7 @@ import {
 import { HelloController } from './app/controllers/hello.controller';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { CatController } from './app/cats/cat.controller';
 
 describe('i18n module e2e fastify', () => {

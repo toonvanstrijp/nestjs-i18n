@@ -9,10 +9,15 @@
     "target": "es2021",
     "sourceMap": true,
     "baseUrl": "./",
-    "incremental": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "ignoreDeprecations": "6.0",
     "newLine": "lf",
-    "types": ["jest", "node","express"]
+    "types": [
+      "jest",
+      "node",
+      "express"
+    ]
   },
   "include": [
     "**/*"

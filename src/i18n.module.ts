@@ -31,6 +31,7 @@ import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators';
 import {
   shouldResolve,
+  isNestMiddleware,
   usingFastify,
   mergeDeep,
   processTranslations,
@@ -178,6 +179,20 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
           };
         }
       });
+    }
+
+    if (!usingFastify(consumer) && isNestMiddleware(consumer)) {
+      const adapterInstance = consumer.httpAdapter.getInstance();
+      if (typeof adapterInstance?.use === 'function') {
+        const noop = () => {};
+        adapterInstance.use(async (err: any, req: any, res: any, next: any) => {
+          if (!req.i18nContext) {
+            await this.middleware.use(req, res, noop);
+          }
+
+          next(err);
+        });
+      }
     }
   }
 

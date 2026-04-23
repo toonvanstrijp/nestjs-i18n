@@ -44,9 +44,13 @@ export class I18nLanguageInterceptor implements NestInterceptor {
 
     ctx.i18nLang = language || this.i18nOptions.fallbackLanguage;
 
-    // Pass down language to handlebars
-    if (ctx.app && ctx.app.locals) {
-      ctx.app.locals.i18nLang = ctx.i18nLang;
+    const response =
+      context.getType<string>() === 'http'
+        ? context.switchToHttp().getResponse()
+        : ctx?.res;
+
+    if (response?.locals) {
+      response.locals.i18nLang = ctx.i18nLang;
     }
 
     if (!i18nContext) {

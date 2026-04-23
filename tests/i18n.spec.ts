@@ -176,6 +176,27 @@ describe('i18n module', () => {
     expect(result).toBe('the translation is missing, nested: Hello, arg: world');
   });
 
+  it('i18n service should throw on missing translation even when logging is disabled', async () => {
+    const module = await Test.createTestingModule({
+      imports: [
+        I18nModule.forRoot({
+          fallbackLanguage: 'en',
+          logging: false,
+          throwOnMissingKey: true,
+          loaderOptions: {
+            path: path.join(__dirname, '/i18n/'),
+          },
+        }),
+      ],
+    }).compile();
+
+    const strictI18n = module.get<I18nService<any>>(I18nService) as I18nService<any>;
+
+    expect(() => (strictI18n as any).translate('test.missing', { lang: 'nl' })).toThrow(I18nError);
+
+    await module.close();
+  });
+
   it('i18n service should support uppercase transform pipes in templates', () => {
     expect(
       i18nService.translate<any>('test.PIPE_UPPERCASE', {

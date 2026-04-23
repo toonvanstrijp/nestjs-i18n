@@ -46,4 +46,22 @@ describe('i18n interceptor', () => {
     const result = await i18nInterceptor.intercept(ctx as any, next as any);
     expect(result).toBeTruthy();
   });
+
+  it('stores the resolved language on response locals instead of app locals', async () => {
+    const response: any = { locals: {}, app: { locals: {} } };
+    const request = { app: response.app };
+    const ctx = {
+      getType: () => 'http',
+      switchToHttp: () => ({
+        getRequest: () => request,
+        getResponse: () => response,
+      }),
+    };
+    const next = { handle: () => ({ handle: () => true }) };
+
+    await i18nInterceptor.intercept(ctx as any, next as any);
+
+    expect(response.locals).toMatchObject({ i18nLang: 'en' });
+    expect(response.app.locals.i18nLang).toBeUndefined();
+  });
 });

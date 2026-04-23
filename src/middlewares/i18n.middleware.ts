@@ -48,9 +48,8 @@ export class I18nMiddleware implements NestMiddleware {
 
     req.i18nLang = language || this.i18nOptions.fallbackLanguage;
 
-    // Pass down language to handlebars
-    if (req.app) {
-      req.app.locals.i18nLang = req.i18nLang;
+    if (res?.locals) {
+      res.locals.i18nLang = req.i18nLang;
     }
 
     req.i18nContext = new I18nContext(req.i18nLang, this.i18nService);

@@ -91,7 +91,10 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         }
       }
 
-      if (['pug', 'ejs', 'eta', 'nunjucks'].includes(this.i18nOptions.viewEngine)) {
+      if (
+        ['pug', 'ejs', 'eta', 'nunjucks'].includes(this.i18nOptions.viewEngine) &&
+        !this.adapter.httpAdapter.constructor.name.toLowerCase().startsWith('fastify')
+      ) {
         const app = this.adapter.httpAdapter.getInstance();
         app.locals ??= {};
         app.locals['t'] = (key: string, lang: any, args: any) => {

@@ -14,4 +14,47 @@ describe('i18n module', () => {
     expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('No resolvers provided.'));
     expect(errorSpy).not.toHaveBeenCalled();
   });
+
+  it('registers the view helper on Express locals only', async () => {
+    const refresh = jest.fn();
+    const expressApp = { locals: {} as Record<string, unknown> };
+    const getInstance = jest.fn().mockReturnValue(expressApp);
+    const module = Object.create(I18nModule.prototype) as any;
+
+    module.i18n = { refresh, t: jest.fn() };
+    module.i18nOptions = { viewEngine: 'ejs' };
+    module.adapter = {
+      httpAdapter: {
+        getInstance,
+        constructor: { name: 'ExpressAdapter' },
+      },
+    };
+    module.translations = { pipe: jest.fn() };
+
+    await module.onModuleInit();
+
+    expect(refresh).toHaveBeenCalled();
+    expect(expressApp.locals.t).toEqual(expect.any(Function));
+  });
+
+  it('does not register the view helper on Fastify app locals', async () => {
+    const refresh = jest.fn();
+    const getInstance = jest.fn();
+    const module = Object.create(I18nModule.prototype) as any;
+
+    module.i18n = { refresh, t: jest.fn() };
+    module.i18nOptions = { viewEngine: 'ejs' };
+    module.adapter = {
+      httpAdapter: {
+        getInstance,
+        constructor: { name: 'FastifyAdapter' },
+      },
+    };
+    module.translations = { pipe: jest.fn() };
+
+    await module.onModuleInit();
+
+    expect(refresh).toHaveBeenCalled();
+    expect(getInstance).not.toHaveBeenCalled();
+  });
 });

@@ -1,0 +1,7 @@
+{
+  "greeting": "Hallo",
+  "common": {
+    "yes": "Ja",
+    "no": "Nee"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "feature": {
+    "name": "Feature",
+    "description": "This is a feature"
+  },
+  "common": {
+    "cancel": "Cancel"
+  }
+}

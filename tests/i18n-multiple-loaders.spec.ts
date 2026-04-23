@@ -36,20 +36,12 @@ describe('i18n multiple loaders', () => {
 
     it('should merge translations from multiple loaders', () => {
       // From loader1
-      expect(i18nService.translate('core.greeting', { lang: 'en' })).toBe(
-        'Hello',
-      );
-      expect(i18nService.translate('core.greeting', { lang: 'nl' })).toBe(
-        'Hallo',
-      );
+      expect(i18nService.translate('core.greeting', { lang: 'en' })).toBe('Hello');
+      expect(i18nService.translate('core.greeting', { lang: 'nl' })).toBe('Hallo');
 
       // From loader2
-      expect(i18nService.translate('features.feature.name', { lang: 'en' })).toBe(
-        'Feature',
-      );
-      expect(i18nService.translate('features.feature.name', { lang: 'nl' })).toBe(
-        'Functie',
-      );
+      expect(i18nService.translate('features.feature.name', { lang: 'en' })).toBe('Feature');
+      expect(i18nService.translate('features.feature.name', { lang: 'nl' })).toBe('Functie');
 
       // From loader2 French (only in loader2)
       expect(i18nService.translate('features.feature.name', { lang: 'fr' })).toBe(
@@ -59,15 +51,11 @@ describe('i18n multiple loaders', () => {
 
     it('should merge nested translations correctly', () => {
       // Loader1 has core.common
-      expect(i18nService.translate('core.common.yes', { lang: 'en' })).toBe(
-        'Yes',
-      );
+      expect(i18nService.translate('core.common.yes', { lang: 'en' })).toBe('Yes');
       expect(i18nService.translate('core.common.no', { lang: 'en' })).toBe('No');
 
       // Loader2 also has common.cancel, should merge
-      expect(i18nService.translate('features.common.cancel', { lang: 'en' })).toBe(
-        'Cancel',
-      );
+      expect(i18nService.translate('features.common.cancel', { lang: 'en' })).toBe('Cancel');
     });
 
     it('should combine languages from multiple loaders', async () => {
@@ -80,9 +68,7 @@ describe('i18n multiple loaders', () => {
     });
 
     it('should fallback to fallbackLanguage if lang not found', () => {
-      expect(
-        i18nService.translate('core.greeting', { lang: 'de' })
-      ).toBe('Hello');
+      expect(i18nService.translate('core.greeting', { lang: 'de' })).toBe('Hello');
     });
   });
 
@@ -120,12 +106,8 @@ describe('i18n multiple loaders', () => {
     });
 
     it('should merge translations from multiple loaders in async mode', () => {
-      expect(i18nService.translate('core.greeting', { lang: 'en' })).toBe(
-        'Hello',
-      );
-      expect(i18nService.translate('features.feature.name', { lang: 'en' })).toBe(
-        'Feature',
-      );
+      expect(i18nService.translate('core.greeting', { lang: 'en' })).toBe('Hello');
+      expect(i18nService.translate('features.feature.name', { lang: 'en' })).toBe('Feature');
     });
 
     it('should merge languages in async mode', async () => {
@@ -163,12 +145,8 @@ describe('i18n multiple loaders', () => {
     });
 
     it('should still work with legacy loader + loaderOptions API', () => {
-      expect(i18nService.translate('core.greeting', { lang: 'en' })).toBe(
-        'Hello',
-      );
-      expect(i18nService.translate('core.greeting', { lang: 'nl' })).toBe(
-        'Hallo',
-      );
+      expect(i18nService.translate('core.greeting', { lang: 'en' })).toBe('Hello');
+      expect(i18nService.translate('core.greeting', { lang: 'nl' })).toBe('Hallo');
     });
   });
 
@@ -207,13 +185,9 @@ describe('i18n multiple loaders', () => {
       // Both loaders have "common" object with different keys
       // Loader1: common.yes, common.no
       // Loader2: common.cancel
-      expect(i18nService.translate('core.common.yes', { lang: 'en' })).toBe(
-        'Yes',
-      );
+      expect(i18nService.translate('core.common.yes', { lang: 'en' })).toBe('Yes');
       expect(i18nService.translate('core.common.no', { lang: 'en' })).toBe('No');
-      expect(
-        i18nService.translate('features.common.cancel', { lang: 'en' })
-      ).toBe('Cancel');
+      expect(i18nService.translate('features.common.cancel', { lang: 'en' })).toBe('Cancel');
     });
 
     it('should support refresh with multiple loaders', async () => {
@@ -226,9 +200,7 @@ describe('i18n multiple loaders', () => {
       await i18nService.refresh();
 
       // Should still have the same translation
-      expect(i18nService.translate('core.greeting', { lang: 'en' })).toBe(
-        'Hello',
-      );
+      expect(i18nService.translate('core.greeting', { lang: 'en' })).toBe('Hello');
     });
   });
 });

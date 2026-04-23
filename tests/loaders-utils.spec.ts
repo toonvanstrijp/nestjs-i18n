@@ -11,7 +11,10 @@ describe('loaders-utils', () => {
         ['en', 'nl'],
       );
       const loader2 = new MockI18nLoader(
-        { en: { feature: 'Feature', core: { version: '1.0' } }, fr: { feature: 'Caractéristique' } },
+        {
+          en: { feature: 'Feature', core: { version: '1.0' } },
+          fr: { feature: 'Caractéristique' },
+        },
         ['en', 'fr'],
       );
 
@@ -34,10 +37,7 @@ describe('loaders-utils', () => {
     });
 
     it('should handle single loader', async () => {
-      const loader = new MockI18nLoader(
-        { en: { greeting: 'Hello' } },
-        ['en'],
-      );
+      const loader = new MockI18nLoader({ en: { greeting: 'Hello' } }, ['en']);
 
       const result = await processTranslations([loader]);
 
@@ -76,14 +76,8 @@ describe('loaders-utils', () => {
       const translations1 = { en: { greeting: 'Hello' } };
       const translations2 = { en: { feature: 'Feature' } };
 
-      const loader1 = new MockI18nLoaderWithObservable(
-        new BehaviorSubject(translations1),
-        ['en'],
-      );
-      const loader2 = new MockI18nLoaderWithObservable(
-        new BehaviorSubject(translations2),
-        ['en'],
-      );
+      const loader1 = new MockI18nLoaderWithObservable(new BehaviorSubject(translations1), ['en']);
+      const loader2 = new MockI18nLoaderWithObservable(new BehaviorSubject(translations2), ['en']);
 
       const result = await processTranslations([loader1, loader2]);
 
@@ -151,9 +145,7 @@ describe('loaders-utils', () => {
       // Subscribe to get actual value
       await new Promise((resolve) => {
         (result as Observable<string[]>).subscribe((languages) => {
-          expect(languages).toEqual(
-            expect.arrayContaining(['en', 'nl', 'fr']),
-          );
+          expect(languages).toEqual(expect.arrayContaining(['en', 'nl', 'fr']));
           resolve(null);
         });
       });

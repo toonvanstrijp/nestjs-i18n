@@ -29,7 +29,13 @@ import { ValueProvider, ClassProvider, OnModuleInit, NestModule } from '@nestjs/
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
 import { getI18nResolverOptionsToken } from './decorators';
-import { shouldResolve, usingFastify, mergeDeep, processTranslations, processLanguages } from './utils';
+import {
+  shouldResolve,
+  usingFastify,
+  mergeDeep,
+  processTranslations,
+  processLanguages,
+} from './utils';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
 import { Observable, BehaviorSubject, Subject, takeUntil } from 'rxjs';

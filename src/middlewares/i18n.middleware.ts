@@ -14,6 +14,7 @@ import { I18nContext, I18nOptions } from '../index';
 import { I18nService } from '../services/i18n.service';
 import { I18nOptionResolver } from '../interfaces';
 import { I18nError } from '../i18n.error';
+import { I18nMessageFormat } from '../utils';
 
 const ExecutionContextMethodNotImplemented = new I18nError(
   "Method not implemented. nestjs-i18n creates a fake Http context since it's using middleware to resolve your language. Nestjs middlewares don't have access to the ExecutionContext.",
@@ -27,6 +28,7 @@ export class I18nMiddleware implements NestMiddleware {
     @Inject(I18N_RESOLVERS)
     private readonly i18nResolvers: I18nOptionResolver[],
     private readonly i18nService: I18nService,
+    private readonly messageFormat: I18nMessageFormat,
     private readonly moduleRef: ModuleRef,
   ) {}
 
@@ -53,7 +55,7 @@ export class I18nMiddleware implements NestMiddleware {
       res.locals.i18nLang = req.i18nLang;
     }
 
-    req.i18nContext = new I18nContext(req.i18nLang, this.i18nService);
+    req.i18nContext = new I18nContext(req.i18nLang, this.i18nService, this.messageFormat);
 
     if (this.i18nOptions.skipAsyncHook) {
       next();

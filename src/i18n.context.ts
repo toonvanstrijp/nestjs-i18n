@@ -3,7 +3,8 @@ import { AsyncLocalStorage } from 'async_hooks';
 import { I18nTranslator, I18nValidationError } from './interfaces';
 import { I18nService, TranslateOptions } from './services/i18n.service';
 import { Path, PathValue } from './types';
-import { getContextObject } from './utils';
+import { getContextObject, I18nMessageFormat } from './utils';
+import { IfAnyOrNever } from './types';
 
 export class I18nContext<K = Record<string, unknown>> implements I18nTranslator<K> {
   private static storage = new AsyncLocalStorage<I18nContext>();
@@ -17,20 +18,44 @@ export class I18nContext<K = Record<string, unknown>> implements I18nTranslator<
   constructor(
     readonly lang: string,
     readonly service: I18nService<K>,
+    readonly messageFormat: I18nMessageFormat,
   ) {}
 
   public translate<P extends Path<K> = any, R = PathValue<K, P>>(
     key: P,
     options?: TranslateOptions,
-  ) {
-    options = {
+  ): IfAnyOrNever<R, string, R> {
+    const translatedOptions = {
       lang: this.lang,
       ...options,
     };
-    return this.service.translate<P, R>(key, options);
+
+    const useICU = translatedOptions.useICU ?? this.messageFormat.enabled;
+    const rawResult = useICU
+      ? this.service.translate<P, R>(key, { ...translatedOptions, args: undefined })
+      : this.service.translate<P, R>(key, translatedOptions);
+
+    if (!useICU || typeof rawResult !== 'string') {
+      return rawResult as IfAnyOrNever<R, string, R>;
+    }
+
+    const icuArgs =
+      translatedOptions.args && !Array.isArray(translatedOptions.args)
+        ? (translatedOptions.args as Record<string, any>)
+        : undefined;
+
+    try {
+      const compiled = this.messageFormat.compile(rawResult, translatedOptions.lang);
+      return compiled(icuArgs ?? {}) as IfAnyOrNever<R, string, R>;
+    } catch {
+      return rawResult as IfAnyOrNever<R, string, R>;
+    }
   }
 
-  public t<P extends Path<K> = any, R = PathValue<K, P>>(key: P, options?: TranslateOptions) {
+  public t<P extends Path<K> = any, R = PathValue<K, P>>(
+    key: P,
+    options?: TranslateOptions,
+  ): IfAnyOrNever<R, string, R> {
     return this.translate<P, R>(key, options);
   }
 

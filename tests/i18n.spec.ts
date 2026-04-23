@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import path from 'path';
 import fs from 'fs';
-import { I18nModule, I18nService, I18nLoader, i18nValidationMessage } from '../src';
+import { I18nContext, I18nModule, I18nService, I18nLoader, i18nValidationMessage } from '../src';
 import { I18nError } from '../src/i18n.error';
+import { I18nMessageFormat } from '../src/utils';
 import { I18nTranslations } from './generated/i18n.generated';
 import { plainToInstance } from 'class-transformer';
 import { PostsDto } from './app/dto/create-posts.dto';
@@ -10,9 +11,10 @@ import { PostsDto } from './app/dto/create-posts.dto';
 describe('i18n module', () => {
   let i18nService: I18nService<I18nTranslations>;
   let i18nLoader: I18nLoader;
+  let moduleRef: TestingModule;
 
   beforeAll(async () => {
-    const module = await Test.createTestingModule({
+    moduleRef = await Test.createTestingModule({
       imports: [
         I18nModule.forRoot({
           fallbackLanguage: 'en',
@@ -23,8 +25,8 @@ describe('i18n module', () => {
       ],
     }).compile();
 
-    i18nService = module.get(I18nService);
-    i18nLoader = module.get(I18nLoader);
+    i18nService = moduleRef.get(I18nService);
+    i18nLoader = moduleRef.get(I18nLoader);
   });
 
   it('i18n service should be defined', async () => {
@@ -231,6 +233,38 @@ describe('i18n module', () => {
         args: { title: 'Mr.', name: 'john doe' },
       }),
     ).toBe('Hello, Mr. JOHN DOE!');
+  });
+
+  it('i18n context should support ICU select and plural formatting when enabled', async () => {
+    const icuModule = await Test.createTestingModule({
+      imports: [
+        I18nModule.forRoot({
+          fallbackLanguage: 'en',
+          useICU: true,
+          loaderOptions: {
+            path: path.join(__dirname, '/i18n/'),
+          },
+        }),
+      ],
+    }).compile();
+
+    const icuService = icuModule.get<I18nService<I18nTranslations>>(I18nService);
+    const icuMessageFormat = icuModule.get(I18nMessageFormat);
+    const i18nContext = new I18nContext('en', icuService, icuMessageFormat);
+
+    expect(
+      i18nContext.translate<any>('test.ICU_MESSAGE', {
+        args: { GENDER: 'female', COUNT: 2 },
+      }),
+    ).toBe('She sent 2 messages');
+
+    expect(
+      i18nContext.translate<any>('test.ICU_MESSAGE', {
+        args: { GENDER: 'male', COUNT: 1 },
+      }),
+    ).toBe('He sent 1 message');
+
+    await icuModule.close();
   });
 
   it('i18n service should NOT return translation from subfolders by default', () => {

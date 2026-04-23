@@ -8,12 +8,14 @@ import {
   I18N_OPTIONS,
   I18N_RESOLVERS,
 } from '../src';
+import { I18nMessageFormat } from '../src/utils';
 
 describe('i18n interceptor', () => {
   let i18nService: I18nService;
   let i18nInterceptor: I18nLanguageInterceptor;
   let moduleRef: ModuleRef;
   let i18nOptions: any;
+  let messageFormat: I18nMessageFormat;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -30,10 +32,12 @@ describe('i18n interceptor', () => {
     i18nService = module.get(I18nService);
     moduleRef = module.get(ModuleRef);
     i18nOptions = module.get(I18N_OPTIONS);
+    messageFormat = module.get(I18nMessageFormat);
     i18nInterceptor = new I18nLanguageInterceptor(
       i18nOptions,
       module.get(I18N_RESOLVERS),
       i18nService,
+      messageFormat,
       moduleRef,
     );
   });
@@ -92,6 +96,7 @@ describe('i18n interceptor', () => {
         },
       ] as any,
       i18nService,
+      messageFormat,
       moduleRef,
     );
 

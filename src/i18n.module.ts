@@ -46,6 +46,7 @@ import { I18nMiddleware } from './middlewares/i18n.middleware';
 import { mkdir, readFile, writeFile } from 'fs/promises';
 import path from 'path';
 import { NestMiddlewareConsumer } from './types';
+import { I18nMessageFormat } from './utils';
 export const logger = new Logger('I18nService');
 
 const defaultOptions: Partial<I18nOptions> = {
@@ -260,6 +261,12 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       useValue: options.resolvers || [],
     };
 
+    const i18nMessageFormatProvider: Provider = {
+      provide: I18nMessageFormat,
+      useFactory: (resolvedOptions: I18nOptions) => new I18nMessageFormat(resolvedOptions),
+      inject: [I18N_OPTIONS],
+    };
+
     return {
       module: I18nModule,
       providers: [
@@ -274,6 +281,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         translationsProvider,
         languagesProvider,
         resolversProvider,
+        i18nMessageFormatProvider,
         i18nLoadersProvider,
         ...legacyProviders,
         i18nLanguagesSubjectProvider,
@@ -311,6 +319,12 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
       useValue: i18nTranslationSubject,
     };
 
+    const i18nMessageFormatProvider: Provider = {
+      provide: I18nMessageFormat,
+      useFactory: (resolvedOptions: I18nOptions) => new I18nMessageFormat(resolvedOptions),
+      inject: [I18N_OPTIONS],
+    };
+
     return {
       module: I18nModule,
       imports: options.imports || [],
@@ -325,6 +339,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         asyncLanguagesProvider,
         asyncLoaderOptionsProvider,
         asyncLoadersProvider,
+        i18nMessageFormatProvider,
         I18nService,
         I18nMiddleware,
         resolversProvider,

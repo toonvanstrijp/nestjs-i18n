@@ -13,6 +13,7 @@ import {
   resolveLanguage,
   getContextObject,
   getLanguageFromResolverResult,
+  I18nMessageFormat,
 } from '../utils';
 import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
 import { Observable, Subscription } from 'rxjs';
@@ -25,6 +26,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     @Inject(I18N_RESOLVERS)
     private readonly i18nResolvers: I18nOptionResolver[],
     private readonly i18nService: I18nService,
+    private readonly messageFormat: I18nMessageFormat,
     private readonly moduleRef: ModuleRef,
   ) {}
 
@@ -59,7 +61,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     }
 
     if (!i18nContext) {
-      ctx.i18nContext = new I18nContext(ctx.i18nLang, this.i18nService);
+      ctx.i18nContext = new I18nContext(ctx.i18nLang, this.i18nService, this.messageFormat);
 
       if (!this.i18nOptions.skipAsyncHook) {
         return new Observable((observer) => {

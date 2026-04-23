@@ -2,6 +2,7 @@ import { ModuleRef } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
 import path from 'path';
 import {
+  I18nContext,
   I18nModule,
   I18nService,
   I18nLanguageInterceptor,
@@ -9,6 +10,7 @@ import {
   I18N_RESOLVERS,
 } from '../src';
 import { I18nMessageFormat } from '../src/utils';
+import { firstValueFrom, of } from 'rxjs';
 
 describe('i18n interceptor', () => {
   let i18nService: I18nService;
@@ -103,5 +105,47 @@ describe('i18n interceptor', () => {
     await interceptor.intercept(ctx as any, next as any);
 
     expect(response.locals.i18nLang).toBe('nl');
+  });
+
+  it('stores language on websocket client and provides I18nContext.current() in handler execution', async () => {
+    const client: any = {
+      handshake: {
+        headers: {
+          'x-custom-lang': 'nl',
+        },
+      },
+    };
+
+    const wsContext = {
+      getType: () => 'ws',
+      switchToWs: () => ({
+        getClient: () => client,
+      }),
+    };
+
+    const next = {
+      handle: jest.fn(() => of(I18nContext.current()?.lang)),
+    };
+
+    const interceptor = new I18nLanguageInterceptor(
+      {
+        ...i18nOptions,
+        skipAsyncHook: false,
+      },
+      [
+        {
+          resolve: () => 'nl',
+        },
+      ] as any,
+      i18nService,
+      messageFormat,
+      moduleRef,
+    );
+
+    const result$ = await interceptor.intercept(wsContext as any, next as any);
+    const langFromContext = await firstValueFrom(result$);
+
+    expect(client.i18nLang).toBe('nl');
+    expect(langFromContext).toBe('nl');
   });
 });

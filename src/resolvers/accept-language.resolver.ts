@@ -27,6 +27,12 @@ export class AcceptLanguageResolver implements I18nResolver {
         req = context.switchToHttp().getRequest();
         service = req.i18nService;
         break;
+      case 'ws': {
+        const client: any = context.switchToWs().getClient();
+        req = client?.handshake ?? client?.upgradeReq ?? client?.request ?? client;
+        service = client?.i18nService;
+        break;
+      }
       case 'graphql':
         [, , { req, i18nService: service }] = context.getArgs();
         if (!req) return undefined;
@@ -39,7 +45,7 @@ export class AcceptLanguageResolver implements I18nResolver {
       ? req.raw.headers?.['accept-language']
       : req?.headers?.['accept-language'];
 
-    if (lang) {
+    if (lang && service) {
       const supportedLangs = service.getSupportedLanguages();
       if (this.options.matchType === 'strict') {
         return pick(supportedLangs, lang) ?? undefined;

@@ -8,14 +8,9 @@ import {
   WsArgumentsHost,
 } from '@nestjs/common/interfaces';
 import { ModuleRef } from '@nestjs/core';
-import { shouldResolve } from '../utils';
+import { resolveLanguage } from '../utils';
 import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
-import {
-  I18nContext,
-  I18nOptions,
-  I18nResolver,
-  ResolverWithOptions,
-} from '../index';
+import { I18nContext, I18nOptions } from '../index';
 import { I18nService } from '../services/i18n.service';
 import { I18nOptionResolver } from '../interfaces';
 import { I18nError } from '../i18n.error';
@@ -45,19 +40,11 @@ export class I18nMiddleware implements NestMiddleware {
 
     req.i18nService = this.i18nService;
 
-    for (const r of this.i18nResolvers) {
-      const resolver = await this.getResolver(r);
-
-      language = resolver.resolve(new MiddlewareHttpContext(req, res, next));
-
-      if (language instanceof Promise) {
-        language = await (language as Promise<string>);
-      }
-
-      if (language !== undefined) {
-        break;
-      }
-    }
+    language = await resolveLanguage(
+      this.i18nResolvers,
+      new MiddlewareHttpContext(req, res, next) as any,
+      this.moduleRef,
+    );
 
     req.i18nLang = language || this.i18nOptions.fallbackLanguage;
 
@@ -75,18 +62,6 @@ export class I18nMiddleware implements NestMiddleware {
     }
   }
 
-  private async getResolver(r: I18nOptionResolver): Promise<I18nResolver> {
-    if (shouldResolve(r)) {
-      if ('use' in r) {
-        const resolver = r as ResolverWithOptions;
-        return this.moduleRef.get(resolver.use);
-      } else {
-        return this.moduleRef.get(r as Type<I18nResolver>);
-      }
-    } else {
-      return r as I18nResolver;
-    }
-  }
 }
 
 class MiddlewareHttpContext

@@ -16,13 +16,14 @@ import {
 import {
   I18N_LANGUAGES,
   I18N_LANGUAGES_SUBJECT,
+  I18N_LOADERS,
   I18N_OPTIONS,
   I18N_TRANSLATIONS,
   I18N_TRANSLATIONS_SUBJECT,
 } from '../i18n.constants';
 import { I18nLoader } from '../loaders/i18n.loader';
 import { IfAnyOrNever, Path, PathValue } from '../types';
-import { formatI18nErrors } from '../utils';
+import { formatI18nErrors, processTranslations, processLanguages } from '../utils';
 import { I18nTranslator, I18nPluralObject } from '../interfaces';
 import { I18nError } from '../i18n.error';
 
@@ -67,7 +68,8 @@ export class I18nService<K = Record<string, unknown>>
     @Inject(I18N_LANGUAGES)
     supportedLanguages: Observable<string[]>,
     private readonly logger: Logger,
-    private readonly loader: I18nLoader,
+    @Inject(I18N_LOADERS)
+    private readonly loaders: I18nLoader[],
     @Inject(I18N_LANGUAGES_SUBJECT)
     private readonly languagesSubject: BehaviorSubject<string[]>,
     @Inject(I18N_TRANSLATIONS_SUBJECT)
@@ -180,7 +182,7 @@ export class I18nService<K = Record<string, unknown>>
     languages?: string[] | Observable<string[]>,
   ) {
     if (!translations) {
-      translations = await this.loader.load();
+      translations = await processTranslations(this.loaders);
     }
     if (translations instanceof Observable) {
       this.translationsSubject.next(
@@ -191,7 +193,7 @@ export class I18nService<K = Record<string, unknown>>
     }
 
     if (!languages) {
-      languages = await this.loader.languages();
+      languages = await processLanguages(this.loaders);
     }
 
     if (languages instanceof Observable) {
@@ -201,17 +203,13 @@ export class I18nService<K = Record<string, unknown>>
     }
   }
 
-  public hbsHelper = <P extends Path<K> = any>(
-    key: P,
-    args: any,
-    options: any,
-  ) => {
+  public hbsHelper = (key: string, args: any, options: any): string => {
     if (!options) {
       options = args;
     }
 
     const lang = options.lookupProperty(options.data.root, 'i18nLang');
-    return this.t<P>(key, { lang, args });
+    return this.t(key as Path<K>, { lang, args }) as string;
   };
 
   private translateObject(

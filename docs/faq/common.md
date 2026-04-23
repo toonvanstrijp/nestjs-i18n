@@ -35,3 +35,17 @@ No, unless you use i18n validation features.
 
 If you do not use those features, you can omit `class-validator` from your project.
 
+## TypeScript becomes very slow or appears stuck when `skipLibCheck` is `false`
+
+This can happen when TypeScript fully checks declaration files from dependencies in `node_modules`.
+
+`nestjs-i18n` exports advanced conditional types for generated translation keys. In some projects and TypeScript versions, resolving these declarations can trigger very deep (or circular) type evaluation and cause the checker to become extremely slow.
+
+### Workarounds
+
+- Keep `skipLibCheck: true` in your app `tsconfig` if possible.
+- Narrow usage of the generated key types in hot paths where type expansion can explode.
+- Ensure you are on the latest TypeScript and `nestjs-i18n` versions.
+
+This behavior is an upstream type-checking limitation involving `nestjs-i18n` declaration complexity. If this affects you, please open or upvote an issue in the `nestjs-i18n` repository with a minimal reproduction.
+

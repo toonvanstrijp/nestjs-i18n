@@ -5,15 +5,18 @@ import {
   ValidationError,
 } from '@nestjs/common';
 import iterate from 'iterare';
-import { I18nContext, logger } from '..';
+import { I18nContext } from '..';
 import {
   I18nValidationError,
+  I18nValidationException,
   I18nValidationExceptionFilterDetailedErrorsOption,
   I18nValidationExceptionFilterErrorFormatterOption,
-  I18nValidationException,
 } from '../interfaces';
-import { mapChildrenToValidationErrors, formatI18nErrors } from '../utils';
-import { I18nError } from '../i18n.error';
+import {
+  formatI18nErrors,
+  getI18nContextOrThrow,
+  mapChildrenToValidationErrors,
+} from '../utils';
 
 type I18nValidationExceptionFilterOptions =
   | I18nValidationExceptionFilterDetailedErrorsOption
@@ -27,16 +30,9 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     },
   ) {}
   catch(exception: I18nValidationException, host: ArgumentsHost) {
-    const i18n = I18nContext.current(host) ?? I18nContext.current();
-
-    if (i18n == undefined) {
-      if (!i18n) {
-        logger.error(
-          'I18n context not found! Is this function triggered by a processor or cronjob? Please use the I18nService',
-        );
-      }
-      throw new I18nError('I18n context undefined');
-    }
+    const i18n = getI18nContextOrThrow(
+      I18nContext.current(host) ?? I18nContext.current(),
+    );
 
     let errors = exception.errors ?? [];
     if ((this.options as any).autoTranslate) {

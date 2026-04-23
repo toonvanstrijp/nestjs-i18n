@@ -8,6 +8,8 @@ import { I18nService, TranslateOptions } from '../services/i18n.service';
 import { HttpStatus, MiddlewareConsumer } from '@nestjs/common';
 import { NestMiddlewareConsumer, Path } from '../types';
 
+type NoInfer<T> = [T][T extends any ? 0 : never];
+
 export function shouldResolve(e: I18nOptionResolver) {
   return typeof e === 'function' || 'use' in e;
 }
@@ -49,7 +51,7 @@ export function i18nValidationErrorFactory(
 }
 
 export function i18nValidationMessage<K = Record<string, unknown>>(
-  key: Path<K>,
+  key: Path<NoInfer<K>>,
   args?: any,
 ) {
   return (a: ValidationArguments) => {

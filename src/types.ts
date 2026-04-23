@@ -5,30 +5,25 @@ export interface NestMiddlewareConsumer extends MiddlewareConsumer {
   httpAdapter: AbstractHttpAdapter;
 }
 
-type IsAny<T> = unknown extends T ? ([keyof T] extends [never] ? false : true) : false;
+type PathKeyOf<T> = T extends any[]
+  ? Exclude<Extract<keyof T, string>, keyof any[]>
+  : Extract<keyof T, string>;
 
-type StringKeyOf<T> = Extract<keyof T, string>;
+export type Path<T, Depth extends 1[] = []> = [T] extends [Record<string, any>]
+  ? {
+      [K in PathKeyOf<T>]: 0 extends 1 & T[K]
+        ? never
+        : [T[K]] extends [Record<string, any>]
+          ? Depth['length'] extends 8
+            ? K
+            : K | `${K}.${Path<T[K], [...Depth, 1]>}`
+          : K;
+    }[PathKeyOf<T>]
+  : never;
 
-type PathKeyOf<T> = T extends any[] ? Exclude<StringKeyOf<T>, keyof any[]> : StringKeyOf<T>;
-
-type PathInternal<T> =
-  T extends Record<string, any>
-    ? {
-        [K in PathKeyOf<T>]: IsAny<T[K]> extends true
-          ? never
-          : T[K] extends Record<string, any>
-            ? K | `${K}.${PathInternal<T[K]>}`
-            : K;
-      }[PathKeyOf<T>]
-    : never;
-
-export type Path<T> = PathInternal<T>;
-
-export type PathValue<T, P extends Path<T>> = P extends `${infer Key}.${infer Rest}`
+export type PathValue<T, P extends string> = P extends `${infer Key}.${infer Rest}`
   ? Key extends keyof T
-    ? Rest extends Path<T[Key]>
-      ? PathValue<T[Key], Rest>
-      : never
+    ? PathValue<T[Key], Rest>
     : never
   : P extends keyof T
     ? T[P]

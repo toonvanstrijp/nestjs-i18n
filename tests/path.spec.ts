@@ -1,4 +1,4 @@
-import { Path } from '../src';
+import { Path, PathValue } from '../src';
 
 type Assert<T extends true> = T;
 type Equal<A, B> =
@@ -46,5 +46,52 @@ describe('Path type', () => {
     // @ts-expect-error array method names should not become valid path segments
     const invalidPath: Path<T> = 'items.push';
     expect(invalidPath as unknown).toBeDefined();
+  });
+
+  it('should cap recursive path expansion depth', () => {
+    type Deep = {
+      a: {
+        b: {
+          c: {
+            d: {
+              e: {
+                f: {
+                  g: {
+                    h: {
+                      i: {
+                        j: string;
+                      };
+                    };
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+
+    const validAtCap: Path<Deep> = 'a.b.c.d.e.f.g.h.i';
+    expect(validAtCap).toBe('a.b.c.d.e.f.g.h.i');
+
+    // @ts-expect-error recursion is intentionally capped to avoid runaway type expansion
+    const beyondCap: Path<Deep> = 'a.b.c.d.e.f.g.h.i.j';
+    expect(beyondCap as unknown).toBeDefined();
+  });
+
+  it('should preserve PathValue inference for regular nested paths', () => {
+    type Nested = {
+      user: {
+        profile: {
+          name: string;
+        };
+      };
+    };
+
+    type NameValue = PathValue<Nested, 'user.profile.name'>;
+    type _PathValueStillString = Assert<Equal<NameValue, string>>;
+
+    const typeAssertion: _PathValueStillString = true;
+    expect(typeAssertion).toBe(true);
   });
 });

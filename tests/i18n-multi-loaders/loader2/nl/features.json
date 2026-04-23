@@ -1,0 +1,9 @@
+{
+  "feature": {
+    "name": "Functie",
+    "description": "Dit is een functie"
+  },
+  "common": {
+    "cancel": "Annuleren"
+  }
+}

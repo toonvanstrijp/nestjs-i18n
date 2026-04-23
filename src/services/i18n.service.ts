@@ -266,18 +266,16 @@ export class I18nService<K = Record<string, unknown>>
           translation = pluralObject[pluralCategory];
         }
       } else if (translation instanceof Object) {
-        const result = Object.keys(translation).reduce((obj, nestedKey) => {
-          return {
-            ...obj,
-            [nestedKey]: this.translateObject(
-              nestedKey,
-              translation,
-              lang,
-              options,
-              rootTranslations,
-            ),
-          };
-        }, {});
+        const result: { [key: string]: I18nTranslation | string } = {};
+        for (const nestedKey of Object.keys(translation)) {
+          result[nestedKey] = this.translateObject(
+            nestedKey,
+            translation,
+            lang,
+            options,
+            rootTranslations,
+          );
+        }
 
         if (translation instanceof Array) {
           return Object.values(result) as unknown as I18nTranslation;

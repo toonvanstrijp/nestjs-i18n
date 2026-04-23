@@ -144,7 +144,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
         });
       } catch {
         logger.error(
-          'typescript package not found, types generation failed. Please install typescript as a dev dependency to enable this feature.',
+          'Typescript package not found, types generation failed. Please install typescript as a dev dependency to enable this feature.',
         );
       }
     }
@@ -163,9 +163,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
     if (usingFastify(consumer)) {
       consumer.httpAdapter.getInstance().addHook('preHandler', async (request: any, reply: any) => {
-        const locals: Record<string, unknown> = {
-          ...reply.locals,
-        };
+        const locals: Record<string, unknown> = reply.locals ?? (reply.locals = {});
 
         if (request.raw.i18nLang) {
           locals.i18nLang = request.raw.i18nLang;
@@ -180,7 +178,6 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
           };
         }
 
-        reply.locals = locals;
       });
     }
   }

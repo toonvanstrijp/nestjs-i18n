@@ -42,13 +42,13 @@ type ClassValidatorValidate = (
   options?: Record<string, any>,
 ) => Promise<any[]>;
 
-export type TranslateOptions = {
+export interface TranslateOptions {
   lang?: string;
   args?: ({ [k: string]: any } | string)[] | { [k: string]: any };
   defaultValue?: string;
   debug?: boolean;
   useICU?: boolean;
-};
+}
 
 @Injectable()
 export class I18nService<K = Record<string, unknown>>

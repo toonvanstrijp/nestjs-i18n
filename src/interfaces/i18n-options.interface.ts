@@ -23,9 +23,11 @@ export type OptionProvider<T = any> =
   | Omit<ExistingProvider<T>, 'provide'>
   | OptionsProvider;
 
-export type ResolverWithOptions = {
+export interface ResolverWithOptionsBase {
   use: Type<I18nResolver>;
-} & OptionProvider;
+}
+
+export type ResolverWithOptions = ResolverWithOptionsBase & OptionProvider;
 
 export type I18nOptionsWithoutResolvers = Omit<
   I18nOptions,
@@ -42,9 +44,19 @@ export type Formatter = (
   ...args: (string | Record<string, string>)[]
 ) => string;
 
+export interface I18nFallbacks {
+  [key: string]: string;
+}
+
+export interface I18nICUOptions {
+  biDiSupport?: boolean;
+  formatters?: Record<string, (...args: any[]) => any>;
+  strictNumberSign?: boolean;
+}
+
 export interface I18nOptions {
   fallbackLanguage: string;
-  fallbacks?: { [key: string]: string };
+  fallbacks?: I18nFallbacks;
   resolvers?: I18nOptionResolver[];
   /** @deprecated Use `loaders` instead */
   loader?: Type<I18nLoader>;
@@ -60,11 +72,7 @@ export interface I18nOptions {
   throwOnMissingKey?: boolean;
   typesOutputPath?: string;
   useICU?: boolean;
-  icuOptions?: {
-    biDiSupport?: boolean;
-    formatters?: Record<string, (...args: any[]) => any>;
-    strictNumberSign?: boolean;
-  };
+  icuOptions?: I18nICUOptions;
   icuLocales?: string[];
 }
 

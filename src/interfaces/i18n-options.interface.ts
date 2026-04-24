@@ -70,6 +70,14 @@ export interface I18nOptions {
   skipAsyncHook?: boolean;
   validatorOptions?: I18nValidatorOptions;
   throwOnMissingKey?: boolean;
+  /** Configure how translation keys are split into nested paths. Set false to disable splitting. */
+  keySeparator?: string | false;
+  /** Configure namespace separator (for example test:HELLO). Set false to disable namespace parsing. */
+  nsSeparator?: string | false;
+  /** Whether object/array translations are returned instead of the key when translating structured values. */
+  returnObjects?: boolean;
+  /** Join array translations into a single string using this delimiter. */
+  joinArrays?: string;
   typesOutputPath?: string;
   useICU?: boolean;
   icuOptions?: I18nICUOptions;

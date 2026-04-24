@@ -98,6 +98,122 @@ describe('i18n module', () => {
     ).toBe('Будь ласка, спробуйте ще раз');
   });
 
+  it('i18n service should support namespace separator overrides', () => {
+    expect(
+      i18nService.translate<any>('test:HELLO', {
+        lang: 'en',
+        nsSeparator: ':',
+      }),
+    ).toBe('Hello');
+  });
+
+  it('i18n service should support disabling key separator splitting', () => {
+    expect(
+      i18nService.translate<any>('test.HELLO', {
+        lang: 'en',
+        keySeparator: false,
+      }),
+    ).toBe('test.HELLO');
+  });
+
+  it('i18n service should join array values when joinArrays is set', () => {
+    expect(
+      i18nService.translate<any>('test.ARRAY', {
+        lang: 'en',
+        joinArrays: ', ',
+      }),
+    ).toBe('ONE, TWO, THREE');
+  });
+
+  it('i18n service should return key for structured values when returnObjects is false', () => {
+    expect(
+      i18nService.translate<any>('test.ARRAY', {
+        lang: 'en',
+        returnObjects: false,
+      }),
+    ).toBe('test.ARRAY');
+  });
+
+  it('i18n service should return arrays by default for structured values', () => {
+    expect(i18nService.translate<any>('test.ARRAY', { lang: 'en' })).toEqual([
+      'ONE',
+      'TWO',
+      'THREE',
+    ]);
+  });
+
+  it('i18n service should use module-level joinArrays option', async () => {
+    const module = await Test.createTestingModule({
+      imports: [
+        I18nModule.forRoot({
+          fallbackLanguage: 'en',
+          joinArrays: ' | ',
+          loaderOptions: {
+            path: path.join(__dirname, '/i18n/'),
+          },
+        }),
+      ],
+    }).compile();
+
+    const scopedI18n = module.get<I18nService<I18nTranslations>>(I18nService);
+
+    expect(scopedI18n.translate('test.ARRAY', { lang: 'en' })).toBe('ONE | TWO | THREE');
+
+    await module.close();
+  });
+
+  it('translate options should override module-level returnObjects option', async () => {
+    const module = await Test.createTestingModule({
+      imports: [
+        I18nModule.forRoot({
+          fallbackLanguage: 'en',
+          returnObjects: false,
+          loaderOptions: {
+            path: path.join(__dirname, '/i18n/'),
+          },
+        }),
+      ],
+    }).compile();
+
+    const scopedI18n = module.get<I18nService<I18nTranslations>>(I18nService);
+
+    expect(scopedI18n.translate('test.ARRAY', { lang: 'en' })).toBe('test.ARRAY');
+    expect(
+      scopedI18n.translate('test.ARRAY', {
+        lang: 'en',
+        returnObjects: true,
+      }),
+    ).toEqual(['ONE', 'TWO', 'THREE']);
+
+    await module.close();
+  });
+
+  it('translate options should override module-level namespace separator option', async () => {
+    const module = await Test.createTestingModule({
+      imports: [
+        I18nModule.forRoot({
+          fallbackLanguage: 'en',
+          nsSeparator: ':',
+          loaderOptions: {
+            path: path.join(__dirname, '/i18n/'),
+          },
+        }),
+      ],
+    }).compile();
+
+    const scopedI18n = module.get<I18nService<I18nTranslations>>(I18nService);
+
+    expect(scopedI18n.translate('test:HELLO' as any, { lang: 'en' })).toBe('Hello');
+    expect(
+      scopedI18n.translate('test:HELLO' as any, {
+        lang: 'en',
+        nsSeparator: false,
+      }),
+    ).toBe('test:HELLO');
+
+    await module.close();
+  });
+
   it('i18n service should return fallback translation', () => {
     expect(i18nService.translate('test.ENGLISH', { lang: 'nl' })).toBe('English');
   });

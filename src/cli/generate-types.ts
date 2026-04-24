@@ -2,13 +2,13 @@
 
 import { generateI18nTypes } from '../types-generator';
 
-type CliOptions = {
+interface CliOptions {
   path?: string;
   out?: string;
   format?: 'json' | 'yaml';
   pattern?: string;
   includeSubfolders?: boolean;
-};
+}
 
 function parseArgs(args: string[]): CliOptions {
   const options: CliOptions = {};

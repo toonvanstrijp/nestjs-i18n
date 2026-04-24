@@ -39,7 +39,7 @@ import {
 } from './utils';
 import { I18nTranslation } from './interfaces/i18n-translation.interface';
 import { I18nLoader } from './loaders/i18n.loader';
-import { Observable, BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { Observable, BehaviorSubject, Subject, takeUntil, switchMap } from 'rxjs';
 import format from 'string-format';
 import { I18nJsonLoader } from './loaders';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
@@ -112,38 +112,50 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
 
         const typesOutputPath = this.i18nOptions.typesOutputPath;
 
-        this.translations.pipe(takeUntil(this.unsubscribe)).subscribe(async (t) => {
-          logger.log('Checking translation changes');
-          const object = Object.keys(t).reduce((result, key) => mergeDeep(result, t[key]), {});
+        this.translations
+          .pipe(
+            takeUntil(this.unsubscribe),
+            switchMap(async (t) => {
+              try {
+                logger.log('Checking translation changes');
+                const object = Object.keys(t).reduce(
+                  (result, key) => mergeDeep(result, t[key]),
+                  {},
+                );
 
-          const rawContent = await ts.createTypesFile(object);
+                const rawContent = await ts.createTypesFile(object);
 
-          if (!rawContent) {
-            return;
-          }
+                if (!rawContent) {
+                  return;
+                }
 
-          const outputFile = ts.annotateSourceCode(rawContent);
+                const outputFile = ts.annotateSourceCode(rawContent);
 
-          await mkdir(path.dirname(typesOutputPath), {
-            recursive: true,
-          });
-          let currentFileContent = null;
-          try {
-            currentFileContent = await readFile(typesOutputPath, 'utf8');
-          } catch (err) {
-            logger.error(err);
-          }
-          if (currentFileContent != outputFile) {
-            await writeFile(typesOutputPath, outputFile);
-            logger.log(
-              `Types generated in: ${this.i18nOptions.typesOutputPath}.
+                await mkdir(path.dirname(typesOutputPath), {
+                  recursive: true,
+                });
+                let currentFileContent = null;
+                try {
+                  currentFileContent = await readFile(typesOutputPath, 'utf8');
+                } catch (err) {
+                  logger.error(err);
+                }
+                if (currentFileContent != outputFile) {
+                  await writeFile(typesOutputPath, outputFile);
+                  logger.log(
+                    `Types generated in: ${this.i18nOptions.typesOutputPath}.
                 Please also add it to ignore files of your linter and formatter to avoid linting and formatting it
                 `,
-            );
-          } else {
-            logger.log('No changes detected');
-          }
-        });
+                  );
+                } else {
+                  logger.log('No changes detected');
+                }
+              } catch (err) {
+                logger.error('Error generating types file', err);
+              }
+            }),
+          )
+          .subscribe();
       } catch {
         logger.error(
           'Typescript package not found, types generation failed. Please install typescript as a dev dependency to enable this feature.',

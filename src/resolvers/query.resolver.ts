@@ -1,6 +1,7 @@
 import { I18nResolver } from '../index';
 import { Injectable, ExecutionContext } from '@nestjs/common';
 import { I18nResolverOptions } from '../decorators';
+import { ExecutionContextType } from '../i18n.constants';
 
 @Injectable()
 export class QueryResolver implements I18nResolver {
@@ -10,10 +11,10 @@ export class QueryResolver implements I18nResolver {
     let req: any;
 
     switch (context.getType() as string) {
-      case 'http':
+      case ExecutionContextType.HTTP:
         req = context.switchToHttp().getRequest();
         break;
-      case 'graphql':
+      case ExecutionContextType.GRAPHQL:
         [, , { req }] = context.getArgs();
         break;
     }

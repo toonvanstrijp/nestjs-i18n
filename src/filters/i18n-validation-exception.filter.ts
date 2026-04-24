@@ -30,13 +30,18 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     },
   ) {}
   catch(exception: I18nValidationException, host: ArgumentsHost) {
-    const i18n = getI18nContextOrThrow(
-      I18nContext.current(host) ?? I18nContext.current(),
-    );
-
-    const errors = formatI18nErrors(exception.errors ?? [], i18n.service, {
-      lang: i18n.lang,
-    });
+    const errors =
+      exception.errorsAlreadyTranslated && exception.errors
+        ? exception.errors
+        : formatI18nErrors(
+            exception.errors ?? [],
+            getI18nContextOrThrow(
+              I18nContext.current(host) ?? I18nContext.current(),
+            ).service,
+            {
+              lang: (I18nContext.current(host) ?? I18nContext.current())?.lang,
+            },
+          );
 
     const normalizedErrors = this.normalizeValidationErrors(errors);
 

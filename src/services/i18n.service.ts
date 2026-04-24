@@ -20,6 +20,11 @@ import {
   I18N_OPTIONS,
   I18N_TRANSLATIONS,
   I18N_TRANSLATIONS_SUBJECT,
+  PLURAL_KEYS,
+  TransformPipeName,
+  DEFAULT_KEY_SEPARATOR,
+  DEFAULT_NAMESPACE_SEPARATOR,
+  PIPE_SEPARATOR,
 } from '../i18n.constants';
 import { I18nLoader } from '../loaders/i18n.loader';
 import { IfAnyOrNever, Path, PathValue } from '../types';
@@ -27,11 +32,10 @@ import { formatI18nErrors, processTranslations, processLanguages } from '../util
 import { I18nTranslator, I18nPluralObject } from '../interfaces';
 import { I18nError } from '../i18n.error';
 
-const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
 const translationTransformPipes: Record<string, (value: string) => string> = {
-  uppercase: (value: string) => value.toUpperCase(),
-  lowercase: (value: string) => value.toLowerCase(),
-  capitalize: (value: string) =>
+  [TransformPipeName.UPPERCASE]: (value: string) => value.toUpperCase(),
+  [TransformPipeName.LOWERCASE]: (value: string) => value.toLowerCase(),
+  [TransformPipeName.CAPITALIZE]: (value: string) =>
     value.length > 0
       ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
       : value,
@@ -412,11 +416,11 @@ export class I18nService<K = Record<string, unknown>>
   }
 
   private getKeySeparator(options?: TranslateOptions): string | false {
-    return options?.keySeparator ?? this.i18nOptions.keySeparator ?? '.';
+    return options?.keySeparator ?? this.i18nOptions.keySeparator ?? DEFAULT_KEY_SEPARATOR;
   }
 
   private getNamespaceSeparator(options?: TranslateOptions): string | false {
-    return options?.nsSeparator ?? this.i18nOptions.nsSeparator ?? false;
+    return options?.nsSeparator ?? this.i18nOptions.nsSeparator ?? DEFAULT_NAMESPACE_SEPARATOR;
   }
 
   private applyTranslationTransformPipes(
@@ -431,7 +435,7 @@ export class I18nService<K = Record<string, unknown>>
       /\{\{\s*([^{}]+?)\s*\}\}/g,
       (match, rawExpression: string) => {
         const parts = rawExpression
-          .split('|')
+          .split(PIPE_SEPARATOR)
           .map((part) => part.trim())
           .filter((part) => part.length > 0);
 
@@ -545,7 +549,7 @@ export class I18nService<K = Record<string, unknown>>
   }
 
   private getPluralObject(translation: any): I18nPluralObject | undefined {
-    for (const k of pluralKeys) {
+    for (const k of PLURAL_KEYS) {
       if (translation[k]) {
         return translation as I18nPluralObject;
       }

@@ -17,6 +17,7 @@ import {
   getI18nContextOrThrow,
   mapChildrenToValidationErrors,
 } from '../utils';
+import { ExecutionContextType } from '../i18n.constants';
 
 type I18nValidationExceptionFilterOptions =
   | I18nValidationExceptionFilterDetailedErrorsOption
@@ -46,7 +47,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     const normalizedErrors = this.normalizeValidationErrors(errors);
 
     switch (host.getType() as string) {
-      case 'http':
+      case ExecutionContextType.HTTP:
         const response = host.switchToHttp().getResponse();
         const responseBody = this.buildResponseBody(
           host,
@@ -57,7 +58,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
           .status(this.options.errorHttpStatusCode || exception.getStatus())
           .send(responseBody);
         break;
-      case 'graphql':
+      case ExecutionContextType.GRAPHQL:
         return this.createGraphQLError(exception, normalizedErrors);
     }
   }

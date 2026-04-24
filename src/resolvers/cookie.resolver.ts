@@ -2,6 +2,7 @@ import {parse} from 'cookie';
 import { Injectable, ExecutionContext } from '@nestjs/common';
 import { I18nResolver } from '..';
 import { I18nResolverOptions } from '../decorators';
+import { ExecutionContextType } from '../i18n.constants';
 
 /**
  * Simple resolver to fetch language/locale from cookie
@@ -17,16 +18,16 @@ export class CookieResolver implements I18nResolver {
     let req: any;
 
     switch (context.getType() as string) {
-      case 'http':
+      case ExecutionContextType.HTTP:
         req = context.switchToHttp().getRequest();
         req = req.raw ? req.raw : req;
         break;
-      case 'ws': {
+      case ExecutionContextType.WS: {
         const client: any = context.switchToWs().getClient();
         req = client?.handshake ?? client?.upgradeReq ?? client?.request ?? client;
         break;
       }
-      case 'graphql':
+      case ExecutionContextType.GRAPHQL:
         [, , { req }] = context.getArgs();
         break;
     }

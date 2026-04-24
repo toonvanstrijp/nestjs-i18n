@@ -1,5 +1,6 @@
 import { ArgumentsHost, ExecutionContext, Logger } from '@nestjs/common';
 import { I18nOptions } from '..';
+import { ExecutionContextType } from '../i18n.constants';
 
 const logger = new Logger('I18nService');
 
@@ -17,15 +18,15 @@ export function getContextObject(
   const contextType = context.getType<string>();
 
   switch (contextType) {
-    case 'http':
+    case ExecutionContextType.HTTP:
       return context.switchToHttp().getRequest();
-    case 'ws':
+    case ExecutionContextType.WS:
       return context.switchToWs().getClient();
-    case 'graphql':
+    case ExecutionContextType.GRAPHQL:
       return context.getArgs()[2];
-    case 'rpc':
+    case ExecutionContextType.RPC:
       return context.switchToRpc().getContext();
-    case 'rmq':
+    case ExecutionContextType.RMQ:
       return context.getArgs()[1];
     default:
       if (i18nOptions?.logging) {

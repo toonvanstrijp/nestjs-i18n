@@ -2,6 +2,7 @@ import { I18nResolver, I18nResolverOptions } from '../index';
 import { Injectable, ExecutionContext } from '@nestjs/common';
 import { pick } from 'accept-language-parser';
 import { I18nService } from '../services/i18n.service';
+import { ExecutionContextType } from '../i18n.constants';
 
 interface AcceptLanguageResolverOptions {
   matchType: 'strict' | 'loose' | 'strict-loose';
@@ -23,17 +24,17 @@ export class AcceptLanguageResolver implements I18nResolver {
     let service: I18nService;
 
     switch (context.getType() as string) {
-      case 'http':
+      case ExecutionContextType.HTTP:
         req = context.switchToHttp().getRequest();
         service = req.i18nService;
         break;
-      case 'ws': {
+      case ExecutionContextType.WS: {
         const client: any = context.switchToWs().getClient();
         req = client?.handshake ?? client?.upgradeReq ?? client?.request ?? client;
         service = client?.i18nService;
         break;
       }
-      case 'graphql':
+      case ExecutionContextType.GRAPHQL:
         [, , { req, i18nService: service }] = context.getArgs();
         if (!req) return undefined;
         break;

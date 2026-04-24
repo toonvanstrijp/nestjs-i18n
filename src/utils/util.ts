@@ -43,10 +43,23 @@ function validationErrorToI18n(e: ValidationError): I18nValidationError {
 export function i18nValidationErrorFactory(
   errors: ValidationError[],
 ): I18nValidationException {
+  const normalizedErrors = errors.map((e) => {
+    return validationErrorToI18n(e);
+  });
+
+  const { I18nContext } = require('../i18n.context') as typeof import('../i18n.context');
+  const i18n = I18nContext.current();
+
+  if (!i18n) {
+    return new I18nValidationException(normalizedErrors);
+  }
+
   return new I18nValidationException(
-    errors.map((e) => {
-      return validationErrorToI18n(e);
+    formatI18nErrors(normalizedErrors, i18n.service, {
+      lang: i18n.lang,
     }),
+    undefined,
+    true,
   );
 }
 

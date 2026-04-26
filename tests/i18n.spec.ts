@@ -218,6 +218,18 @@ describe('i18n module', () => {
     expect(i18nService.translate('test.ENGLISH', { lang: 'nl' })).toBe('English');
   });
 
+  it('i18n service should load global translations for every language', () => {
+    expect(i18nService.translate('APP_NAME' as any, { lang: 'en' })).toBe('BLA');
+    expect(i18nService.translate('APP_NAME' as any, { lang: 'nl' })).toBe('BLA');
+    expect(i18nService.translate('APP_NAME' as any, { lang: 'uk' })).toBe('BLA');
+  });
+
+  it('i18n service should fallback when a key exists only in the fallback language', () => {
+    expect(i18nService.translate('test.ONLY_EN_KEY', { lang: 'nl' })).toBe(
+      'this key only exists in en lang',
+    );
+  });
+
   it('i18n service should return fallback translation if language not registered', () => {
     expect(i18nService.translate('test.ENGLISH', { lang: 'es' })).toBe('English');
   });

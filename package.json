@@ -1,6 +1,6 @@
 {
   "name": "nestjs-i18n",
-  "version": "10.8.0",
+  "version": "10.8.1",
   "homepage": "https://nestjs-i18n.com",
   "description": "The i18n module for Nest.",
   "author": "Toon van Strijp",
@@ -54,7 +54,7 @@
     "doc:serve": "docusaurus serve",
     "doc:write-translations": "docusaurus write-translations",
     "doc:write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
     "generate:types": "nestjs-i18n",
     "verify": "npm run format:check && npm run lint && npm run test:cov"
   },

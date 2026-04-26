@@ -8,12 +8,12 @@ import { I18nError } from './i18n.error';
 type LoaderFormat = 'json' | 'yaml';
 
 export interface GenerateI18nTypesOptions extends I18nAbstractLoaderOptions {
-  outputPath: string;
+  output: string;
   format?: LoaderFormat;
 }
 
 export interface GenerateI18nTypesResult {
-  outputPath: string;
+  output: string;
   written: boolean;
 }
 
@@ -47,25 +47,25 @@ export async function generateI18nTypes(
     }
 
     const outputFile = ts.annotateSourceCode(rawContent);
-    fs.mkdirSync(path.dirname(options.outputPath), { recursive: true });
+    fs.mkdirSync(path.dirname(options.output), { recursive: true });
 
     let currentFileContent: string | null = null;
     try {
-      currentFileContent = fs.readFileSync(options.outputPath, 'utf8');
+      currentFileContent = fs.readFileSync(options.output, 'utf8');
     } catch {
       currentFileContent = null;
     }
 
     if (currentFileContent === outputFile) {
       return {
-        outputPath: options.outputPath,
+        output: options.output,
         written: false,
       };
     }
 
-    fs.writeFileSync(options.outputPath, outputFile);
+    fs.writeFileSync(options.output, outputFile);
     return {
-      outputPath: options.outputPath,
+      output: options.output,
       written: true,
     };
   } finally {

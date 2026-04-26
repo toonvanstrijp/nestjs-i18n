@@ -17,7 +17,7 @@ describe('types generator', () => {
   it('should generate types from json translations without booting the app', async () => {
     const result = await generateI18nTypes({
       path: join(__dirname, 'i18n'),
-      outputPath,
+      output: outputPath,
       format: 'json',
       watch: false,
     });
@@ -33,7 +33,7 @@ describe('types generator', () => {
   it('should not rewrite file when generated content is unchanged', async () => {
     const result = await generateI18nTypes({
       path: join(__dirname, 'i18n'),
-      outputPath,
+      output: outputPath,
       format: 'json',
       watch: false,
     });
@@ -47,7 +47,7 @@ describe('types generator', () => {
     try {
       const result = await generateI18nTypes({
         path: join(__dirname, 'i18n'),
-        outputPath: yamlOutputPath,
+        output: yamlOutputPath,
         format: 'yaml',
         watch: false,
       });

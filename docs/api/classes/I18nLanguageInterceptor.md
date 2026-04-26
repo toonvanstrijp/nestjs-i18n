@@ -1,10 +1,6 @@
----
-id: "I18nLanguageInterceptor"
-title: "Class: I18nLanguageInterceptor"
-sidebar_label: "I18nLanguageInterceptor"
-sidebar_position: 0
-custom_edit_url: null
----
+# Class: I18nLanguageInterceptor
+
+Defined in: [src/interceptors/i18n-language.interceptor.ts:22](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interceptors/i18n-language.interceptor.ts#L22)
 
 ## Implements
 
@@ -12,104 +8,68 @@ custom_edit_url: null
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new I18nLanguageInterceptor**(`i18nOptions`, `i18nResolvers`, `i18nService`, `moduleRef`)
+> **new I18nLanguageInterceptor**(`i18nOptions`, `i18nResolvers`, `i18nService`, `messageFormat`, `moduleRef`): `I18nLanguageInterceptor`
+
+Defined in: [src/interceptors/i18n-language.interceptor.ts:23](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interceptors/i18n-language.interceptor.ts#L23)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `i18nOptions` | [`I18nOptions`](../interfaces/I18nOptions.md) |
-| `i18nResolvers` | [`I18nOptionResolver`](../modules.md#i18noptionresolver)[] |
-| `i18nService` | [`I18nService`](I18nService.md)<`Record`<`string`, `unknown`\>\> |
-| `moduleRef` | `ModuleRef` |
+##### i18nOptions
 
-#### Defined in
+[`I18nOptions`](../interfaces/I18nOptions.md)
 
-[src/interceptors/i18n-language.interceptor.ts:24](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interceptors/i18n-language.interceptor.ts#L24)
+##### i18nResolvers
 
-## Properties
+[`I18nOptionResolver`](../type-aliases/I18nOptionResolver.md)[]
 
-### i18nOptions
+##### i18nService
 
-• `Private` `Readonly` **i18nOptions**: [`I18nOptions`](../interfaces/I18nOptions.md)
+[`I18nService`](I18nService.md)
 
-#### Defined in
+##### messageFormat
 
-[src/interceptors/i18n-language.interceptor.ts:26](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interceptors/i18n-language.interceptor.ts#L26)
+`I18nMessageFormat`
 
-___
+##### moduleRef
 
-### i18nResolvers
+`ModuleRef`
 
-• `Private` `Readonly` **i18nResolvers**: [`I18nOptionResolver`](../modules.md#i18noptionresolver)[]
+#### Returns
 
-#### Defined in
-
-[src/interceptors/i18n-language.interceptor.ts:28](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interceptors/i18n-language.interceptor.ts#L28)
-
-___
-
-### i18nService
-
-• `Private` `Readonly` **i18nService**: [`I18nService`](I18nService.md)<`Record`<`string`, `unknown`\>\>
-
-#### Defined in
-
-[src/interceptors/i18n-language.interceptor.ts:29](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interceptors/i18n-language.interceptor.ts#L29)
-
-___
-
-### moduleRef
-
-• `Private` `Readonly` **moduleRef**: `ModuleRef`
-
-#### Defined in
-
-[src/interceptors/i18n-language.interceptor.ts:30](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interceptors/i18n-language.interceptor.ts#L30)
+`I18nLanguageInterceptor`
 
 ## Methods
 
-### getResolver
+### intercept()
 
-▸ `Private` **getResolver**(`r`): `Promise`<[`I18nResolver`](../interfaces/I18nResolver.md)\>
+> **intercept**(`context`, `next`): `Promise`\<`Observable`\<`any`\>\>
 
-#### Parameters
+Defined in: [src/interceptors/i18n-language.interceptor.ts:33](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interceptors/i18n-language.interceptor.ts#L33)
 
-| Name | Type |
-| :------ | :------ |
-| `r` | [`I18nOptionResolver`](../modules.md#i18noptionresolver) |
-
-#### Returns
-
-`Promise`<[`I18nResolver`](../interfaces/I18nResolver.md)\>
-
-#### Defined in
-
-[src/interceptors/i18n-language.interceptor.ts:86](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interceptors/i18n-language.interceptor.ts#L86)
-
-___
-
-### intercept
-
-▸ **intercept**(`context`, `next`): `Promise`<`Observable`<`any`\>\>
+Method to implement a custom interceptor.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `context` | `ExecutionContext` |
-| `next` | `CallHandler`<`any`\> |
+##### context
+
+`ExecutionContext`
+
+an `ExecutionContext` object providing methods to access the
+route handler and class about to be invoked.
+
+##### next
+
+`CallHandler`\<`any`\>
+
+a reference to the `CallHandler`, which provides access to an
+`Observable` representing the response stream from the route handler.
 
 #### Returns
 
-`Promise`<`Observable`<`any`\>\>
+`Promise`\<`Observable`\<`any`\>\>
 
 #### Implementation of
 
-NestInterceptor.intercept
-
-#### Defined in
-
-[src/interceptors/i18n-language.interceptor.ts:33](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interceptors/i18n-language.interceptor.ts#L33)
+`NestInterceptor.intercept`

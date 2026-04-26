@@ -1,10 +1,6 @@
----
-id: "I18nModule"
-title: "Class: I18nModule"
-sidebar_label: "I18nModule"
-sidebar_position: 0
-custom_edit_url: null
----
+# Class: I18nModule
+
+Defined in: [src/i18n.module.ts:62](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.module.ts#L62)
 
 ## Implements
 
@@ -14,84 +10,51 @@ custom_edit_url: null
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new I18nModule**(`i18n`, `translations`, `i18nOptions`, `adapter`)
+> **new I18nModule**(`i18n`, `translations`, `i18nOptions`, `adapter`, `middleware`): `I18nModule`
+
+Defined in: [src/i18n.module.ts:65](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.module.ts#L65)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `i18n` | [`I18nService`](I18nService.md)<`Record`<`string`, `unknown`\>\> |
-| `translations` | `Observable`<[`I18nTranslation`](../interfaces/I18nTranslation.md)\> |
-| `i18nOptions` | [`I18nOptions`](../interfaces/I18nOptions.md) |
-| `adapter` | `HttpAdapterHost`<`AbstractHttpAdapter`<`any`, `any`, `any`\>\> |
+##### i18n
 
-#### Defined in
+[`I18nService`](I18nService.md)
 
-[src/i18n.module.ts:67](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L67)
+##### translations
 
-## Properties
+`Observable`\<[`I18nTranslation`](../interfaces/I18nTranslation.md)\>
 
-### adapter
+##### i18nOptions
 
-• `Private` **adapter**: `HttpAdapterHost`<`AbstractHttpAdapter`<`any`, `any`, `any`\>\>
+[`I18nOptions`](../interfaces/I18nOptions.md)
 
-#### Defined in
+##### adapter
 
-[src/i18n.module.ts:72](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L72)
+`HttpAdapterHost`
 
-___
+##### middleware
 
-### i18n
+[`I18nMiddleware`](I18nMiddleware.md)
 
-• `Private` `Readonly` **i18n**: [`I18nService`](I18nService.md)<`Record`<`string`, `unknown`\>\>
+#### Returns
 
-#### Defined in
-
-[src/i18n.module.ts:68](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L68)
-
-___
-
-### i18nOptions
-
-• `Private` `Readonly` **i18nOptions**: [`I18nOptions`](../interfaces/I18nOptions.md)
-
-#### Defined in
-
-[src/i18n.module.ts:71](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L71)
-
-___
-
-### translations
-
-• `Private` **translations**: `Observable`<[`I18nTranslation`](../interfaces/I18nTranslation.md)\>
-
-#### Defined in
-
-[src/i18n.module.ts:70](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L70)
-
-___
-
-### unsubscribe
-
-• `Private` **unsubscribe**: `Subject`<`void`\>
-
-#### Defined in
-
-[src/i18n.module.ts:65](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L65)
+`I18nModule`
 
 ## Methods
 
-### configure
+### configure()
 
-▸ **configure**(`consumer`): `void`
+> **configure**(`consumer`): `void`
+
+Defined in: [src/i18n.module.ts:172](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.module.ts#L172)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `consumer` | `MiddlewareConsumer` |
+##### consumer
+
+`NestMiddlewareConsumer`
 
 #### Returns
 
@@ -99,17 +62,15 @@ ___
 
 #### Implementation of
 
-NestModule.configure
+`NestModule.configure`
 
-#### Defined in
+***
 
-[src/i18n.module.ts:152](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L152)
+### onModuleDestroy()
 
-___
+> **onModuleDestroy**(): `void`
 
-### onModuleDestroy
-
-▸ **onModuleDestroy**(): `void`
+Defined in: [src/i18n.module.ts:167](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.module.ts#L167)
 
 #### Returns
 
@@ -117,174 +78,56 @@ ___
 
 #### Implementation of
 
-OnModuleDestroy.onModuleDestroy
+`OnModuleDestroy.onModuleDestroy`
 
-#### Defined in
+***
 
-[src/i18n.module.ts:148](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L148)
+### onModuleInit()
 
-___
+> **onModuleInit**(): `Promise`\<`void`\>
 
-### onModuleInit
-
-▸ **onModuleInit**(): `Promise`<`void`\>
+Defined in: [src/i18n.module.ts:74](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.module.ts#L74)
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Implementation of
 
-OnModuleInit.onModuleInit
+`OnModuleInit.onModuleInit`
 
-#### Defined in
+***
 
-[src/i18n.module.ts:75](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L75)
+### forRoot()
 
-___
+> `static` **forRoot**(`options`): `DynamicModule`
 
-### createAsyncLanguagesProvider
-
-▸ `Static` `Private` **createAsyncLanguagesProvider**(): `Provider`<`any`\>
-
-#### Returns
-
-`Provider`<`any`\>
-
-#### Defined in
-
-[src/i18n.module.ts:376](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L376)
-
-___
-
-### createAsyncLoaderOptionsProvider
-
-▸ `Static` `Private` **createAsyncLoaderOptionsProvider**(): `Provider`<`any`\>
-
-#### Returns
-
-`Provider`<`any`\>
-
-#### Defined in
-
-[src/i18n.module.ts:343](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L343)
-
-___
-
-### createAsyncOptionsProvider
-
-▸ `Static` `Private` **createAsyncOptionsProvider**(`options`): `Provider`<`any`\>
+Defined in: [src/i18n.module.ts:212](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.module.ts#L212)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | [`I18nAsyncOptions`](../interfaces/I18nAsyncOptions.md) |
+##### options
 
-#### Returns
-
-`Provider`<`any`\>
-
-#### Defined in
-
-[src/i18n.module.ts:319](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L319)
-
-___
-
-### createAsyncTranslationProvider
-
-▸ `Static` `Private` **createAsyncTranslationProvider**(): `Provider`<`any`\>
-
-#### Returns
-
-`Provider`<`any`\>
-
-#### Defined in
-
-[src/i18n.module.ts:353](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L353)
-
-___
-
-### createResolverProviders
-
-▸ `Static` `Private` **createResolverProviders**(`resolvers?`): `Provider`<`any`\>[]
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `resolvers?` | [`I18nOptionResolver`](../modules.md#i18noptionresolver)[] |
-
-#### Returns
-
-`Provider`<`any`\>[]
-
-#### Defined in
-
-[src/i18n.module.ts:406](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L406)
-
-___
-
-### forRoot
-
-▸ `Static` **forRoot**(`options`): `DynamicModule`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | [`I18nOptions`](../interfaces/I18nOptions.md) |
+[`I18nOptions`](../interfaces/I18nOptions.md)
 
 #### Returns
 
 `DynamicModule`
 
-#### Defined in
+***
 
-[src/i18n.module.ts:162](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L162)
+### forRootAsync()
 
-___
+> `static` **forRootAsync**(`options`): `DynamicModule`
 
-### forRootAsync
-
-▸ `Static` **forRootAsync**(`options`): `DynamicModule`
+Defined in: [src/i18n.module.ts:307](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.module.ts#L307)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | [`I18nAsyncOptions`](../interfaces/I18nAsyncOptions.md) |
+##### options
+
+[`I18nAsyncOptions`](../interfaces/I18nAsyncOptions.md)
 
 #### Returns
 
 `DynamicModule`
-
-#### Defined in
-
-[src/i18n.module.ts:259](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L259)
-
-___
-
-### sanitizeI18nOptions
-
-▸ `Static` `Private` **sanitizeI18nOptions**<`T`\>(`options`): `T`
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `T` | [`I18nOptions`](../interfaces/I18nOptions.md) \| [`I18nAsyncOptions`](../interfaces/I18nAsyncOptions.md) |
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `T` |
-
-#### Returns
-
-`T`
-
-#### Defined in
-
-[src/i18n.module.ts:399](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.module.ts#L399)

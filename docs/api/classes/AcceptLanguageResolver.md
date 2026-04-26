@@ -1,10 +1,6 @@
----
-id: "AcceptLanguageResolver"
-title: "Class: AcceptLanguageResolver"
-sidebar_label: "AcceptLanguageResolver"
-sidebar_position: 0
-custom_edit_url: null
----
+# Class: AcceptLanguageResolver
+
+Defined in: [src/resolvers/accept-language.resolver.ts:12](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/resolvers/accept-language.resolver.ts#L12)
 
 ## Implements
 
@@ -12,50 +8,40 @@ custom_edit_url: null
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new AcceptLanguageResolver**(`options?`)
+> **new AcceptLanguageResolver**(`options?`): `AcceptLanguageResolver`
 
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `AcceptLanguageResolverOptions` |
-
-#### Defined in
-
-[src/resolvers/accept-language.resolver.ts:12](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/resolvers/accept-language.resolver.ts#L12)
-
-## Properties
-
-### options
-
-• `Private` **options**: `AcceptLanguageResolverOptions`
-
-#### Defined in
-
-[src/resolvers/accept-language.resolver.ts:14](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/resolvers/accept-language.resolver.ts#L14)
-
-## Methods
-
-### resolve
-
-▸ **resolve**(`context`): `Promise`<`string` \| `string`[]\>
+Defined in: [src/resolvers/accept-language.resolver.ts:13](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/resolvers/accept-language.resolver.ts#L13)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `context` | `ExecutionContext` |
+##### options?
+
+`AcceptLanguageResolverOptions` = `...`
 
 #### Returns
 
-`Promise`<`string` \| `string`[]\>
+`AcceptLanguageResolver`
+
+## Methods
+
+### resolve()
+
+> **resolve**(`context`): `Promise`\<`string` \| `string`[]\>
+
+Defined in: [src/resolvers/accept-language.resolver.ts:20](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/resolvers/accept-language.resolver.ts#L20)
+
+#### Parameters
+
+##### context
+
+`ExecutionContext`
+
+#### Returns
+
+`Promise`\<`string` \| `string`[]\>
 
 #### Implementation of
 
-[I18nResolver](../interfaces/I18nResolver.md).[resolve](../interfaces/I18nResolver.md#resolve)
-
-#### Defined in
-
-[src/resolvers/accept-language.resolver.ts:19](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/resolvers/accept-language.resolver.ts#L19)
+[`I18nResolver`](../interfaces/I18nResolver.md).[`resolve`](../interfaces/I18nResolver.md#resolve)

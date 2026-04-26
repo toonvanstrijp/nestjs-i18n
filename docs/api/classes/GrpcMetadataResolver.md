@@ -1,10 +1,6 @@
----
-id: "GrpcMetadataResolver"
-title: "Class: GrpcMetadataResolver"
-sidebar_label: "GrpcMetadataResolver"
-sidebar_position: 0
-custom_edit_url: null
----
+# Class: GrpcMetadataResolver
+
+Defined in: [src/resolvers/grpc-metadata.resolver.ts:7](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/resolvers/grpc-metadata.resolver.ts#L7)
 
 ## Implements
 
@@ -12,50 +8,40 @@ custom_edit_url: null
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new GrpcMetadataResolver**(`keys?`)
+> **new GrpcMetadataResolver**(`keys?`): `GrpcMetadataResolver`
 
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `keys` | `string`[] |
-
-#### Defined in
-
-[src/resolvers/grpc-metadata.resolver.ts:7](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/resolvers/grpc-metadata.resolver.ts#L7)
-
-## Properties
-
-### keys
-
-• `Private` **keys**: `string`[]
-
-#### Defined in
-
-[src/resolvers/grpc-metadata.resolver.ts:9](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/resolvers/grpc-metadata.resolver.ts#L9)
-
-## Methods
-
-### resolve
-
-▸ **resolve**(`context`): `Promise`<`string` \| `string`[]\>
+Defined in: [src/resolvers/grpc-metadata.resolver.ts:8](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/resolvers/grpc-metadata.resolver.ts#L8)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `context` | `ExecutionContext` |
+##### keys?
+
+`string`[] = `...`
 
 #### Returns
 
-`Promise`<`string` \| `string`[]\>
+`GrpcMetadataResolver`
+
+## Methods
+
+### resolve()
+
+> **resolve**(`context`): `Promise`\<`string` \| `string`[]\>
+
+Defined in: [src/resolvers/grpc-metadata.resolver.ts:13](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/resolvers/grpc-metadata.resolver.ts#L13)
+
+#### Parameters
+
+##### context
+
+`ExecutionContext`
+
+#### Returns
+
+`Promise`\<`string` \| `string`[]\>
 
 #### Implementation of
 
-[I18nResolver](../interfaces/I18nResolver.md).[resolve](../interfaces/I18nResolver.md#resolve)
-
-#### Defined in
-
-[src/resolvers/grpc-metadata.resolver.ts:12](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/resolvers/grpc-metadata.resolver.ts#L12)
+[`I18nResolver`](../interfaces/I18nResolver.md).[`resolve`](../interfaces/I18nResolver.md#resolve)

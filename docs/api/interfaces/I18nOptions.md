@@ -1,141 +1,187 @@
----
-id: "I18nOptions"
-title: "Interface: I18nOptions"
-sidebar_label: "I18nOptions"
-sidebar_position: 0
-custom_edit_url: null
----
+# Interface: I18nOptions
+
+Defined in: [src/interfaces/i18n-options.interface.ts:57](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L57)
 
 ## Properties
 
-### disableMiddleware
+### disableMiddleware?
 
-• `Optional` **disableMiddleware**: `boolean`
+> `optional` **disableMiddleware?**: `boolean`
 
-#### Defined in
+Defined in: [src/interfaces/i18n-options.interface.ts:69](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L69)
 
-[src/interfaces/i18n-options.interface.ts:52](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L52)
-
-___
+***
 
 ### fallbackLanguage
 
-• **fallbackLanguage**: `string`
+> **fallbackLanguage**: `string`
 
-#### Defined in
+Defined in: [src/interfaces/i18n-options.interface.ts:58](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L58)
 
-[src/interfaces/i18n-options.interface.ts:44](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L44)
+***
 
-___
+### fallbacks?
 
-### fallbacks
+> `optional` **fallbacks?**: [`I18nFallbacks`](I18nFallbacks.md)
 
-• `Optional` **fallbacks**: `Object`
+Defined in: [src/interfaces/i18n-options.interface.ts:59](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L59)
 
-#### Index signature
+***
 
-▪ [key: `string`]: `string`
+### formatter?
 
-#### Defined in
+> `optional` **formatter?**: [`Formatter`](../type-aliases/Formatter.md)
 
-[src/interfaces/i18n-options.interface.ts:45](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L45)
+Defined in: [src/interfaces/i18n-options.interface.ts:66](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L66)
 
-___
+***
 
-### formatter
+### icuLocales?
 
-• `Optional` **formatter**: [`Formatter`](../modules.md#formatter)
+> `optional` **icuLocales?**: `string`[]
 
-#### Defined in
+Defined in: [src/interfaces/i18n-options.interface.ts:84](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L84)
 
-[src/interfaces/i18n-options.interface.ts:49](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L49)
+***
 
-___
+### icuOptions?
 
-### loader
+> `optional` **icuOptions?**: [`I18nICUOptions`](I18nICUOptions.md)
 
-• `Optional` **loader**: `Type`<[`I18nLoader`](../classes/I18nLoader.md)\>
+Defined in: [src/interfaces/i18n-options.interface.ts:83](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L83)
 
-#### Defined in
+***
 
-[src/interfaces/i18n-options.interface.ts:47](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L47)
+### joinArrays?
 
-___
+> `optional` **joinArrays?**: `string`
 
-### loaderOptions
+Defined in: [src/interfaces/i18n-options.interface.ts:80](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L80)
 
-• **loaderOptions**: `any`
+Join array translations into a single string using this delimiter.
 
-#### Defined in
+***
 
-[src/interfaces/i18n-options.interface.ts:48](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L48)
+### keySeparator?
 
-___
+> `optional` **keySeparator?**: `string` \| `false`
 
-### logging
+Defined in: [src/interfaces/i18n-options.interface.ts:74](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L74)
 
-• `Optional` **logging**: `boolean`
+Configure how translation keys are split into nested paths. Set false to disable splitting.
 
-#### Defined in
+***
 
-[src/interfaces/i18n-options.interface.ts:50](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L50)
+### ~~loader?~~
 
-___
+> `optional` **loader?**: `Type`\<[`I18nLoader`](../classes/I18nLoader.md)\>
 
-### resolvers
+Defined in: [src/interfaces/i18n-options.interface.ts:62](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L62)
 
-• `Optional` **resolvers**: [`I18nOptionResolver`](../modules.md#i18noptionresolver)[]
+#### Deprecated
 
-#### Defined in
+Use `loaders` instead
 
-[src/interfaces/i18n-options.interface.ts:46](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L46)
+***
 
-___
+### ~~loaderOptions?~~
 
-### skipAsyncHook
+> `optional` **loaderOptions?**: `any`
 
-• `Optional` **skipAsyncHook**: `boolean`
+Defined in: [src/interfaces/i18n-options.interface.ts:64](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L64)
 
-#### Defined in
+#### Deprecated
 
-[src/interfaces/i18n-options.interface.ts:53](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L53)
+Use `loaders` instead
 
-___
+***
 
-### throwOnMissingKey
+### loaders?
 
-• `Optional` **throwOnMissingKey**: `boolean`
+> `optional` **loaders?**: [`I18nLoader`](../classes/I18nLoader.md)[]
 
-#### Defined in
+Defined in: [src/interfaces/i18n-options.interface.ts:65](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L65)
 
-[src/interfaces/i18n-options.interface.ts:55](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L55)
+***
 
-___
+### logging?
 
-### typesOutputPath
+> `optional` **logging?**: `boolean`
 
-• `Optional` **typesOutputPath**: `string`
+Defined in: [src/interfaces/i18n-options.interface.ts:67](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L67)
 
-#### Defined in
+***
 
-[src/interfaces/i18n-options.interface.ts:56](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L56)
+### nsSeparator?
 
-___
+> `optional` **nsSeparator?**: `string` \| `false`
 
-### validatorOptions
+Defined in: [src/interfaces/i18n-options.interface.ts:76](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L76)
 
-• `Optional` **validatorOptions**: `ValidatorOptions`
+Configure namespace separator (for example test:HELLO). Set false to disable namespace parsing.
 
-#### Defined in
+***
 
-[src/interfaces/i18n-options.interface.ts:54](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L54)
+### resolvers?
 
-___
+> `optional` **resolvers?**: [`I18nOptionResolver`](../type-aliases/I18nOptionResolver.md)[]
 
-### viewEngine
+Defined in: [src/interfaces/i18n-options.interface.ts:60](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L60)
 
-• `Optional` **viewEngine**: ``"hbs"`` \| ``"pug"`` \| ``"ejs"``
+***
 
-#### Defined in
+### returnObjects?
 
-[src/interfaces/i18n-options.interface.ts:51](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L51)
+> `optional` **returnObjects?**: `boolean`
+
+Defined in: [src/interfaces/i18n-options.interface.ts:78](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L78)
+
+Whether object/array translations are returned instead of the key when translating structured values.
+
+***
+
+### skipAsyncHook?
+
+> `optional` **skipAsyncHook?**: `boolean`
+
+Defined in: [src/interfaces/i18n-options.interface.ts:70](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L70)
+
+***
+
+### throwOnMissingKey?
+
+> `optional` **throwOnMissingKey?**: `boolean`
+
+Defined in: [src/interfaces/i18n-options.interface.ts:72](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L72)
+
+***
+
+### typesOutputPath?
+
+> `optional` **typesOutputPath?**: `string`
+
+Defined in: [src/interfaces/i18n-options.interface.ts:81](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L81)
+
+***
+
+### useICU?
+
+> `optional` **useICU?**: `boolean`
+
+Defined in: [src/interfaces/i18n-options.interface.ts:82](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L82)
+
+***
+
+### validatorOptions?
+
+> `optional` **validatorOptions?**: `ValidatorOptions`
+
+Defined in: [src/interfaces/i18n-options.interface.ts:71](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L71)
+
+***
+
+### viewEngine?
+
+> `optional` **viewEngine?**: [`I18nViewEngine`](../type-aliases/I18nViewEngine.md)
+
+Defined in: [src/interfaces/i18n-options.interface.ts:68](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L68)

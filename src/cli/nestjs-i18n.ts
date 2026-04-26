@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
 import { generateI18nTypes } from '../types-generator';
+import { checkI18nTranslations } from './check-translations';
 
 
 interface CliOptions {
+  mode: 'generate' | 'check';
   path: string;
   out: string;
   format?: 'json' | 'yaml';
@@ -20,6 +22,28 @@ interface ParsedCliOptions {
 const DEFAULT_PATH = 'i18n';
 const DEFAULT_OUT = 'generated.ts';
 const DEFAULT_FORMAT: NonNullable<CliOptions['format']> = 'json';
+const CLI_VERSION = `v${require('../../package.json').version}`;
+const HELP_ASCII_ART = `
+███╗   ██╗███████╗███████╗████████╗███████╗      ██╗ ██╗ █████╗ ███╗   ██╗
+████╗  ██║██╔════╝██╔════╝╚══██╔══╝██╔════╝      ██║███║██╔══██╗████╗  ██║
+██╔██╗ ██║█████╗  ███████╗   ██║   ███████╗█████╗██║╚██║╚█████╔╝██╔██╗ ██║
+██║╚██╗██║██╔══╝  ╚════██║   ██║   ╚════██║╚════╝██║ ██║██╔══██╗██║╚██╗██║
+██║ ╚████║███████╗███████║   ██║   ███████║      ██║ ██║╚█████╔╝██║ ╚████║
+╚═╝  ╚═══╝╚══════╝╚══════╝   ╚═╝   ╚══════╝      ╚═╝ ╚═╝ ╚════╝ ╚═╝  ╚═══╝
+`
+
+function renderLogoWithVersion(logo: string, version: string): string {
+  const lines = logo.trimEnd().split('\n');
+
+  if (lines.length === 0) {
+    return logo;
+  }
+
+  const maxLineLength = Math.max(...lines.map((line) => line.length));
+  lines[0] = `${lines[0].padEnd(maxLineLength + 2)}${version}`;
+
+  return lines.join('\n');
+}
 
 function getDefaultPattern(format: NonNullable<CliOptions['format']>): string {
   return format === 'yaml' ? '*.{yaml,yml}' : '*.json';
@@ -35,6 +59,7 @@ function getOptionValue(args: string[], index: number, optionName: string): stri
 
 function parseArgs(args: string[]): ParsedCliOptions {
   const options: CliOptions = {
+    mode: 'generate',
     path: DEFAULT_PATH,
     out: DEFAULT_OUT,
     format: DEFAULT_FORMAT,
@@ -50,6 +75,16 @@ function parseArgs(args: string[]): ParsedCliOptions {
     if (arg === '--help' || arg === '-h') {
       printHelp();
       process.exit(0);
+    }
+
+    if (arg === 'check' || arg === '--check') {
+      options.mode = 'check';
+      continue;
+    }
+
+    if (arg === 'generate') {
+      options.mode = 'generate';
+      continue;
     }
 
     if (arg === '--path' || arg === '-p') {
@@ -96,6 +131,12 @@ function parseArgs(args: string[]): ParsedCliOptions {
       continue;
     }
 
+    if (!arg.startsWith('-')) {
+      throw new Error(
+        `Unexpected positional argument "${arg}". Use flags (for example: -p <dir>).`,
+      );
+    }
+
     warnings.push(`Unknown option: ${arg}`);
   }
 
@@ -103,9 +144,11 @@ function parseArgs(args: string[]): ParsedCliOptions {
 }
 
 function printHelp() {
+  process.stdout.write(`${renderLogoWithVersion(HELP_ASCII_ART, CLI_VERSION)}\n\n`);
   process.stdout.write(`🌍 Generate TypeScript translation key types for nestjs-i18n.\n\n`);
   process.stdout.write(`📌 Usage:\n`);
-  process.stdout.write(`  nestjs-i18n [options]\n\n`);
+  process.stdout.write(`  nestjs-i18n [options]\n`);
+  process.stdout.write(`  nestjs-i18n check -p <dir> [options]\n\n`);
 
   process.stdout.write(`⚙️ Options:\n`);
   process.stdout.write(
@@ -121,13 +164,16 @@ function printHelp() {
     `      --pattern <glob>            Custom file glob; overrides default format pattern\n`,
   );
   process.stdout.write(
-    `      --include-subfolders        Scan nested language folders (default)\n`,
+    `      --include-subfolders        Scan nested language folders (default: true)\n`,
   );
   process.stdout.write(
     `      --no-include-subfolders     Only scan direct child folders\n`,
   );
   process.stdout.write(
-    `  -w, --watch                     Watch translation files and regenerate on changes\n`,
+    `  -w, --watch                     Watch translation files and regenerate on changes (default: false)\n`,
+  );
+  process.stdout.write(
+    `      --check                     Run key completeness check across all languages\n`,
   );
   process.stdout.write(`  -h, --help                       Show this help\n\n`);
 
@@ -136,11 +182,15 @@ function printHelp() {
   process.stdout.write(`  nestjs-i18n -p src/i18n -o src/generated/i18n.generated.ts\n`);
   process.stdout.write(`  nestjs-i18n --format yaml --pattern '*.{yaml,yml}'\n`);
   process.stdout.write(`  nestjs-i18n --watch --no-include-subfolders\n\n`);
+  process.stdout.write(`  nestjs-i18n check -p i18n\n`);
+  process.stdout.write(`  nestjs-i18n check -p src/i18n --format yaml\n\n`);
 
   process.stdout.write(`📝 Notes:\n`);
   process.stdout.write(`  - Default file pattern for json: *.json\n`);
   process.stdout.write(`  - Default file pattern for yaml: *.{yaml,yml}\n`);
   process.stdout.write(`  - If --pattern is set, it is used as-is\n`);
+  process.stdout.write(`  - Positional arguments are not supported; use flags\n`);
+  process.stdout.write(`  - check mode exits with code 1 when missing keys are found\n`);
 }
 
 async function main() {
@@ -157,6 +207,45 @@ async function main() {
 
   const selectedFormat = options.format ?? DEFAULT_FORMAT;
   const selectedPattern = options.pattern ?? getDefaultPattern(selectedFormat);
+
+  if (options.mode === 'check') {
+    if (options.watch) {
+      process.stderr.write(`⚠️ --watch is ignored in check mode.\n`);
+    }
+
+    const checkResult = await checkI18nTranslations({
+      path: options.path,
+      format: selectedFormat,
+      filePattern: selectedPattern,
+      includeSubfolders: options.includeSubfolders,
+      watch: false,
+    });
+
+    process.stdout.write(
+      `🔎 Found languages: ${checkResult.languages.join(', ') || '(none)'}\n`,
+    );
+
+    if (checkResult.ok) {
+      process.stdout.write(`✅ All languages contain the same translation keys.\n`);
+      return;
+    }
+
+    for (const language of checkResult.languages) {
+      const missingKeys = checkResult.missingByLanguage[language] ?? [];
+      if (missingKeys.length === 0) {
+        process.stdout.write(`✅ ${language}: complete\n`);
+        continue;
+      }
+
+      process.stdout.write(`❌ ${language}: ${missingKeys.length} missing keys\n`);
+      for (const key of missingKeys) {
+        process.stdout.write(`   - ${key}\n`);
+      }
+    }
+
+    process.stderr.write(`❌ Check failed with ${checkResult.totalMissing} missing entries.\n`);
+    process.exit(1);
+  }
 
   const result = await generateI18nTypes({
     path: options.path,

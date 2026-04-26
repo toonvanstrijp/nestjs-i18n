@@ -11,13 +11,7 @@
     "baseUrl": "./",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "ignoreDeprecations": "6.0",
-    "newLine": "lf",
-    "types": [
-      "jest",
-      "node",
-      "express"
-    ]
+    "newLine": "lf"
   },
   "include": [
     "**/*"

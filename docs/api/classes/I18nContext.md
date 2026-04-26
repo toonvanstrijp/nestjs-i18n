@@ -1,267 +1,257 @@
----
-id: "I18nContext"
-title: "Class: I18nContext<K>"
-sidebar_label: "I18nContext"
-sidebar_position: 0
-custom_edit_url: null
----
+# Class: I18nContext\<K\>
 
-## Type parameters
+Defined in: [src/i18n.context.ts:9](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.context.ts#L9)
 
-| Name | Type |
-| :------ | :------ |
-| `K` | `Record`<`string`, `unknown`\> |
+## Type Parameters
+
+### K
+
+`K` = `Record`\<`string`, `unknown`\>
 
 ## Implements
 
-- [`I18nTranslator`](../interfaces/I18nTranslator.md)<`K`\>
+- [`I18nTranslator`](../interfaces/I18nTranslator.md)\<`K`\>
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new I18nContext**<`K`\>(`lang`, `service`)
+> **new I18nContext**\<`K`\>(`lang`, `service`, `messageFormat`): `I18nContext`\<`K`\>
 
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `K` | `Record`<`string`, `unknown`\> |
+Defined in: [src/i18n.context.ts:18](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.context.ts#L18)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `lang` | `string` |
-| `service` | [`I18nService`](I18nService.md)<`K`\> |
+##### lang
 
-#### Defined in
+`string`
 
-[src/i18n.context.ts:19](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.context.ts#L19)
+##### service
+
+[`I18nService`](I18nService.md)\<`K`\>
+
+##### messageFormat
+
+`I18nMessageFormat`
+
+#### Returns
+
+`I18nContext`\<`K`\>
 
 ## Properties
 
 ### id
 
-• `Readonly` **id**: `number`
+> `readonly` **id**: `number`
 
-#### Defined in
+Defined in: [src/i18n.context.ts:12](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.context.ts#L12)
 
-[src/i18n.context.ts:13](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.context.ts#L13)
-
-___
+***
 
 ### lang
 
-• `Readonly` **lang**: `string`
+> `readonly` **lang**: `string`
 
-#### Defined in
+Defined in: [src/i18n.context.ts:19](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.context.ts#L19)
 
-[src/i18n.context.ts:20](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.context.ts#L20)
+***
 
-___
+### messageFormat
+
+> `readonly` **messageFormat**: `I18nMessageFormat`
+
+Defined in: [src/i18n.context.ts:21](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.context.ts#L21)
+
+***
 
 ### service
 
-• `Readonly` **service**: [`I18nService`](I18nService.md)<`K`\>
+> `readonly` **service**: [`I18nService`](I18nService.md)\<`K`\>
 
-#### Defined in
-
-[src/i18n.context.ts:21](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.context.ts#L21)
-
-___
-
-### counter
-
-▪ `Static` `Private` **counter**: `number` = `1`
-
-#### Defined in
-
-[src/i18n.context.ts:12](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.context.ts#L12)
-
-___
-
-### storage
-
-▪ `Static` `Private` **storage**: `AsyncLocalStorage`<[`I18nContext`](I18nContext.md)<`Record`<`string`, `unknown`\>\>\>
-
-#### Defined in
-
-[src/i18n.context.ts:11](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.context.ts#L11)
+Defined in: [src/i18n.context.ts:20](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.context.ts#L20)
 
 ## Accessors
 
 ### i18n
 
-• `get` **i18n**(): [`I18nContext`](I18nContext.md)<`K`\>
+#### Get Signature
 
-#### Returns
+> **get** **i18n**(): `I18nContext`\<`K`\>
 
-[`I18nContext`](I18nContext.md)<`K`\>
+Defined in: [src/i18n.context.ts:14](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.context.ts#L14)
 
-#### Defined in
+##### Returns
 
-[src/i18n.context.ts:15](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.context.ts#L15)
+`I18nContext`\<`K`\>
 
 ## Methods
 
-### t
+### t()
 
-▸ **t**<`P`, `R`\>(`key`, `options?`): `IfAnyOrNever`<`R`, `string`, `R`\>
+> **t**\<`P`, `R`\>(`key`, `options?`): `IfAnyOrNever`\<`R`, `string`, `R`\>
 
-#### Type parameters
+Defined in: [src/i18n.context.ts:55](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.context.ts#L55)
 
-| Name | Type |
-| :------ | :------ |
-| `P` | extends `string` = `any` |
-| `R` | [`PathValue`](../modules.md#pathvalue)<`K`, `P`\> |
+#### Type Parameters
+
+##### P
+
+`P` *extends* `string` = `any`
+
+##### R
+
+`R` = [`PathValue`](../type-aliases/PathValue.md)\<`K`, `P`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `key` | `P` |
-| `options?` | [`TranslateOptions`](../modules.md#translateoptions) |
+##### key
+
+`P`
+
+##### options?
+
+[`TranslateOptions`](../interfaces/TranslateOptions.md)
 
 #### Returns
 
-`IfAnyOrNever`<`R`, `string`, `R`\>
+`IfAnyOrNever`\<`R`, `string`, `R`\>
 
 #### Implementation of
 
-[I18nTranslator](../interfaces/I18nTranslator.md).[t](../interfaces/I18nTranslator.md#t)
+[`I18nTranslator`](../interfaces/I18nTranslator.md).[`t`](../interfaces/I18nTranslator.md#t)
 
-#### Defined in
+***
 
-[src/i18n.context.ts:35](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.context.ts#L35)
+### translate()
 
-___
+> **translate**\<`P`, `R`\>(`key`, `options?`): `IfAnyOrNever`\<`R`, `string`, `R`\>
 
-### translate
+Defined in: [src/i18n.context.ts:24](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.context.ts#L24)
 
-▸ **translate**<`P`, `R`\>(`key`, `options?`): `IfAnyOrNever`<`R`, `string`, `R`\>
+#### Type Parameters
 
-#### Type parameters
+##### P
 
-| Name | Type |
-| :------ | :------ |
-| `P` | extends `string` = `any` |
-| `R` | [`PathValue`](../modules.md#pathvalue)<`K`, `P`\> |
+`P` *extends* `string` = `any`
+
+##### R
+
+`R` = [`PathValue`](../type-aliases/PathValue.md)\<`K`, `P`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `key` | `P` |
-| `options?` | [`TranslateOptions`](../modules.md#translateoptions) |
+##### key
+
+`P`
+
+##### options?
+
+[`TranslateOptions`](../interfaces/TranslateOptions.md)
 
 #### Returns
 
-`IfAnyOrNever`<`R`, `string`, `R`\>
+`IfAnyOrNever`\<`R`, `string`, `R`\>
 
 #### Implementation of
 
-[I18nTranslator](../interfaces/I18nTranslator.md).[translate](../interfaces/I18nTranslator.md#translate)
+[`I18nTranslator`](../interfaces/I18nTranslator.md).[`translate`](../interfaces/I18nTranslator.md#translate)
 
-#### Defined in
+***
 
-[src/i18n.context.ts:24](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.context.ts#L24)
+### validate()
 
-___
+> **validate**(`value`, `options?`): `Promise`\<`ValidationError`[]\>
 
-### validate
-
-▸ **validate**(`value`, `options?`): `Promise`<`ValidationError`[]\>
+Defined in: [src/i18n.context.ts:62](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.context.ts#L62)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `any` |
-| `options?` | [`TranslateOptions`](../modules.md#translateoptions) |
+##### value
+
+`any`
+
+##### options?
+
+[`TranslateOptions`](../interfaces/TranslateOptions.md)
 
 #### Returns
 
-`Promise`<`ValidationError`[]\>
+`Promise`\<`ValidationError`[]\>
 
 #### Implementation of
 
-[I18nTranslator](../interfaces/I18nTranslator.md).[validate](../interfaces/I18nTranslator.md#validate)
+[`I18nTranslator`](../interfaces/I18nTranslator.md).[`validate`](../interfaces/I18nTranslator.md#validate)
 
-#### Defined in
+***
 
-[src/i18n.context.ts:42](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.context.ts#L42)
+### create()
 
-___
+> `static` **create**(`ctx`, `next`): `void`
 
-### create
-
-▸ `Static` **create**(`ctx`, `next`): `void`
+Defined in: [src/i18n.context.ts:70](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.context.ts#L70)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `ctx` | [`I18nContext`](I18nContext.md)<`Record`<`string`, `unknown`\>\> |
-| `next` | (...`args`: `any`[]) => `void` |
+##### ctx
+
+`I18nContext`
+
+##### next
+
+(...`args`) => `void`
 
 #### Returns
 
 `void`
 
-#### Defined in
+***
 
-[src/i18n.context.ts:53](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.context.ts#L53)
+### createAsync()
 
-___
+> `static` **createAsync**\<`T`\>(`ctx`, `next`): `Promise`\<`T`\>
 
-### createAsync
+Defined in: [src/i18n.context.ts:74](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.context.ts#L74)
 
-▸ `Static` **createAsync**<`T`\>(`ctx`, `next`): `Promise`<`T`\>
+#### Type Parameters
 
-#### Type parameters
+##### T
 
-| Name |
-| :------ |
-| `T` |
+`T`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `ctx` | [`I18nContext`](I18nContext.md)<`Record`<`string`, `unknown`\>\> |
-| `next` | (...`args`: `any`[]) => `Promise`<`T`\> |
+##### ctx
+
+`I18nContext`
+
+##### next
+
+(...`args`) => `Promise`\<`T`\>
 
 #### Returns
 
-`Promise`<`T`\>
+`Promise`\<`T`\>
 
-#### Defined in
+***
 
-[src/i18n.context.ts:57](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.context.ts#L57)
+### current()
 
-___
+> `static` **current**\<`K`\>(`context?`): `I18nContext`\<`K`\>
 
-### current
+Defined in: [src/i18n.context.ts:78](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/i18n.context.ts#L78)
 
-▸ `Static` **current**<`K`\>(`context?`): [`I18nContext`](I18nContext.md)<`K`\>
+#### Type Parameters
 
-#### Type parameters
+##### K
 
-| Name | Type |
-| :------ | :------ |
-| `K` | `Record`<`string`, `unknown`\> |
+`K` = `Record`\<`string`, `unknown`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `context?` | `ArgumentsHost` |
+##### context?
+
+`ArgumentsHost`
 
 #### Returns
 
-[`I18nContext`](I18nContext.md)<`K`\>
-
-#### Defined in
-
-[src/i18n.context.ts:64](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/i18n.context.ts#L64)
+`I18nContext`\<`K`\>

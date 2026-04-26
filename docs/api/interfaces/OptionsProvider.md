@@ -1,17 +1,11 @@
----
-id: "OptionsProvider"
-title: "Interface: OptionsProvider"
-sidebar_label: "OptionsProvider"
-sidebar_position: 0
-custom_edit_url: null
----
+# Interface: OptionsProvider
+
+Defined in: [src/interfaces/i18n-options.interface.ts:13](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L13)
 
 ## Properties
 
 ### options
 
-• **options**: `any`
+> **options**: `any`
 
-#### Defined in
-
-[src/interfaces/i18n-options.interface.ts:14](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L14)
+Defined in: [src/interfaces/i18n-options.interface.ts:14](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L14)

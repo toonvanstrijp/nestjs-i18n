@@ -1,20 +1,15 @@
----
-id: "I18nAbstractLoader"
-title: "Class: I18nAbstractLoader"
-sidebar_label: "I18nAbstractLoader"
-sidebar_position: 0
-custom_edit_url: null
----
+# Abstract Class: I18nAbstractLoader
 
-## Hierarchy
+Defined in: [src/loaders/i18n.abstract.loader.ts:30](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L30)
+
+## Extends
 
 - [`I18nLoader`](I18nLoader.md)
 
-  ↳ **`I18nAbstractLoader`**
+## Extended by
 
-  ↳↳ [`I18nJsonLoader`](I18nJsonLoader.md)
-
-  ↳↳ [`I18nYamlLoader`](I18nYamlLoader.md)
+- [`I18nJsonLoader`](I18nJsonLoader.md)
+- [`I18nYamlLoader`](I18nYamlLoader.md)
 
 ## Implements
 
@@ -22,209 +17,184 @@ custom_edit_url: null
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new I18nAbstractLoader**(`options`)
+> **new I18nAbstractLoader**(`options`): `I18nAbstractLoader`
+
+Defined in: [src/loaders/i18n.abstract.loader.ts:42](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L42)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | [`I18nAbstractLoaderOptions`](../interfaces/I18nAbstractLoaderOptions.md) |
+##### options
+
+[`I18nAbstractLoaderOptions`](../interfaces/I18nAbstractLoaderOptions.md)
+
+#### Returns
+
+`I18nAbstractLoader`
 
 #### Overrides
 
-[I18nLoader](I18nLoader.md).[constructor](I18nLoader.md#constructor)
-
-#### Defined in
-
-[src/loaders/i18n.abstract.loader.ts:38](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L38)
-
-## Properties
-
-### events
-
-• `Private` **events**: `Subject`<`string`\>
-
-#### Defined in
-
-[src/loaders/i18n.abstract.loader.ts:36](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L36)
-
-___
-
-### options
-
-• `Private` **options**: [`I18nAbstractLoaderOptions`](../interfaces/I18nAbstractLoaderOptions.md)
-
-#### Defined in
-
-[src/loaders/i18n.abstract.loader.ts:40](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L40)
-
-___
-
-### watcher
-
-• `Private` `Optional` **watcher**: `FSWatcher`
-
-#### Defined in
-
-[src/loaders/i18n.abstract.loader.ts:34](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L34)
+[`I18nLoader`](I18nLoader.md).[`constructor`](I18nLoader.md#constructor)
 
 ## Methods
 
-### assignPrefixedTranslation
+### assignPrefixedTranslation()
 
-▸ `Protected` **assignPrefixedTranslation**(`translations`, `prefix`, `property`, `value`): `void`
+> `protected` **assignPrefixedTranslation**(`translations`, `prefix`, `property`, `value`): `void`
+
+Defined in: [src/loaders/i18n.abstract.loader.ts:189](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L189)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `translations` | `string` \| [`I18nTranslation`](../interfaces/I18nTranslation.md) |
-| `prefix` | `string`[] |
-| `property` | `string` |
-| `value` | `string` |
+##### translations
+
+[`I18nTranslation`](../interfaces/I18nTranslation.md)
+
+##### prefix
+
+`string`[]
+
+##### property
+
+`string`
+
+##### value
+
+`any`
 
 #### Returns
 
 `void`
 
-#### Defined in
+***
 
-[src/loaders/i18n.abstract.loader.ts:149](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L149)
+### formatData()
 
-___
+> `abstract` **formatData**(`data`): `any`
 
-### formatData
-
-▸ `Abstract` **formatData**(`data`): `any`
+Defined in: [src/loaders/i18n.abstract.loader.ts:278](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L278)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `data` | `any` |
+##### data
+
+`any`
 
 #### Returns
 
 `any`
 
-#### Defined in
+***
 
-[src/loaders/i18n.abstract.loader.ts:188](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L188)
+### getDefaultOptions()
 
-___
+> `abstract` **getDefaultOptions**(): `Partial`\<[`I18nAbstractLoaderOptions`](../interfaces/I18nAbstractLoaderOptions.md)\>
 
-### getDefaultOptions
-
-▸ `Abstract` **getDefaultOptions**(): `Partial`<[`I18nAbstractLoaderOptions`](../interfaces/I18nAbstractLoaderOptions.md)\>
+Defined in: [src/loaders/i18n.abstract.loader.ts:279](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L279)
 
 #### Returns
 
-`Partial`<[`I18nAbstractLoaderOptions`](../interfaces/I18nAbstractLoaderOptions.md)\>
+`Partial`\<[`I18nAbstractLoaderOptions`](../interfaces/I18nAbstractLoaderOptions.md)\>
 
-#### Defined in
+***
 
-[src/loaders/i18n.abstract.loader.ts:189](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L189)
+### languages()
 
-___
+> **languages**(): `Promise`\<`string`[] \| `Observable`\<`string`[]\>\>
 
-### languages
-
-▸ **languages**(): `Promise`<`string`[] \| `Observable`<`string`[]\>\>
+Defined in: [src/loaders/i18n.abstract.loader.ts:67](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L67)
 
 #### Returns
 
-`Promise`<`string`[] \| `Observable`<`string`[]\>\>
+`Promise`\<`string`[] \| `Observable`\<`string`[]\>\>
 
 #### Overrides
 
-[I18nLoader](I18nLoader.md).[languages](I18nLoader.md#languages)
+[`I18nLoader`](I18nLoader.md).[`languages`](I18nLoader.md#languages)
 
-#### Defined in
+***
 
-[src/loaders/i18n.abstract.loader.ts:60](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L60)
+### load()
 
-___
+> **load**(): `Promise`\<[`I18nTranslation`](../interfaces/I18nTranslation.md) \| `Observable`\<[`I18nTranslation`](../interfaces/I18nTranslation.md)\>\>
 
-### load
-
-▸ **load**(): `Promise`<[`I18nTranslation`](../interfaces/I18nTranslation.md) \| `Observable`<[`I18nTranslation`](../interfaces/I18nTranslation.md)\>\>
+Defined in: [src/loaders/i18n.abstract.loader.ts:89](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L89)
 
 #### Returns
 
-`Promise`<[`I18nTranslation`](../interfaces/I18nTranslation.md) \| `Observable`<[`I18nTranslation`](../interfaces/I18nTranslation.md)\>\>
+`Promise`\<[`I18nTranslation`](../interfaces/I18nTranslation.md) \| `Observable`\<[`I18nTranslation`](../interfaces/I18nTranslation.md)\>\>
 
 #### Overrides
 
-[I18nLoader](I18nLoader.md).[load](I18nLoader.md#load)
+[`I18nLoader`](I18nLoader.md).[`load`](I18nLoader.md#load)
 
-#### Defined in
+***
 
-[src/loaders/i18n.abstract.loader.ts:70](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L70)
+### onModuleDestroy()
 
-___
+> **onModuleDestroy**(): `Promise`\<`void`\>
 
-### onModuleDestroy
-
-▸ **onModuleDestroy**(): `Promise`<`void`\>
+Defined in: [src/loaders/i18n.abstract.loader.ts:61](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L61)
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Implementation of
 
-OnModuleDestroy.onModuleDestroy
+`OnModuleDestroy.onModuleDestroy`
 
-#### Defined in
+***
 
-[src/loaders/i18n.abstract.loader.ts:54](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L54)
+### parseLanguages()
 
-___
+> `protected` **parseLanguages**(): `Promise`\<`string`[]\>
 
-### parseLanguages
-
-▸ `Protected` **parseLanguages**(): `Promise`<`string`[]\>
+Defined in: [src/loaders/i18n.abstract.loader.ts:214](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L214)
 
 #### Returns
 
-`Promise`<`string`[]\>
+`Promise`\<`string`[]\>
 
-#### Defined in
+***
 
-[src/loaders/i18n.abstract.loader.ts:170](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L170)
+### parseTranslations()
 
-___
+> `protected` **parseTranslations**(`eventInfo?`): `Promise`\<[`I18nTranslation`](../interfaces/I18nTranslation.md)\>
 
-### parseTranslations
-
-▸ `Protected` **parseTranslations**(): `Promise`<[`I18nTranslation`](../interfaces/I18nTranslation.md)\>
-
-#### Returns
-
-`Promise`<[`I18nTranslation`](../interfaces/I18nTranslation.md)\>
-
-#### Defined in
-
-[src/loaders/i18n.abstract.loader.ts:80](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L80)
-
-___
-
-### sanitizeOptions
-
-▸ `Protected` **sanitizeOptions**(`options`): [`I18nAbstractLoaderOptions`](../interfaces/I18nAbstractLoaderOptions.md)
+Defined in: [src/loaders/i18n.abstract.loader.ts:111](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L111)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | [`I18nAbstractLoaderOptions`](../interfaces/I18nAbstractLoaderOptions.md) |
+##### eventInfo?
+
+###### event
+
+`string`
+
+###### filePath
+
+`string`
+
+#### Returns
+
+`Promise`\<[`I18nTranslation`](../interfaces/I18nTranslation.md)\>
+
+***
+
+### sanitizeOptions()
+
+> `protected` **sanitizeOptions**(`options`): [`I18nAbstractLoaderOptions`](../interfaces/I18nAbstractLoaderOptions.md)
+
+Defined in: [src/loaders/i18n.abstract.loader.ts:230](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L230)
+
+#### Parameters
+
+##### options
+
+[`I18nAbstractLoaderOptions`](../interfaces/I18nAbstractLoaderOptions.md)
 
 #### Returns
 
 [`I18nAbstractLoaderOptions`](../interfaces/I18nAbstractLoaderOptions.md)
-
-#### Defined in
-
-[src/loaders/i18n.abstract.loader.ts:177](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L177)

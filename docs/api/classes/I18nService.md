@@ -1,261 +1,125 @@
----
-id: "I18nService"
-title: "Class: I18nService<K>"
-sidebar_label: "I18nService"
-sidebar_position: 0
-custom_edit_url: null
----
+# Class: I18nService\<K\>
 
-## Type parameters
+Defined in: [src/services/i18n.service.ts:62](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/services/i18n.service.ts#L62)
 
-| Name | Type |
-| :------ | :------ |
-| `K` | `Record`<`string`, `unknown`\> |
+## Type Parameters
+
+### K
+
+`K` = `Record`\<`string`, `unknown`\>
 
 ## Implements
 
-- [`I18nTranslator`](../interfaces/I18nTranslator.md)<`K`\>
+- [`I18nTranslator`](../interfaces/I18nTranslator.md)\<`K`\>
 - `OnModuleDestroy`
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new I18nService**<`K`\>(`i18nOptions`, `translations`, `supportedLanguages`, `logger`, `loader`, `languagesSubject`, `translationsSubject`)
+> **new I18nService**\<`K`\>(`i18nOptions`, `translations`, `supportedLanguages`, `logger`, `loaders`, `languagesSubject`, `translationsSubject`): `I18nService`\<`K`\>
 
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `K` | `Record`<`string`, `unknown`\> |
+Defined in: [src/services/i18n.service.ts:72](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/services/i18n.service.ts#L72)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `i18nOptions` | [`I18nOptions`](../interfaces/I18nOptions.md) |
-| `translations` | `Observable`<[`I18nTranslation`](../interfaces/I18nTranslation.md)\> |
-| `supportedLanguages` | `Observable`<`string`[]\> |
-| `logger` | `Logger` |
-| `loader` | [`I18nLoader`](I18nLoader.md) |
-| `languagesSubject` | `BehaviorSubject`<`string`[]\> |
-| `translationsSubject` | `BehaviorSubject`<[`I18nTranslation`](../interfaces/I18nTranslation.md)\> |
+##### i18nOptions
 
-#### Defined in
+[`I18nOptions`](../interfaces/I18nOptions.md)
 
-[src/services/i18n.service.ts:44](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L44)
+##### translations
+
+`Observable`\<[`I18nTranslation`](../interfaces/I18nTranslation.md)\>
+
+##### supportedLanguages
+
+`Observable`\<`string`[]\>
+
+##### logger
+
+`Logger`
+
+##### loaders
+
+[`I18nLoader`](I18nLoader.md)[]
+
+##### languagesSubject
+
+`BehaviorSubject`\<`string`[]\>
+
+##### translationsSubject
+
+`BehaviorSubject`\<[`I18nTranslation`](../interfaces/I18nTranslation.md)\>
+
+#### Returns
+
+`I18nService`\<`K`\>
 
 ## Properties
 
 ### i18nOptions
 
-• `Protected` `Readonly` **i18nOptions**: [`I18nOptions`](../interfaces/I18nOptions.md)
+> `protected` `readonly` **i18nOptions**: [`I18nOptions`](../interfaces/I18nOptions.md)
 
-#### Defined in
-
-[src/services/i18n.service.ts:46](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L46)
-
-___
-
-### languagesSubject
-
-• `Private` `Readonly` **languagesSubject**: `BehaviorSubject`<`string`[]\>
-
-#### Defined in
-
-[src/services/i18n.service.ts:54](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L54)
-
-___
-
-### loader
-
-• `Private` `Readonly` **loader**: [`I18nLoader`](I18nLoader.md)
-
-#### Defined in
-
-[src/services/i18n.service.ts:52](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L52)
-
-___
-
-### logger
-
-• `Private` `Readonly` **logger**: `Logger`
-
-#### Defined in
-
-[src/services/i18n.service.ts:51](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L51)
-
-___
-
-### pluralRules
-
-• `Private` **pluralRules**: `Map`<`string`, `PluralRules`\>
-
-#### Defined in
-
-[src/services/i18n.service.ts:40](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L40)
-
-___
-
-### supportedLanguages
-
-• `Private` **supportedLanguages**: `string`[]
-
-#### Defined in
-
-[src/services/i18n.service.ts:38](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L38)
-
-___
-
-### translations
-
-• `Private` **translations**: [`I18nTranslation`](../interfaces/I18nTranslation.md)
-
-#### Defined in
-
-[src/services/i18n.service.ts:39](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L39)
-
-___
-
-### translationsSubject
-
-• `Private` `Readonly` **translationsSubject**: `BehaviorSubject`<[`I18nTranslation`](../interfaces/I18nTranslation.md)\>
-
-#### Defined in
-
-[src/services/i18n.service.ts:56](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L56)
-
-___
-
-### unsubscribe
-
-• `Private` **unsubscribe**: `Subject`<`void`\>
-
-#### Defined in
-
-[src/services/i18n.service.ts:42](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L42)
+Defined in: [src/services/i18n.service.ts:74](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/services/i18n.service.ts#L74)
 
 ## Methods
 
-### getFallbackLanguage
+### getSupportedLanguages()
 
-▸ `Private` **getFallbackLanguage**(`lang`): `string`
+> **getSupportedLanguages**(): `string`[]
 
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `lang` | `string` |
-
-#### Returns
-
-`string`
-
-#### Defined in
-
-[src/services/i18n.service.ts:138](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L138)
-
-___
-
-### getNestedTranslations
-
-▸ `Private` **getNestedTranslations**(`translation`): { `args`: `any` ; `index`: `number` ; `key`: `string` ; `length`: `number`  }[]
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `translation` | `string` |
-
-#### Returns
-
-{ `args`: `any` ; `index`: `number` ; `key`: `string` ; `length`: `number`  }[]
-
-#### Defined in
-
-[src/services/i18n.service.ts:332](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L332)
-
-___
-
-### getPluralObject
-
-▸ `Private` **getPluralObject**(`translation`): [`I18nPluralObject`](../interfaces/I18nPluralObject.md)
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `translation` | `any` |
-
-#### Returns
-
-[`I18nPluralObject`](../interfaces/I18nPluralObject.md)
-
-#### Defined in
-
-[src/services/i18n.service.ts:322](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L322)
-
-___
-
-### getSupportedLanguages
-
-▸ **getSupportedLanguages**(): `string`[]
+Defined in: [src/services/i18n.service.ts:183](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/services/i18n.service.ts#L183)
 
 #### Returns
 
 `string`[]
 
-#### Defined in
+***
 
-[src/services/i18n.service.ts:161](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L161)
+### getTranslations()
 
-___
+> **getTranslations**(): [`I18nTranslation`](../interfaces/I18nTranslation.md)
 
-### getTranslations
-
-▸ **getTranslations**(): [`I18nTranslation`](../interfaces/I18nTranslation.md)
+Defined in: [src/services/i18n.service.ts:187](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/services/i18n.service.ts#L187)
 
 #### Returns
 
 [`I18nTranslation`](../interfaces/I18nTranslation.md)
 
-#### Defined in
+***
 
-[src/services/i18n.service.ts:165](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L165)
+### hbsHelper()
 
-___
+> **hbsHelper**(`key`, `args`, `options`): `string`
 
-### hbsHelper
-
-▸ **hbsHelper**<`P`\>(`key`, `args`, `options`): `IfAnyOrNever`<[`PathValue`](../modules.md#pathvalue)<`K`, `P`\>, `string`, [`PathValue`](../modules.md#pathvalue)<`K`, `P`\>\>
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `P` | extends `string` = `any` |
+Defined in: [src/services/i18n.service.ts:217](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/services/i18n.service.ts#L217)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `key` | `P` |
-| `args` | `any` |
-| `options` | `any` |
+##### key
+
+`string`
+
+##### args
+
+`any`
+
+##### options
+
+`any`
 
 #### Returns
 
-`IfAnyOrNever`<[`PathValue`](../modules.md#pathvalue)<`K`, `P`\>, `string`, [`PathValue`](../modules.md#pathvalue)<`K`, `P`\>\>
+`string`
 
-#### Defined in
+***
 
-[src/services/i18n.service.ts:195](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L195)
+### onModuleDestroy()
 
-___
+> **onModuleDestroy**(): `void`
 
-### onModuleDestroy
-
-▸ **onModuleDestroy**(): `void`
+Defined in: [src/services/i18n.service.ts:97](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/services/i18n.service.ts#L97)
 
 #### Returns
 
@@ -263,162 +127,142 @@ ___
 
 #### Implementation of
 
-OnModuleDestroy.onModuleDestroy
+`OnModuleDestroy.onModuleDestroy`
 
-#### Defined in
+***
 
-[src/services/i18n.service.ts:68](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L68)
+### refresh()
 
-___
+> **refresh**(`translations?`, `languages?`): `Promise`\<`void`\>
 
-### refresh
-
-▸ **refresh**(`translations?`, `languages?`): `Promise`<`void`\>
+Defined in: [src/services/i18n.service.ts:191](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/services/i18n.service.ts#L191)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `translations?` | [`I18nTranslation`](../interfaces/I18nTranslation.md) \| `Observable`<[`I18nTranslation`](../interfaces/I18nTranslation.md)\> |
-| `languages?` | `string`[] \| `Observable`<`string`[]\> |
+##### translations?
+
+[`I18nTranslation`](../interfaces/I18nTranslation.md) \| `Observable`\<[`I18nTranslation`](../interfaces/I18nTranslation.md)\>
+
+##### languages?
+
+`string`[] \| `Observable`\<`string`[]\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
-#### Defined in
+***
 
-[src/services/i18n.service.ts:169](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L169)
+### resolveLanguage()
 
-___
+> **resolveLanguage**(`lang`): `string`
 
-### resolveLanguage
-
-▸ **resolveLanguage**(`lang`): `string`
+Defined in: [src/services/i18n.service.ts:535](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/services/i18n.service.ts#L535)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `lang` | `string` |
+##### lang
+
+`string`
 
 #### Returns
 
 `string`
 
-#### Defined in
+***
 
-[src/services/i18n.service.ts:306](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L306)
+### t()
 
-___
+> **t**\<`P`, `R`\>(`key`, `options?`): `IfAnyOrNever`\<`R`, `string`, `R`\>
 
-### t
+Defined in: [src/services/i18n.service.ts:176](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/services/i18n.service.ts#L176)
 
-▸ **t**<`P`, `R`\>(`key`, `options?`): `IfAnyOrNever`<`R`, `string`, `R`\>
+#### Type Parameters
 
-#### Type parameters
+##### P
 
-| Name | Type |
-| :------ | :------ |
-| `P` | extends `string` = `any` |
-| `R` | [`PathValue`](../modules.md#pathvalue)<`K`, `P`\> |
+`P` *extends* `string` = `any`
+
+##### R
+
+`R` = [`PathValue`](../type-aliases/PathValue.md)\<`K`, `P`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `key` | `P` |
-| `options?` | [`TranslateOptions`](../modules.md#translateoptions) |
+##### key
+
+`P`
+
+##### options?
+
+[`TranslateOptions`](../interfaces/TranslateOptions.md)
 
 #### Returns
 
-`IfAnyOrNever`<`R`, `string`, `R`\>
+`IfAnyOrNever`\<`R`, `string`, `R`\>
 
 #### Implementation of
 
-[I18nTranslator](../interfaces/I18nTranslator.md).[t](../interfaces/I18nTranslator.md#t)
+[`I18nTranslator`](../interfaces/I18nTranslator.md).[`t`](../interfaces/I18nTranslator.md#t)
 
-#### Defined in
+***
 
-[src/services/i18n.service.ts:154](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L154)
+### translate()
 
-___
+> **translate**\<`P`, `R`\>(`key`, `options?`): `IfAnyOrNever`\<`R`, `string`, `R`\>
 
-### translate
+Defined in: [src/services/i18n.service.ts:102](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/services/i18n.service.ts#L102)
 
-▸ **translate**<`P`, `R`\>(`key`, `options?`): `IfAnyOrNever`<`R`, `string`, `R`\>
+#### Type Parameters
 
-#### Type parameters
+##### P
 
-| Name | Type |
-| :------ | :------ |
-| `P` | extends `string` = `any` |
-| `R` | [`PathValue`](../modules.md#pathvalue)<`K`, `P`\> |
+`P` *extends* `string` = `any`
+
+##### R
+
+`R` = [`PathValue`](../type-aliases/PathValue.md)\<`K`, `P`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `key` | `P` |
-| `options?` | [`TranslateOptions`](../modules.md#translateoptions) |
+##### key
+
+`P`
+
+##### options?
+
+[`TranslateOptions`](../interfaces/TranslateOptions.md)
 
 #### Returns
 
-`IfAnyOrNever`<`R`, `string`, `R`\>
+`IfAnyOrNever`\<`R`, `string`, `R`\>
 
 #### Implementation of
 
-[I18nTranslator](../interfaces/I18nTranslator.md).[translate](../interfaces/I18nTranslator.md#translate)
+[`I18nTranslator`](../interfaces/I18nTranslator.md).[`translate`](../interfaces/I18nTranslator.md#translate)
 
-#### Defined in
+***
 
-[src/services/i18n.service.ts:73](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L73)
+### validate()
 
-___
+> **validate**(`value`, `options?`): `Promise`\<`ValidationError`[]\>
 
-### translateObject
-
-▸ `Private` **translateObject**(`key`, `translations`, `lang`, `options?`, `rootTranslations?`): `string` \| [`I18nTranslation`](../interfaces/I18nTranslation.md)
+Defined in: [src/services/i18n.service.ts:594](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/services/i18n.service.ts#L594)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `key` | `string` |
-| `translations` | `string` \| [`I18nTranslation`](../interfaces/I18nTranslation.md) |
-| `lang` | `string` |
-| `options?` | [`TranslateOptions`](../modules.md#translateoptions) |
-| `rootTranslations?` | `string` \| [`I18nTranslation`](../interfaces/I18nTranslation.md) |
+##### value
+
+`any`
+
+##### options?
+
+[`TranslateOptions`](../interfaces/TranslateOptions.md)
 
 #### Returns
 
-`string` \| [`I18nTranslation`](../interfaces/I18nTranslation.md)
-
-#### Defined in
-
-[src/services/i18n.service.ts:208](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L208)
-
-___
-
-### validate
-
-▸ **validate**(`value`, `options?`): `Promise`<`ValidationError`[]\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `value` | `any` |
-| `options?` | [`TranslateOptions`](../modules.md#translateoptions) |
-
-#### Returns
-
-`Promise`<`ValidationError`[]\>
+`Promise`\<`ValidationError`[]\>
 
 #### Implementation of
 
-[I18nTranslator](../interfaces/I18nTranslator.md).[validate](../interfaces/I18nTranslator.md#validate)
-
-#### Defined in
-
-[src/services/i18n.service.ts:364](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/services/i18n.service.ts#L364)
+[`I18nTranslator`](../interfaces/I18nTranslator.md).[`validate`](../interfaces/I18nTranslator.md#validate)

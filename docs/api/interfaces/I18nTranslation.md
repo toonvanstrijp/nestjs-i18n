@@ -1,11 +1,7 @@
----
-id: "I18nTranslation"
-title: "Interface: I18nTranslation"
-sidebar_label: "I18nTranslation"
-sidebar_position: 0
-custom_edit_url: null
----
+# Interface: I18nTranslation
+
+Defined in: [src/interfaces/i18n-translation.interface.ts:1](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-translation.interface.ts#L1)
 
 ## Indexable
 
-▪ [key: `string`]: { `[key: string]`: [`I18nTranslation`](I18nTranslation.md) \| `string`;  } \| `string`
+> \[`key`: `string`\]: `string` \| \{\[`key`: `string`\]: `string` \| `I18nTranslation`; \}

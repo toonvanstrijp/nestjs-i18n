@@ -1,10 +1,6 @@
----
-id: "I18nMiddleware"
-title: "Class: I18nMiddleware"
-sidebar_label: "I18nMiddleware"
-sidebar_position: 0
-custom_edit_url: null
----
+# Class: I18nMiddleware
+
+Defined in: [src/middlewares/i18n.middleware.ts:24](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/middlewares/i18n.middleware.ts#L24)
 
 ## Implements
 
@@ -12,105 +8,64 @@ custom_edit_url: null
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new I18nMiddleware**(`i18nOptions`, `i18nResolvers`, `i18nService`, `moduleRef`)
+> **new I18nMiddleware**(`i18nOptions`, `i18nResolvers`, `i18nService`, `messageFormat`, `moduleRef`): `I18nMiddleware`
+
+Defined in: [src/middlewares/i18n.middleware.ts:25](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/middlewares/i18n.middleware.ts#L25)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `i18nOptions` | [`I18nOptions`](../interfaces/I18nOptions.md) |
-| `i18nResolvers` | [`I18nOptionResolver`](../modules.md#i18noptionresolver)[] |
-| `i18nService` | [`I18nService`](I18nService.md)<`Record`<`string`, `unknown`\>\> |
-| `moduleRef` | `ModuleRef` |
+##### i18nOptions
 
-#### Defined in
+[`I18nOptions`](../interfaces/I18nOptions.md)
 
-[src/middlewares/i18n.middleware.ts:29](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/middlewares/i18n.middleware.ts#L29)
+##### i18nResolvers
 
-## Properties
+[`I18nOptionResolver`](../type-aliases/I18nOptionResolver.md)[]
 
-### i18nOptions
+##### i18nService
 
-• `Private` `Readonly` **i18nOptions**: [`I18nOptions`](../interfaces/I18nOptions.md)
+[`I18nService`](I18nService.md)
 
-#### Defined in
+##### messageFormat
 
-[src/middlewares/i18n.middleware.ts:31](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/middlewares/i18n.middleware.ts#L31)
+`I18nMessageFormat`
 
-___
+##### moduleRef
 
-### i18nResolvers
+`ModuleRef`
 
-• `Private` `Readonly` **i18nResolvers**: [`I18nOptionResolver`](../modules.md#i18noptionresolver)[]
+#### Returns
 
-#### Defined in
-
-[src/middlewares/i18n.middleware.ts:33](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/middlewares/i18n.middleware.ts#L33)
-
-___
-
-### i18nService
-
-• `Private` `Readonly` **i18nService**: [`I18nService`](I18nService.md)<`Record`<`string`, `unknown`\>\>
-
-#### Defined in
-
-[src/middlewares/i18n.middleware.ts:34](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/middlewares/i18n.middleware.ts#L34)
-
-___
-
-### moduleRef
-
-• `Private` `Readonly` **moduleRef**: `ModuleRef`
-
-#### Defined in
-
-[src/middlewares/i18n.middleware.ts:35](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/middlewares/i18n.middleware.ts#L35)
+`I18nMiddleware`
 
 ## Methods
 
-### getResolver
+### use()
 
-▸ `Private` **getResolver**(`r`): `Promise`<[`I18nResolver`](../interfaces/I18nResolver.md)\>
+> **use**(`req`, `res`, `next`): `Promise`\<`any`\>
 
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `r` | [`I18nOptionResolver`](../modules.md#i18noptionresolver) |
-
-#### Returns
-
-`Promise`<[`I18nResolver`](../interfaces/I18nResolver.md)\>
-
-#### Defined in
-
-[src/middlewares/i18n.middleware.ts:78](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/middlewares/i18n.middleware.ts#L78)
-
-___
-
-### use
-
-▸ **use**(`req`, `res`, `next`): `Promise`<`any`\>
+Defined in: [src/middlewares/i18n.middleware.ts:35](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/middlewares/i18n.middleware.ts#L35)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `req` | `any` |
-| `res` | `any` |
-| `next` | `any` |
+##### req
+
+`any`
+
+##### res
+
+`any`
+
+##### next
+
+`any`
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`\>
 
 #### Implementation of
 
-NestMiddleware.use
-
-#### Defined in
-
-[src/middlewares/i18n.middleware.ts:38](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/middlewares/i18n.middleware.ts#L38)
+`NestMiddleware.use`

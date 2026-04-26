@@ -1,10 +1,6 @@
----
-id: "HeaderResolver"
-title: "Class: HeaderResolver"
-sidebar_label: "HeaderResolver"
-sidebar_position: 0
-custom_edit_url: null
----
+# Class: HeaderResolver
+
+Defined in: [src/resolvers/header.resolver.ts:7](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/resolvers/header.resolver.ts#L7)
 
 ## Implements
 
@@ -12,60 +8,40 @@ custom_edit_url: null
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new HeaderResolver**(`keys?`)
+> **new HeaderResolver**(`keys?`): `HeaderResolver`
 
-#### Parameters
-
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `keys` | `string`[] | `[]` |
-
-#### Defined in
-
-[src/resolvers/header.resolver.ts:8](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/resolvers/header.resolver.ts#L8)
-
-## Properties
-
-### keys
-
-• `Private` **keys**: `string`[] = `[]`
-
-#### Defined in
-
-[src/resolvers/header.resolver.ts:10](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/resolvers/header.resolver.ts#L10)
-
-___
-
-### logger
-
-• `Private` **logger**: `Logger`
-
-#### Defined in
-
-[src/resolvers/header.resolver.ts:7](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/resolvers/header.resolver.ts#L7)
-
-## Methods
-
-### resolve
-
-▸ **resolve**(`context`): `string`
+Defined in: [src/resolvers/header.resolver.ts:9](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/resolvers/header.resolver.ts#L9)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `context` | `ExecutionContext` |
+##### keys?
+
+`string`[] = `[]`
 
 #### Returns
 
-`string`
+`HeaderResolver`
+
+## Methods
+
+### resolve()
+
+> **resolve**(`context`): `Promise`\<`string` \| `string`[]\>
+
+Defined in: [src/resolvers/header.resolver.ts:14](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/resolvers/header.resolver.ts#L14)
+
+#### Parameters
+
+##### context
+
+`ExecutionContext`
+
+#### Returns
+
+`Promise`\<`string` \| `string`[]\>
 
 #### Implementation of
 
-[I18nResolver](../interfaces/I18nResolver.md).[resolve](../interfaces/I18nResolver.md#resolve)
-
-#### Defined in
-
-[src/resolvers/header.resolver.ts:13](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/resolvers/header.resolver.ts#L13)
+[`I18nResolver`](../interfaces/I18nResolver.md).[`resolve`](../interfaces/I18nResolver.md#resolve)

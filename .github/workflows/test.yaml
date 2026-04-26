@@ -11,20 +11,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
       - name: Set up Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: npm
-      - name: install
-        run: npm install
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       - name: check format
-        run: npm run format:check
+        run: pnpm run format:check
       - name: lint
-        run: npm run lint
+        run: pnpm run lint
       - name: test
-        run: npm run test:cov
+        run: pnpm run test:cov
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:

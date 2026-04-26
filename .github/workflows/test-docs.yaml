@@ -11,11 +11,13 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v3
       - name: Set up Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: npm
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: true
       - name: Build Docusaurus website
-        run: |
-          npm ci 
-          npm run doc:build
+        run: pnpm run doc:build

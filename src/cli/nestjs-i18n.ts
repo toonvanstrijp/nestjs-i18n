@@ -32,7 +32,7 @@ const HELP_ASCII_ART = `
 ╚═╝  ╚═══╝╚══════╝╚══════╝   ╚═╝   ╚══════╝      ╚═╝ ╚═╝ ╚════╝ ╚═╝  ╚═══╝
 `
 
-function renderLogoWithVersion(logo: string, version: string): string {
+export function renderLogoWithVersion(logo: string, version: string): string {
   const lines = logo.trimEnd().split('\n');
 
   if (lines.length === 0) {
@@ -45,11 +45,11 @@ function renderLogoWithVersion(logo: string, version: string): string {
   return lines.join('\n');
 }
 
-function getDefaultPattern(format: NonNullable<CliOptions['format']>): string {
+export function getDefaultPattern(format: NonNullable<CliOptions['format']>): string {
   return format === 'yaml' ? '*.{yaml,yml}' : '*.json';
 }
 
-function getOptionValue(args: string[], index: number, optionName: string): string {
+export function getOptionValue(args: string[], index: number, optionName: string): string {
   const value = args[index + 1];
   if (!value || value.startsWith('-')) {
     throw new Error(`Missing value for ${optionName}. Use --help to see valid usage.`);
@@ -57,7 +57,7 @@ function getOptionValue(args: string[], index: number, optionName: string): stri
   return value;
 }
 
-function parseArgs(args: string[]): ParsedCliOptions {
+export function parseArgs(args: string[]): ParsedCliOptions {
   const options: CliOptions = {
     mode: 'generate',
     path: DEFAULT_PATH,
@@ -143,57 +143,44 @@ function parseArgs(args: string[]): ParsedCliOptions {
   return { options, warnings };
 }
 
-function printHelp() {
-  process.stdout.write(`${renderLogoWithVersion(HELP_ASCII_ART, CLI_VERSION)}\n\n`);
-  process.stdout.write(`🌍 Generate TypeScript translation key types for nestjs-i18n.\n\n`);
-  process.stdout.write(`📌 Usage:\n`);
-  process.stdout.write(`  nestjs-i18n [options]\n`);
-  process.stdout.write(`  nestjs-i18n check -p <dir> [options]\n\n`);
-
-  process.stdout.write(`⚙️ Options:\n`);
-  process.stdout.write(
-    `  -p, --path <dir>                Translation root directory (default: ${DEFAULT_PATH})\n`,
+export function renderHelp(): string {
+  return (
+    `${renderLogoWithVersion(HELP_ASCII_ART, CLI_VERSION)}\n\n` +
+    `🌍 Generate TypeScript translation key types for nestjs-i18n.\n\n` +
+    `📌 Usage:\n` +
+    `  nestjs-i18n [options]\n` +
+    `  nestjs-i18n check -p <dir> [options]\n\n` +
+    `⚙️ Options:\n` +
+    `  -p, --path <dir>                Translation root directory (default: ${DEFAULT_PATH})\n` +
+    `  -o, --out <file>                Output .ts file (default: ${DEFAULT_OUT})\n` +
+    `  -f, --format <json|yaml>        Translation format (default: ${DEFAULT_FORMAT})\n` +
+    `      --pattern <glob>            Custom file glob; overrides default format pattern\n` +
+    `      --include-subfolders        Scan nested language folders (default: true)\n` +
+    `      --no-include-subfolders     Only scan direct child folders\n` +
+    `  -w, --watch                     Watch translation files and regenerate on changes (default: false)\n` +
+    `      --check                     Run key completeness check across all languages\n` +
+    `  -h, --help                       Show this help\n\n` +
+    `💡 Examples:\n` +
+    `  nestjs-i18n\n` +
+    `  nestjs-i18n -p src/i18n -o src/generated/i18n.generated.ts\n` +
+    `  nestjs-i18n --format yaml --pattern '*.{yaml,yml}'\n` +
+    `  nestjs-i18n --watch --no-include-subfolders\n\n` +
+    `  nestjs-i18n check -p i18n\n` +
+    `  nestjs-i18n check -p src/i18n --format yaml\n\n` +
+    `📝 Notes:\n` +
+    `  - Default file pattern for json: *.json\n` +
+    `  - Default file pattern for yaml: *.{yaml,yml}\n` +
+    `  - If --pattern is set, it is used as-is\n` +
+    `  - Positional arguments are not supported; use flags\n` +
+    `  - check mode exits with code 1 when missing keys are found\n`
   );
-  process.stdout.write(
-    `  -o, --out <file>                Output .ts file (default: ${DEFAULT_OUT})\n`,
-  );
-  process.stdout.write(
-    `  -f, --format <json|yaml>        Translation format (default: ${DEFAULT_FORMAT})\n`,
-  );
-  process.stdout.write(
-    `      --pattern <glob>            Custom file glob; overrides default format pattern\n`,
-  );
-  process.stdout.write(
-    `      --include-subfolders        Scan nested language folders (default: true)\n`,
-  );
-  process.stdout.write(
-    `      --no-include-subfolders     Only scan direct child folders\n`,
-  );
-  process.stdout.write(
-    `  -w, --watch                     Watch translation files and regenerate on changes (default: false)\n`,
-  );
-  process.stdout.write(
-    `      --check                     Run key completeness check across all languages\n`,
-  );
-  process.stdout.write(`  -h, --help                       Show this help\n\n`);
-
-  process.stdout.write(`💡 Examples:\n`);
-  process.stdout.write(`  nestjs-i18n\n`);
-  process.stdout.write(`  nestjs-i18n -p src/i18n -o src/generated/i18n.generated.ts\n`);
-  process.stdout.write(`  nestjs-i18n --format yaml --pattern '*.{yaml,yml}'\n`);
-  process.stdout.write(`  nestjs-i18n --watch --no-include-subfolders\n\n`);
-  process.stdout.write(`  nestjs-i18n check -p i18n\n`);
-  process.stdout.write(`  nestjs-i18n check -p src/i18n --format yaml\n\n`);
-
-  process.stdout.write(`📝 Notes:\n`);
-  process.stdout.write(`  - Default file pattern for json: *.json\n`);
-  process.stdout.write(`  - Default file pattern for yaml: *.{yaml,yml}\n`);
-  process.stdout.write(`  - If --pattern is set, it is used as-is\n`);
-  process.stdout.write(`  - Positional arguments are not supported; use flags\n`);
-  process.stdout.write(`  - check mode exits with code 1 when missing keys are found\n`);
 }
 
-async function main() {
+export function printHelp() {
+  process.stdout.write(renderHelp());
+}
+
+export async function main() {
   const { options, warnings } = parseArgs(process.argv.slice(2));
 
   for (const warning of warnings) {
@@ -263,7 +250,9 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  process.stderr.write(`❌ ${error?.message || error}\n`);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    process.stderr.write(`❌ ${error?.message || error}\n`);
+    process.exit(1);
+  });
+}

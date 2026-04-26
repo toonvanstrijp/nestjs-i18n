@@ -124,4 +124,45 @@ describe('types generator', () => {
       fs.rmSync(fixtureRoot, { recursive: true, force: true });
     }
   });
+
+  it('should detect real missing keys but not global shared keys', async () => {
+    const result = await checkI18nTranslations({
+      path: join(__dirname, 'i18n'),
+      format: 'json',
+      watch: false,
+    });
+
+    expect(result.ok).toBe(false);
+    expect(result.missingByLanguage.nl).toContain('test.ONLY_EN_KEY');
+    expect(result.missingByLanguage.nl).not.toContain('APP_NAME');
+  });
+
+  it('should treat arrays as leaf keys during checks', async () => {
+    const fixtureRoot = join(__dirname, 'generated', 'check-fixture-arrays');
+    const enDir = join(fixtureRoot, 'en');
+    const nlDir = join(fixtureRoot, 'nl');
+
+    try {
+      fs.mkdirSync(enDir, { recursive: true });
+      fs.mkdirSync(nlDir, { recursive: true });
+
+      fs.writeFileSync(
+        join(enDir, 'common.json'),
+        JSON.stringify({ items: ['one', 'two'], nested: { labels: ['a'] } }),
+      );
+      fs.writeFileSync(join(nlDir, 'common.json'), JSON.stringify({ items: ['een', 'twee'] }));
+
+      const result = await checkI18nTranslations({
+        path: fixtureRoot,
+        format: 'json',
+        watch: false,
+      });
+
+      expect(result.ok).toBe(false);
+      expect(result.missingByLanguage.nl).toContain('common.nested.labels');
+      expect(result.missingByLanguage.nl).not.toContain('common.items.0');
+    } finally {
+      fs.rmSync(fixtureRoot, { recursive: true, force: true });
+    }
+  });
 });

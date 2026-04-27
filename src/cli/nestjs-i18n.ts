@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { generateI18nTypes } from '../types-generator';
 import { checkI18nTranslations } from './check-translations';
 

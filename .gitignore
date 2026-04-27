@@ -87,7 +87,6 @@ typings/
 
 dist/
 reports/
-bin/
 coverage/
 
 # Dependencies

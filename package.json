@@ -29,15 +29,14 @@
     "nestjs-i18n": "./bin/nestjs-i18n.mjs"
   },
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
   "scripts": {
     "prepare": "npm run build",
     "build": "npx rimraf dist && tsc -p tsconfig.build.json",
     "prerelease": "npm run build && bumpp",
     "release": "npm publish --access public",
-    "prerelease:next": "npm run build",
-    "release:next": "npm publish --access public --tag next",
     "format": "oxfmt --write **/*.ts",
     "format:check": "oxfmt --check **/*.ts",
     "test": "jest --config ./tests/jest-test.json --runInBand",
@@ -96,11 +95,11 @@
     "hbs": "^4.2.1",
     "jest": "^30.3.0",
     "nunjucks": "^3.2.4",
-    "oxfmt": "^0.46.0",
-    "oxlint": "^1.61.0",
+    "oxfmt": "^0.47.0",
+    "oxlint": "^1.62.0",
     "pug": "^3.0.4",
     "reflect-metadata": "^0.2.2",
-    "supertest": "^7.1.3",
+    "supertest": "^7.2.2",
     "ts-jest": "^29.4.9",
     "typedoc": "^0.28.19",
     "typedoc-docusaurus-theme": "^1.4.2",

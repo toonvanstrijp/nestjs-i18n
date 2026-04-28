@@ -11,15 +11,15 @@ importers:
 
   .:
     dependencies:
+      '@messageformat/core':
+        specifier: ^3.4.0
+        version: 3.4.0
       chokidar:
         specifier: ^3.6.0
         version: 3.6.0
       cookie:
         specifier: ^1.1.1
         version: 1.1.1
-      messageformat:
-        specifier: ^4.0.0
-        version: 4.0.0
       rxjs:
         specifier: '*'
         version: 7.8.2
@@ -60,9 +60,6 @@ importers:
       '@grpc/proto-loader':
         specifier: ^0.8.0
         version: 0.8.0
-      '@messageformat/core':
-        specifier: ^3.4.0
-        version: 3.4.0
       '@nestjs/apollo':
         specifier: ^13.3.0
         version: 13.3.0(@apollo/server@4.0.0(graphql@16.13.2))(@as-integrations/express5@1.1.2(@apollo/server@4.0.0(graphql@16.13.2))(express@5.2.1))(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19)(@nestjs/graphql@13.3.0(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19)(class-transformer@0.5.1)(class-validator@0.15.1)(graphql@16.13.2)(reflect-metadata@0.2.2))(graphql@16.13.2)
@@ -5255,10 +5252,6 @@ packages:
   merge2@1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
-
-  messageformat@4.0.0:
-    resolution: {integrity: sha512-XKmJ/ffTWToWOlHJzt85ZChQgVGC0LHzNWuNK8zuYpNySsB0nIEmytOdSAOW9ETKtkajAUJf520m5gFHHnrTYg==}
-    engines: {node: ^20.19 || ^22.12 || >=24}
 
   methods@1.1.2:
     resolution: {integrity: sha512-iclAHeNqNm68zFtnZ0e+1L2yUIdvzNoauKU4WBA3VvH/vPFieF7qfRlwUZU+DA9P9bPXIS90ulxoUoCH23sV2w==}
@@ -14034,8 +14027,6 @@ snapshots:
   merge-stream@2.0.0: {}
 
   merge2@1.4.1: {}
-
-  messageformat@4.0.0: {}
 
   methods@1.1.2: {}
 

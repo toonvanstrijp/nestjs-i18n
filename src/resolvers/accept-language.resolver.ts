@@ -1,9 +1,9 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
-import { pick } from 'accept-language-parser';
 import { I18nResolverOptions } from '../decorators';
 import { ExecutionContextType } from '../i18n.constants';
 import { I18nResolver } from '../interfaces';
 import { I18nService } from '../services/i18n.service';
+import { pick } from '../utils/accept-language-parser';
 
 interface AcceptLanguageResolverOptions {
   matchType: 'strict' | 'loose' | 'strict-loose';

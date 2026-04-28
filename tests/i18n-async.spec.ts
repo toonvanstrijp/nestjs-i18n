@@ -1,7 +1,10 @@
+import path from 'path';
+
 import { Global, Module } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import path from 'path';
+import { of } from 'rxjs';
+
 import {
   HeaderResolver,
   I18nLanguageInterceptor,
@@ -10,7 +13,6 @@ import {
   I18N_OPTIONS,
   I18N_RESOLVERS,
 } from '../src';
-import { of } from 'rxjs';
 import { I18nMessageFormat } from '../src/utils';
 
 describe('i18n async module', () => {

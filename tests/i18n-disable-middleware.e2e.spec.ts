@@ -1,5 +1,9 @@
-import { Test } from '@nestjs/testing';
 import path from 'path';
+
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { Test } from '@nestjs/testing';
+import request from 'supertest';
+
 import {
   CookieResolver,
   HeaderResolver,
@@ -7,9 +11,7 @@ import {
   I18nModule,
   QueryResolver,
 } from '../src';
-import request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
-import { NestExpressApplication } from '@nestjs/platform-express';
 
 describe('i18n module e2e no middleware', () => {
   let app: NestExpressApplication;

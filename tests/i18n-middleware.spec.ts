@@ -1,6 +1,8 @@
+import path from 'path';
+
 import { ModuleRef } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import path from 'path';
+
 import { I18nMiddleware, I18nModule, I18N_OPTIONS, I18N_RESOLVERS, I18nService } from '../src';
 import { I18nMessageFormat } from '../src/utils';
 

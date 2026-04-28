@@ -1,5 +1,9 @@
-import { Test } from '@nestjs/testing';
 import path from 'path';
+
+import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import request from 'supertest';
+
 import {
   CookieResolver,
   HeaderResolver,
@@ -9,10 +13,8 @@ import {
   I18nValidationPipe,
   I18nValidationExceptionFilter,
 } from '../src';
-import { INestApplication } from '@nestjs/common';
-import request from 'supertest';
-import { HelloController } from './app/controllers/hello.controller';
 import { CatController } from './app/cats/cat.controller';
+import { HelloController } from './app/controllers/hello.controller';
 
 describe('i18n module e2e express', () => {
   let app: INestApplication;

@@ -1,12 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+
+import { Test, TestingModule } from '@nestjs/testing';
+import { plainToInstance } from 'class-transformer';
+
 import { I18nContext, I18nModule, I18nService, I18nLoader, i18nValidationMessage } from '../src';
 import { I18nError } from '../src/i18n.error';
 import { I18nMessageFormat } from '../src/utils';
-import { I18nTranslations } from './generated/i18n.generated';
-import { plainToInstance } from 'class-transformer';
 import { PostsDto } from './app/dto/create-posts.dto';
+import { I18nTranslations } from './generated/i18n.generated';
 
 describe('i18n module', () => {
   let i18nService: I18nService<I18nTranslations>;

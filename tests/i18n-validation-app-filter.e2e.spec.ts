@@ -1,3 +1,5 @@
+import path from 'path';
+
 import {
   ArgumentsHost,
   Body,
@@ -8,11 +10,11 @@ import {
   Post,
 } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
-import { Test } from '@nestjs/testing';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { Test } from '@nestjs/testing';
 import { IsNotEmpty } from 'class-validator';
-import path from 'path';
 import request from 'supertest';
+
 import {
   I18nModule,
   I18nValidationException,

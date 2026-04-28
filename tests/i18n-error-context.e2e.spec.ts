@@ -1,3 +1,5 @@
+import path from 'path';
+
 import {
   ArgumentsHost,
   Catch,
@@ -9,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import path from 'path';
+
 import { I18nContext, I18nModule } from '../src';
 
 @Catch()

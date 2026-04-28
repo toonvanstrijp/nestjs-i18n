@@ -1,4 +1,9 @@
 import path from 'path';
+
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { Test } from '@nestjs/testing';
+import request from 'supertest';
+
 import {
   CookieResolver,
   HeaderResolver,
@@ -8,11 +13,8 @@ import {
   I18nValidationExceptionFilter,
   I18nValidationPipe,
 } from '../src';
-import { HelloController } from './app/controllers/hello.controller';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import { Test } from '@nestjs/testing';
-import request from 'supertest';
 import { CatController } from './app/cats/cat.controller';
+import { HelloController } from './app/controllers/hello.controller';
 
 describe('i18n module e2e fastify', () => {
   let app: NestFastifyApplication;

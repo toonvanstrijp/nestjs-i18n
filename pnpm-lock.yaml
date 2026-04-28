@@ -11,6 +11,9 @@ importers:
 
   .:
     dependencies:
+      '@types/js-yaml':
+        specifier: ^4.0.9
+        version: 4.0.9
       accept-language-parser:
         specifier: ^1.5.0
         version: 1.5.0
@@ -102,9 +105,6 @@ importers:
       '@types/jest':
         specifier: ^30.0.0
         version: 30.0.0
-      '@types/js-yaml':
-        specifier: ^4.0.9
-        version: 4.0.9
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0

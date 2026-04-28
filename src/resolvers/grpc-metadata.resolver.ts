@@ -1,7 +1,8 @@
-import { I18nResolver, I18nResolverOptions } from '../index';
-import { Injectable, ExecutionContext } from '@nestjs/common';
 import { Metadata } from '@grpc/grpc-js';
+import { ExecutionContext, Injectable } from '@nestjs/common';
+import { I18nResolverOptions } from '../decorators';
 import { ExecutionContextType } from '../i18n.constants';
+import { I18nResolver } from '../interfaces';
 
 @Injectable()
 export class GrpcMetadataResolver implements I18nResolver {

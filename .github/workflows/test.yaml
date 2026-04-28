@@ -22,7 +22,7 @@ jobs:
           node-version: 24
           cache: pnpm
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --shamefully-hoist
       - name: check format
         run: pnpm run format:check
       - name: lint

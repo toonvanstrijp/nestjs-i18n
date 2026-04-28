@@ -1,4 +1,5 @@
-import { I18nContext, logger } from '..';
+import { logger } from '../utils';
+import { I18nContext } from '../i18n.context';
 import { I18nError } from '../i18n.error';
 
 export function getI18nContextOrThrow<K = Record<string, unknown>>(

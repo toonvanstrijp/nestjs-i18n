@@ -1,53 +1,56 @@
 import {
+  ClassProvider,
   DynamicModule,
   Global,
   Inject,
   Logger,
   Module,
+  NestModule,
   OnModuleDestroy,
+  OnModuleInit,
   Provider,
+  ValueProvider,
 } from '@nestjs/common';
-import {
-  I18N_OPTIONS,
-  I18N_TRANSLATIONS,
-  I18N_LANGUAGES,
-  I18N_RESOLVERS,
-  I18N_LOADER_OPTIONS,
-  I18N_LOADERS,
-  I18N_LANGUAGES_SUBJECT,
-  I18N_TRANSLATIONS_SUBJECT,
-} from './i18n.constants';
-import { I18nService } from './services/i18n.service';
-import {
-  I18nAsyncOptions,
-  Formatter,
-  I18nOptions,
-  I18nOptionsFactory,
-  I18nOptionResolver,
-} from './interfaces/i18n-options.interface';
-import { ValueProvider, ClassProvider, OnModuleInit, NestModule } from '@nestjs/common';
-import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
-import { getI18nResolverOptionsToken } from './decorators';
-import {
-  shouldResolve,
-  isNestMiddleware,
-  usingFastify,
-  mergeDeep,
-  processTranslations,
-  processLanguages,
-} from './utils';
-import { I18nTranslation } from './interfaces/i18n-translation.interface';
-import { I18nLoader } from './loaders/i18n.loader';
-import { Observable, BehaviorSubject, Subject, takeUntil, switchMap } from 'rxjs';
-import format from 'string-format';
-import { I18nJsonLoader } from './loaders';
-import { I18nMiddleware } from './middlewares/i18n.middleware';
 import { mkdir, readFile, writeFile } from 'fs/promises';
 import path from 'path';
-import { NestMiddlewareConsumer } from './types';
-import { I18nMessageFormat } from './utils';
-export const logger = new Logger('I18nService');
+import { BehaviorSubject, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import format from 'string-format';
+import { getI18nResolverOptionsToken } from './decorators';
+import {
+  I18N_LANGUAGES,
+  I18N_LANGUAGES_SUBJECT,
+  I18N_LOADER_OPTIONS,
+  I18N_LOADERS,
+  I18N_OPTIONS,
+  I18N_RESOLVERS,
+  I18N_TRANSLATIONS,
+  I18N_TRANSLATIONS_SUBJECT,
+} from './i18n.constants';
+import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
+import {
+  Formatter,
+  I18nAsyncOptions,
+  I18nOptionResolver,
+  I18nOptions,
+  I18nOptionsFactory,
+} from './interfaces/i18n-options.interface';
+import { I18nTranslation } from './interfaces/i18n-translation.interface';
+import { I18nJsonLoader } from './loaders';
+import { I18nLoader } from './loaders/i18n.loader';
+import { I18nMiddleware } from './middlewares/i18n.middleware';
+import { I18nService } from './services/i18n.service';
+import { NestMiddlewareConsumer } from './interfaces';
+import {
+  I18nMessageFormat,
+  isNestMiddleware,
+  logger,
+  mergeDeep,
+  processLanguages,
+  processTranslations,
+  shouldResolve,
+  usingFastify,
+} from './utils';
 
 const defaultOptions: Partial<I18nOptions> = {
   resolvers: [],

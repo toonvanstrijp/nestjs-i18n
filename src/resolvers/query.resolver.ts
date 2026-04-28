@@ -1,7 +1,7 @@
-import { I18nResolver } from '../index';
-import { Injectable, ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { I18nResolverOptions } from '../decorators';
 import { ExecutionContextType } from '../i18n.constants';
+import { I18nResolver } from '../interfaces';
 
 @Injectable()
 export class QueryResolver implements I18nResolver {

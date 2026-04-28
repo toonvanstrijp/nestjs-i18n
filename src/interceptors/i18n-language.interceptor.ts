@@ -1,22 +1,22 @@
 import {
+  CallHandler,
+  ExecutionContext,
   Inject,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common';
-import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
-import { I18nContext, I18nOptions } from '../index';
-import { I18nService } from '../services/i18n.service';
 import { ModuleRef } from '@nestjs/core';
+import { Observable, Subscription } from 'rxjs';
+import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
+import { I18nContext } from '../i18n.context';
+import { I18nOptionResolver, I18nOptions } from '../interfaces';
+import { I18nService } from '../services/i18n.service';
 import {
-  resolveLanguage,
   getContextObject,
   getLanguageFromResolverResult,
   I18nMessageFormat,
+  resolveLanguage,
 } from '../utils';
-import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
-import { Observable, Subscription } from 'rxjs';
 
 @Injectable()
 export class I18nLanguageInterceptor implements NestInterceptor {

@@ -3,7 +3,7 @@ import {
   I18nAbstractLoader,
   I18nAbstractLoaderOptions,
 } from './i18n.abstract.loader';
-import yaml from 'js-yaml';
+import yaml from 'yaml';
 
 export class I18nYamlLoader extends I18nAbstractLoader {
   getDefaultOptions(): Partial<I18nAbstractLoaderOptions> {
@@ -15,9 +15,11 @@ export class I18nYamlLoader extends I18nAbstractLoader {
 
   formatData(data: any) {
     try {
-      return yaml.load(data, { json: true });
-    } catch (e) {
-      if (e instanceof yaml.YAMLException) {
+      return yaml.parse(data);
+    } catch (e: any) {
+
+      // yaml.parse throws YAMLParseError on error
+      if (e && e.name === 'YAMLParseError') {
         throw new I18nError(
           'Invalid YAML file. Please check your YAML syntax.',
         );

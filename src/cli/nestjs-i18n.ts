@@ -2,20 +2,7 @@ import { generateI18nTypes } from '../types-generator';
 import { checkI18nTranslations } from './check-translations';
 
 
-interface CliOptions {
-  mode: 'generate' | 'check';
-  path: string;
-  out: string;
-  format?: 'json' | 'yaml';
-  pattern?: string;
-  includeSubfolders?: boolean;
-  watch: boolean;
-}
-
-interface ParsedCliOptions {
-  options: CliOptions;
-  warnings: string[];
-}
+import { CliOptions, ParsedCliOptions } from '../interfaces/cli.interface';
 
 const DEFAULT_PATH = 'i18n';
 const DEFAULT_OUT = 'generated.ts';

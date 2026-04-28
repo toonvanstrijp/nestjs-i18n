@@ -1,18 +1,6 @@
-import { I18nAbstractLoaderOptions, I18nJsonLoader, I18nYamlLoader } from '../loaders';
+import { I18nJsonLoader, I18nYamlLoader } from '../loaders';
 import { I18nTranslation } from '../interfaces';
-
-type LoaderFormat = 'json' | 'yaml';
-
-export interface CheckI18nTranslationsOptions extends I18nAbstractLoaderOptions {
-  format?: LoaderFormat;
-}
-
-export interface CheckI18nTranslationsResult {
-  ok: boolean;
-  languages: string[];
-  missingByLanguage: Record<string, string[]>;
-  totalMissing: number;
-}
+import { CheckI18nTranslationsOptions, CheckI18nTranslationsResult } from '../interfaces/check-i18n-translations.interface';
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);

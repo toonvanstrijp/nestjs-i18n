@@ -1,5 +1,5 @@
-import { readdir, lstat, access } from 'fs/promises';
 import type { Dirent } from 'fs';
+import { access, lstat, readdir } from 'fs/promises';
 import path from 'path';
 
 export const exists = async (path: string): Promise<boolean> => {

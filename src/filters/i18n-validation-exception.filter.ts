@@ -5,7 +5,7 @@ import {
   ValidationError,
 } from '@nestjs/common';
 
-import { I18nContext } from '..';
+import { I18nContext } from '../i18n.context';
 import {
   I18nValidationError,
   I18nValidationException,

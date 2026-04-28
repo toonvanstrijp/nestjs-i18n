@@ -2,9 +2,8 @@ import { ArgumentsHost } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
 import { I18nTranslator, I18nValidationError } from './interfaces';
 import { I18nService, TranslateOptions } from './services/i18n.service';
-import { Path, PathValue } from './types';
+import { IfAnyOrNever, Path, PathValue } from './types';
 import { getContextObject, I18nMessageFormat } from './utils';
-import { IfAnyOrNever } from './types';
 
 export class I18nContext<K = Record<string, unknown>> implements I18nTranslator<K> {
   private static storage = new AsyncLocalStorage<I18nContext>();

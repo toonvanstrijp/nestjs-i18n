@@ -1,6 +1,6 @@
-import { I18nResolver } from '../index';
-import { Injectable, ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { ExecutionContextType } from '../i18n.constants';
+import { I18nResolver } from '../interfaces';
 
 @Injectable()
 export class GraphQLWebsocketResolver implements I18nResolver {

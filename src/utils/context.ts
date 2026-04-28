@@ -1,8 +1,7 @@
-import { ArgumentsHost, ExecutionContext, Logger } from '@nestjs/common';
-import { I18nOptions } from '..';
+import { ArgumentsHost, ExecutionContext } from '@nestjs/common';
+import { I18nOptions } from '../interfaces';
 import { ExecutionContextType } from '../i18n.constants';
-
-const logger = new Logger('I18nService');
+import { logger } from "./util";
 
 export function getContextObject(
   i18nOptions?: I18nOptions,

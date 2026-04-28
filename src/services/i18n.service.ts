@@ -8,29 +8,30 @@ import {
   takeUntil,
 } from 'rxjs';
 import {
-  I18nContext,
-  I18nOptions,
-  I18nTranslation,
-  I18nValidationError,
-} from '..';
-import {
+  DEFAULT_KEY_SEPARATOR,
+  DEFAULT_NAMESPACE_SEPARATOR,
   I18N_LANGUAGES,
   I18N_LANGUAGES_SUBJECT,
   I18N_LOADERS,
   I18N_OPTIONS,
   I18N_TRANSLATIONS,
   I18N_TRANSLATIONS_SUBJECT,
+  PIPE_SEPARATOR,
   PLURAL_KEYS,
   TransformPipeName,
-  DEFAULT_KEY_SEPARATOR,
-  DEFAULT_NAMESPACE_SEPARATOR,
-  PIPE_SEPARATOR,
 } from '../i18n.constants';
-import { I18nLoader } from '../loaders/i18n.loader';
-import { IfAnyOrNever, Path, PathValue } from '../types';
-import { formatI18nErrors, processTranslations, processLanguages } from '../utils';
-import { I18nTranslator, I18nPluralObject } from '../interfaces';
 import { I18nError } from '../i18n.error';
+import {
+  I18nOptions,
+  I18nPluralObject,
+  I18nTranslation,
+  I18nTranslator,
+  I18nValidationError,
+} from '../interfaces';
+import { I18nLoader } from '../loaders';
+import { IfAnyOrNever, Path, PathValue } from '../types';
+import { formatI18nErrors, processLanguages, processTranslations } from '../utils';
+import { I18nContext } from "../i18n.context";
 
 const translationTransformPipes: Record<string, (value: string) => string> = {
   [TransformPipeName.UPPERCASE]: (value: string) => value.toUpperCase(),

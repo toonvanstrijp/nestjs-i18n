@@ -1,4 +1,5 @@
-import { I18nModule, logger } from '../src/i18n.module';
+import { logger } from '../src/utils';
+import { I18nModule } from '../src/i18n.module';
 
 describe('i18n module', () => {
   afterEach(() => {

@@ -1,6 +1,6 @@
 import {parse} from 'cookie';
 import { Injectable, ExecutionContext } from '@nestjs/common';
-import { I18nResolver } from '..';
+import { I18nResolver } from '../interfaces';
 import { I18nResolverOptions } from '../decorators';
 import { ExecutionContextType } from '../i18n.constants';
 

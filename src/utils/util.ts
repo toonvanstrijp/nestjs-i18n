@@ -5,10 +5,14 @@ import {
 } from '../interfaces';
 import { ValidationArguments, ValidationError } from 'class-validator';
 import { I18nService, TranslateOptions } from '../services/i18n.service';
-import { HttpStatus, MiddlewareConsumer } from '@nestjs/common';
+import { HttpStatus, Logger, MiddlewareConsumer } from '@nestjs/common';
 import { NestMiddlewareConsumer, Path } from '../types';
 
 type NoInfer<T> = [T][T extends any ? 0 : never];
+
+
+
+export const logger = new Logger('I18nService');
 
 export function shouldResolve(e: I18nOptionResolver) {
   return typeof e === 'function' || 'use' in e;

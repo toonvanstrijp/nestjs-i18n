@@ -1,4 +1,5 @@
-import { I18nResolver, I18nResolverOptions } from '../index';
+import { I18nResolver } from '../interfaces';
+import {I18nResolverOptions } from '../decorators';
 import { Injectable, ExecutionContext } from '@nestjs/common';
 import { pick } from 'accept-language-parser';
 import { I18nService } from '../services/i18n.service';

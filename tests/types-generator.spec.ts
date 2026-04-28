@@ -1,8 +1,8 @@
-import { join } from 'node:path';
 import fs from 'node:fs';
+import { join } from 'node:path';
 
-import { generateI18nTypes } from '../src/types-generator';
 import { checkI18nTranslations } from '../src/cli/check-translations';
+import { generateI18nTypes } from '../src/types-generator';
 
 describe('types generator', () => {
   const outputPath = join(__dirname, 'generated', 'types-generator.generated.ts');

@@ -1,5 +1,11 @@
-import { Test } from '@nestjs/testing';
 import path from 'path';
+import { join } from 'path';
+
+import { NestFastifyApplication, FastifyAdapter } from '@nestjs/platform-fastify';
+import { Test } from '@nestjs/testing';
+import { Eta } from 'eta';
+import request from 'supertest';
+
 import {
   CookieResolver,
   HeaderResolver,
@@ -7,11 +13,7 @@ import {
   I18nModule,
   QueryResolver,
 } from '../src';
-import request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
-import { NestFastifyApplication, FastifyAdapter } from '@nestjs/platform-fastify';
-import { join } from 'path';
-import { Eta } from 'eta';
 
 describe('i18n module e2e fastify eta', () => {
   let app: NestFastifyApplication;

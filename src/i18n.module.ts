@@ -1,3 +1,6 @@
+import { mkdir, readFile, writeFile } from 'fs/promises';
+import path from 'path';
+
 import {
   ClassProvider,
   DynamicModule,
@@ -12,10 +15,9 @@ import {
   ValueProvider,
 } from '@nestjs/common';
 import { APP_INTERCEPTOR, HttpAdapterHost } from '@nestjs/core';
-import { mkdir, readFile, writeFile } from 'fs/promises';
-import path from 'path';
 import { BehaviorSubject, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import format from 'string-format';
+
 import { getI18nResolverOptionsToken } from './decorators';
 import {
   I18N_LANGUAGES,
@@ -28,6 +30,7 @@ import {
   I18N_TRANSLATIONS_SUBJECT,
 } from './i18n.constants';
 import { I18nLanguageInterceptor } from './interceptors/i18n-language.interceptor';
+import { NestMiddlewareConsumer } from './interfaces';
 import {
   Formatter,
   I18nAsyncOptions,
@@ -40,7 +43,6 @@ import { I18nJsonLoader } from './loaders';
 import { I18nLoader } from './loaders/i18n.loader';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
 import { I18nService } from './services/i18n.service';
-import { NestMiddlewareConsumer } from './interfaces';
 import {
   I18nMessageFormat,
   isNestMiddleware,

@@ -1,6 +1,9 @@
+import path from 'path';
+
 import { ModuleRef } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import path from 'path';
+import { firstValueFrom, of } from 'rxjs';
+
 import {
   I18nContext,
   I18nModule,
@@ -10,7 +13,6 @@ import {
   I18N_RESOLVERS,
 } from '../src';
 import { I18nMessageFormat } from '../src/utils';
-import { firstValueFrom, of } from 'rxjs';
 
 describe('i18n interceptor', () => {
   let i18nService: I18nService;

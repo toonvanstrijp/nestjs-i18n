@@ -1,5 +1,18 @@
-import { Test } from '@nestjs/testing';
 import path from 'path';
+
+import { ApolloClient, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { WebSocketLink } from '@apollo/client/link/ws';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { INestApplication } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+import { Test } from '@nestjs/testing';
+import gql from 'graphql-tag';
+import { createClient } from 'graphql-ws';
+import { SubscriptionClient } from 'subscriptions-transport-ws';
+import request from 'supertest';
+import WebSocket from 'ws';
+
 import {
   CookieResolver,
   HeaderResolver,
@@ -8,19 +21,8 @@ import {
   AcceptLanguageResolver,
   I18nValidationPipe,
 } from '../src';
-import { INestApplication } from '@nestjs/common';
-import request from 'supertest';
-import { HelloController } from './app/controllers/hello.controller';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CatModule } from './app/cats/cat.module';
-import { createClient } from 'graphql-ws';
-import { ApolloClient, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
-import WebSocket from 'ws';
-import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
-import gql from 'graphql-tag';
-import { SubscriptionClient } from 'subscriptions-transport-ws';
-import { WebSocketLink } from '@apollo/client/link/ws';
+import { HelloController } from './app/controllers/hello.controller';
 
 describe('i18n module e2e graphql', () => {
   let app: INestApplication;

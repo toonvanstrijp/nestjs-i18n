@@ -16,7 +16,7 @@
     "tests/*",
   ],
   "rules": {
-    "no-explicit-any": "off"
+    "no-explicit-any": "off",
   },
   "env": {
     "builtin": true

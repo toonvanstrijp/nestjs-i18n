@@ -1,7 +1,9 @@
+import path from 'path';
+
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
-import path from 'path';
 import request from 'supertest';
+
 import {
   AcceptLanguageResolver,
   CookieResolver,

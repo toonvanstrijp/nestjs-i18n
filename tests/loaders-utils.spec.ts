@@ -1,7 +1,8 @@
-import { I18nLoader } from '../src/loaders/i18n.loader';
-import { I18nTranslation } from '../src/interfaces/i18n-translation.interface';
-import { processTranslations, processLanguages } from '../src/utils/loaders-utils';
 import { BehaviorSubject, Observable } from 'rxjs';
+
+import { I18nTranslation } from '../src/interfaces/i18n-translation.interface';
+import { I18nLoader } from '../src/loaders/i18n.loader';
+import { processTranslations, processLanguages } from '../src/utils/loaders-utils';
 
 describe('loaders-utils', () => {
   describe('processTranslations', () => {

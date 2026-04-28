@@ -1,5 +1,11 @@
-import { Test } from '@nestjs/testing';
 import path from 'path';
+import { join } from 'path';
+
+import { Global, Module } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { Test } from '@nestjs/testing';
+import request from 'supertest';
+
 import {
   CookieResolver,
   HeaderResolver,
@@ -7,11 +13,7 @@ import {
   I18nModule,
   QueryResolver,
 } from '../src';
-import request from 'supertest';
 import { HelloController } from './app/controllers/hello.controller';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
-import { Global, Module } from '@nestjs/common';
 
 @Global()
 @Module({

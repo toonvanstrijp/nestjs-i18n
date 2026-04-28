@@ -1,8 +1,8 @@
-import {parse} from 'cookie';
-import { Injectable, ExecutionContext } from '@nestjs/common';
-import { I18nResolver } from '../interfaces';
+import { ExecutionContext, Injectable } from '@nestjs/common';
+import { parse } from 'cookie';
 import { I18nResolverOptions } from '../decorators';
 import { ExecutionContextType } from '../i18n.constants';
+import { I18nResolver } from '../interfaces';
 
 /**
  * Simple resolver to fetch language/locale from cookie

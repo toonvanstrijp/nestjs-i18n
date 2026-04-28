@@ -1,12 +1,14 @@
-import { Test } from '@nestjs/testing';
 import path from 'path';
+import { join } from 'path';
+
+import { Metadata } from '@grpc/grpc-js';
+import { INestApplication } from '@nestjs/common';
+import { ClientGrpc, ClientsModule, MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { Test } from '@nestjs/testing';
+
 import { GrpcMetadataResolver, I18nModule } from '../src';
 import { HelloController } from './app/controllers/hello.controller';
-import { ClientGrpc, ClientsModule, MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { join } from 'path';
-import { INestApplication } from '@nestjs/common';
 import { HeroService } from './app/interfaces/hero.interface';
-import { Metadata } from '@grpc/grpc-js';
 
 describe('i18n module e2e rpc', () => {
   let app: INestApplication;

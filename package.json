@@ -77,7 +77,6 @@
     "@nestjs/platform-express": "^11.1.19",
     "@nestjs/platform-fastify": "^11.1.19",
     "@nestjs/testing": "^11.1.19",
-    "@types/accept-language-parser": "^1.5.8",
     "@types/hbs": "^4.0.5",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.6.0",
@@ -107,7 +106,6 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "accept-language-parser": "^1.5.0",
     "chokidar": "^3.6.0",
     "cookie": "^1.1.1",
     "messageformat": "^4.0.0",

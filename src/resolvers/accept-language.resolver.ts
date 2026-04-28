@@ -1,5 +1,5 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
-import { pick } from 'accept-language-parser';
+import { pick } from '../utils/accept-language-parser';
 import { I18nResolverOptions } from '../decorators';
 import { ExecutionContextType } from '../i18n.constants';
 import { I18nResolver } from '../interfaces';

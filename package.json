@@ -1,6 +1,6 @@
 {
   "name": "nestjs-i18n",
-  "version": "10.8.2",
+  "version": "10.8.3",
   "homepage": "https://nestjs-i18n.com",
   "description": "The i18n module for Nest.",
   "author": "Toon van Strijp",
@@ -68,7 +68,6 @@
     "@fastify/view": "^11.1.1",
     "@grpc/grpc-js": "^1.14.3",
     "@grpc/proto-loader": "^0.8.0",
-    "@messageformat/core": "^3.4.0",
     "@nestjs/apollo": "^13.3.0",
     "@nestjs/common": "^11.1.19",
     "@nestjs/core": "^11.1.19",
@@ -108,8 +107,8 @@
   "dependencies": {
     "chokidar": "^3.6.0",
     "cookie": "^1.1.1",
-    "messageformat": "^4.0.0",
     "string-format": "^2.0.0",
+    "@messageformat/core": "^3.4.0",
     "yaml": "^2.8.3"
   },
   "peerDependencies": {

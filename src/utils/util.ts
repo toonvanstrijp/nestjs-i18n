@@ -1,12 +1,14 @@
+import { HttpStatus, Logger, MiddlewareConsumer } from '@nestjs/common';
+import { ValidationArguments, ValidationError } from 'class-validator';
 import {
   I18nOptionResolver,
   I18nValidationError,
   I18nValidationException,
+  NestMiddlewareConsumer,
+  TranslateOptions,
 } from '../interfaces';
-import { ValidationArguments, ValidationError } from 'class-validator';
-import { I18nService, TranslateOptions } from '../services/i18n.service';
-import { HttpStatus, Logger, MiddlewareConsumer } from '@nestjs/common';
-import { NestMiddlewareConsumer, Path } from '../types';
+import { I18nService, } from '../services/i18n.service';
+import { Path } from '../types';
 
 type NoInfer<T> = [T][T extends any ? 0 : never];
 

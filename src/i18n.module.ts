@@ -40,7 +40,7 @@ import { I18nJsonLoader } from './loaders';
 import { I18nLoader } from './loaders/i18n.loader';
 import { I18nMiddleware } from './middlewares/i18n.middleware';
 import { I18nService } from './services/i18n.service';
-import { NestMiddlewareConsumer } from './types';
+import { NestMiddlewareConsumer } from './interfaces';
 import {
   I18nMessageFormat,
   isNestMiddleware,

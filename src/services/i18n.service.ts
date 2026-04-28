@@ -20,6 +20,7 @@ import {
   PLURAL_KEYS,
   TransformPipeName,
 } from '../i18n.constants';
+import { I18nContext } from "../i18n.context";
 import { I18nError } from '../i18n.error';
 import {
   I18nOptions,
@@ -31,7 +32,8 @@ import {
 import { I18nLoader } from '../loaders';
 import { IfAnyOrNever, Path, PathValue } from '../types';
 import { formatI18nErrors, processLanguages, processTranslations } from '../utils';
-import { I18nContext } from "../i18n.context";
+
+import { TranslateOptions } from '../interfaces';
 
 const translationTransformPipes: Record<string, (value: string) => string> = {
   [TransformPipeName.UPPERCASE]: (value: string) => value.toUpperCase(),
@@ -47,17 +49,6 @@ type ClassValidatorValidate = (
   options?: Record<string, any>,
 ) => Promise<any[]>;
 
-export interface TranslateOptions {
-  lang?: string;
-  args?: ({ [k: string]: any } | string)[] | { [k: string]: any };
-  defaultValue?: string;
-  debug?: boolean;
-  useICU?: boolean;
-  keySeparator?: string | false;
-  nsSeparator?: string | false;
-  returnObjects?: boolean;
-  joinArrays?: string;
-}
 
 @Injectable()
 export class I18nService<K = Record<string, unknown>>

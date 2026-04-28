@@ -23,7 +23,7 @@ jobs:
           cache: pnpm
       - name: Build Docusaurus website
         run: |
-          pnpm install --frozen-lockfile
+          pnpm install --shamefully-hoist
           pnpm run doc:build
       - name: Deploy to GitHub Pages
         if: success()

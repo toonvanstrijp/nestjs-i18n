@@ -17,6 +17,15 @@
   ],
   "rules": {
     "no-explicit-any": "off",
+    "no-unused-vars": [
+      "error",
+      {
+        "fix": {
+          "imports": "safe-fix",
+          "variables": "off"
+        }
+      }
+    ]
   },
   "env": {
     "builtin": true

@@ -4,7 +4,7 @@ import {
   ExceptionFilter,
   ValidationError,
 } from '@nestjs/common';
-import iterate from 'iterare';
+
 import { I18nContext } from '..';
 import {
   I18nValidationError,
@@ -115,13 +115,12 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
   protected flattenValidationErrors(
     validationErrors: ValidationError[],
   ): string[] {
-    return iterate(validationErrors)
+    return validationErrors
       .map((error) => mapChildrenToValidationErrors(error))
-      .flatten()
+      .flat()
       .filter((item) => !!item.constraints)
       .map((item) => Object.values(item.constraints ?? {}))
-      .flatten()
-      .toArray();
+      .flat();
   }
   protected buildResponseBody(
     host: ArgumentsHost,

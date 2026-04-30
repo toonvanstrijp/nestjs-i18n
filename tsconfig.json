@@ -8,15 +8,11 @@
     "skipLibCheck": true,
     "target": "es2021",
     "sourceMap": true,
-    "baseUrl": "./",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "newLine": "lf"
-  },
-  "include": [
-    "**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+    "newLine": "lf",
+    "strict": false,
+    "types": ["express","node","jest"],
+    "rootDir": "./src",
+  }
 }

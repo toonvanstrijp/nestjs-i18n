@@ -12,7 +12,6 @@
     "allowSyntheticDefaultImports": true,
     "newLine": "lf",
     "strict": false,
-    "types": ["express","node","jest"],
-    "rootDir": "./src",
-  }
+    "types": ["express","node","jest"]
+  },
 }

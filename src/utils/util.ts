@@ -9,6 +9,8 @@ import {
 } from '../interfaces';
 import { I18nService, } from '../services/i18n.service';
 import { Path } from '../types';
+import { I18nContext } from "../i18n.context";
+
 
 type NoInfer<T> = [T][T extends any ? 0 : never];
 
@@ -53,7 +55,7 @@ export function i18nValidationErrorFactory(
     return validationErrorToI18n(e);
   });
 
-  const { I18nContext } = require('../i18n.context') as typeof import('../i18n.context');
+
   const i18n = I18nContext.current();
 
   if (!i18n) {

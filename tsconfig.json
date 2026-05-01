@@ -8,15 +8,10 @@
     "skipLibCheck": true,
     "target": "es2021",
     "sourceMap": true,
-    "baseUrl": "./",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "newLine": "lf"
+    "newLine": "lf",
+    "strict": false,
+    "types": ["express","node","jest"]
   },
-  "include": [
-    "**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
 }

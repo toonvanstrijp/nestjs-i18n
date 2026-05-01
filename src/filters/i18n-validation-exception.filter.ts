@@ -30,7 +30,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       detailedErrors: true,
     },
   ) {}
-  catch(exception: I18nValidationException, host: ArgumentsHost) {
+  catch(exception: I18nValidationException, host: ArgumentsHost): unknown {
     const errors =
       exception.errorsAlreadyTranslated && exception.errors
         ? exception.errors

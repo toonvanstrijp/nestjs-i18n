@@ -9,5 +9,4 @@ export * from "./i18n-messageformat";
 export * from "./loaders-utils";
 export * from "./merge";
 export * from "./resolver";
-export * from "./typescript";
 export * from "./util";

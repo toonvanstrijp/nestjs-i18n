@@ -14,8 +14,8 @@ import {
   merge as ObservableMerge,
   of as ObservableOf,
   switchMap,
-} from 'rxjs'
-import { FSWatcher, watch as chokidarWatch} from 'chokidar';
+} from 'rxjs';
+import chokidar from 'chokidar';
 import { I18nError } from '../i18n.error';
 
 
@@ -29,10 +29,11 @@ export interface I18nAbstractLoaderOptions {
 
 export abstract class I18nAbstractLoader
   extends I18nLoader
-  implements OnModuleDestroy {
+  implements OnModuleDestroy
+{
   private readonly logger = new Logger(I18nAbstractLoader.name);
 
-  private watcher?: FSWatcher;
+  private watcher?: chokidar.FSWatcher;
 
   private events: Subject<{ event: string; filePath: string }> = new Subject();
 
@@ -46,7 +47,8 @@ export abstract class I18nAbstractLoader
     this.options = this.sanitizeOptions(options);
 
     if (this.options.watch) {
-      this.watcher = chokidarWatch(this.options.path, { ignoreInitial: true })
+      this.watcher = chokidar
+        .watch(this.options.path, { ignoreInitial: true })
         .on('all', (event, filePath) => {
           this.events.next({
             event,

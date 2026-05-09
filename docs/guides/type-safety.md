@@ -12,7 +12,7 @@ To use generated types specify the `typesOutputPath` option to let `nestjs-i18n`
 
 ```typescript title="src/app.module.ts"
 import { Module } from '@nestjs/common';
-import * as path from 'path';
+import path from 'path';
 import { I18nModule } from 'nestjs-i18n';
 
 @Module({

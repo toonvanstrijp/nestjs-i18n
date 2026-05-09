@@ -1,6 +1,6 @@
-import { TranslateOptions } from '../services/i18n.service';
 import { IfAnyOrNever, Path, PathValue } from '../types';
 import { I18nValidationError } from './i18n-validation-error.interface';
+import { TranslateOptions } from './translate-options.interface';
 
 export interface I18nTranslator<K = Record<string, unknown>> {
   translate<P extends Path<K> = any, R = PathValue<K, P>>(

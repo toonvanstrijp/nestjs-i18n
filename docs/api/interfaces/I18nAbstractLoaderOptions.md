@@ -1,47 +1,35 @@
----
-id: "I18nAbstractLoaderOptions"
-title: "Interface: I18nAbstractLoaderOptions"
-sidebar_label: "I18nAbstractLoaderOptions"
-sidebar_position: 0
-custom_edit_url: null
----
+# Interface: I18nAbstractLoaderOptions
+
+Defined in: [src/loaders/i18n.abstract.loader.ts:23](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L23)
 
 ## Properties
 
-### filePattern
+### filePattern?
 
-• `Optional` **filePattern**: `string`
+> `optional` **filePattern?**: `string`
 
-#### Defined in
+Defined in: [src/loaders/i18n.abstract.loader.ts:26](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L26)
 
-[src/loaders/i18n.abstract.loader.ts:21](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L21)
+***
 
-___
+### includeSubfolders?
 
-### includeSubfolders
+> `optional` **includeSubfolders?**: `boolean`
 
-• `Optional` **includeSubfolders**: `boolean`
+Defined in: [src/loaders/i18n.abstract.loader.ts:25](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L25)
 
-#### Defined in
-
-[src/loaders/i18n.abstract.loader.ts:20](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L20)
-
-___
+***
 
 ### path
 
-• **path**: `string`
+> **path**: `string`
 
-#### Defined in
+Defined in: [src/loaders/i18n.abstract.loader.ts:24](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L24)
 
-[src/loaders/i18n.abstract.loader.ts:19](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L19)
-
-___
+***
 
 ### watch
 
-• `Optional` **watch**: `boolean`
+> **watch**: `boolean`
 
-#### Defined in
-
-[src/loaders/i18n.abstract.loader.ts:22](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/loaders/i18n.abstract.loader.ts#L22)
+Defined in: [src/loaders/i18n.abstract.loader.ts:27](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/loaders/i18n.abstract.loader.ts#L27)

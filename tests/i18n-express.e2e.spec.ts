@@ -1,5 +1,9 @@
+import path from 'path';
+
+import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
+import request from 'supertest';
+
 import {
   CookieResolver,
   HeaderResolver,
@@ -9,10 +13,8 @@ import {
   I18nValidationPipe,
   I18nValidationExceptionFilter,
 } from '../src';
-import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { HelloController } from './app/controllers/hello.controller';
 import { CatController } from './app/cats/cat.controller';
+import { HelloController } from './app/controllers/hello.controller';
 
 describe('i18n module e2e express', () => {
   let app: INestApplication;
@@ -562,6 +564,18 @@ describe('i18n module e2e express', () => {
       .expect('Wij gaan winkelen: Iedere 2 dagen');
   });
 
+  it('/GET hello/icu should format ICU select and plural message', async () => {
+    await request(app.getHttpServer())
+      .get('/hello/icu?gender=female&count=2')
+      .expect(200)
+      .expect('She sent 2 messages');
+
+    await request(app.getHttpServer())
+      .get('/hello/icu?gender=male&count=1')
+      .expect(200)
+      .expect('He sent 1 message');
+  });
+
   it('/GET hello/guard should return correct translation', async () => {
     await request(app.getHttpServer())
       .get('/hello/guard')
@@ -679,6 +693,44 @@ describe('i18n module e2e express', () => {
         ],
         error: 'Bad Request',
       });
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+});
+
+describe('i18n module e2e express default language regression #644', () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      imports: [
+        I18nModule.forRoot({
+          fallbackLanguage: 'fr',
+          resolvers: [new HeaderResolver(['x-custom-lang'])],
+          loaderOptions: {
+            path: path.join(__dirname, '/i18n/'),
+          },
+        }),
+      ],
+      controllers: [HelloController],
+    }).compile();
+
+    app = module.createNestApplication();
+    await app.init();
+  });
+
+  it(`/GET hello should use fallbackLanguage when x-custom-lang is missing`, () => {
+    return request(app.getHttpServer()).get('/hello').expect(200).expect('Bonjour');
+  });
+
+  it(`/GET hello should use fallbackLanguage when x-custom-lang is unsupported`, () => {
+    return request(app.getHttpServer())
+      .get('/hello')
+      .set('x-custom-lang', 'es')
+      .expect(200)
+      .expect('Bonjour');
   });
 
   afterAll(async () => {

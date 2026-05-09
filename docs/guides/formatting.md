@@ -72,7 +72,7 @@ To use a custom formatter define the `formatter` option. This option takes a fun
 
 ```typescript title="src/app.module.ts"
 import { Module } from '@nestjs/common';
-import * as path from 'path';
+import path from 'path';
 import { I18nJsonLoader, I18nModule } from 'nestjs-i18n';
 
 @Module({

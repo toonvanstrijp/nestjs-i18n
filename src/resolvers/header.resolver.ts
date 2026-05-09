@@ -1,10 +1,11 @@
-import { I18nResolver } from '../index';
-import { Injectable, ExecutionContext, Logger } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { I18nResolverOptions } from '../decorators';
+import { ExecutionContextType } from '../i18n.constants';
+import { I18nResolver } from '../interfaces';
+import { logger } from "../utils";
 
 @Injectable()
 export class HeaderResolver implements I18nResolver {
-  private logger = new Logger('I18nService');
   constructor(
     @I18nResolverOptions()
     private keys: string[] = [],
@@ -14,10 +15,15 @@ export class HeaderResolver implements I18nResolver {
     let req: any;
 
     switch (context.getType() as string) {
-      case 'http':
+      case ExecutionContextType.HTTP:
         req = context.switchToHttp().getRequest();
         break;
-      case 'graphql':
+      case ExecutionContextType.WS: {
+        const client: any = context.switchToWs().getClient();
+        req = client?.handshake ?? client?.upgradeReq ?? client?.request ?? client;
+        break;
+      }
+      case ExecutionContextType.GRAPHQL:
         [, , { req }] = context.getArgs();
         break;
     }
@@ -27,7 +33,7 @@ export class HeaderResolver implements I18nResolver {
     if (req) {
       for (const key of this.keys) {
         if (key === 'accept-language') {
-          this.logger.warn(
+          logger.warn(
             'HeaderResolver does not support RFC4647 Accept-Language header. Please use AcceptLanguageResolver instead.',
           );
         }

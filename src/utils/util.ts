@@ -1,14 +1,22 @@
+import { HttpStatus, Logger, MiddlewareConsumer } from '@nestjs/common';
+import { ValidationArguments, ValidationError } from 'class-validator';
 import {
   I18nOptionResolver,
   I18nValidationError,
   I18nValidationException,
+  NestMiddlewareConsumer,
+  TranslateOptions,
 } from '../interfaces';
-import { ValidationArguments, ValidationError } from 'class-validator';
-import { I18nService, TranslateOptions } from '../services/i18n.service';
-import { HttpStatus, MiddlewareConsumer } from '@nestjs/common';
-import { NestMiddlewareConsumer, Path } from '../types';
+import { I18nService, } from '../services/i18n.service';
+import { Path } from '../types';
+import { I18nContext } from "../i18n.context";
+
 
 type NoInfer<T> = [T][T extends any ? 0 : never];
+
+
+
+export const logger = new Logger('I18nService');
 
 export function shouldResolve(e: I18nOptionResolver) {
   return typeof e === 'function' || 'use' in e;
@@ -43,10 +51,23 @@ function validationErrorToI18n(e: ValidationError): I18nValidationError {
 export function i18nValidationErrorFactory(
   errors: ValidationError[],
 ): I18nValidationException {
+  const normalizedErrors = errors.map((e) => {
+    return validationErrorToI18n(e);
+  });
+
+
+  const i18n = I18nContext.current();
+
+  if (!i18n) {
+    return new I18nValidationException(normalizedErrors);
+  }
+
   return new I18nValidationException(
-    errors.map((e) => {
-      return validationErrorToI18n(e);
+    formatI18nErrors(normalizedErrors, i18n.service, {
+      lang: i18n.lang,
     }),
+    undefined,
+    true,
   );
 }
 
@@ -73,8 +94,22 @@ export function formatI18nErrors<K = Record<string, unknown>>(
     error.children = formatI18nErrors(error.children ?? [], i18n, options);
     error.constraints = Object.keys(error.constraints ?? {}).reduce(
       (result, key) => {
-        const [translationKey, argsString] = error.constraints![key].split('|');
-        const args = argsString ? JSON.parse(argsString) : {};
+        const rawConstraint = error.constraints![key];
+        const separatorIndex = rawConstraint.indexOf('|');
+        const translationKey =
+          separatorIndex === -1
+            ? rawConstraint
+            : rawConstraint.slice(0, separatorIndex);
+        const argsString =
+          separatorIndex === -1 ? '' : rawConstraint.slice(separatorIndex + 1);
+        let args: Record<string, any> = {};
+        if (argsString) {
+          try {
+            args = JSON.parse(argsString);
+          } catch {
+            args = {};
+          }
+        }
         const constraints = args.constraints
           ? args.constraints.reduce((acc: Record<string, string>, cur: any, index: number) => {
               acc[index.toString()] = cur;

@@ -1,17 +1,25 @@
+import path from 'path';
+
 import { ModuleRef } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
+import { firstValueFrom, of } from 'rxjs';
+
 import {
+  I18nContext,
   I18nModule,
   I18nService,
   I18nLanguageInterceptor,
   I18N_OPTIONS,
   I18N_RESOLVERS,
 } from '../src';
+import { I18nMessageFormat } from '../src/utils';
 
 describe('i18n interceptor', () => {
   let i18nService: I18nService;
   let i18nInterceptor: I18nLanguageInterceptor;
+  let moduleRef: ModuleRef;
+  let i18nOptions: any;
+  let messageFormat: I18nMessageFormat;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -26,11 +34,15 @@ describe('i18n interceptor', () => {
     }).compile();
 
     i18nService = module.get(I18nService);
+    moduleRef = module.get(ModuleRef);
+    i18nOptions = module.get(I18N_OPTIONS);
+    messageFormat = module.get(I18nMessageFormat);
     i18nInterceptor = new I18nLanguageInterceptor(
-      module.get(I18N_OPTIONS),
+      i18nOptions,
       module.get(I18N_RESOLVERS),
       i18nService,
-      module.get(ModuleRef),
+      messageFormat,
+      moduleRef,
     );
   });
 
@@ -45,5 +57,126 @@ describe('i18n interceptor', () => {
     const next = { handle: () => Promise.resolve(true) };
     const result = await i18nInterceptor.intercept(ctx as any, next as any);
     expect(result).toBeTruthy();
+  });
+
+  it('stores the resolved language on response locals instead of app locals', async () => {
+    const response: any = { locals: {}, app: { locals: {} } };
+    const request = { app: response.app };
+    const ctx = {
+      getType: () => 'http',
+      switchToHttp: () => ({
+        getRequest: () => request,
+        getResponse: () => response,
+      }),
+    };
+    const next = { handle: () => ({ handle: () => true }) };
+
+    await i18nInterceptor.intercept(ctx as any, next as any);
+
+    expect(response.locals).toMatchObject({ i18nLang: 'en' });
+    expect(response.app.locals.i18nLang).toBeUndefined();
+  });
+
+  it('normalizes resolver array result to a single language string', async () => {
+    const response: any = { locals: {}, app: { locals: {} } };
+    const request = { app: response.app };
+    const ctx = {
+      getType: () => 'http',
+      switchToHttp: () => ({
+        getRequest: () => request,
+        getResponse: () => response,
+      }),
+    };
+    const next = { handle: jest.fn(() => ({ handle: () => true })) };
+
+    const interceptor = new I18nLanguageInterceptor(
+      {
+        ...i18nOptions,
+        skipAsyncHook: true,
+      },
+      [
+        {
+          resolve: () => ['nl', 'en'],
+        },
+      ] as any,
+      i18nService,
+      messageFormat,
+      moduleRef,
+    );
+
+    await interceptor.intercept(ctx as any, next as any);
+
+    expect(response.locals.i18nLang).toBe('nl');
+  });
+
+  it('stores language on websocket client and provides I18nContext.current() in handler execution', async () => {
+    const client: any = {
+      handshake: {
+        headers: {
+          'x-custom-lang': 'nl',
+        },
+      },
+    };
+
+    const wsContext = {
+      getType: () => 'ws',
+      switchToWs: () => ({
+        getClient: () => client,
+      }),
+    };
+
+    const next = {
+      handle: jest.fn(() => of(I18nContext.current()?.lang)),
+    };
+
+    const interceptor = new I18nLanguageInterceptor(
+      {
+        ...i18nOptions,
+        skipAsyncHook: false,
+      },
+      [
+        {
+          resolve: () => 'nl',
+        },
+      ] as any,
+      i18nService,
+      messageFormat,
+      moduleRef,
+    );
+
+    const result$ = await interceptor.intercept(wsContext as any, next as any);
+    const langFromContext = await firstValueFrom(result$);
+
+    expect(client.i18nLang).toBe('nl');
+    expect(langFromContext).toBe('nl');
+  });
+
+  it('provides I18nContext.current() for rpc when transport context object is undefined', async () => {
+    const rpcContext = {
+      getType: () => 'rpc',
+      switchToRpc: () => ({
+        getContext: () => undefined,
+      }),
+    };
+
+    const next = {
+      handle: jest.fn(() => of(I18nContext.current()?.lang)),
+    };
+
+    const interceptor = new I18nLanguageInterceptor(
+      {
+        ...i18nOptions,
+        skipAsyncHook: false,
+      },
+      [] as any,
+      i18nService,
+      messageFormat,
+      moduleRef,
+    );
+
+    const result$ = await interceptor.intercept(rpcContext as any, next as any);
+    const langFromContext = await firstValueFrom(result$);
+
+    expect(langFromContext).toBe('en');
   });
 });

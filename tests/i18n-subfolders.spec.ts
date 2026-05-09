@@ -1,5 +1,7 @@
+import path from 'path';
+
 import { Test } from '@nestjs/testing';
-import * as path from 'path';
+
 import { I18nLoader, I18nModule, I18nService } from '../src';
 
 describe('i18n module including subfolders', () => {

@@ -44,6 +44,7 @@ export type I18nTranslations = {
         "PIPE_CHAIN": string;
         "PIPE_UNKNOWN": string;
         "PIPE_MIXED": string;
+        "ICU_MESSAGE": string;
         "day_interval": {
             "one": string;
             "other": string;

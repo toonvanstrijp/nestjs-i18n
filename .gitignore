@@ -87,7 +87,6 @@ typings/
 
 dist/
 reports/
-bin/
 coverage/
 
 # Dependencies
@@ -111,3 +110,4 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 tsconfig.build.tsbuildinfo
+.fallow/

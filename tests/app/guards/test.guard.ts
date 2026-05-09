@@ -12,10 +12,11 @@ export class TestGuard implements CanActivate {
     let response = context.switchToHttp().getResponse();
 
     const i18n = I18nContext.current<I18nTranslations>();
-    response.header(
-      'X-Test',
-      i18n.t('test.CURRENT_LANGUAGE', { args: { lang: i18n.lang } }),
-    );
+    const translatedHeader = i18n
+      ? i18n.t('test.CURRENT_LANGUAGE', { args: { lang: i18n.lang } })
+      : '';
+
+    response.header('X-Test', translatedHeader);
 
     return true;
   }

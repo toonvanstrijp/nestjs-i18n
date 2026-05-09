@@ -1,67 +1,51 @@
----
-id: "I18nPluralObject"
-title: "Interface: I18nPluralObject"
-sidebar_label: "I18nPluralObject"
-sidebar_position: 0
-custom_edit_url: null
----
+# Interface: I18nPluralObject
+
+Defined in: [src/interfaces/i18n-plural.interface.ts:1](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-plural.interface.ts#L1)
 
 ## Properties
 
-### few
+### few?
 
-• `Optional` **few**: `string`
+> `optional` **few?**: `string`
 
-#### Defined in
+Defined in: [src/interfaces/i18n-plural.interface.ts:5](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-plural.interface.ts#L5)
 
-[src/interfaces/i18n-plural.interface.ts:5](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-plural.interface.ts#L5)
+***
 
-___
+### many?
 
-### many
+> `optional` **many?**: `string`
 
-• `Optional` **many**: `string`
+Defined in: [src/interfaces/i18n-plural.interface.ts:6](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-plural.interface.ts#L6)
 
-#### Defined in
+***
 
-[src/interfaces/i18n-plural.interface.ts:6](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-plural.interface.ts#L6)
+### one?
 
-___
+> `optional` **one?**: `string`
 
-### one
+Defined in: [src/interfaces/i18n-plural.interface.ts:3](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-plural.interface.ts#L3)
 
-• `Optional` **one**: `string`
+***
 
-#### Defined in
+### other?
 
-[src/interfaces/i18n-plural.interface.ts:3](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-plural.interface.ts#L3)
+> `optional` **other?**: `string`
 
-___
+Defined in: [src/interfaces/i18n-plural.interface.ts:7](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-plural.interface.ts#L7)
 
-### other
+***
 
-• `Optional` **other**: `string`
+### two?
 
-#### Defined in
+> `optional` **two?**: `string`
 
-[src/interfaces/i18n-plural.interface.ts:7](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-plural.interface.ts#L7)
+Defined in: [src/interfaces/i18n-plural.interface.ts:4](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-plural.interface.ts#L4)
 
-___
+***
 
-### two
+### zero?
 
-• `Optional` **two**: `string`
+> `optional` **zero?**: `string`
 
-#### Defined in
-
-[src/interfaces/i18n-plural.interface.ts:4](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-plural.interface.ts#L4)
-
-___
-
-### zero
-
-• `Optional` **zero**: `string`
-
-#### Defined in
-
-[src/interfaces/i18n-plural.interface.ts:2](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-plural.interface.ts#L2)
+Defined in: [src/interfaces/i18n-plural.interface.ts:2](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-plural.interface.ts#L2)

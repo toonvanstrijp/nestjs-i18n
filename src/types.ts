@@ -1,10 +1,3 @@
-import { MiddlewareConsumer } from '@nestjs/common';
-import { AbstractHttpAdapter } from '@nestjs/core';
-
-export interface NestMiddlewareConsumer extends MiddlewareConsumer {
-  httpAdapter: AbstractHttpAdapter;
-}
-
 type PathKeyOf<T> = T extends any[]
   ? Exclude<Extract<keyof T, string>, keyof any[]>
   : Extract<keyof T, string>;

@@ -1,21 +1,14 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { I18nAbstractLoaderOptions, I18nJsonLoader, I18nYamlLoader } from './loaders';
-import { I18nTranslation } from './interfaces';
-import { mergeDeep } from './utils';
+import fs from 'fs';
+import path from 'path';
+
 import { I18nError } from './i18n.error';
-
-type LoaderFormat = 'json' | 'yaml';
-
-export interface GenerateI18nTypesOptions extends I18nAbstractLoaderOptions {
-  outputPath: string;
-  format?: LoaderFormat;
-}
-
-export interface GenerateI18nTypesResult {
-  outputPath: string;
-  written: boolean;
-}
+import { I18nTranslation } from './interfaces';
+import {
+  GenerateI18nTypesOptions,
+  GenerateI18nTypesResult,
+} from './interfaces/types-generator.interface';
+import { I18nJsonLoader, I18nYamlLoader } from './loaders';
+import { mergeDeep } from './utils';
 
 export async function generateI18nTypes(
   options: GenerateI18nTypesOptions,
@@ -47,25 +40,25 @@ export async function generateI18nTypes(
     }
 
     const outputFile = ts.annotateSourceCode(rawContent);
-    fs.mkdirSync(path.dirname(options.outputPath), { recursive: true });
+    fs.mkdirSync(path.dirname(options.output), { recursive: true });
 
     let currentFileContent: string | null = null;
     try {
-      currentFileContent = fs.readFileSync(options.outputPath, 'utf8');
+      currentFileContent = fs.readFileSync(options.output, 'utf8');
     } catch {
       currentFileContent = null;
     }
 
     if (currentFileContent === outputFile) {
       return {
-        outputPath: options.outputPath,
+        output: options.output,
         written: false,
       };
     }
 
-    fs.writeFileSync(options.outputPath, outputFile);
+    fs.writeFileSync(options.output, outputFile);
     return {
-      outputPath: options.outputPath,
+      output: options.output,
       written: true,
     };
   } finally {

@@ -1,4 +1,4 @@
-import * as ts from 'typescript';
+import ts from 'typescript';
 
 const convertArrayItemToType = async (item: any): Promise<ts.TypeNode> => {
   if (Array.isArray(item)) {

@@ -1,37 +1,27 @@
----
-id: "I18nValidationExceptionFilterDetailedErrorsOption"
-title: "Interface: I18nValidationExceptionFilterDetailedErrorsOption"
-sidebar_label: "I18nValidationExceptionFilterDetailedErrorsOption"
-sidebar_position: 0
-custom_edit_url: null
----
+# Interface: I18nValidationExceptionFilterDetailedErrorsOption
 
-## Hierarchy
+Defined in: [src/interfaces/i18n-validation-exception-filter.interface.ts:8](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-validation-exception-filter.interface.ts#L8)
+
+## Extends
 
 - `I18nValidationExceptionFilterCommonErrorsOption`
 
-  ↳ **`I18nValidationExceptionFilterDetailedErrorsOption`**
-
 ## Properties
 
-### detailedErrors
+### detailedErrors?
 
-• `Optional` **detailedErrors**: `boolean`
+> `optional` **detailedErrors?**: `boolean`
 
-#### Defined in
+Defined in: [src/interfaces/i18n-validation-exception-filter.interface.ts:10](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-validation-exception-filter.interface.ts#L10)
 
-[src/interfaces/i18n-validation-exception-filter.interface.ts:9](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-validation-exception-filter.interface.ts#L9)
+***
 
-___
+### errorHttpStatusCode?
 
-### errorHttpStatusCode
+> `optional` **errorHttpStatusCode?**: `number`
 
-• `Optional` **errorHttpStatusCode**: `number`
+Defined in: [src/interfaces/i18n-validation-exception-filter.interface.ts:5](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-validation-exception-filter.interface.ts#L5)
 
 #### Inherited from
 
-I18nValidationExceptionFilterCommonErrorsOption.errorHttpStatusCode
-
-#### Defined in
-
-[src/interfaces/i18n-validation-exception-filter.interface.ts:4](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-validation-exception-filter.interface.ts#L4)
+`I18nValidationExceptionFilterCommonErrorsOption.errorHttpStatusCode`

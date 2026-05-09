@@ -8,30 +8,37 @@ import {
   takeUntil,
 } from 'rxjs';
 import {
-  I18nContext,
-  I18nOptions,
-  I18nTranslation,
-  I18nValidationError,
-} from '..';
-import {
+  DEFAULT_KEY_SEPARATOR,
+  DEFAULT_NAMESPACE_SEPARATOR,
   I18N_LANGUAGES,
   I18N_LANGUAGES_SUBJECT,
   I18N_LOADERS,
   I18N_OPTIONS,
   I18N_TRANSLATIONS,
   I18N_TRANSLATIONS_SUBJECT,
+  PIPE_SEPARATOR,
+  PLURAL_KEYS,
+  TransformPipeName,
 } from '../i18n.constants';
-import { I18nLoader } from '../loaders/i18n.loader';
-import { IfAnyOrNever, Path, PathValue } from '../types';
-import { formatI18nErrors, processTranslations, processLanguages } from '../utils';
-import { I18nTranslator, I18nPluralObject } from '../interfaces';
+import { I18nContext } from "../i18n.context";
 import { I18nError } from '../i18n.error';
+import {
+  I18nOptions,
+  I18nPluralObject,
+  I18nTranslation,
+  I18nTranslator,
+  I18nValidationError,
+} from '../interfaces';
+import { I18nLoader } from '../loaders';
+import { IfAnyOrNever, Path, PathValue } from '../types';
+import { formatI18nErrors, processLanguages, processTranslations } from '../utils';
 
-const pluralKeys = ['zero', 'one', 'two', 'few', 'many', 'other'];
+import { TranslateOptions } from '../interfaces';
+
 const translationTransformPipes: Record<string, (value: string) => string> = {
-  uppercase: (value: string) => value.toUpperCase(),
-  lowercase: (value: string) => value.toLowerCase(),
-  capitalize: (value: string) =>
+  [TransformPipeName.UPPERCASE]: (value: string) => value.toUpperCase(),
+  [TransformPipeName.LOWERCASE]: (value: string) => value.toLowerCase(),
+  [TransformPipeName.CAPITALIZE]: (value: string) =>
     value.length > 0
       ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
       : value,
@@ -42,12 +49,6 @@ type ClassValidatorValidate = (
   options?: Record<string, any>,
 ) => Promise<any[]>;
 
-export type TranslateOptions = {
-  lang?: string;
-  args?: ({ [k: string]: any } | string)[] | { [k: string]: any };
-  defaultValue?: string;
-  debug?: boolean;
-};
 
 @Injectable()
 export class I18nService<K = Record<string, unknown>>
@@ -127,8 +128,10 @@ export class I18nService<K = Record<string, unknown>>
         key as string
       }" in "${lang}" does not exist.`;
       if (lang !== this.i18nOptions.fallbackLanguage || defaultValue) {
-        if (this.i18nOptions.logging && this.i18nOptions.throwOnMissingKey) {
-          this.logger.error(translationKeyMissing);
+        if (this.i18nOptions.throwOnMissingKey) {
+          if (this.i18nOptions.logging) {
+            this.logger.error(translationKeyMissing);
+          }
           throw new I18nError(translationKeyMissing);
         }
 
@@ -218,30 +221,15 @@ export class I18nService<K = Record<string, unknown>>
     lang: string,
     options?: TranslateOptions,
     rootTranslations?: I18nTranslation | string,
-  ): I18nTranslation | string {
-    const keys = key.split('.');
-    const [firstKey] = keys;
-
+  ): I18nTranslation | string | undefined {
     const args = options?.args;
     const translationObject =
       typeof translations === 'string' ? undefined : translations;
 
-    if (keys.length > 1 && translationObject && !translationObject[key]) {
-      const newKey = keys.slice(1, keys.length).join('.');
-
-      if (translationObject[firstKey]) {
-        return this.translateObject(
-          newKey,
-          translationObject[firstKey] as I18nTranslation | string,
-          lang,
-          options,
-          rootTranslations,
-        );
-      }
-    }
-
     let translation =
-      (translationObject ? translationObject[key] : translations) ??
+      (translationObject
+        ? this.getTranslationByKey(translationObject, key, options)
+        : translations) ??
       options?.defaultValue;
 
     if (translation && args !== undefined) {
@@ -263,29 +251,72 @@ export class I18nService<K = Record<string, unknown>>
         } else if (pluralObject[pluralCategory]) {
           translation = pluralObject[pluralCategory];
         }
-      } else if (translation instanceof Object) {
-        const result = Object.keys(translation).reduce((obj, nestedKey) => {
-          return {
-            ...obj,
-            [nestedKey]: this.translateObject(
-              nestedKey,
-              translation,
-              lang,
-              options,
-              rootTranslations,
-            ),
-          };
-        }, {});
+      }
+    }
 
-        if (translation instanceof Array) {
-          return Object.values(result) as unknown as I18nTranslation;
+    if (translation instanceof Object) {
+      const shouldReturnObjects =
+        options?.returnObjects ?? this.i18nOptions.returnObjects ?? true;
+      const joinArrays = options?.joinArrays ?? this.i18nOptions.joinArrays;
+
+      if (translation instanceof Array) {
+        if (typeof joinArrays === 'string') {
+          return translation.map((item) => String(item)).join(joinArrays);
         }
 
-        return result;
+        if (!shouldReturnObjects) {
+          return key;
+        }
+
+        if (args === undefined) {
+          return translation as unknown as I18nTranslation;
+        }
+
+        const result: { [key: string]: I18nTranslation | string } = {};
+        for (const nestedKey of Object.keys(translation)) {
+          const nestedTranslation = this.translateObject(
+            nestedKey,
+            translation,
+            lang,
+            options,
+            rootTranslations,
+          );
+          result[nestedKey] =
+            nestedTranslation === undefined ? nestedKey : nestedTranslation;
+        }
+
+        return Object.values(result) as unknown as I18nTranslation;
       }
-      if (typeof translation !== 'string') {
+
+      if (!shouldReturnObjects) {
+        return key;
+      }
+
+      if (args === undefined) {
         return translation;
       }
+
+      const result: { [key: string]: I18nTranslation | string } = {};
+      for (const nestedKey of Object.keys(translation)) {
+        const nestedTranslation = this.translateObject(
+          nestedKey,
+          translation,
+          lang,
+          options,
+          rootTranslations,
+        );
+        result[nestedKey] =
+          nestedTranslation === undefined ? nestedKey : nestedTranslation;
+      }
+
+      return result;
+    }
+
+    if (typeof translation !== 'string') {
+      return translation;
+    }
+
+    if (args !== undefined) {
       const { template, formatterArgs } = this.applyTranslationTransformPipes(
         translation,
         args,
@@ -324,6 +355,66 @@ export class I18nService<K = Record<string, unknown>>
     return translation;
   }
 
+  private getTranslationByKey(
+    translations: I18nTranslation,
+    key: string,
+    options?: TranslateOptions,
+  ): I18nTranslation | string | undefined {
+    if (translations[key] !== undefined) {
+      return translations[key] as I18nTranslation | string;
+    }
+
+    const nsSeparator = this.getNamespaceSeparator(options);
+    if (nsSeparator && key.includes(nsSeparator)) {
+      const separatorIndex = key.indexOf(nsSeparator);
+      const namespace = key.slice(0, separatorIndex);
+      const namespacedKey = key.slice(separatorIndex + nsSeparator.length);
+      const namespaceTranslations = translations[namespace];
+
+      if (
+        namespaceTranslations !== undefined &&
+        typeof namespaceTranslations !== 'string'
+      ) {
+        return this.getTranslationByKey(
+          namespaceTranslations as I18nTranslation,
+          namespacedKey,
+          {
+            ...options,
+            nsSeparator: false,
+          },
+        );
+      }
+    }
+
+    const keySeparator = this.getKeySeparator(options);
+    if (!keySeparator || !key.includes(keySeparator)) {
+      return undefined;
+    }
+
+    const separatorIndex = key.indexOf(keySeparator);
+    const firstKey = key.slice(0, separatorIndex);
+    const nestedKey = key.slice(separatorIndex + keySeparator.length);
+    const nestedTranslations = translations[firstKey];
+
+    if (nestedTranslations && typeof nestedTranslations !== 'string') {
+      return this.getTranslationByKey(
+        nestedTranslations as I18nTranslation,
+        nestedKey,
+        options,
+      );
+    }
+
+    return undefined;
+  }
+
+  private getKeySeparator(options?: TranslateOptions): string | false {
+    return options?.keySeparator ?? this.i18nOptions.keySeparator ?? DEFAULT_KEY_SEPARATOR;
+  }
+
+  private getNamespaceSeparator(options?: TranslateOptions): string | false {
+    return options?.nsSeparator ?? this.i18nOptions.nsSeparator ?? DEFAULT_NAMESPACE_SEPARATOR;
+  }
+
   private applyTranslationTransformPipes(
     template: string,
     args?: ({ [k: string]: any } | string)[] | { [k: string]: any },
@@ -336,7 +427,7 @@ export class I18nService<K = Record<string, unknown>>
       /\{\{\s*([^{}]+?)\s*\}\}/g,
       (match, rawExpression: string) => {
         const parts = rawExpression
-          .split('|')
+          .split(PIPE_SEPARATOR)
           .map((part) => part.trim())
           .filter((part) => part.length > 0);
 
@@ -450,7 +541,7 @@ export class I18nService<K = Record<string, unknown>>
   }
 
   private getPluralObject(translation: any): I18nPluralObject | undefined {
-    for (const k of pluralKeys) {
+    for (const k of PLURAL_KEYS) {
       if (translation[k]) {
         return translation as I18nPluralObject;
       }

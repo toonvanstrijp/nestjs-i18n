@@ -1,51 +1,63 @@
----
-id: "I18nValidationExceptionFilterErrorFormatterOption"
-title: "Interface: I18nValidationExceptionFilterErrorFormatterOption"
-sidebar_label: "I18nValidationExceptionFilterErrorFormatterOption"
-sidebar_position: 0
-custom_edit_url: null
----
+# Interface: I18nValidationExceptionFilterErrorFormatterOption
 
-## Hierarchy
+Defined in: [src/interfaces/i18n-validation-exception-filter.interface.ts:13](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-validation-exception-filter.interface.ts#L13)
+
+## Extends
 
 - `I18nValidationExceptionFilterCommonErrorsOption`
 
-  ↳ **`I18nValidationExceptionFilterErrorFormatterOption`**
-
 ## Properties
 
-### errorFormatter
+### errorFormatter?
 
-• `Optional` **errorFormatter**: (`errors`: `ValidationError`[]) => `object`
+> `optional` **errorFormatter?**: (`errors`) => `object`
 
-#### Type declaration
+Defined in: [src/interfaces/i18n-validation-exception-filter.interface.ts:15](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-validation-exception-filter.interface.ts#L15)
 
-▸ (`errors`): `object`
+#### Parameters
 
-##### Parameters
+##### errors
 
-| Name | Type |
-| :------ | :------ |
-| `errors` | `ValidationError`[] |
+`ValidationError`[]
 
-##### Returns
+#### Returns
 
 `object`
 
-#### Defined in
+***
 
-[src/interfaces/i18n-validation-exception-filter.interface.ts:14](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-validation-exception-filter.interface.ts#L14)
+### errorHttpStatusCode?
 
-___
+> `optional` **errorHttpStatusCode?**: `number`
 
-### errorHttpStatusCode
-
-• `Optional` **errorHttpStatusCode**: `number`
+Defined in: [src/interfaces/i18n-validation-exception-filter.interface.ts:5](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-validation-exception-filter.interface.ts#L5)
 
 #### Inherited from
 
-I18nValidationExceptionFilterCommonErrorsOption.errorHttpStatusCode
+`I18nValidationExceptionFilterCommonErrorsOption.errorHttpStatusCode`
 
-#### Defined in
+***
 
-[src/interfaces/i18n-validation-exception-filter.interface.ts:4](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-validation-exception-filter.interface.ts#L4)
+### responseBodyFormatter?
+
+> `optional` **responseBodyFormatter?**: (`host`, `exc`, `formattedErrors`) => `Record`\<`string`, `unknown`\>
+
+Defined in: [src/interfaces/i18n-validation-exception-filter.interface.ts:16](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-validation-exception-filter.interface.ts#L16)
+
+#### Parameters
+
+##### host
+
+`ArgumentsHost`
+
+##### exc
+
+[`I18nValidationException`](../classes/I18nValidationException.md)
+
+##### formattedErrors
+
+`object`
+
+#### Returns
+
+`Record`\<`string`, `unknown`\>

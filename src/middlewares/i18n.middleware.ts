@@ -8,12 +8,12 @@ import {
   WsArgumentsHost,
 } from '@nestjs/common/interfaces';
 import { ModuleRef } from '@nestjs/core';
-import { resolveLanguage } from '../utils';
 import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
-import { I18nContext, I18nOptions } from '../index';
-import { I18nService } from '../services/i18n.service';
-import { I18nOptionResolver } from '../interfaces';
+import { I18nContext } from '../i18n.context';
 import { I18nError } from '../i18n.error';
+import { I18nOptionResolver, I18nOptions } from '../interfaces';
+import { I18nService } from '../services/i18n.service';
+import { getLanguageFromResolverResult, I18nMessageFormat, resolveLanguage } from '../utils';
 
 const ExecutionContextMethodNotImplemented = new I18nError(
   "Method not implemented. nestjs-i18n creates a fake Http context since it's using middleware to resolve your language. Nestjs middlewares don't have access to the ExecutionContext.",
@@ -27,6 +27,7 @@ export class I18nMiddleware implements NestMiddleware {
     @Inject(I18N_RESOLVERS)
     private readonly i18nResolvers: I18nOptionResolver[],
     private readonly i18nService: I18nService,
+    private readonly messageFormat: I18nMessageFormat,
     private readonly moduleRef: ModuleRef,
   ) {}
 
@@ -46,14 +47,14 @@ export class I18nMiddleware implements NestMiddleware {
       this.moduleRef,
     );
 
-    req.i18nLang = language || this.i18nOptions.fallbackLanguage;
+    req.i18nLang =
+      getLanguageFromResolverResult(language) || this.i18nOptions.fallbackLanguage;
 
-    // Pass down language to handlebars
-    if (req.app) {
-      req.app.locals.i18nLang = req.i18nLang;
+    if (res?.locals) {
+      res.locals.i18nLang = req.i18nLang;
     }
 
-    req.i18nContext = new I18nContext(req.i18nLang, this.i18nService);
+    req.i18nContext = new I18nContext(req.i18nLang, this.i18nService, this.messageFormat);
 
     if (this.i18nOptions.skipAsyncHook) {
       next();

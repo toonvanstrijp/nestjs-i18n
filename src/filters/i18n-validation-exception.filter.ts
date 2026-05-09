@@ -4,8 +4,8 @@ import {
   ExceptionFilter,
   ValidationError,
 } from '@nestjs/common';
-import iterate from 'iterare';
-import { I18nContext } from '..';
+
+import { I18nContext } from '../i18n.context';
 import {
   I18nValidationError,
   I18nValidationException,
@@ -17,6 +17,7 @@ import {
   getI18nContextOrThrow,
   mapChildrenToValidationErrors,
 } from '../utils';
+import { ExecutionContextType } from '../i18n.constants';
 
 type I18nValidationExceptionFilterOptions =
   | I18nValidationExceptionFilterDetailedErrorsOption
@@ -45,7 +46,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     const normalizedErrors = this.normalizeValidationErrors(errors);
 
     switch (host.getType() as string) {
-      case 'http':
+      case ExecutionContextType.HTTP:
         const response = host.switchToHttp().getResponse();
         const responseBody = this.buildResponseBody(
           host,
@@ -56,12 +57,12 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
           .status(this.options.errorHttpStatusCode || exception.getStatus())
           .send(responseBody);
         break;
-      case 'graphql':
+      case ExecutionContextType.GRAPHQL:
         return this.createGraphQLError(exception, normalizedErrors);
     }
   }
 
-  private createGraphQLError(
+  private async createGraphQLError(
     exception: I18nValidationException,
     errors: string[] | I18nValidationError[] | object,
   ) {
@@ -69,8 +70,8 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
 
     try {
       // Load lazily so non-GraphQL consumers don't need the graphql package.
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const { GraphQLError } = require('graphql');
+
+      const { GraphQLError } = await import('graphql');
 
       return new GraphQLError(exception.message, {
         extensions: {
@@ -113,13 +114,12 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
   protected flattenValidationErrors(
     validationErrors: ValidationError[],
   ): string[] {
-    return iterate(validationErrors)
+    return validationErrors
       .map((error) => mapChildrenToValidationErrors(error))
-      .flatten()
+      .flat()
       .filter((item) => !!item.constraints)
       .map((item) => Object.values(item.constraints ?? {}))
-      .flatten()
-      .toArray();
+      .flat();
   }
 
   protected translateValidationErrors(

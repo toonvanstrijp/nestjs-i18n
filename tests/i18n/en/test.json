@@ -24,6 +24,7 @@
   "PIPE_CHAIN": "Hello, {{name | uppercase | capitalize}}!",
   "PIPE_UNKNOWN": "Hello, {{name | unknownPipe}}!",
   "PIPE_MIXED": "Hello, {title} {{name | uppercase}}!",
+  "ICU_MESSAGE": "{GENDER, select, male{He} female{She} other{They}} sent {COUNT, plural, one{# message} other{# messages}}",
   "day_interval": {
     "one": "Every day",
     "other": "Every {count} days",

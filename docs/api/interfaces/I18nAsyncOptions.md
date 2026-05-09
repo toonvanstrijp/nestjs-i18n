@@ -1,124 +1,108 @@
----
-id: "I18nAsyncOptions"
-title: "Interface: I18nAsyncOptions"
-sidebar_label: "I18nAsyncOptions"
-sidebar_position: 0
-custom_edit_url: null
----
+# Interface: I18nAsyncOptions
 
-## Hierarchy
+Defined in: [src/interfaces/i18n-options.interface.ts:93](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L93)
 
-- `Pick`<`ModuleMetadata`, ``"imports"``\>
+## Extends
 
-  ↳ **`I18nAsyncOptions`**
+- `Pick`\<`ModuleMetadata`, `"imports"`\>
 
 ## Properties
 
-### imports
+### imports?
 
-• `Optional` **imports**: (`Type`<`any`\> \| `DynamicModule` \| `Promise`<`DynamicModule`\> \| `ForwardReference`<`any`\>)[]
+> `optional` **imports?**: (`DynamicModule` \| `Type`\<`any`\> \| `Promise`\<`DynamicModule`\> \| `ForwardReference`\<`any`\>)[]
+
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/interfaces/modules/module-metadata.interface.d.ts:18
 
 Optional list of imported modules that export the providers which are
 required in this module.
 
 #### Inherited from
 
-Pick.imports
+`Pick.imports`
 
-#### Defined in
+***
 
-node_modules/@nestjs/common/interfaces/modules/module-metadata.interface.d.ts:18
+### inject?
 
-___
+> `optional` **inject?**: `any`[]
 
-### inject
+Defined in: [src/interfaces/i18n-options.interface.ts:104](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L104)
 
-• `Optional` **inject**: `any`[]
+***
 
-#### Defined in
+### ~~loader?~~
 
-[src/interfaces/i18n-options.interface.ts:74](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L74)
+> `optional` **loader?**: `Type`\<[`I18nLoader`](../classes/I18nLoader.md)\>
 
-___
+Defined in: [src/interfaces/i18n-options.interface.ts:102](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L102)
 
-### loader
+#### Deprecated
 
-• `Optional` **loader**: `Type`<[`I18nLoader`](../classes/I18nLoader.md)\>
+Use `loaders` in the factory return value instead
 
-#### Defined in
+***
 
-[src/interfaces/i18n-options.interface.ts:73](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L73)
+### loaders?
 
-___
+> `optional` **loaders?**: [`I18nLoader`](../classes/I18nLoader.md)[]
 
-### logging
+Defined in: [src/interfaces/i18n-options.interface.ts:103](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L103)
 
-• `Optional` **logging**: `boolean`
+***
 
-#### Defined in
+### logging?
 
-[src/interfaces/i18n-options.interface.ts:75](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L75)
+> `optional` **logging?**: `boolean`
 
-___
+Defined in: [src/interfaces/i18n-options.interface.ts:105](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L105)
 
-### name
+***
 
-• `Optional` **name**: `string`
+### name?
 
-#### Defined in
+> `optional` **name?**: `string`
 
-[src/interfaces/i18n-options.interface.ts:66](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L66)
+Defined in: [src/interfaces/i18n-options.interface.ts:94](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L94)
 
-___
+***
 
-### resolvers
+### resolvers?
 
-• `Optional` **resolvers**: [`I18nOptionResolver`](../modules.md#i18noptionresolver)[]
+> `optional` **resolvers?**: [`I18nOptionResolver`](../type-aliases/I18nOptionResolver.md)[]
 
-#### Defined in
+Defined in: [src/interfaces/i18n-options.interface.ts:100](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L100)
 
-[src/interfaces/i18n-options.interface.ts:72](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L72)
+***
 
-___
+### useClass?
 
-### useClass
+> `optional` **useClass?**: `Type`\<[`I18nOptionsFactory`](I18nOptionsFactory.md)\>
 
-• `Optional` **useClass**: `Type`<[`I18nOptionsFactory`](I18nOptionsFactory.md)\>
+Defined in: [src/interfaces/i18n-options.interface.ts:96](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L96)
 
-#### Defined in
+***
 
-[src/interfaces/i18n-options.interface.ts:68](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L68)
+### useExisting?
 
-___
+> `optional` **useExisting?**: `Type`\<[`I18nOptionsFactory`](I18nOptionsFactory.md)\>
 
-### useExisting
+Defined in: [src/interfaces/i18n-options.interface.ts:95](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L95)
 
-• `Optional` **useExisting**: `Type`<[`I18nOptionsFactory`](I18nOptionsFactory.md)\>
+***
 
-#### Defined in
+### useFactory?
 
-[src/interfaces/i18n-options.interface.ts:67](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L67)
+> `optional` **useFactory?**: (...`args`) => [`I18nOptionsWithoutResolvers`](../type-aliases/I18nOptionsWithoutResolvers.md) \| `Promise`\<[`I18nOptionsWithoutResolvers`](../type-aliases/I18nOptionsWithoutResolvers.md)\>
 
-___
+Defined in: [src/interfaces/i18n-options.interface.ts:97](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-options.interface.ts#L97)
 
-### useFactory
+#### Parameters
 
-• `Optional` **useFactory**: (...`args`: `any`[]) => [`I18nOptionsWithoutResolvers`](../modules.md#i18noptionswithoutresolvers) \| `Promise`<[`I18nOptionsWithoutResolvers`](../modules.md#i18noptionswithoutresolvers)\>
+##### args
 
-#### Type declaration
+...`any`[]
 
-▸ (`...args`): [`I18nOptionsWithoutResolvers`](../modules.md#i18noptionswithoutresolvers) \| `Promise`<[`I18nOptionsWithoutResolvers`](../modules.md#i18noptionswithoutresolvers)\>
+#### Returns
 
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `...args` | `any`[] |
-
-##### Returns
-
-[`I18nOptionsWithoutResolvers`](../modules.md#i18noptionswithoutresolvers) \| `Promise`<[`I18nOptionsWithoutResolvers`](../modules.md#i18noptionswithoutresolvers)\>
-
-#### Defined in
-
-[src/interfaces/i18n-options.interface.ts:69](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-options.interface.ts#L69)
+[`I18nOptionsWithoutResolvers`](../type-aliases/I18nOptionsWithoutResolvers.md) \| `Promise`\<[`I18nOptionsWithoutResolvers`](../type-aliases/I18nOptionsWithoutResolvers.md)\>

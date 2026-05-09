@@ -1,0 +1,1 @@
+<%= it.t('test.day_interval', it.i18nLang, { count: it.count }) %>

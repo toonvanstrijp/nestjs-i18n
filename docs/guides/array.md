@@ -25,3 +25,7 @@ You can also get the whole array, but translated.
 ```typescript title="src/app.controller.ts"
 await i18n.t('test.animals') // ['cat', 'dog', 'elephant']
 ```
+
+:::tip
+Use the [`joinArrays`](guides/i18next-options.md#joinarrays) option to automatically join array results into a single string.
+:::

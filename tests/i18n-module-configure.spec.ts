@@ -4,7 +4,7 @@ describe('i18n module configure', () => {
   const createModule = (disableMiddleware = false) => {
     const module = Object.create(I18nModule.prototype) as any;
     module.i18nOptions = { disableMiddleware };
-    return module as { configure: (consumer: any) => void };
+    return module as any;
   };
 
   it('uses Fastify-safe wildcard route when adapter is Fastify', () => {
@@ -56,5 +56,37 @@ describe('i18n module configure', () => {
     module.configure(consumer);
 
     expect(consumer.apply).not.toHaveBeenCalled();
+  });
+
+  it('sets the resolved language on reply locals for Fastify', async () => {
+    const module = createModule();
+    module.i18nOptions = { disableMiddleware: false, viewEngine: 'ejs' };
+    module.i18n = { t: jest.fn() };
+
+    let preHandler: ((request: any, reply: any) => Promise<void>) | undefined;
+
+    const consumer = {
+      apply: jest.fn().mockReturnValue({ forRoutes: jest.fn() }),
+      httpAdapter: {
+        constructor: { name: 'FastifyAdapter' },
+        getInstance: () => ({
+          addHook: jest.fn((hook: string, handler: (request: any, reply: any) => Promise<void>) => {
+            if (hook === 'preHandler') {
+              preHandler = handler;
+            }
+          }),
+        }),
+      },
+    } as any;
+
+    module.configure(consumer);
+
+    const reply = { locals: {} };
+    await preHandler?.({ raw: { i18nLang: 'nl' } }, reply);
+
+    expect(reply.locals).toMatchObject({
+      i18nLang: 'nl',
+      t: expect.any(Function),
+    });
   });
 });

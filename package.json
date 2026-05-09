@@ -1,44 +1,38 @@
 {
   "name": "nestjs-i18n",
-  "version": "10.7.5",
-  "homepage": "https://nestjs-i18n.com",
+  "version": "10.8.4",
   "description": "The i18n module for Nest.",
-  "author": "Toon van Strijp",
-  "license": "MIT",
-  "engines": {
-    "node": ">=22"
-  },
   "keywords": [
-    "nestjs",
     "i18n",
-    "internationalization",
-    "internationalisation",
-    "internationalize",
-    "internationalise",
     "international",
+    "internationalisation",
+    "internationalise",
+    "internationalization",
     "internationalize",
-    "locale"
+    "locale",
+    "nestjs"
   ],
+  "homepage": "https://nestjs-i18n.com",
+  "license": "MIT",
+  "author": "Toon van Strijp",
   "repository": {
     "type": "git",
     "url": "https://github.com/ToonvanStrijp/nestjs-i18n"
   },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "bin": {
     "nestjs-i18n": "./bin/nestjs-i18n.mjs"
   },
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "prepare": "npm run build",
-    "build": "npm run build:lib",
-    "build:lib": "npx rimraf dist && tsc -p tsconfig.build.json",
+    "build": "npx rimraf dist && tsc -p tsconfig.build.json",
     "prerelease": "npm run build && bumpp",
     "release": "npm publish --access public",
-    "prerelease:next": "npm run build",
-    "release:next": "npm publish --access public --tag next",
     "format": "oxfmt --write **/*.ts",
     "format:check": "oxfmt --check **/*.ts",
     "test": "jest --config ./tests/jest-test.json --runInBand",
@@ -47,7 +41,6 @@
     "coveralls": "npm run test:cov && cat ./coverage/lcov.info | coveralls",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "docusaurus": "docusaurus",
     "doc:start": "docusaurus start",
     "doc:build": "docusaurus build",
     "doc:swizzle": "docusaurus swizzle",
@@ -56,63 +49,63 @@
     "doc:serve": "docusaurus serve",
     "doc:write-translations": "docusaurus write-translations",
     "doc:write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
     "generate:types": "nestjs-i18n",
     "verify": "npm run format:check && npm run lint && npm run test:cov"
   },
+  "dependencies": {
+    "@messageformat/core": "^3.4.0",
+    "chokidar": "^3.6.0",
+    "cookie": "^1.1.1",
+    "string-format": "^2.0.0",
+    "yaml": "^2.8.3"
+  },
   "devDependencies": {
     "@apollo/client": "^3.14.1",
-    "@docusaurus/core": "^2.4.3",
-    "@docusaurus/module-type-aliases": "^2.4.3",
-    "@docusaurus/preset-classic": "^2.4.3",
+    "@apollo/server": "4.0.0",
+    "@as-integrations/express5": "^1.1.2",
+    "@docusaurus/core": "^3.10.1",
+    "@docusaurus/module-type-aliases": "^3.10.1",
+    "@docusaurus/preset-classic": "^3.10.1",
+    "@docusaurus/tsconfig": "^3.10.1",
     "@fastify/view": "^11.1.1",
     "@grpc/grpc-js": "^1.14.3",
     "@grpc/proto-loader": "^0.8.0",
-    "@nestjs/apollo": "^13.2.5",
+    "@nestjs/apollo": "^13.4.0",
     "@nestjs/common": "^11.1.19",
     "@nestjs/core": "^11.1.19",
-    "@nestjs/graphql": "^13.2.5",
+    "@nestjs/graphql": "^13.4.0",
     "@nestjs/microservices": "^11.1.19",
     "@nestjs/platform-express": "^11.1.19",
     "@nestjs/platform-fastify": "^11.1.19",
     "@nestjs/testing": "^11.1.19",
-    "@tsconfig/docusaurus": "^2.0.9",
-    "@types/accept-language-parser": "^1.5.8",
-    "@types/cookie": "^1.0.0",
     "@types/hbs": "^4.0.5",
     "@types/jest": "^30.0.0",
-    "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.6.0",
     "@types/string-format": "^2.0.3",
     "@types/supertest": "^7.2.0",
     "bumpp": "^11.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
-    "docusaurus-plugin-typedoc": "^0.20.1",
+    "docusaurus-plugin-typedoc": "^1.4.2",
     "ejs": "^5.0.2",
+    "eta": "^4.6.0",
     "graphql-subscriptions": "^3.0.0",
     "graphql-tag": "^2.12.6",
     "handlebars": "^4.7.9",
     "hbs": "^4.2.1",
     "jest": "^30.3.0",
-    "oxfmt": "^0.45.0",
-    "oxlint": "^1.60.0",
+    "nunjucks": "^3.2.4",
+    "oxfmt": "^0.47.0",
+    "oxlint": "^1.62.0",
     "pug": "^3.0.4",
     "reflect-metadata": "^0.2.2",
-    "supertest": "^6.3.3",
+    "supertest": "^7.2.2",
     "ts-jest": "^29.4.9",
-    "typedoc": "^0.25.1",
-    "typedoc-plugin-markdown": "^3.17.1",
-    "typescript": "^4.9.5"
-  },
-  "dependencies": {
-    "@as-integrations/express5": "^1.1.2",
-    "accept-language-parser": "^1.5.0",
-    "chokidar": "^3.6.0",
-    "cookie": "^1.1.1",
-    "iterare": "^1.2.1",
-    "js-yaml": "^4.1.1",
-    "string-format": "^2.0.0"
+    "typedoc": "^0.28.19",
+    "typedoc-docusaurus-theme": "^1.4.2",
+    "typedoc-plugin-markdown": "^4.11.0",
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "@nestjs/common": "*",
@@ -136,5 +129,13 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "pnpm": {
+    "overrides": {
+      "webpack": "5.95.0"
+    }
   }
 }

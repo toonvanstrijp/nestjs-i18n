@@ -2,6 +2,8 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
+import { themes } from 'prism-react-renderer';
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   plugins: [
@@ -12,6 +14,10 @@ const config = {
       {
         entryPoints: ['./src/index.ts'],
         tsconfig: './tsconfig.build.json',
+        skipErrorChecking: true,
+        sidebar: {
+          autoConfiguration: true,
+        },
       },
     ],
   ],
@@ -20,7 +26,11 @@ const config = {
   url: 'https://nestjs-i18n.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
   organizationName: 'toonvanstrijp', // Usually your GitHub org/user name.
   projectName: 'nestjs-i18n', // Usually your repo name.
   trailingSlash: false,
@@ -65,8 +75,8 @@ const config = {
         ],
       },
       prism: {
-        darkTheme: require('prism-react-renderer/themes/dracula'),
-        theme: require('prism-react-renderer/themes/github'),
+        darkTheme: themes.dracula,
+        theme: themes.github,
       },
       footer: {
         style: 'dark',

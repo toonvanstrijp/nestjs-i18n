@@ -1,10 +1,6 @@
----
-id: "I18nValidationExceptionFilter"
-title: "Class: I18nValidationExceptionFilter"
-sidebar_label: "I18nValidationExceptionFilter"
-sidebar_position: 0
-custom_edit_url: null
----
+# Class: I18nValidationExceptionFilter
+
+Defined in: [src/filters/i18n-validation-exception.filter.ts:27](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/filters/i18n-validation-exception.filter.ts#L27)
 
 ## Implements
 
@@ -12,111 +8,113 @@ custom_edit_url: null
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new I18nValidationExceptionFilter**(`options?`)
+> **new I18nValidationExceptionFilter**(`options?`): `I18nValidationExceptionFilter`
 
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `I18nValidationExceptionFilterOptions` |
-
-#### Defined in
-
-[src/filters/i18n-validation-exception.filter.ts:23](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/filters/i18n-validation-exception.filter.ts#L23)
-
-## Properties
-
-### options
-
-• `Private` `Readonly` **options**: `I18nValidationExceptionFilterOptions`
-
-#### Defined in
-
-[src/filters/i18n-validation-exception.filter.ts:24](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/filters/i18n-validation-exception.filter.ts#L24)
-
-## Methods
-
-### catch
-
-▸ **catch**(`exception`, `host`): [`I18nValidationException`](I18nValidationException.md)
+Defined in: [src/filters/i18n-validation-exception.filter.ts:28](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/filters/i18n-validation-exception.filter.ts#L28)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `exception` | [`I18nValidationException`](I18nValidationException.md) |
-| `host` | `ArgumentsHost` |
+##### options?
+
+`I18nValidationExceptionFilterOptions` = `...`
 
 #### Returns
 
-[`I18nValidationException`](I18nValidationException.md)
+`I18nValidationExceptionFilter`
 
-#### Implementation of
+## Methods
 
-ExceptionFilter.catch
+### buildResponseBody()
 
-#### Defined in
+> `protected` **buildResponseBody**(`host`, `exc`, `error`): `Record`\<`string`, `unknown`\>
 
-[src/filters/i18n-validation-exception.filter.ts:28](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/filters/i18n-validation-exception.filter.ts#L28)
-
-___
-
-### flattenValidationErrors
-
-▸ `Protected` **flattenValidationErrors**(`validationErrors`): `string`[]
+Defined in: [src/filters/i18n-validation-exception.filter.ts:126](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/filters/i18n-validation-exception.filter.ts#L126)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `validationErrors` | `ValidationError`[] |
+##### host
+
+`ArgumentsHost`
+
+##### exc
+
+[`I18nValidationException`](I18nValidationException.md)
+
+##### error
+
+`object` \| `ValidationError`[] \| `string`[]
+
+#### Returns
+
+`Record`\<`string`, `unknown`\>
+
+***
+
+### catch()
+
+> **catch**(`exception`, `host`): `Promise`\<[`I18nValidationException`](I18nValidationException.md) \| `GraphQLError`\>
+
+Defined in: [src/filters/i18n-validation-exception.filter.ts:33](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/filters/i18n-validation-exception.filter.ts#L33)
+
+Method to implement a custom exception filter.
+
+#### Parameters
+
+##### exception
+
+[`I18nValidationException`](I18nValidationException.md)
+
+the class of the exception being handled
+
+##### host
+
+`ArgumentsHost`
+
+used to access an array of arguments for
+the in-flight request
+
+#### Returns
+
+`Promise`\<[`I18nValidationException`](I18nValidationException.md) \| `GraphQLError`\>
+
+#### Implementation of
+
+`ExceptionFilter.catch`
+
+***
+
+### flattenValidationErrors()
+
+> `protected` **flattenValidationErrors**(`validationErrors`): `string`[]
+
+Defined in: [src/filters/i18n-validation-exception.filter.ts:115](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/filters/i18n-validation-exception.filter.ts#L115)
+
+#### Parameters
+
+##### validationErrors
+
+`ValidationError`[]
 
 #### Returns
 
 `string`[]
 
-#### Defined in
+***
 
-[src/filters/i18n-validation-exception.filter.ts:79](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/filters/i18n-validation-exception.filter.ts#L79)
+### normalizeValidationErrors()
 
-___
+> `protected` **normalizeValidationErrors**(`validationErrors`): `object` \| `ValidationError`[] \| `string`[]
 
-### isWithErrorFormatter
-
-▸ `Private` **isWithErrorFormatter**(`options`): options is I18nValidationExceptionFilterErrorFormatterOption
+Defined in: [src/filters/i18n-validation-exception.filter.ts:96](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/filters/i18n-validation-exception.filter.ts#L96)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | `I18nValidationExceptionFilterOptions` |
+##### validationErrors
+
+`ValidationError`[]
 
 #### Returns
 
-options is I18nValidationExceptionFilterErrorFormatterOption
-
-#### Defined in
-
-[src/filters/i18n-validation-exception.filter.ts:55](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/filters/i18n-validation-exception.filter.ts#L55)
-
-___
-
-### normalizeValidationErrors
-
-▸ `Protected` **normalizeValidationErrors**(`validationErrors`): `object` \| `string`[] \| `ValidationError`[]
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `validationErrors` | `ValidationError`[] |
-
-#### Returns
-
-`object` \| `string`[] \| `ValidationError`[]
-
-#### Defined in
-
-[src/filters/i18n-validation-exception.filter.ts:61](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/filters/i18n-validation-exception.filter.ts#L61)
+`object` \| `ValidationError`[] \| `string`[]

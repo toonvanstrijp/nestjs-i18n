@@ -1,95 +1,95 @@
----
-id: "I18nTranslator"
-title: "Interface: I18nTranslator<K>"
-sidebar_label: "I18nTranslator"
-sidebar_position: 0
-custom_edit_url: null
----
+# Interface: I18nTranslator\<K\>
 
-## Type parameters
+Defined in: [src/interfaces/i18n-translator.interface.ts:5](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-translator.interface.ts#L5)
 
-| Name | Type |
-| :------ | :------ |
-| `K` | `Record`<`string`, `unknown`\> |
+## Type Parameters
 
-## Implemented by
+### K
 
-- [`I18nContext`](../classes/I18nContext.md)
-- [`I18nService`](../classes/I18nService.md)
+`K` = `Record`\<`string`, `unknown`\>
 
 ## Methods
 
-### t
+### t()
 
-▸ **t**<`P`, `R`\>(`key`, `options?`): `IfAnyOrNever`<`R`, `string`, `R`\>
+> **t**\<`P`, `R`\>(`key`, `options?`): `IfAnyOrNever`\<`R`, `string`, `R`\>
 
-#### Type parameters
+Defined in: [src/interfaces/i18n-translator.interface.ts:11](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-translator.interface.ts#L11)
 
-| Name | Type |
-| :------ | :------ |
-| `P` | extends `string` = `any` |
-| `R` | [`PathValue`](../modules.md#pathvalue)<`K`, `P`\> |
+#### Type Parameters
 
-#### Parameters
+##### P
 
-| Name | Type |
-| :------ | :------ |
-| `key` | `P` |
-| `options?` | [`TranslateOptions`](../modules.md#translateoptions) |
+`P` *extends* `string` = `any`
 
-#### Returns
+##### R
 
-`IfAnyOrNever`<`R`, `string`, `R`\>
-
-#### Defined in
-
-[src/interfaces/i18n-translator.interface.ts:11](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-translator.interface.ts#L11)
-
-___
-
-### translate
-
-▸ **translate**<`P`, `R`\>(`key`, `options?`): `IfAnyOrNever`<`R`, `string`, `R`\>
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `P` | extends `string` = `any` |
-| `R` | [`PathValue`](../modules.md#pathvalue)<`K`, `P`\> |
+`R` = [`PathValue`](../type-aliases/PathValue.md)\<`K`, `P`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `key` | `P` |
-| `options?` | [`TranslateOptions`](../modules.md#translateoptions) |
+##### key
+
+`P`
+
+##### options?
+
+[`TranslateOptions`](TranslateOptions.md)
 
 #### Returns
 
-`IfAnyOrNever`<`R`, `string`, `R`\>
+`IfAnyOrNever`\<`R`, `string`, `R`\>
 
-#### Defined in
+***
 
-[src/interfaces/i18n-translator.interface.ts:6](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-translator.interface.ts#L6)
+### translate()
 
-___
+> **translate**\<`P`, `R`\>(`key`, `options?`): `IfAnyOrNever`\<`R`, `string`, `R`\>
 
-### validate
+Defined in: [src/interfaces/i18n-translator.interface.ts:6](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-translator.interface.ts#L6)
 
-▸ **validate**(`value`, `options?`): `Promise`<`ValidationError`[]\>
+#### Type Parameters
+
+##### P
+
+`P` *extends* `string` = `any`
+
+##### R
+
+`R` = [`PathValue`](../type-aliases/PathValue.md)\<`K`, `P`\>
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `any` |
-| `options?` | [`TranslateOptions`](../modules.md#translateoptions) |
+##### key
+
+`P`
+
+##### options?
+
+[`TranslateOptions`](TranslateOptions.md)
 
 #### Returns
 
-`Promise`<`ValidationError`[]\>
+`IfAnyOrNever`\<`R`, `string`, `R`\>
 
-#### Defined in
+***
 
-[src/interfaces/i18n-translator.interface.ts:16](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/interfaces/i18n-translator.interface.ts#L16)
+### validate()
+
+> **validate**(`value`, `options?`): `Promise`\<`ValidationError`[]\>
+
+Defined in: [src/interfaces/i18n-translator.interface.ts:16](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/interfaces/i18n-translator.interface.ts#L16)
+
+#### Parameters
+
+##### value
+
+`any`
+
+##### options?
+
+[`TranslateOptions`](TranslateOptions.md)
+
+#### Returns
+
+`Promise`\<`ValidationError`[]\>

@@ -1,0 +1,1 @@
+<%= it.t('test.HELLO', it.i18nLang) %>

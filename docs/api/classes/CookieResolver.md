@@ -1,10 +1,6 @@
----
-id: "CookieResolver"
-title: "Class: CookieResolver"
-sidebar_label: "CookieResolver"
-sidebar_position: 0
-custom_edit_url: null
----
+# Class: CookieResolver
+
+Defined in: [src/resolvers/cookie.resolver.ts:11](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/resolvers/cookie.resolver.ts#L11)
 
 Simple resolver to fetch language/locale from cookie
 
@@ -14,41 +10,35 @@ Simple resolver to fetch language/locale from cookie
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new CookieResolver**(`cookieNames?`)
+> **new CookieResolver**(`cookieNames?`): `CookieResolver`
+
+Defined in: [src/resolvers/cookie.resolver.ts:12](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/resolvers/cookie.resolver.ts#L12)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `cookieNames` | `string`[] |
+##### cookieNames?
 
-#### Defined in
+`string`[] = `...`
 
-[src/resolvers/cookie.resolver.ts:11](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/resolvers/cookie.resolver.ts#L11)
+#### Returns
 
-## Properties
-
-### cookieNames
-
-• `Private` `Readonly` **cookieNames**: `string`[]
-
-#### Defined in
-
-[src/resolvers/cookie.resolver.ts:13](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/resolvers/cookie.resolver.ts#L13)
+`CookieResolver`
 
 ## Methods
 
-### resolve
+### resolve()
 
-▸ **resolve**(`context`): `string` \| `string`[]
+> **resolve**(`context`): `string` \| `string`[]
+
+Defined in: [src/resolvers/cookie.resolver.ts:17](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/resolvers/cookie.resolver.ts#L17)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `context` | `ExecutionContext` |
+##### context
+
+`ExecutionContext`
 
 #### Returns
 
@@ -56,8 +46,4 @@ Simple resolver to fetch language/locale from cookie
 
 #### Implementation of
 
-[I18nResolver](../interfaces/I18nResolver.md).[resolve](../interfaces/I18nResolver.md#resolve)
-
-#### Defined in
-
-[src/resolvers/cookie.resolver.ts:16](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/resolvers/cookie.resolver.ts#L16)
+[`I18nResolver`](../interfaces/I18nResolver.md).[`resolve`](../interfaces/I18nResolver.md#resolve)

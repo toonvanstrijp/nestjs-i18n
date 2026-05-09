@@ -1,204 +1,168 @@
----
-id: "I18nValidationPipe"
-title: "Class: I18nValidationPipe"
-sidebar_label: "I18nValidationPipe"
-sidebar_position: 0
-custom_edit_url: null
----
+# Class: I18nValidationPipe
 
-## Hierarchy
+Defined in: [src/pipes/i18n-validation.pipe.ts:14](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/pipes/i18n-validation.pipe.ts#L14)
+
+## Extends
 
 - `ValidationPipe`
 
-  ↳ **`I18nValidationPipe`**
-
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new I18nValidationPipe**(`options?`)
+> **new I18nValidationPipe**(`options?`): `I18nValidationPipe`
+
+Defined in: [src/pipes/i18n-validation.pipe.ts:15](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/pipes/i18n-validation.pipe.ts#L15)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options?` | [`I18nValidationPipeOptions`](../modules.md#i18nvalidationpipeoptions) |
+##### options?
+
+[`I18nValidationPipeOptions`](../type-aliases/I18nValidationPipeOptions.md)
+
+#### Returns
+
+`I18nValidationPipe`
 
 #### Overrides
 
-ValidationPipe.constructor
-
-#### Defined in
-
-[src/pipes/i18n-validation.pipe.ts:15](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/pipes/i18n-validation.pipe.ts#L15)
+`ValidationPipe.constructor`
 
 ## Properties
 
 ### errorHttpStatusCode
 
-• `Protected` **errorHttpStatusCode**: `ErrorHttpStatusCode`
+> `protected` **errorHttpStatusCode**: `ErrorHttpStatusCode`
+
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:33
 
 #### Inherited from
 
-ValidationPipe.errorHttpStatusCode
+`ValidationPipe.errorHttpStatusCode`
 
-#### Defined in
-
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:33
-
-___
+***
 
 ### exceptionFactory
 
-• `Protected` **exceptionFactory**: (`errors`: `ValidationError`[]) => `any`
+> `protected` **exceptionFactory**: (`errors`) => `any`
 
-#### Type declaration
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:35
 
-▸ (`errors`): `any`
+#### Parameters
 
-##### Parameters
+##### errors
 
-| Name | Type |
-| :------ | :------ |
-| `errors` | `ValidationError`[] |
+`ValidationError`[]
 
-##### Returns
+#### Returns
 
 `any`
 
 #### Inherited from
 
-ValidationPipe.exceptionFactory
+`ValidationPipe.exceptionFactory`
 
-#### Defined in
-
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:35
-
-___
+***
 
 ### expectedType
 
-• `Protected` **expectedType**: `Type`<`any`\>
+> `protected` **expectedType**: `Type`\<`any`\>
+
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:34
 
 #### Inherited from
 
-ValidationPipe.expectedType
+`ValidationPipe.expectedType`
 
-#### Defined in
+***
 
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:34
+### isDetailedOutputDisabled?
 
-___
+> `protected` `optional` **isDetailedOutputDisabled?**: `boolean`
 
-### isDetailedOutputDisabled
-
-• `Protected` `Optional` **isDetailedOutputDisabled**: `boolean`
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:30
 
 #### Inherited from
 
-ValidationPipe.isDetailedOutputDisabled
+`ValidationPipe.isDetailedOutputDisabled`
 
-#### Defined in
-
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:30
-
-___
+***
 
 ### isTransformEnabled
 
-• `Protected` **isTransformEnabled**: `boolean`
+> `protected` **isTransformEnabled**: `boolean`
+
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:29
 
 #### Inherited from
 
-ValidationPipe.isTransformEnabled
+`ValidationPipe.isTransformEnabled`
 
-#### Defined in
-
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:29
-
-___
+***
 
 ### transformOptions
 
-• `Protected` **transformOptions**: `ClassTransformOptions`
+> `protected` **transformOptions**: `ClassTransformOptions`
+
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:32
 
 #### Inherited from
 
-ValidationPipe.transformOptions
+`ValidationPipe.transformOptions`
 
-#### Defined in
-
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:32
-
-___
+***
 
 ### validateCustomDecorators
 
-• `Protected` **validateCustomDecorators**: `boolean`
+> `protected` **validateCustomDecorators**: `boolean`
+
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:36
 
 #### Inherited from
 
-ValidationPipe.validateCustomDecorators
+`ValidationPipe.validateCustomDecorators`
 
-#### Defined in
-
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:36
-
-___
+***
 
 ### validatorOptions
 
-• `Protected` **validatorOptions**: `ValidatorOptions`
+> `protected` **validatorOptions**: `ValidatorOptions`
+
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:31
 
 #### Inherited from
 
-ValidationPipe.validatorOptions
-
-#### Defined in
-
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:31
+`ValidationPipe.validatorOptions`
 
 ## Methods
 
-### createExceptionFactory
+### createExceptionFactory()
 
-▸ **createExceptionFactory**(): (`validationErrors?`: `ValidationError`[]) => `unknown`
+> **createExceptionFactory**(): (`validationErrors?`) => `unknown`
+
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:41
 
 #### Returns
 
-`fn`
-
-▸ (`validationErrors?`): `unknown`
-
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `validationErrors?` | `ValidationError`[] |
-
-##### Returns
-
-`unknown`
+(`validationErrors?`) => `unknown`
 
 #### Inherited from
 
-ValidationPipe.createExceptionFactory
+`ValidationPipe.createExceptionFactory`
 
-#### Defined in
+***
 
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:41
+### flattenValidationErrors()
 
-___
+> `protected` **flattenValidationErrors**(`validationErrors`): `string`[]
 
-### flattenValidationErrors
-
-▸ `Protected` **flattenValidationErrors**(`validationErrors`): `string`[]
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:48
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `validationErrors` | `ValidationError`[] |
+##### validationErrors
+
+`ValidationError`[]
 
 #### Returns
 
@@ -206,23 +170,21 @@ ___
 
 #### Inherited from
 
-ValidationPipe.flattenValidationErrors
+`ValidationPipe.flattenValidationErrors`
 
-#### Defined in
+***
 
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:48
+### isPrimitive()
 
-___
+> `protected` **isPrimitive**(`value`): `boolean`
 
-### isPrimitive
-
-▸ `Protected` **isPrimitive**(`value`): `boolean`
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:46
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `unknown` |
+##### value
+
+`unknown`
 
 #### Returns
 
@@ -230,23 +192,21 @@ ___
 
 #### Inherited from
 
-ValidationPipe.isPrimitive
+`ValidationPipe.isPrimitive`
 
-#### Defined in
+***
 
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:46
+### loadTransformer()
 
-___
+> `protected` **loadTransformer**(`transformerPackage?`): `TransformerPackage`
 
-### loadTransformer
-
-▸ `Protected` **loadTransformer**(`transformerPackage?`): `TransformerPackage`
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:39
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `transformerPackage?` | `TransformerPackage` |
+##### transformerPackage?
+
+`TransformerPackage`
 
 #### Returns
 
@@ -254,23 +214,21 @@ ___
 
 #### Inherited from
 
-ValidationPipe.loadTransformer
+`ValidationPipe.loadTransformer`
 
-#### Defined in
+***
 
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:39
+### loadValidator()
 
-___
+> `protected` **loadValidator**(`validatorPackage?`): `ValidatorPackage`
 
-### loadValidator
-
-▸ `Protected` **loadValidator**(`validatorPackage?`): `ValidatorPackage`
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:38
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `validatorPackage?` | `ValidatorPackage` |
+##### validatorPackage?
+
+`ValidatorPackage`
 
 #### Returns
 
@@ -278,24 +236,25 @@ ___
 
 #### Inherited from
 
-ValidationPipe.loadValidator
+`ValidationPipe.loadValidator`
 
-#### Defined in
+***
 
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:38
+### mapChildrenToValidationErrors()
 
-___
+> `protected` **mapChildrenToValidationErrors**(`error`, `parentPath?`): `ValidationError`[]
 
-### mapChildrenToValidationErrors
-
-▸ `Protected` **mapChildrenToValidationErrors**(`error`, `parentPath?`): `ValidationError`[]
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:49
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `error` | `ValidationError` |
-| `parentPath?` | `string` |
+##### error
+
+`ValidationError`
+
+##### parentPath?
+
+`string`
 
 #### Returns
 
@@ -303,24 +262,25 @@ ___
 
 #### Inherited from
 
-ValidationPipe.mapChildrenToValidationErrors
+`ValidationPipe.mapChildrenToValidationErrors`
 
-#### Defined in
+***
 
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:49
+### prependConstraintsWithParentProp()
 
-___
+> `protected` **prependConstraintsWithParentProp**(`parentPath`, `error`): `ValidationError`
 
-### prependConstraintsWithParentProp
-
-▸ `Protected` **prependConstraintsWithParentProp**(`parentPath`, `error`): `ValidationError`
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:50
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `parentPath` | `string` |
-| `error` | `ValidationError` |
+##### parentPath
+
+`string`
+
+##### error
+
+`ValidationError`
 
 #### Returns
 
@@ -328,23 +288,21 @@ ___
 
 #### Inherited from
 
-ValidationPipe.prependConstraintsWithParentProp
+`ValidationPipe.prependConstraintsWithParentProp`
 
-#### Defined in
+***
 
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:50
+### stripProtoKeys()
 
-___
+> `protected` **stripProtoKeys**(`value`): `void`
 
-### stripProtoKeys
-
-▸ `Protected` **stripProtoKeys**(`value`): `void`
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:45
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `any` |
+##### value
+
+`any`
 
 #### Returns
 
@@ -352,54 +310,57 @@ ___
 
 #### Inherited from
 
-ValidationPipe.stripProtoKeys
+`ValidationPipe.stripProtoKeys`
 
-#### Defined in
+***
 
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:45
+### toEmptyIfNil()
 
-___
+> `protected` **toEmptyIfNil**\<`T`, `R`\>(`value`, `metatype`): `string` \| `object` \| `R`
 
-### toEmptyIfNil
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:44
 
-▸ `Protected` **toEmptyIfNil**<`T`, `R`\>(`value`): {} \| `R`
+#### Type Parameters
 
-#### Type parameters
+##### T
 
-| Name | Type |
-| :------ | :------ |
-| `T` | `any` |
-| `R` | `any` |
+`T` = `any`
+
+##### R
+
+`R` = `T`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `T` |
+##### value
+
+`T`
+
+##### metatype
+
+`object` \| `Type`\<`unknown`\>
 
 #### Returns
 
-{} \| `R`
+`string` \| `object` \| `R`
 
 #### Inherited from
 
-ValidationPipe.toEmptyIfNil
+`ValidationPipe.toEmptyIfNil`
 
-#### Defined in
+***
 
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:44
+### toValidate()
 
-___
+> `protected` **toValidate**(`metadata`): `boolean`
 
-### toValidate
-
-▸ `Protected` **toValidate**(`metadata`): `boolean`
+Defined in: [src/pipes/i18n-validation.pipe.ts:22](https://github.com/toonvanstrijp/nestjs-i18n/blob/4e4ebce513fdde29fadb2358f8753744e6022935/src/pipes/i18n-validation.pipe.ts#L22)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `metadata` | `ArgumentMetadata` |
+##### metadata
+
+`ArgumentMetadata`
 
 #### Returns
 
@@ -407,49 +368,57 @@ ___
 
 #### Overrides
 
-ValidationPipe.toValidate
+`ValidationPipe.toValidate`
 
-#### Defined in
+***
 
-[src/pipes/i18n-validation.pipe.ts:22](https://github.com/toonvanstrijp/nestjs-i18n/blob/085d31c/src/pipes/i18n-validation.pipe.ts#L22)
+### transform()
 
-___
+> **transform**(`value`, `metadata`): `Promise`\<`any`\>
 
-### transform
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:40
 
-▸ **transform**(`value`, `metadata`): `Promise`<`any`\>
+Method to implement a custom pipe.  Called with two parameters
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `any` |
-| `metadata` | `ArgumentMetadata` |
+##### value
+
+`any`
+
+argument before it is received by route handler method
+
+##### metadata
+
+`ArgumentMetadata`
+
+contains metadata about the value
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`\>
 
 #### Inherited from
 
-ValidationPipe.transform
+`ValidationPipe.transform`
 
-#### Defined in
+***
 
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:40
+### transformPrimitive()
 
-___
+> `protected` **transformPrimitive**(`value`, `metadata`): `any`
 
-### transformPrimitive
-
-▸ `Protected` **transformPrimitive**(`value`, `metadata`): `any`
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:43
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `value` | `any` |
-| `metadata` | `ArgumentMetadata` |
+##### value
+
+`any`
+
+##### metadata
+
+`ArgumentMetadata`
 
 #### Returns
 
@@ -457,33 +426,30 @@ ___
 
 #### Inherited from
 
-ValidationPipe.transformPrimitive
+`ValidationPipe.transformPrimitive`
 
-#### Defined in
+***
 
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:43
+### validate()
 
-___
+> `protected` **validate**(`object`, `validatorOptions?`): `ValidationError`[] \| `Promise`\<`ValidationError`[]\>
 
-### validate
-
-▸ `Protected` **validate**(`object`, `validatorOptions?`): `ValidationError`[] \| `Promise`<`ValidationError`[]\>
+Defined in: node\_modules/.pnpm/@nestjs+common@11.1.19\_class-transformer@0.5.1\_class-validator@0.15.1\_reflect-metadata@0.2.2\_rxjs@7.8.2/node\_modules/@nestjs/common/pipes/validation.pipe.d.ts:47
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `object` | `object` |
-| `validatorOptions?` | `ValidatorOptions` |
+##### object
+
+`object`
+
+##### validatorOptions?
+
+`ValidatorOptions`
 
 #### Returns
 
-`ValidationError`[] \| `Promise`<`ValidationError`[]\>
+`ValidationError`[] \| `Promise`\<`ValidationError`[]\>
 
 #### Inherited from
 
-ValidationPipe.validate
-
-#### Defined in
-
-node_modules/@nestjs/common/pipes/validation.pipe.d.ts:47
+`ValidationPipe.validate`

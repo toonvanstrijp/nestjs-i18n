@@ -169,6 +169,23 @@ export class HelloController {
     );
   }
 
+  @Get('/icu')
+  icu(
+    @I18n() i18n: I18nContext<I18nTranslations>,
+    @Query('gender') gender = 'other',
+    @Query('count') count = '0',
+  ): any {
+    const numericCount = Number(count);
+
+    return i18n.translate<any>('test.ICU_MESSAGE', {
+      useICU: true,
+      args: {
+        GENDER: gender,
+        COUNT: Number.isNaN(numericCount) ? 0 : numericCount,
+      },
+    });
+  }
+
   @Get('/guard')
   @UseGuards(TestGuard)
   guard(): any {

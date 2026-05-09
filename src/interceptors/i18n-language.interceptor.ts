@@ -1,17 +1,22 @@
 import {
+  CallHandler,
+  ExecutionContext,
   Inject,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common';
-import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
-import { I18nContext, I18nOptions } from '../index';
-import { I18nService } from '../services/i18n.service';
 import { ModuleRef } from '@nestjs/core';
-import { resolveLanguage, getContextObject } from '../utils';
-import { I18nOptionResolver } from '../interfaces/i18n-options.interface';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
+import { I18nContext } from '../i18n.context';
+import { I18nOptionResolver, I18nOptions } from '../interfaces';
+import { I18nService } from '../services/i18n.service';
+import {
+  getContextObject,
+  getLanguageFromResolverResult,
+  I18nMessageFormat,
+  resolveLanguage,
+} from '../utils';
 
 @Injectable()
 export class I18nLanguageInterceptor implements NestInterceptor {
@@ -21,6 +26,7 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     @Inject(I18N_RESOLVERS)
     private readonly i18nResolvers: I18nOptionResolver[],
     private readonly i18nService: I18nService,
+    private readonly messageFormat: I18nMessageFormat,
     private readonly moduleRef: ModuleRef,
   ) {}
 
@@ -32,34 +38,67 @@ export class I18nLanguageInterceptor implements NestInterceptor {
     let language = null;
 
     const ctx = getContextObject(this.i18nOptions, context);
+    const contextType = context.getType<string>();
+    const supportedContextTypes = ['http', 'graphql', 'rpc', 'rmq', 'ws'];
 
-    // Skip interceptor if language is already resolved (in case of http middleware) or when ctx is undefined (unsupported context)
-    if (ctx === undefined || ctx.i18nLang) {
+    // Skip interceptor only for unsupported contexts.
+    // For rpc/ws we still need AsyncLocal i18n context even if the transport
+    // does not expose a mutable context object.
+    if (!supportedContextTypes.includes(contextType)) {
       return next.handle();
     }
 
-    ctx.i18nService = this.i18nService;
+    // Skip interceptor if language is already resolved (in case of http middleware)
+    if (ctx?.i18nLang) {
+      return next.handle();
+    }
+
+    if (ctx) {
+      ctx.i18nService = this.i18nService;
+    }
 
     language = await resolveLanguage(this.i18nResolvers, context, this.moduleRef);
 
-    ctx.i18nLang = language || this.i18nOptions.fallbackLanguage;
+    const resolvedLanguage =
+      getLanguageFromResolverResult(language) || this.i18nOptions.fallbackLanguage;
 
-    // Pass down language to handlebars
-    if (ctx.app && ctx.app.locals) {
-      ctx.app.locals.i18nLang = ctx.i18nLang;
+    if (ctx) {
+      ctx.i18nLang = resolvedLanguage;
+    }
+
+    const response =
+      context.getType<string>() === 'http'
+        ? context.switchToHttp().getResponse()
+        : ctx?.res;
+
+    if (response?.locals && ctx?.i18nLang) {
+      response.locals.i18nLang = ctx.i18nLang;
     }
 
     if (!i18nContext) {
-      ctx.i18nContext = new I18nContext(ctx.i18nLang, this.i18nService);
+      const requestI18nContext = new I18nContext(
+        resolvedLanguage,
+        this.i18nService,
+        this.messageFormat,
+      );
+
+      if (ctx) {
+        ctx.i18nContext = requestI18nContext;
+      }
 
       if (!this.i18nOptions.skipAsyncHook) {
         return new Observable((observer) => {
-          I18nContext.createAsync(ctx.i18nContext, async (error) => {
-            if (error) {
-              throw error;
-            }
-            return next.handle().subscribe(observer);
+          let subscription: Subscription | undefined;
+
+          I18nContext.createAsync(requestI18nContext, async () => {
+            subscription = next.handle().subscribe(observer);
+          }).catch((error) => {
+            observer.error(error);
           });
+
+          return () => {
+            subscription?.unsubscribe();
+          };
         });
       }
     }

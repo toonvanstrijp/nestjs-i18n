@@ -1,7 +1,9 @@
-import { I18nResolver, I18nResolverOptions } from '../index';
-import { Injectable, ExecutionContext } from '@nestjs/common';
-import { pick } from 'accept-language-parser';
+import { ExecutionContext, Injectable } from '@nestjs/common';
+import { I18nResolverOptions } from '../decorators';
+import { ExecutionContextType } from '../i18n.constants';
+import { I18nResolver } from '../interfaces';
 import { I18nService } from '../services/i18n.service';
+import { pick } from '../utils/accept-language-parser';
 
 interface AcceptLanguageResolverOptions {
   matchType: 'strict' | 'loose' | 'strict-loose';
@@ -23,11 +25,17 @@ export class AcceptLanguageResolver implements I18nResolver {
     let service: I18nService;
 
     switch (context.getType() as string) {
-      case 'http':
+      case ExecutionContextType.HTTP:
         req = context.switchToHttp().getRequest();
         service = req.i18nService;
         break;
-      case 'graphql':
+      case ExecutionContextType.WS: {
+        const client: any = context.switchToWs().getClient();
+        req = client?.handshake ?? client?.upgradeReq ?? client?.request ?? client;
+        service = client?.i18nService;
+        break;
+      }
+      case ExecutionContextType.GRAPHQL:
         [, , { req, i18nService: service }] = context.getArgs();
         if (!req) return undefined;
         break;
@@ -39,7 +47,7 @@ export class AcceptLanguageResolver implements I18nResolver {
       ? req.raw.headers?.['accept-language']
       : req?.headers?.['accept-language'];
 
-    if (lang) {
+    if (lang && service) {
       const supportedLangs = service.getSupportedLanguages();
       if (this.options.matchType === 'strict') {
         return pick(supportedLangs, lang) ?? undefined;

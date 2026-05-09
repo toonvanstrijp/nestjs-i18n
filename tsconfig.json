@@ -8,16 +8,10 @@
     "skipLibCheck": true,
     "target": "es2021",
     "sourceMap": true,
-    "baseUrl": "./",
-    "incremental": true,
-    "ignoreDeprecations": "6.0",
-    "newLine": "lf"
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "newLine": "lf",
+    "strict": false,
+    "types": ["express","node","jest"]
   },
-  "include": [
-    "**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ]
 }

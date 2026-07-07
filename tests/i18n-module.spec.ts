@@ -1,9 +1,11 @@
 import path from 'node:path';
+
+import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { I18N_LOADERS } from '../src/i18n.constants';
 import { I18nModule } from '../src/i18n.module';
 import { logger } from '../src/utils';
-import { I18N_LOADERS } from '../src/i18n.constants';
-import { INestApplication } from '@nestjs/common';
 
 describe('i18n module', () => {
   afterEach(() => {

@@ -1,5 +1,9 @@
+import path from 'node:path';
+import { Test, TestingModule } from '@nestjs/testing';
 import { I18nModule } from '../src/i18n.module';
 import { logger } from '../src/utils';
+import { I18N_LOADERS } from '../src/i18n.constants';
+import { INestApplication } from '@nestjs/common';
 
 describe('i18n module', () => {
   afterEach(() => {
@@ -59,16 +63,91 @@ describe('i18n module', () => {
     expect(getInstance).not.toHaveBeenCalled();
   });
 
-  it('emits unsubscribe notifier on module destroy', () => {
+  it('emits unsubscribe notifier on module destroy', async () => {
     const module = Object.create(I18nModule.prototype) as any;
     module.unsubscribe = {
       next: jest.fn(),
       complete: jest.fn(),
     };
+    module.loaders = [];
 
-    module.onModuleDestroy();
+    await module.onModuleDestroy();
 
     expect(module.unsubscribe.next).toHaveBeenCalledTimes(1);
     expect(module.unsubscribe.complete).toHaveBeenCalledTimes(1);
+  });
+
+  describe('when initialized with forRoot', () => {
+    let app: INestApplication;
+    let loader: any;
+
+    beforeEach(async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          I18nModule.forRoot({
+            fallbackLanguage: 'en',
+            loaderOptions: { path: path.join(__dirname, 'i18n'), watch: true },
+          }),
+        ],
+      }).compile();
+
+      app = module.createNestApplication();
+      await app.init();
+
+      loader = app.get(I18N_LOADERS)[0];
+    });
+
+    afterEach(async () => {
+      // Manually call onModuleDestroy to avoid Jest open handle error.
+      loader.onModuleDestroy();
+    });
+
+    it('closes loaders on application close', async () => {
+      const spy = jest.spyOn(loader, 'onModuleDestroy');
+
+      await app.close();
+
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  describe('when initialized with forRootAsync', () => {
+    let app: INestApplication;
+    let loader: any;
+
+    beforeEach(async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          I18nModule.forRootAsync({
+            useFactory: () => ({
+              fallbackLanguage: 'en',
+              loaderOptions: {
+                path: path.join(__dirname, 'i18n'),
+                watch: true,
+              },
+            }),
+            resolvers: [],
+          }),
+        ],
+      }).compile();
+
+      app = module.createNestApplication();
+      await app.init();
+
+      loader = app.get(I18N_LOADERS)[0];
+    });
+
+    afterEach(async () => {
+      // Manually call onModuleDestroy to avoid Jest open handle error.
+      loader.onModuleDestroy();
+    });
+
+    it('closes loaders on application close', async () => {
+      const spy = jest.spyOn(loader, 'onModuleDestroy');
+
+      await app.close();
+
+      expect(spy).toHaveBeenCalled();
+    });
   });
 });

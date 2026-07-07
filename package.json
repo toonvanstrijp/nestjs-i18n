@@ -1,6 +1,6 @@
 {
   "name": "nestjs-i18n",
-  "version": "10.8.4",
+  "version": "10.8.5",
   "description": "The i18n module for Nest.",
   "keywords": [
     "i18n",

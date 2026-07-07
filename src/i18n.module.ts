@@ -72,6 +72,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     @Inject(I18N_TRANSLATIONS)
     private translations: Observable<I18nTranslation>,
     @Inject(I18N_OPTIONS) private readonly i18nOptions: I18nOptions,
+    @Inject(I18N_LOADERS) private readonly loaders: I18nLoader[],
     private adapter: HttpAdapterHost,
     private readonly middleware: I18nMiddleware,
   ) {}
@@ -169,9 +170,15 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
     }
   }
 
-  onModuleDestroy() {
+  async onModuleDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+
+    // Loaders created inside the forRootAsync factory (or passed
+    // pre-instantiated via the `loaders` option) are not managed by Nest's DI
+    // lifecycle, so their own onModuleDestroy is never invoked. Close them
+    // here.
+    await Promise.all(this.loaders.map((loader) => loader.onModuleDestroy?.()));
   }
 
   configure(consumer: NestMiddlewareConsumer) {

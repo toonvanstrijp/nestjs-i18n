@@ -3,6 +3,7 @@ import {
   I18nAbstractLoader,
   I18nAbstractLoaderOptions,
 } from './i18n.abstract.loader';
+import { readFile } from 'fs/promises';
 
 export class I18nJsonLoader extends I18nAbstractLoader {
   getDefaultOptions(): Partial<I18nAbstractLoaderOptions> {
@@ -11,8 +12,10 @@ export class I18nJsonLoader extends I18nAbstractLoader {
       watch: false,
     };
   }
-  formatData(data: any) {
+
+  protected override async parseFile(file: string): Promise<any> {
     try {
+      const data = await readFile(file, 'utf8');
       return JSON.parse(data);
     } catch (e) {
       if (e instanceof SyntaxError) {

@@ -41,7 +41,7 @@ export abstract class I18nAbstractLoader
 
   constructor(
     @Inject(I18N_LOADER_OPTIONS)
-    private options: I18nAbstractLoaderOptions,
+    protected options: I18nAbstractLoaderOptions,
   ) {
     super();
     this.options = this.sanitizeOptions(options);
@@ -151,7 +151,7 @@ export abstract class I18nAbstractLoader
 
       let data: any;
       try {
-        data = this.formatData(await readFile(file, 'utf8'));
+        data = await this.parseFile(file);
       } catch (e) {
         const error = e as Error;
         throw new I18nError(
@@ -219,7 +219,7 @@ export abstract class I18nAbstractLoader
     return this.languagesCache;
   }
 
-  private async getCachedLanguages(): Promise<string[]> {
+  protected async getCachedLanguages(): Promise<string[]> {
     if (this.languagesCache) {
       return this.languagesCache;
     }
@@ -240,7 +240,7 @@ export abstract class I18nAbstractLoader
     return options;
   }
 
-  private parseFilePattern(filePattern: string): RegExp {
+  protected parseFilePattern(filePattern: string): RegExp {
     const singleExtensionPattern = /^\*\.([A-Za-z0-9_-]+)$/;
     const groupedExtensionPattern = /^\*\.\{([^}]+)\}$/;
 
@@ -275,6 +275,6 @@ export abstract class I18nAbstractLoader
     return new RegExp(`^.*\\.(${extensions.join('|')})$`);
   }
 
-  abstract formatData(data: any): any;
+  protected abstract parseFile(file: string): Promise<any>;
   abstract getDefaultOptions(): Partial<I18nAbstractLoaderOptions>;
 }

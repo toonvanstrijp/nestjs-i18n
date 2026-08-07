@@ -1,5 +1,7 @@
 import path from 'path';
+
 import { Test } from '@nestjs/testing';
+
 import { I18nModule, I18nService, I18nLoader, I18nObjectLoader } from '../src';
 
 describe('i18n object module', () => {
@@ -59,9 +61,7 @@ describe('i18n object module', () => {
   });
 
   it('i18n service should return fallback translation if language not registered', () => {
-    expect(i18nService.translate('test.ENGLISH', { lang: 'es' })).toBe(
-      'English',
-    );
+    expect(i18nService.translate('test.ENGLISH', { lang: 'es' })).toBe('English');
   });
 
   it('i18n service should return supported languages', () => {

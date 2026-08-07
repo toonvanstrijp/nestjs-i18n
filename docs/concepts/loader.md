@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Loaders
 
-Loaders are responsible for fetching translation data and the list of available languages. `nestjs-i18n` ships two loaders out of the box: `I18nJsonLoader` (default) and `I18nYamlLoader`.
+Loaders are responsible for fetching translation data and the list of available languages. `nestjs-i18n` ships three loaders out of the box: `I18nJsonLoader` (default), `I18nYamlLoader`, and `I18nObjectLoader`.
 
 ## Single loader (legacy)
 
@@ -41,6 +41,23 @@ I18nModule.forRoot({
 ```
 
 When the same key exists in multiple loaders the **last** loader wins. Deeply nested objects are merged recursively, so partial overrides are safe.
+
+## Object Loader
+
+The `I18nObjectLoader` allows you to load translations written as executable JavaScript/TypeScript modules (`.js` or `.ts` files) from the filesystem:
+
+```typescript title="src/app.module.ts"
+I18nModule.forRoot({
+  fallbackLanguage: 'en',
+  loaderOptions: {
+    path: path.join(__dirname, '/i18n/'),
+    filePattern: '*.ts', // or '*.js' in production
+  },
+  loader: I18nObjectLoader,
+}),
+```
+
+This loader is useful when you want to define translations dynamically or use full TypeScript compilation checks on your translation objects. Under watch mode (`watch: true`), it evicts Node's require cache automatically to support hot reloading.
 
 ## Custom loader
 

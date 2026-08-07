@@ -137,5 +137,6 @@
     "overrides": {
       "webpack": "5.95.0"
     }
-  }
+  },
+  "packageManager": "pnpm@10.15.0"
 }

@@ -1,0 +1,8 @@
+export default {
+  HELLO: "Hello",
+  PRODUCT: {
+    NEW: "New Product: {name}",
+  },
+  ENGLISH: "English",
+  ARRAY: ["ONE", "TWO", "THREE"],
+};

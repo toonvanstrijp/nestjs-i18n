@@ -1,20 +1,27 @@
-import { Type } from '@nestjs/common';
 import {
   ClassProvider,
   ExistingProvider,
   FactoryProvider,
   ModuleMetadata,
+  Type,
   ValueProvider,
-} from '@nestjs/common/interfaces';
-import { I18nResolver } from './i18n-language-resolver.interface';
-import { I18nLoader } from '../loaders';
+} from '@nestjs/common';
 import { ValidatorOptions } from 'class-validator';
+
+import { I18nLoader } from '../loaders';
+import { I18nResolver } from './i18n-language-resolver.interface';
 
 export interface OptionsProvider {
   options: any;
 }
 
-export type I18nViewEngine = 'hbs' | 'handlebars' | 'pug' | 'ejs' | 'eta' | 'nunjucks';
+export type I18nViewEngine =
+  | 'hbs'
+  | 'handlebars'
+  | 'pug'
+  | 'ejs'
+  | 'eta'
+  | 'nunjucks';
 
 export type OptionProvider<T = any> =
   | Omit<ClassProvider<T>, 'provide'>

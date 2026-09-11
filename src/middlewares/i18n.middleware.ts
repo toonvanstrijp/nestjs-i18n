@@ -1,19 +1,29 @@
-import { Inject, Injectable, NestMiddleware, Type } from '@nestjs/common';
 import {
   ArgumentsHost,
   ContextType,
   ExecutionContext,
+  Inject,
+  Injectable,
+  NestMiddleware,
+  Type,
+} from '@nestjs/common';
+import {
   HttpArgumentsHost,
   RpcArgumentsHost,
   WsArgumentsHost,
-} from '@nestjs/common/interfaces';
+} from '@nestjs/common/internal';
 import { ModuleRef } from '@nestjs/core';
+
 import { I18N_OPTIONS, I18N_RESOLVERS } from '../i18n.constants';
 import { I18nContext } from '../i18n.context';
 import { I18nError } from '../i18n.error';
 import { I18nOptionResolver, I18nOptions } from '../interfaces';
 import { I18nService } from '../services/i18n.service';
-import { getLanguageFromResolverResult, I18nMessageFormat, resolveLanguage } from '../utils';
+import {
+  getLanguageFromResolverResult,
+  I18nMessageFormat,
+  resolveLanguage,
+} from '../utils';
 
 const ExecutionContextMethodNotImplemented = new I18nError(
   "Method not implemented. nestjs-i18n creates a fake Http context since it's using middleware to resolve your language. Nestjs middlewares don't have access to the ExecutionContext.",
@@ -48,13 +58,18 @@ export class I18nMiddleware implements NestMiddleware {
     );
 
     req.i18nLang =
-      getLanguageFromResolverResult(language) || this.i18nOptions.fallbackLanguage;
+      getLanguageFromResolverResult(language) ||
+      this.i18nOptions.fallbackLanguage;
 
     if (res?.locals) {
       res.locals.i18nLang = req.i18nLang;
     }
 
-    req.i18nContext = new I18nContext(req.i18nLang, this.i18nService, this.messageFormat);
+    req.i18nContext = new I18nContext(
+      req.i18nLang,
+      this.i18nService,
+      this.messageFormat,
+    );
 
     if (this.i18nOptions.skipAsyncHook) {
       next();
@@ -62,7 +77,6 @@ export class I18nMiddleware implements NestMiddleware {
       I18nContext.create(req.i18nContext, next);
     }
   }
-
 }
 
 class MiddlewareHttpContext

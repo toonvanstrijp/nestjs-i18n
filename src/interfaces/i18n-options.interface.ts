@@ -85,6 +85,8 @@ export interface I18nOptions {
   returnObjects?: boolean;
   /** Join array translations into a single string using this delimiter. */
   joinArrays?: string;
+  /** Whether an empty string translation is returned as-is. Set false to treat it as a missing key. */
+  returnEmptyString?: boolean;
   typesOutputPath?: string;
   useICU?: boolean;
   icuOptions?: I18nICUOptions;

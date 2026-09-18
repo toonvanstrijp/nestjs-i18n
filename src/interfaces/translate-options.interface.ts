@@ -8,4 +8,5 @@ export interface TranslateOptions {
   nsSeparator?: string | false;
   returnObjects?: boolean;
   joinArrays?: string;
+  returnEmptyString?: boolean;
 }

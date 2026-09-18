@@ -147,6 +147,30 @@ i18n.t('test.ARRAY', { joinArrays: ', ' })  // => 'ONE, TWO, THREE'
 
 ---
 
+## returnEmptyString
+
+When a key resolves to an **empty string**, controls whether that empty string is returned or the key is treated as missing.
+
+**Default:** `true` (return the empty string)
+
+```json title="src/i18n/en/test.json"
+{
+  "EMPTY": ""
+}
+```
+
+```typescript
+i18n.t('test.EMPTY')   // => ''
+
+// With returnEmptyString: false, returns the key instead
+i18n.t('test.EMPTY', { returnEmptyString: false })   // => 'test.EMPTY'
+
+// defaultValue still takes precedence over the key
+i18n.t('test.EMPTY', { returnEmptyString: false, defaultValue: 'n/a' })   // => 'n/a'
+```
+
+---
+
 ## Summary
 
 | Option | Type | Default | Scope |
@@ -155,3 +179,4 @@ i18n.t('test.ARRAY', { joinArrays: ', ' })  // => 'ONE, TWO, THREE'
 | `nsSeparator` | `string \| false` | `false` | module + per-call |
 | `returnObjects` | `boolean` | `true` | module + per-call |
 | `joinArrays` | `string` | `undefined` | module + per-call |
+| `returnEmptyString` | `boolean` | `true` | module + per-call |

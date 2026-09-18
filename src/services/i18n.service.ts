@@ -31,7 +31,7 @@ import {
 } from '../interfaces';
 import { I18nLoader } from '../loaders';
 import { IfAnyOrNever, Path, PathValue } from '../types';
-import { formatI18nErrors, processLanguages, processTranslations } from '../utils';
+import { formatI18nErrors, logError, processLanguages, processTranslations } from '../utils';
 
 import { TranslateOptions } from '../interfaces';
 
@@ -568,7 +568,7 @@ export class I18nService<K = Record<string, unknown>>
         try {
           args = JSON.parse(result[3]);
         } catch (e) {
-          this.logger.error(`Error while parsing JSON`, e);
+          logError(this.logger, `Error while parsing JSON`, e);
         }
       }
 

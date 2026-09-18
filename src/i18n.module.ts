@@ -46,6 +46,7 @@ import { I18nService } from './services/i18n.service';
 import {
   I18nMessageFormat,
   isNestMiddleware,
+  logError,
   logger,
   mergeDeep,
   processLanguages,
@@ -96,7 +97,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
           hbs.registerHelper('t', this.i18n.hbsHelper);
           logger.log('Handlebars helper registered');
         } catch (e) {
-          logger.error(this.i18nOptions.viewEngine + ' module failed to load', e);
+          logError(logger, this.i18nOptions.viewEngine + ' module failed to load', e);
         }
       }
 
@@ -157,7 +158,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
                   logger.log('No changes detected');
                 }
               } catch (err) {
-                logger.error('Error generating types file', err);
+                logError(logger, 'Error generating types file', err);
               }
             }),
           )
@@ -471,7 +472,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
             streamSubject.next(value);
           }
         } catch (e) {
-          logger.error('parsing translation error', e);
+          logError(logger, 'parsing translation error', e);
         }
         return streamSubject.asObservable();
       },
@@ -504,7 +505,7 @@ export class I18nModule implements OnModuleInit, OnModuleDestroy, NestModule {
             streamSubject.next(value);
           }
         } catch (e) {
-          logger.error('parsing translation error', e);
+          logError(logger, 'parsing translation error', e);
         }
         return streamSubject.asObservable();
       },

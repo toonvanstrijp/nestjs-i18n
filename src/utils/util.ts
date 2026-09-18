@@ -1,4 +1,4 @@
-import { HttpStatus, Logger, MiddlewareConsumer } from '@nestjs/common';
+import { HttpStatus, Logger, LoggerService, MiddlewareConsumer } from '@nestjs/common';
 import { ValidationArguments, ValidationError } from 'class-validator';
 import {
   I18nOptionResolver,
@@ -17,6 +17,17 @@ type NoInfer<T> = [T][T extends any ? 0 : never];
 
 
 export const logger = new Logger('I18nService');
+
+/**
+ * Logs an error with its message and stack. Nest's `Logger.error(message, stack)`
+ * expects a stack *string* as the second argument; passing the Error object
+ * itself prints `{ stack: [ {} ] }` and hides the actual cause.
+ */
+export function logError(log: LoggerService, message: string, error: unknown) {
+  const err = error instanceof Error ? error : undefined;
+  const detail = err ? err.message : String(error);
+  log.error(`${message}: ${detail}`, err?.stack);
+}
 
 export function shouldResolve(e: I18nOptionResolver) {
   return typeof e === 'function' || 'use' in e;

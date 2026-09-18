@@ -5,6 +5,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { I18N_LOADERS } from '../src/i18n.constants';
 import { I18nModule } from '../src/i18n.module';
+import { I18nTranslation } from '../src/interfaces';
+import { I18nLoader } from '../src/loaders/i18n.loader';
 import { logger } from '../src/utils';
 
 describe('i18n module', () => {
@@ -77,6 +79,35 @@ describe('i18n module', () => {
 
     expect(module.unsubscribe.next).toHaveBeenCalledTimes(1);
     expect(module.unsubscribe.complete).toHaveBeenCalledTimes(1);
+  });
+
+  it('logs the underlying error message when a loader fails', async () => {
+    const errorSpy = jest.spyOn(logger, 'error').mockImplementation();
+
+    class FailingLoader extends I18nLoader {
+      async languages() {
+        return ['en'];
+      }
+      async load(): Promise<I18nTranslation> {
+        throw new Error('translation file is malformed');
+      }
+    }
+
+    const module = await Test.createTestingModule({
+      imports: [
+        I18nModule.forRoot({
+          fallbackLanguage: 'en',
+          loader: FailingLoader,
+          loaderOptions: {},
+        }),
+      ],
+    }).compile();
+    await module.close();
+
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('parsing translation error: translation file is malformed'),
+      expect.stringContaining('Error: translation file is malformed'),
+    );
   });
 
   describe('when initialized with forRoot', () => {

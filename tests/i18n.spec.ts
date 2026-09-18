@@ -164,6 +164,79 @@ describe('i18n module', () => {
     await module.close();
   });
 
+  describe('returnEmptyString', () => {
+    const translations = {
+      en: { test: { EMPTY: '', HELLO: 'Hello' } },
+      nl: { test: { EMPTY: '', HELLO: 'Hallo' } },
+    };
+
+    const createService = async (options: { returnEmptyString?: boolean } = {}) => {
+      const module = await Test.createTestingModule({
+        imports: [
+          I18nModule.forRoot({
+            fallbackLanguage: 'en',
+            ...options,
+            loaderOptions: {
+              path: path.join(__dirname, '/i18n/'),
+            },
+          }),
+        ],
+      }).compile();
+
+      const service = module.get<I18nService>(I18nService);
+      await service.refresh(translations, Object.keys(translations));
+
+      return { module, service };
+    };
+
+    it('returns an empty string by default', async () => {
+      const { module, service } = await createService();
+
+      expect(service.translate('test.EMPTY', { lang: 'en' })).toBe('');
+      expect(service.translate('test.EMPTY', { lang: 'nl' })).toBe('');
+
+      await module.close();
+    });
+
+    it('returns the key when the module-level option is false', async () => {
+      const { module, service } = await createService({ returnEmptyString: false });
+
+      expect(service.translate('test.EMPTY', { lang: 'en' })).toBe('test.EMPTY');
+      expect(service.translate('test.EMPTY', { lang: 'nl' })).toBe('test.EMPTY');
+      expect(service.translate('test.HELLO', { lang: 'nl' })).toBe('Hallo');
+
+      await module.close();
+    });
+
+    it('prefers defaultValue over the key when the option is false', async () => {
+      const { module, service } = await createService({ returnEmptyString: false });
+
+      expect(service.translate('test.EMPTY', { lang: 'en', defaultValue: 'fallback' })).toBe(
+        'fallback',
+      );
+
+      await module.close();
+    });
+
+    it('translate options should override the module-level option', async () => {
+      const { module, service } = await createService({ returnEmptyString: false });
+
+      expect(service.translate('test.EMPTY', { lang: 'en', returnEmptyString: true })).toBe('');
+
+      await module.close();
+    });
+
+    it('translate options can disable it per call', async () => {
+      const { module, service } = await createService();
+
+      expect(service.translate('test.EMPTY', { lang: 'en', returnEmptyString: false })).toBe(
+        'test.EMPTY',
+      );
+
+      await module.close();
+    });
+  });
+
   it('translate options should override module-level returnObjects option', async () => {
     const module = await Test.createTestingModule({
       imports: [

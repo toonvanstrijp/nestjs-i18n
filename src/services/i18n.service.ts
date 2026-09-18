@@ -146,6 +146,13 @@ export class I18nService<K = Record<string, unknown>>
       }
     }
 
+    const returnEmptyString =
+      options.returnEmptyString ?? this.i18nOptions.returnEmptyString ?? true;
+
+    if (translation === '' && !returnEmptyString) {
+      return (defaultValue ?? key) as unknown as IfAnyOrNever<R, string, R>;
+    }
+
     return (translation ?? key) as unknown as IfAnyOrNever<R, string, R>;
   }
 

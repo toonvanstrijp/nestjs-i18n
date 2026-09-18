@@ -211,9 +211,9 @@ describe('i18n module', () => {
     it('prefers defaultValue over the key when the option is false', async () => {
       const { module, service } = await createService({ returnEmptyString: false });
 
-      expect(
-        service.translate('test.EMPTY', { lang: 'en', defaultValue: 'fallback' }),
-      ).toBe('fallback');
+      expect(service.translate('test.EMPTY', { lang: 'en', defaultValue: 'fallback' })).toBe(
+        'fallback',
+      );
 
       await module.close();
     });

@@ -1,8 +1,8 @@
 import { I18nLoader } from './i18n.loader';
 import { I18N_LOADER_OPTIONS } from '../i18n.constants';
-import { Inject, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Inject, Logger, LoggerService, OnModuleDestroy } from '@nestjs/common';
 import path from 'path';
-import { exists, getDirectories, getFiles } from '../utils';
+import { exists, getDirectories, getFiles, logError } from '../utils';
 import { I18nTranslation } from '../interfaces';
 import {
   EMPTY,
@@ -30,7 +30,7 @@ export abstract class I18nAbstractLoader
   extends I18nLoader
   implements OnModuleDestroy
 {
-  private readonly logger = new Logger(I18nAbstractLoader.name);
+  protected logger: LoggerService = new Logger(I18nAbstractLoader.name);
 
   private watcher?: chokidar.FSWatcher;
 
@@ -71,7 +71,8 @@ export abstract class I18nAbstractLoader
           switchMap(() =>
             from(this.parseLanguages()).pipe(
               catchError((error) => {
-                this.logger.error(
+                logError(
+                  this.logger,
                   'Error while parsing i18n languages. Ignoring this change.',
                   error,
                 );
@@ -93,7 +94,8 @@ export abstract class I18nAbstractLoader
           switchMap((eventInfo) =>
             from(this.parseTranslations(eventInfo)).pipe(
               catchError((error) => {
-                this.logger.error(
+                logError(
+                  this.logger,
                   'Error while parsing i18n translations. Ignoring this change.',
                   error,
                 );

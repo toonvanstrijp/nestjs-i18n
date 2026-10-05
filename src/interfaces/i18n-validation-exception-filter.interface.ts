@@ -3,6 +3,9 @@ import { I18nValidationException } from './i18n-validation-error.interface';
 
 interface I18nValidationExceptionFilterCommonErrorsOption {
   errorHttpStatusCode?: HttpStatus | number;
+  autoTranslate?: boolean;
+  translatePrefix?: string;
+  translateKeyMapping?: (key: string) => string;
 }
 
 export interface I18nValidationExceptionFilterDetailedErrorsOption

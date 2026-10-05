@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "@messageformat/core": "^3.4.0",
-    "chokidar": "^3.6.0",
+    "chokidar": "^4.0.3",
     "cookie": "^1.1.1",
     "string-format": "^2.0.0",
     "yaml": "^2.8.3"

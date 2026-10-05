@@ -14,7 +14,7 @@ import {
   of as ObservableOf,
   switchMap,
 } from 'rxjs';
-import chokidar from 'chokidar';
+import { FSWatcher, watch } from 'chokidar';
 import { I18nError } from '../i18n.error';
 
 
@@ -32,7 +32,7 @@ export abstract class I18nAbstractLoader
 {
   protected logger: LoggerService = new Logger(I18nAbstractLoader.name);
 
-  private watcher?: chokidar.FSWatcher;
+  private watcher?: FSWatcher;
 
   private events: Subject<{ event: string; filePath: string }> = new Subject();
 
@@ -46,8 +46,7 @@ export abstract class I18nAbstractLoader
     this.options = this.sanitizeOptions(options);
 
     if (this.options.watch) {
-      this.watcher = chokidar
-        .watch(this.options.path, { ignoreInitial: true })
+      this.watcher = watch(this.options.path, { ignoreInitial: true })
         .on('all', (event, filePath) => {
           this.events.next({
             event,

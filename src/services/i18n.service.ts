@@ -194,23 +194,22 @@ export class I18nService<K = Record<string, unknown>>
     if (!translations) {
       translations = await processTranslations(this.loaders);
     }
-    if (translations instanceof Observable) {
-      this.translationsSubject.next(
-        await lastValueFrom(translations.pipe(take(1))),
-      );
-    } else {
-      this.translationsSubject.next(translations);
-    }
+    const nextTranslations =
+      translations instanceof Observable
+        ? await lastValueFrom(translations.pipe(take(1)))
+        : translations;
 
     if (!languages) {
       languages = await processLanguages(this.loaders);
     }
 
-    if (languages instanceof Observable) {
-      this.languagesSubject.next(await lastValueFrom(languages.pipe(take(1))));
-    } else {
-      this.languagesSubject.next(languages);
-    }
+    const nextLanguages =
+      languages instanceof Observable
+        ? await lastValueFrom(languages.pipe(take(1)))
+        : languages;
+
+    this.translationsSubject.next(nextTranslations);
+    this.languagesSubject.next(nextLanguages);
   }
 
   public hbsHelper = (key: string, args: any, options: any): string => {

@@ -27,6 +27,8 @@ await i18n.t('test.day_interval', {
 
 > Note: English plural rules does not require `zero` category. This behavior has been kept for backwards compatibility and will work for any language.
 
+> Note: If the category selected for the given `count` is missing from your translation, the `other` category is used instead.
+
 ```json title="src/i18n/uk/test.json"
 {
   "day_interval": {

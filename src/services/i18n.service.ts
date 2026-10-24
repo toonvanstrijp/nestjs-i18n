@@ -256,6 +256,8 @@ export class I18nService<K = Record<string, unknown>>
           translation = pluralObject['zero'];
         } else if (pluralObject[pluralCategory]) {
           translation = pluralObject[pluralCategory];
+        } else if (pluralObject['other']) {
+          translation = pluralObject['other'];
         }
       }
     }

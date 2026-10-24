@@ -863,6 +863,51 @@ describe('i18n module with fallbacks', () => {
     ).toBe('1.5 дня');
   });
 
+  it('i18n service should fall back to the "other" plural form when the selected category is missing', async () => {
+    const module = await Test.createTestingModule({
+      imports: [
+        I18nModule.forRoot({
+          fallbackLanguage: 'en',
+          loaderOptions: {
+            path: path.join(__dirname, '/i18n/'),
+          },
+        }),
+      ],
+    }).compile();
+
+    const service = module.get<I18nService>(I18nService);
+    await service.refresh(
+      {
+        en: { test: { messages: { zero: 'No messages', other: 'Messages: {count}' } } },
+        pl: {
+          test: {
+            messages: {
+              one: '{count} wiadomość',
+              few: '{count} wiadomości',
+              other: '{count} wiadomości',
+            },
+          },
+        },
+      },
+      ['en', 'pl'],
+    );
+
+    expect(service.translate('test.messages', { lang: 'en', args: { count: 0 } })).toBe(
+      'No messages',
+    );
+    expect(service.translate('test.messages', { lang: 'en', args: { count: 1 } })).toBe(
+      'Messages: 1',
+    );
+    expect(service.translate('test.messages', { lang: 'pl', args: { count: 1 } })).toBe(
+      '1 wiadomość',
+    );
+    expect(service.translate('test.messages', { lang: 'pl', args: { count: 7 } })).toBe(
+      '7 wiadomości',
+    );
+
+    await module.close();
+  });
+
   it('i18nService should correctly return validation errors from @ValidateNested()', async () => {
     const dto = plainToInstance(PostsDto, {
       posts: [{ title: 1, body: 'test body' }],

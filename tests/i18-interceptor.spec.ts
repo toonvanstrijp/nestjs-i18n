@@ -5,6 +5,7 @@ import { Test } from '@nestjs/testing';
 import { firstValueFrom, of } from 'rxjs';
 
 import {
+  CookieResolver,
   I18nContext,
   I18nModule,
   I18nService,
@@ -149,6 +150,39 @@ describe('i18n interceptor', () => {
 
     expect(client.i18nLang).toBe('nl');
     expect(langFromContext).toBe('nl');
+  });
+
+  it('falls back when CookieResolver receives a websocket client without headers', async () => {
+    // Raw `ws` clients expose neither a handshake nor the upgrade request headers.
+    const client: any = {};
+
+    const wsContext = {
+      getType: () => 'ws',
+      switchToWs: () => ({
+        getClient: () => client,
+      }),
+    };
+
+    const next = {
+      handle: jest.fn(() => of(I18nContext.current()?.lang)),
+    };
+
+    const interceptor = new I18nLanguageInterceptor(
+      {
+        ...i18nOptions,
+        skipAsyncHook: false,
+      },
+      [new CookieResolver()],
+      i18nService,
+      messageFormat,
+      moduleRef,
+    );
+
+    const result$ = await interceptor.intercept(wsContext as any, next as any);
+    const langFromContext = await firstValueFrom(result$);
+
+    expect(client.i18nLang).toBe('en');
+    expect(langFromContext).toBe('en');
   });
 
   it('provides I18nContext.current() for rpc when transport context object is undefined', async () => {

@@ -227,6 +227,7 @@ export class I18nService<K = Record<string, unknown>>
     lang: string,
     options?: TranslateOptions,
     rootTranslations?: I18nTranslation | string,
+    resolvingKeys: string[] = [key],
   ): I18nTranslation | string | undefined {
     const args = options?.args;
     const translationObject =
@@ -288,6 +289,7 @@ export class I18nService<K = Record<string, unknown>>
             lang,
             options,
             rootTranslations,
+            resolvingKeys,
           );
           result[nestedKey] =
             nestedTranslation === undefined ? nestedKey : nestedTranslation;
@@ -312,6 +314,7 @@ export class I18nService<K = Record<string, unknown>>
           lang,
           options,
           rootTranslations,
+          resolvingKeys,
         );
         result[nestedKey] =
           nestedTranslation === undefined ? nestedKey : nestedTranslation;
@@ -338,17 +341,28 @@ export class I18nService<K = Record<string, unknown>>
       if (nestedTranslations && nestedTranslations.length > 0) {
         let offset = 0;
         for (const nestedTranslation of nestedTranslations) {
-          const result = rootTranslations
-            ? ((this.translateObject(
-                nestedTranslation.key,
-                rootTranslations,
-                lang,
-                {
-                  ...options,
-                  args: { parent: options?.args, ...nestedTranslation.args },
-                },
-              ) as string) ?? '')
-            : '';
+          // Skip keys that are already being resolved higher up the chain so
+          // that circular references can't recurse forever.
+          const isCircular = resolvingKeys.includes(nestedTranslation.key);
+          if (isCircular && this.i18nOptions.logging) {
+            this.logger.warn(
+              `Circular nested translation "${nestedTranslation.key}" found while translating "${resolvingKeys[0]}".`,
+            );
+          }
+          const result =
+            rootTranslations && !isCircular
+              ? ((this.translateObject(
+                  nestedTranslation.key,
+                  rootTranslations,
+                  lang,
+                  {
+                    ...options,
+                    args: { parent: options?.args, ...nestedTranslation.args },
+                  },
+                  rootTranslations,
+                  [...resolvingKeys, nestedTranslation.key],
+                ) as string) ?? '')
+              : '';
           translation =
             translation.substring(0, nestedTranslation.index - offset) +
             result +

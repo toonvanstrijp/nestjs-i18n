@@ -7,6 +7,7 @@ import { firstValueFrom, of } from 'rxjs';
 
 import {
   CookieResolver,
+  GrpcMetadataResolver,
   I18nContext,
   I18nModule,
   I18nService,

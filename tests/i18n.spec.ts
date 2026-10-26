@@ -381,6 +381,66 @@ describe('i18n module', () => {
     expect(result).toBe('the translation is missing, nested: Hello, arg: world');
   });
 
+  describe('multi-level nested translations', () => {
+    let module: TestingModule;
+    let service: I18nService;
+
+    beforeAll(async () => {
+      module = await Test.createTestingModule({
+        imports: [
+          I18nModule.forRoot({
+            fallbackLanguage: 'en',
+            loaderOptions: {
+              path: path.join(__dirname, '/i18n/'),
+            },
+          }),
+        ],
+      }).compile();
+
+      service = module.get<I18nService>(I18nService);
+      await service.refresh(
+        {
+          en: {
+            test: {
+              GREETING: 'Hello {name}',
+              WELCOME: '$t(test.GREETING, {{ "name": "{name}" }}), welcome',
+              PAGE: { TITLE: 'Home: $t(test.WELCOME, {{ "name": "{name}" }})' },
+              SELF: 'Self: $t(test.SELF)',
+              PING: 'Ping $t(test.PONG)',
+              PONG: 'Pong $t(test.PING)',
+            },
+          },
+        },
+        ['en'],
+      );
+    });
+
+    afterAll(async () => {
+      await module.close();
+    });
+
+    it('i18n service should resolve nested translations inside nested translations', () => {
+      expect(service.translate('test.PAGE.TITLE', { lang: 'en', args: { name: 'Toon' } })).toBe(
+        'Home: Hello Toon, welcome',
+      );
+      expect(service.translate('test.PAGE', { lang: 'en', args: { name: 'Toon' } })).toEqual({
+        TITLE: 'Home: Hello Toon, welcome',
+      });
+    });
+
+    it('i18n service should stop at circular nested translations', () => {
+      const warnSpy = jest.spyOn((service as any).logger, 'warn').mockImplementation(() => {});
+
+      expect(service.translate('test.SELF', { lang: 'en', args: {} })).toBe('Self: ');
+      expect(service.translate('test.PING', { lang: 'en', args: {} })).toBe('Ping Pong ');
+      expect(warnSpy).toHaveBeenCalledWith(
+        'Circular nested translation "test.PING" found while translating "test.PING".',
+      );
+
+      warnSpy.mockRestore();
+    });
+  });
+
   it('i18n service should throw on missing translation even when logging is disabled', async () => {
     const module = await Test.createTestingModule({
       imports: [

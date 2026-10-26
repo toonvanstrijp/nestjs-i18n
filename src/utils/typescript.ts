@@ -7,7 +7,7 @@ const convertArrayItemToType = async (item: any): Promise<ts.TypeNode> => {
     );
     return ts.factory.createTupleTypeNode(nestedArrayItemTypes);
   }
-  if (typeof item === 'object') {
+  if (item !== null && typeof item === 'object') {
     return ts.factory.createTypeLiteralNode(
       await convertObjectToTypeDefinition(item),
     );
@@ -24,7 +24,7 @@ export const convertObjectToTypeDefinition = async (
         Object.keys(object).map(async (key) => {
           const value = object[key];
 
-          if (typeof value === 'string') {
+          if (value === null || typeof value !== 'object') {
             return ts.factory.createPropertySignature(
               undefined,
               ts.factory.createStringLiteral(key),

@@ -17,8 +17,13 @@ export class GrpcMetadataResolver implements I18nResolver {
     let lang  = undefined;
 
     switch (context.getType() as string) {
-      case ExecutionContextType.RPC:
-        const metadata = context.switchToRpc().getContext() as Metadata;
+      case ExecutionContextType.RPC: {
+        const metadata = context.switchToRpc().getContext<Metadata | undefined>();
+        // Other transports (TCP, Redis, NATS, ...) share the rpc context type
+        // but don't pass gRPC metadata, so leave those to the next resolver.
+        if (typeof metadata?.get !== 'function') {
+          break;
+        }
         for (const key of this.keys) {
           const [value] = metadata.get(key);
           if (value) {
@@ -26,6 +31,7 @@ export class GrpcMetadataResolver implements I18nResolver {
             break;
           }
         }
+      }
     }
 
     return lang;

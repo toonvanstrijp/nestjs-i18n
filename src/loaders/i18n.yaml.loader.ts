@@ -17,7 +17,8 @@ export class I18nYamlLoader extends I18nAbstractLoader {
   protected override async parseFile(file: string): Promise<any> {
     try {
       const data = await readFile(file, 'utf8');
-      return yaml.parse(data);
+      // An empty YAML document (or one with only comments) parses to null.
+      return yaml.parse(data) ?? {};
     } catch (e: any) {
       // yaml.parse throws YAMLParseError on error
       if (e && e.name === 'YAMLParseError') {

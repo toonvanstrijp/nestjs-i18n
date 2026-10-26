@@ -39,6 +39,11 @@ describe('i18n yaml module', () => {
     expect(i18nService.translate('yamlonly.HELLO', { lang: 'en' })).toBe('Hello from yaml');
   });
 
+  it('i18n service should ignore empty yaml files', () => {
+    expect(i18nService.getTranslations()['en']).not.toHaveProperty('empty');
+    expect(i18nService.translate('test.HELLO', { lang: 'en' })).toBe('Hello');
+  });
+
   /*
   it('i18n service should fallback to the fallback language if none is provided', () => {
     expect(i18nService.translate('test.HELLO')).toBe('Hello');

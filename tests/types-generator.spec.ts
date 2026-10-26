@@ -66,6 +66,47 @@ describe('types generator', () => {
     }
   });
 
+  it('should type non-string leaf values as strings', async () => {
+    const fixtureRoot = join(__dirname, 'generated', 'types-fixture-non-string');
+    const enDir = join(fixtureRoot, 'en');
+    const fixtureOutputPath = join(
+      __dirname,
+      'generated',
+      'types-generator-non-string.generated.ts',
+    );
+
+    try {
+      fs.mkdirSync(enDir, { recursive: true });
+
+      fs.writeFileSync(
+        join(enDir, 'common.json'),
+        JSON.stringify({
+          untranslated: null,
+          count: 3,
+          enabled: true,
+          items: ['one', null, 2],
+        }),
+      );
+
+      const result = await generateI18nTypes({
+        path: fixtureRoot,
+        output: fixtureOutputPath,
+        format: 'json',
+        watch: false,
+      });
+
+      expect(result.written).toBe(true);
+      const generatedContent = fs.readFileSync(fixtureOutputPath, 'utf8');
+      expect(generatedContent).toContain('"untranslated": string;');
+      expect(generatedContent).toContain('"count": string;');
+      expect(generatedContent).toContain('"enabled": string;');
+      expect(generatedContent).toMatch(/"items": \[\s*string,\s*string,\s*string\s*\];/);
+    } finally {
+      fs.rmSync(fixtureRoot, { recursive: true, force: true });
+      fs.rmSync(fixtureOutputPath, { force: true });
+    }
+  });
+
   it('should fail check when language keys are missing', async () => {
     const fixtureRoot = join(__dirname, 'generated', 'check-fixture-missing');
     const enDir = join(fixtureRoot, 'en');

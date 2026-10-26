@@ -38,3 +38,5 @@ i18n.t('test.PAGE_HOME.SUBTITLE', {args: { username: 'Toon' } })
 :::tip
 The [`formatter`](guides/formatting.md) is applied before doing nested translations. This way you can pass on arguments to your nested translations! 🎉
 :::
+
+Nested translations can reference other nested translations, so they are resolved as deep as needed. A circular reference (for example a translation that references itself) is rendered as an empty string and logs a warning when `logging` is enabled.

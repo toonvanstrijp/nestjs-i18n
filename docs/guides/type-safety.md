@@ -48,9 +48,26 @@ import { generateI18nTypes } from 'nestjs-i18n';
 
 await generateI18nTypes({
   path: './src/i18n',
-  outputPath: './src/generated/i18n.generated.ts',
+  output: './src/generated/i18n.generated.ts',
   format: 'json',
+  watch: false,
 });
+```
+
+To regenerate the types whenever a translation file changes, use `watchI18nTypes` (or the `--watch` CLI option):
+
+```typescript
+import { watchI18nTypes } from 'nestjs-i18n';
+
+const stopWatching = await watchI18nTypes(
+  {
+    path: './src/i18n',
+    output: './src/generated/i18n.generated.ts',
+    format: 'json',
+  },
+  (result) => console.log(`Types generated in: ${result.output}`),
+  (error) => console.error(error),
+);
 ```
 
 CLI options:
@@ -58,6 +75,7 @@ CLI options:
 - `--format <json|yaml>`
 - `--pattern <glob>`
 - `--include-subfolders`
+- `--watch`
 
 # Usage
 

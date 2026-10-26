@@ -23,6 +23,18 @@ describe('cli main', () => {
       },
     );
 
+    const stopWatching = jest.fn().mockResolvedValue(undefined);
+    const watchI18nTypes = jest.fn(
+      async (
+        _options: unknown,
+        onResult: (result: { output: string; written: boolean }) => void,
+        _onError: (error: unknown) => void,
+      ) => {
+        onResult(overrides?.generateResult ?? { output: 'generated.ts', written: true });
+        return stopWatching;
+      },
+    );
+
     const checkI18nTranslations = jest.fn().mockResolvedValue(
       overrides?.checkResult ?? {
         ok: true,
@@ -34,6 +46,7 @@ describe('cli main', () => {
 
     jest.doMock('../src/types-generator', () => ({
       generateI18nTypes,
+      watchI18nTypes,
     }));
 
     jest.doMock('../src/cli/check-translations', () => ({
@@ -45,6 +58,8 @@ describe('cli main', () => {
     return {
       cli,
       generateI18nTypes,
+      watchI18nTypes,
+      stopWatching,
       checkI18nTranslations,
     };
   }
@@ -85,6 +100,37 @@ describe('cli main', () => {
     await cli.main();
 
     expect(stdoutSpy).toHaveBeenCalledWith('ℹ️ No changes detected in: generated.ts\n');
+  });
+
+  it('keeps watching and regenerating types in watch mode', async () => {
+    const stdoutSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => true);
+    const stderrSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => true);
+    process.argv = ['node', 'cli', '-p', 'src/i18n', '-o', 'out.ts', '--watch'];
+
+    const { cli, generateI18nTypes, watchI18nTypes, stopWatching } = await loadCliWithMocks();
+
+    await cli.main();
+
+    expect(watchI18nTypes).toHaveBeenCalledWith(
+      {
+        path: 'src/i18n',
+        output: 'out.ts',
+        format: 'json',
+        filePattern: '*.json',
+        includeSubfolders: true,
+      },
+      expect.any(Function),
+      expect.any(Function),
+    );
+    expect(generateI18nTypes).not.toHaveBeenCalled();
+    expect(stopWatching).not.toHaveBeenCalled();
+    expect(stdoutSpy).toHaveBeenNthCalledWith(1, '✅ Types generated in: generated.ts\n');
+    expect(stdoutSpy).toHaveBeenNthCalledWith(2, '👀 Watching src/i18n for changes...\n');
+
+    const [, , onError] = watchI18nTypes.mock.calls[0];
+    onError(new Error('Failed to generate types file content'));
+
+    expect(stderrSpy).toHaveBeenCalledWith('❌ Failed to generate types file content\n');
   });
 
   it('prints unknown option warnings before generating', async () => {

@@ -33,7 +33,7 @@ export class CookieResolver implements I18nResolver {
     }
 
     if (req) {
-      if (!req.cookies && req.headers.cookie) {
+      if (!req.cookies && req.headers?.cookie) {
         req.cookies = parse(req.headers.cookie);
       }
 

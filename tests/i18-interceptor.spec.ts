@@ -1,11 +1,13 @@
 import path from 'path';
 
 import { ModuleRef } from '@nestjs/core';
+import { TcpContext } from '@nestjs/microservices';
 import { Test } from '@nestjs/testing';
 import { firstValueFrom, of } from 'rxjs';
 
 import {
   CookieResolver,
+  GrpcMetadataResolver,
   I18nContext,
   I18nModule,
   I18nService,
@@ -203,6 +205,64 @@ describe('i18n interceptor', () => {
         skipAsyncHook: false,
       },
       [] as any,
+      i18nService,
+      messageFormat,
+      moduleRef,
+    );
+
+    const result$ = await interceptor.intercept(rpcContext as any, next as any);
+    const langFromContext = await firstValueFrom(result$);
+
+    expect(langFromContext).toBe('en');
+  });
+
+  it('skips GrpcMetadataResolver for rpc transports that do not pass grpc metadata', async () => {
+    const rpcContext = {
+      getType: () => 'rpc',
+      switchToRpc: () => ({
+        getContext: () => new TcpContext([{} as any, 'pattern']),
+      }),
+    };
+
+    const next = {
+      handle: jest.fn(() => of(I18nContext.current()?.lang)),
+    };
+
+    const interceptor = new I18nLanguageInterceptor(
+      {
+        ...i18nOptions,
+        skipAsyncHook: false,
+      },
+      [new GrpcMetadataResolver(), { resolve: () => 'nl' }],
+      i18nService,
+      messageFormat,
+      moduleRef,
+    );
+
+    const result$ = await interceptor.intercept(rpcContext as any, next as any);
+    const langFromContext = await firstValueFrom(result$);
+
+    expect(langFromContext).toBe('nl');
+  });
+
+  it('falls back when GrpcMetadataResolver receives no rpc context object', async () => {
+    const rpcContext = {
+      getType: () => 'rpc',
+      switchToRpc: () => ({
+        getContext: () => undefined,
+      }),
+    };
+
+    const next = {
+      handle: jest.fn(() => of(I18nContext.current()?.lang)),
+    };
+
+    const interceptor = new I18nLanguageInterceptor(
+      {
+        ...i18nOptions,
+        skipAsyncHook: false,
+      },
+      [new GrpcMetadataResolver()],
       i18nService,
       messageFormat,
       moduleRef,

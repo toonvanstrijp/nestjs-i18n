@@ -154,6 +154,41 @@ describe('i18n interceptor', () => {
     expect(langFromContext).toBe('nl');
   });
 
+  it('provides I18nContext.current() for every message of the same websocket client', async () => {
+    const client: any = {};
+
+    const wsContext = {
+      getType: () => 'ws',
+      switchToWs: () => ({
+        getClient: () => client,
+      }),
+    };
+
+    const next = {
+      handle: jest.fn(() => of(I18nContext.current()?.lang)),
+    };
+
+    const resolve = jest.fn(() => 'nl');
+    const interceptor = new I18nLanguageInterceptor(
+      {
+        ...i18nOptions,
+        skipAsyncHook: false,
+      },
+      [{ resolve }] as any,
+      i18nService,
+      messageFormat,
+      moduleRef,
+    );
+
+    const firstMessage$ = await interceptor.intercept(wsContext as any, next as any);
+    expect(await firstValueFrom(firstMessage$)).toBe('nl');
+
+    const secondMessage$ = await interceptor.intercept(wsContext as any, next as any);
+    expect(await firstValueFrom(secondMessage$)).toBe('nl');
+
+    expect(resolve).toHaveBeenCalledTimes(1);
+  });
+
   it('falls back when CookieResolver receives a websocket client without headers', async () => {
     // Raw `ws` clients expose neither a handshake nor the upgrade request headers.
     const client: any = {};

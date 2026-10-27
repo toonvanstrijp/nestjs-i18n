@@ -30,19 +30,18 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       detailedErrors: true,
     },
   ) {}
-  catch(exception: I18nValidationException, host: ArgumentsHost): unknown {
-    const errors =
-      exception.errorsAlreadyTranslated && exception.errors
-        ? exception.errors
-        : formatI18nErrors(
-            exception.errors ?? [],
-            getI18nContextOrThrow(
-              I18nContext.current(host) ?? I18nContext.current(),
-            ).service,
-            {
-              lang: (I18nContext.current(host) ?? I18nContext.current())?.lang,
-            },
-          );
+  catch(exception: I18nValidationException, host: ArgumentsHost) {
+    const i18n = getI18nContextOrThrow(
+      I18nContext.current(host) ?? I18nContext.current(),
+    );
+
+    let errors = exception.errors ?? [];
+    if ((this.options as any).autoTranslate) {
+      errors = this.translateValidationErrors(errors, i18n);
+    }
+    errors = formatI18nErrors(errors, i18n.service, {
+      lang: i18n.lang,
+    });
 
     const normalizedErrors = this.normalizeValidationErrors(errors);
 
@@ -121,6 +120,46 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
       .filter((item) => !!item.constraints)
       .map((item) => Object.values(item.constraints ?? {}))
       .flat();
+  }
+
+  protected translateValidationErrors(
+    errors: ValidationError[],
+    i18n: I18nContext,
+  ): ValidationError[] {
+    if (!(this.options as any).autoTranslate) {
+      return errors;
+    }
+
+    return errors.map((error) => {
+      const translatedError = { ...error };
+
+      if (error.constraints) {
+        translatedError.constraints = {};
+        for (const [constraintName, defaultMessage] of Object.entries(error.constraints)) {
+          const translationKey = `validation.${constraintName.toUpperCase()}`;
+          
+          try {
+            translatedError.constraints[constraintName] = i18n.service.translate(translationKey, {
+              lang: i18n.lang,
+              args: {
+                property: error.property,
+                value: error.value,
+                constraints: error.constraints,
+                target: error.target,
+              },
+            });
+          } catch {
+            translatedError.constraints[constraintName] = defaultMessage;
+          }
+        }
+      }
+
+      if (error.children && error.children.length > 0) {
+        translatedError.children = this.translateValidationErrors(error.children, i18n);
+      }
+
+      return translatedError;
+    });
   }
   protected buildResponseBody(
     host: ArgumentsHost,

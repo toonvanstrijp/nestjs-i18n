@@ -43,4 +43,4 @@ export { i18nValidationErrorFactory, i18nValidationMessage, getContextObject } f
 export { Path, PathValue } from './types';
 
 // generators
-export { generateI18nTypes } from './types-generator';
+export { generateI18nTypes, watchI18nTypes } from './types-generator';

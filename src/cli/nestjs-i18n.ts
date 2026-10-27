@@ -1,8 +1,9 @@
-import { generateI18nTypes } from '../types-generator';
+import { generateI18nTypes, watchI18nTypes } from '../types-generator';
 import { checkI18nTranslations } from './check-translations';
 
 
 import { CliOptions, ParsedCliOptions } from '../interfaces/cli.interface';
+import { GenerateI18nTypesResult } from '../interfaces/types-generator.interface';
 
 const DEFAULT_PATH = 'i18n';
 const DEFAULT_OUT = 'generated.ts';
@@ -218,15 +219,26 @@ export async function main() {
     process.exit(1);
   }
 
-  const result = await generateI18nTypes({
+  const generateOptions = {
     path: options.path,
     output: options.out,
     format: selectedFormat,
     filePattern: selectedPattern,
     includeSubfolders: options.includeSubfolders,
-    watch: options.watch,
-  });
+  };
 
+  if (options.watch) {
+    await watchI18nTypes(generateOptions, printGenerateResult, (error: any) => {
+      process.stderr.write(`❌ ${error?.message || error}\n`);
+    });
+    process.stdout.write(`👀 Watching ${options.path} for changes...\n`);
+    return;
+  }
+
+  printGenerateResult(await generateI18nTypes({ ...generateOptions, watch: false }));
+}
+
+function printGenerateResult(result: GenerateI18nTypesResult) {
   if (result.written) {
     process.stdout.write(`✅ Types generated in: ${result.output}\n`);
   } else {

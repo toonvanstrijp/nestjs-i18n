@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import { join } from 'node:path';
 
 import { checkI18nTranslations } from '../src/cli/check-translations';
-import { generateI18nTypes } from '../src/types-generator';
+import { GenerateI18nTypesResult } from '../src/interfaces/types-generator.interface';
+import { generateI18nTypes, watchI18nTypes } from '../src/types-generator';
 
 describe('types generator', () => {
   const outputPath = join(__dirname, 'generated', 'types-generator.generated.ts');
@@ -104,6 +105,53 @@ describe('types generator', () => {
     } finally {
       fs.rmSync(fixtureRoot, { recursive: true, force: true });
       fs.rmSync(fixtureOutputPath, { force: true });
+    }
+  });
+
+  it('should regenerate types when translations change in watch mode', async () => {
+    const fixtureRoot = join(__dirname, 'generated', 'types-fixture-watch');
+    const enDir = join(fixtureRoot, 'en');
+    const watchOutputPath = join(__dirname, 'generated', 'types-generator-watch.generated.ts');
+    const results: GenerateI18nTypesResult[] = [];
+    const errors: unknown[] = [];
+    let notifyResult: (result: GenerateI18nTypesResult) => void = () => {};
+    const nextResult = () =>
+      new Promise<GenerateI18nTypesResult>((resolve) => {
+        notifyResult = resolve;
+      });
+    let stopWatching: (() => Promise<void>) | undefined;
+
+    try {
+      fs.mkdirSync(enDir, { recursive: true });
+      fs.writeFileSync(join(enDir, 'common.json'), JSON.stringify({ hello: 'Hello' }));
+
+      stopWatching = await watchI18nTypes(
+        { path: fixtureRoot, output: watchOutputPath, format: 'json' },
+        (generated) => {
+          results.push(generated);
+          notifyResult(generated);
+        },
+        (error) => errors.push(error),
+      );
+
+      expect(results).toEqual([{ output: watchOutputPath, written: true }]);
+      expect(fs.readFileSync(watchOutputPath, 'utf8')).toContain('"hello": string;');
+      expect(fs.readFileSync(watchOutputPath, 'utf8')).not.toContain('"world"');
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const result = nextResult();
+      fs.writeFileSync(
+        join(enDir, 'common.json'),
+        JSON.stringify({ hello: 'Hello', world: 'World' }),
+      );
+
+      expect(await result).toEqual({ output: watchOutputPath, written: true });
+      expect(fs.readFileSync(watchOutputPath, 'utf8')).toContain('"world": string;');
+      expect(errors).toEqual([]);
+    } finally {
+      await stopWatching?.();
+      fs.rmSync(fixtureRoot, { recursive: true, force: true });
+      fs.rmSync(watchOutputPath, { force: true });
     }
   });
 

@@ -48,8 +48,15 @@ export class I18nLanguageInterceptor implements NestInterceptor {
       return next.handle();
     }
 
-    // Skip interceptor if language is already resolved (in case of http middleware)
+    // Skip language resolution if it already happened, either in the http
+    // middleware or on an earlier message of the same websocket client.
     if (ctx?.i18nLang) {
+      // Later messages of a websocket client reuse the i18n context stored on
+      // the client, which still has to be made available to the handler.
+      if (!i18nContext && ctx.i18nContext && !this.i18nOptions.skipAsyncHook) {
+        return this.runInI18nContext(ctx.i18nContext, next);
+      }
+
       return next.handle();
     }
 
@@ -87,23 +94,26 @@ export class I18nLanguageInterceptor implements NestInterceptor {
       }
 
       if (!this.i18nOptions.skipAsyncHook) {
-        return new Observable((observer) => {
-          let subscription: Subscription | undefined;
-
-          I18nContext.createAsync(requestI18nContext, async () => {
-            subscription = next.handle().subscribe(observer);
-          }).catch((error) => {
-            observer.error(error);
-          });
-
-          return () => {
-            subscription?.unsubscribe();
-          };
-        });
+        return this.runInI18nContext(requestI18nContext, next);
       }
     }
 
     return next.handle();
   }
 
+  private runInI18nContext(i18nContext: I18nContext, next: CallHandler<any>): Observable<any> {
+    return new Observable((observer) => {
+      let subscription: Subscription | undefined;
+
+      I18nContext.createAsync(i18nContext, async () => {
+        subscription = next.handle().subscribe(observer);
+      }).catch((error) => {
+        observer.error(error);
+      });
+
+      return () => {
+        subscription?.unsubscribe();
+      };
+    });
+  }
 }

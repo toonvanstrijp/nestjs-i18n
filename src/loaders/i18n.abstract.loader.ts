@@ -131,9 +131,10 @@ export abstract class I18nAbstractLoader
       ...languages.map((l) => path.join(i18nPath, l)),
       i18nPath,
     ].reduce(async (f: Promise<string[]>, p: string) => {
-      (await f).push(
-        ...(await getFiles(p, pattern, this.options.includeSubfolders ?? false)),
-      );
+      // Every directory in the i18n root is a language directory that is
+      // already scanned above, so only collect the global files of the root.
+      const includeSubfolders = p !== i18nPath && (this.options.includeSubfolders ?? false);
+      (await f).push(...(await getFiles(p, pattern, includeSubfolders)));
       return f;
     }, Promise.resolve([]));
 

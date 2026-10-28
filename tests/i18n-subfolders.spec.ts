@@ -38,4 +38,23 @@ describe('i18n module including subfolders', () => {
       'Bonjour sous-dossier',
     );
   });
+
+  it('i18n service should return translation from global files', () => {
+    expect(i18nService.translate('APP_NAME', { lang: 'fr' })).toBe('BLA');
+  });
+
+  it('i18n loader should parse each translation file only once', async () => {
+    const parseFileSpy = jest.spyOn(i18nLoader as any, 'parseFile');
+
+    try {
+      await i18nLoader.load();
+
+      const parsedFiles = parseFileSpy.mock.calls.map(([file]) => file);
+      expect(parsedFiles).toContain(path.join(__dirname, '/i18n/global.json'));
+      expect(parsedFiles).toContain(path.join(__dirname, '/i18n/en/subfolder/sub-test.json'));
+      expect(new Set(parsedFiles).size).toBe(parsedFiles.length);
+    } finally {
+      parseFileSpy.mockRestore();
+    }
+  });
 });

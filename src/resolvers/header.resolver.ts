@@ -32,13 +32,16 @@ export class HeaderResolver implements I18nResolver {
 
     if (req) {
       for (const key of this.keys) {
-        if (key === 'accept-language') {
+        if (key.toLowerCase() === 'accept-language') {
           logger.warn(
             'HeaderResolver does not support RFC4647 Accept-Language header. Please use AcceptLanguageResolver instead.',
           );
         }
-        if (req.headers !== undefined && req.headers[key] !== undefined) {
-          lang = req.headers[key];
+        // Node.js lowercases incoming header names, so also look up the
+        // lowercased key to match keys configured like `X-Custom-Lang`.
+        const value = req.headers?.[key] ?? req.headers?.[key.toLowerCase()];
+        if (value !== undefined) {
+          lang = value;
           break;
         }
       }

@@ -9,6 +9,16 @@ function isString(s: any): s is string {
   return typeof s === 'string';
 }
 
+function splitTag(tag: string): { code: string; script: string | null; region: string | null } {
+  const bits = tag.split('-');
+  const hasScript = /^[A-Za-z]{4}$/.test(bits[1] ?? '');
+  return {
+    code: bits[0],
+    script: hasScript ? bits[1] : null,
+    region: (hasScript ? bits[2] : bits[1]) || null
+  };
+}
+
 export function parse(al: string): ParsedLanguage[] {
   if (!al) return [];
   // Fast split, avoid regex if possible
@@ -18,14 +28,9 @@ export function parse(al: string): ParsedLanguage[] {
     const m = parts[i].trim();
     if (!m) continue;
     const bits = m.split(';');
-    const ietf = bits[0].split('-');
-    const hasScript = ietf.length === 3;
-    result.push({
-      code: ietf[0],
-      script: hasScript ? ietf[1] : null,
-      region: hasScript ? ietf[2] : ietf[1] || null,
-      quality: bits[1] ? parseFloat(bits[1].split('=')[1]) : 1.0
-    });
+    const quality = bits[1] ? parseFloat(bits[1].split('=')[1]) : 1.0;
+    if (!(quality > 0)) continue;
+    result.push({ ...splitTag(bits[0]), quality });
   }
   return result.sort((a, b) => b.quality - a.quality);
 }
@@ -44,15 +49,7 @@ export function pick(
   } else {
     parsedAcceptLanguage = acceptLanguage;
   }
-  const supported = supportedLanguages.map((support) => {
-    const bits = support.split('-');
-    const hasScript = bits.length === 3;
-    return {
-      code: bits[0],
-      script: hasScript ? bits[1] : null,
-      region: hasScript ? bits[2] : bits[1] || null
-    };
-  });
+  const supported = supportedLanguages.map(splitTag);
   for (let i = 0; i < parsedAcceptLanguage.length; i++) {
     const lang = parsedAcceptLanguage[i];
     const langCode = lang.code.toLowerCase();
@@ -64,7 +61,7 @@ export function pick(
       const supportedRegion = supported[j].region?.toLowerCase() ?? null;
       if (
         langCode === supportedCode &&
-        (options.loose || !langScript || langScript === supportedScript) &&
+        (!langScript || (options.loose && !supportedScript) || langScript === supportedScript) &&
         (options.loose || !langRegion || langRegion === supportedRegion)
       ) {
         return supportedLanguages[j];

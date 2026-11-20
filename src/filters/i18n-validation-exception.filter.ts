@@ -63,7 +63,9 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
     }
   }
 
-  private async createGraphQLError(
+  // Returns the error itself, not a Promise of it, so filters that wrap or
+  // extend this one get a GraphQLError back from catch() (#776)
+  private createGraphQLError(
     exception: I18nValidationException,
     errors: string[] | I18nValidationError[] | object,
   ) {
@@ -71,8 +73,7 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
 
     try {
       // Load lazily so non-GraphQL consumers don't need the graphql package.
-
-      const { GraphQLError } = await import('graphql');
+      const { GraphQLError } = require('graphql');
 
       return new GraphQLError(exception.message, {
         extensions: {
